@@ -1,3 +1,7 @@
+body {
+    background-color: #f3f5f0;
+}
+
 .register-page {
     text-align: center;
     padding: 50px;
@@ -16,7 +20,8 @@
     align-items: center;
   }
   
-  input {
+  input,
+  select {
     width: 100%;
     max-width: 400px;
     margin: 10px 0;
@@ -56,9 +61,54 @@
     text-decoration: underline;
   }
   
+  /* Estilos para os campos Perfil e Tipo de Insumo */
+  label {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  select {
+    cursor: pointer;
+  }
+  
+  /* Estilizando o campo Perfil */
+  .select-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .select-container::after {
+    content: '\f078'; /* código do ícone de seta para baixo */
+    font-family: 'Font Awesome 5 Free';
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none; /* garante que o ícone não interfere com a seleção */
+    color: #888;
+  }
+  
+  select {
+    appearance: none; /* remove a aparência padrão do dropdown */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: calc(100% - 20px); /* ajusta a largura para acomodar o ícone */
+    background-color: transparent; /* torna o dropdown transparente */
+  }
+  
+  .placeholder-option {
+    display: none; /* oculta a primeira opção padrão */
+  }
+  
+  .placeholder-option:before {
+    content: 'Perfil'; /* texto do placeholder */
+    color: #888;
+  }
+  
   /* Media query para smartphones */
   @media only screen and (max-width: 600px) {
-    .login-page {
+    .register-page {
       padding: 20px;
     }
   
@@ -67,8 +117,9 @@
     }
   
     input,
+    select,
     button {
-      width: 100%;
       max-width: 300px;
     }
   }
+  

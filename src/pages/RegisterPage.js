@@ -1,4 +1,3 @@
-// src/pages/RegisterPage.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/RegisterPage.css';
@@ -11,7 +10,9 @@ const RegisterPage = () => {
     confirmarSenha: '',
     telefone: '',
     enderecoFazenda: '',
-    nomeFazenda: ''
+    nomeFazenda: '',
+    perfil: 'produtor', // perfil padrão
+    tipoInsumo: '', // tipo de insumo selecionado
   });
   const navigate = useNavigate();
 
@@ -36,6 +37,18 @@ const RegisterPage = () => {
         <input type="text" name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} required />
         <input type="text" name="enderecoFazenda" placeholder="Endereço da Fazenda" value={form.enderecoFazenda} onChange={handleChange} required />
         <input type="text" name="nomeFazenda" placeholder="Nome da Fazenda" value={form.nomeFazenda} onChange={handleChange} required />
+
+        {/* Dropdown para seleção de perfil */}
+        <div className="select-container">
+          <label htmlFor="perfil">Perfil:</label>
+          <select name="perfil" id="perfil" value={form.perfil} onChange={handleChange}>
+            <option className="placeholder-option" value="" disabled>Perfil</option>
+            <option value="produtor">Produtor</option>
+            <option value="tecnico">Técnico</option>
+            <option value="fornecedor">Fornecedor</option>
+          </select>
+        </div>
+
         <button type="submit">Cadastrar</button>
       </form>
       <p>Já tem uma conta? <Link to="/login">Entrar</Link></p>

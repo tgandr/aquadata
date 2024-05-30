@@ -1,8 +1,11 @@
+body {
+    background-color: #f3f5f0;
+}
+
 .login-page {
     text-align: center;
     padding: 50px;
     background-color: #f3f5f0;
-    height: 100%;
   }
   
   h2 {
