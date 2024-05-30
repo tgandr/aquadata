@@ -1,5 +1,3 @@
-/* src/pages/RegisterPage.css */
-
 .register-page {
     text-align: center;
     padding: 50px;
@@ -58,3 +56,19 @@
     text-decoration: underline;
   }
   
+  /* Media query para smartphones */
+  @media only screen and (max-width: 600px) {
+    .login-page {
+      padding: 20px;
+    }
+  
+    h2 {
+      font-size: 1.5rem;
+    }
+  
+    input,
+    button {
+      width: 100%;
+      max-width: 300px;
+    }
+  }
