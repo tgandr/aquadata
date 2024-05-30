@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/MainFrame.css';
+import '../styles/AddPonds.css';
 
-const MainFrame = () => {
+const AddPonds = () => {
   const [viveiros, setViveiros] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [form, setForm] = useState({
     numeroViveiro: '',
-    dataEstocagem: '',
-    origemPL: '',
-    quantidadeEstocada: ''
+    area: ''
   });
 
   const handleChange = (e) => {
@@ -21,22 +19,18 @@ const MainFrame = () => {
     const novoViveiro = {
       id: viveiros.length + 1,
       nome: `Viveiro ${form.numeroViveiro}`,
-      dataEstocagem: form.dataEstocagem,
-      origemPL: form.origemPL,
-      quantidadeEstocada: form.quantidadeEstocada
+      area: form.area,
     };
     setViveiros([...viveiros, novoViveiro]);
     setShowPopup(false);
     setForm({
       numeroViveiro: '',
-      dataEstocagem: '',
-      origemPL: '',
-      quantidadeEstocada: ''
+      area: ''
     });
   };
 
   return (
-    <div className="main-frame">
+    <div className="add-ponds">
       <h2>Lista de Viveiros</h2>
       <div className="viveiros-container">
         <button className="adicionar-button" onClick={() => setShowPopup(true)}>Adicionar Viveiro</button>
@@ -44,7 +38,7 @@ const MainFrame = () => {
           <Link to={`/viveiro-${viveiro.id}`} key={viveiro.id}>
             <button className="viveiro-button">
               <span className="viveiro-titulo">{viveiro.nome}</span>
-              <span className="viveiro-data">{viveiro.dataEstocagem}</span>
+              <span className="viveiro-data">{viveiro.area} ha</span>
             </button>
           </Link>
         ))}
@@ -66,34 +60,20 @@ const MainFrame = () => {
                 />
               </label>
               <label>
-                Data de Estocagem:
-                <input
-                  type="date"
-                  name="dataEstocagem"
-                  value={form.dataEstocagem}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-              <label>
-                Origem da PL:
-                <input
-                  type="text"
-                  name="origemPL"
-                  value={form.origemPL}
-                  onChange={handleChange}
-                  required
-                />
-              </label>
-              <label>
-                Quantidade Estocada:
+                Área do viveiro:
                 <input
                   type="number"
-                  name="quantidadeEstocada"
-                  value={form.quantidadeEstocada}
-                  onChange={handleChange}
+                  name="area"
+                  value={form.area}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d+(\.\d{0,1})?$/.test(value)) {
+                      handleChange(e);
+                    }
+                  }}
                   required
-                  min="1"
+                  step="0.1"
+                  min="0"
                 />
               </label>
               <button type="submit">Salvar</button>
@@ -106,4 +86,4 @@ const MainFrame = () => {
   );
 };
 
-export default MainFrame;
+export default AddPonds;

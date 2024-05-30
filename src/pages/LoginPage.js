@@ -11,7 +11,7 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Lógica de autenticação aqui
-    // Se a autenticação for bem-sucedida, redirecione para MainFrame.js
+    // Se a autenticação for bem-sucedida, redirecione para AddPonds.js
     setRedirectToMain(true);
   };
 
