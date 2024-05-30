@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/aquadata/static/css/main.d9d036b7.css",
-    "main.js": "/aquadata/static/js/main.432fd167.js",
+    "main.css": "/aquadata/static/css/main.7da92fba.css",
+    "main.js": "/aquadata/static/js/main.e6a2a1c8.js",
     "static/media/back_white.jpeg": "/aquadata/static/media/back_white.dcc0b6229333cf13b2ec.jpeg",
     "index.html": "/aquadata/index.html",
-    "main.d9d036b7.css.map": "/aquadata/static/css/main.d9d036b7.css.map",
-    "main.432fd167.js.map": "/aquadata/static/js/main.432fd167.js.map"
+    "main.7da92fba.css.map": "/aquadata/static/css/main.7da92fba.css.map",
+    "main.e6a2a1c8.js.map": "/aquadata/static/js/main.e6a2a1c8.js.map"
   },
   "entrypoints": [
-    "static/css/main.d9d036b7.css",
-    "static/js/main.432fd167.js"
+    "static/css/main.7da92fba.css",
+    "static/js/main.e6a2a1c8.js"
   ]
 }
