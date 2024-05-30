@@ -38,7 +38,7 @@ const RegisterPage = () => {
         <input type="text" name="nomeFazenda" placeholder="Nome da Fazenda" value={form.nomeFazenda} onChange={handleChange} required />
         <button type="submit">Cadastrar</button>
       </form>
-      <p>Já tem uma conta? <Link to="/">Entrar</Link></p>
+      <p>Já tem uma conta? <Link to="/login">Entrar</Link></p>
     </div>
   );
 };

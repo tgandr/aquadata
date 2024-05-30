@@ -8,7 +8,7 @@ const HomePage = () => {
     <div className="home-page">
       <img src={logo} alt="AQUADATA Logo" className="logo" />
       <h1></h1>
-      <Link to="/register" className="btn-enter">Entrar</Link>
+      <Link to="/login" className="btn-enter">Entrar</Link>
       <footer>
         <p>Versão 1.0 | © 2024 AQUADATA</p>
       </footer>
