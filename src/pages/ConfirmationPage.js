@@ -8,7 +8,7 @@ const ConfirmationPage = () => {
     <div className="confirmation-page">
       <h2>Cadastro Realizado</h2>
       <p>Seu cadastro foi realizado com sucesso!</p>
-      <Link to="/" className="btn-continue">Continuar</Link>
+      <Link to="/viveiros" className="btn-continue">Continuar</Link>
     </div>
   );
 };
