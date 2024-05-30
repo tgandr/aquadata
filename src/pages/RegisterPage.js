@@ -23,7 +23,7 @@ const RegisterPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     localStorage.setItem('formData', JSON.stringify(form));
-    navigate('/viveiros', { state: form });
+    navigate('/viveiros');
   };
 
   return (

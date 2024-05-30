@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import '../styles/AddPonds.css';
 
 const AddPonds = () => {
@@ -20,6 +20,8 @@ const AddPonds = () => {
   const saveViveirosToLocalStorage = (viveiros) => {
     localStorage.setItem('viveiros', JSON.stringify(viveiros));
   };
+
+  const formData = JSON.parse(localStorage.getItem('formData'));
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -45,6 +47,7 @@ const AddPonds = () => {
   return (
     <div className="add-ponds">
       <h2>Lista de Viveiros</h2>
+      <h3>Fazenda {formData.nomeFazenda}</h3>
       <div className="viveiros-container">
         <button className="adicionar-button" onClick={() => setShowPopup(true)}>Adicionar Viveiro</button>
         {viveiros.length > 0 ? (
