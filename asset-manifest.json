@@ -1,14 +1,22 @@
 {
   "files": {
-    "main.css": "/aquadata/static/css/main.7d9bfe2f.css",
-    "main.js": "/aquadata/static/js/main.e6a2a1c8.js",
+    "main.css": "/aquadata/static/css/main.ba0433a8.css",
+    "main.js": "/aquadata/static/js/main.c8341b68.js",
+    "static/media/fa-solid-900.ttf": "/aquadata/static/media/fa-solid-900.bacd5de623fb563b961a.ttf",
+    "static/media/fa-brands-400.ttf": "/aquadata/static/media/fa-brands-400.60127e352b7a11f7f1bc.ttf",
+    "static/media/fa-solid-900.woff2": "/aquadata/static/media/fa-solid-900.4d986b00ff9ca3828fbd.woff2",
+    "static/media/fa-brands-400.woff2": "/aquadata/static/media/fa-brands-400.455ea818179b4def0c43.woff2",
     "static/media/back_white.jpeg": "/aquadata/static/media/back_white.dcc0b6229333cf13b2ec.jpeg",
+    "static/media/fa-regular-400.ttf": "/aquadata/static/media/fa-regular-400.eb91f7b948a42799f678.ttf",
+    "static/media/fa-regular-400.woff2": "/aquadata/static/media/fa-regular-400.21cb8f55d8e0c5b89751.woff2",
+    "static/media/fa-v4compatibility.ttf": "/aquadata/static/media/fa-v4compatibility.c8e090db312b0bea2aa2.ttf",
+    "static/media/fa-v4compatibility.woff2": "/aquadata/static/media/fa-v4compatibility.cf7f5903d06b79ad60f1.woff2",
     "index.html": "/aquadata/index.html",
-    "main.7d9bfe2f.css.map": "/aquadata/static/css/main.7d9bfe2f.css.map",
-    "main.e6a2a1c8.js.map": "/aquadata/static/js/main.e6a2a1c8.js.map"
+    "main.ba0433a8.css.map": "/aquadata/static/css/main.ba0433a8.css.map",
+    "main.c8341b68.js.map": "/aquadata/static/js/main.c8341b68.js.map"
   },
   "entrypoints": [
-    "static/css/main.7d9bfe2f.css",
-    "static/js/main.e6a2a1c8.js"
+    "static/css/main.ba0433a8.css",
+    "static/js/main.c8341b68.js"
   ]
 }
