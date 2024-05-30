@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Prof. Thiago Andrade da Silva <br />
+          Prof. Thiago Andrade da Silva, Bachelor in Zootechnics <br />
           M.Sc. in Fishing Engineering <br />
           Instituto Federal de Educação, Ciência e Tecnologia do Ceará
         </p>
