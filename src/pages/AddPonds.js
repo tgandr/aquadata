@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/AddPonds.css';
 
@@ -9,6 +9,17 @@ const AddPonds = () => {
     numeroViveiro: '',
     area: ''
   });
+
+  useEffect(() => {
+    const storedViveiros = JSON.parse(localStorage.getItem('viveiros'));
+    if (storedViveiros) {
+      setViveiros(storedViveiros);
+    }
+  }, []);
+
+  const saveViveirosToLocalStorage = (viveiros) => {
+    localStorage.setItem('viveiros', JSON.stringify(viveiros));
+  };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,7 +32,9 @@ const AddPonds = () => {
       nome: `Viveiro ${form.numeroViveiro}`,
       area: form.area,
     };
-    setViveiros([...viveiros, novoViveiro]);
+    const updatedViveiros = [...viveiros, novoViveiro];
+    setViveiros(updatedViveiros);
+    saveViveirosToLocalStorage(updatedViveiros);
     setShowPopup(false);
     setForm({
       numeroViveiro: '',
@@ -34,14 +47,18 @@ const AddPonds = () => {
       <h2>Lista de Viveiros</h2>
       <div className="viveiros-container">
         <button className="adicionar-button" onClick={() => setShowPopup(true)}>Adicionar Viveiro</button>
-        {viveiros.map(viveiro => (
-          <Link to={`/viveiro-${viveiro.id}`} key={viveiro.id}>
-            <button className="viveiro-button">
-              <span className="viveiro-titulo">{viveiro.nome}</span>
-              <span className="viveiro-data">{viveiro.area} ha</span>
-            </button>
-          </Link>
-        ))}
+        {viveiros.length > 0 ? (
+          viveiros.map(viveiro => (
+            <Link to={`/viveiro-${viveiro.id}`} key={viveiro.id}>
+              <button className="viveiro-button">
+                <span className="viveiro-titulo">{viveiro.nome}</span>
+                <span className="viveiro-data">{viveiro.area} ha</span>
+              </button>
+            </Link>
+          ))
+        ) : (
+          <p>Nenhum viveiro cadastrado.</p>
+        )}
       </div>
 
       {showPopup && (

@@ -9,17 +9,13 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    // Lógica de autenticação aqui
-    // Se a autenticação for bem-sucedida, redirecione para AddPonds.js
-    setRedirectToMain(true);
-  };
-
-  useEffect(() => {
-    if (redirectToMain) {
+    const storedData = JSON.parse(localStorage.getItem('formData'));
+    if (storedData.email === email) {
       navigate('/viveiros');
+    } else {
+      alert('Email ou senha inválidos!');
     }
-  }, [redirectToMain, navigate]);
+  };  // Login verifica apenas o e-mail. Objetivo de demonstração.
 
   return (
     <div className="login-page">

@@ -22,8 +22,8 @@ const RegisterPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Implementar lógica de cadastro
-    navigate('/confirmation');
+    localStorage.setItem('formData', JSON.stringify(form));
+    navigate('/viveiros', { state: form });
   };
 
   return (
