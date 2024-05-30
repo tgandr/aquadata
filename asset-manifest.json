@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/aquadata/static/css/main.4c767fd1.css",
-    "main.js": "/aquadata/static/js/main.c1b31cea.js",
+    "main.css": "/aquadata/static/css/main.7152c781.css",
+    "main.js": "/aquadata/static/js/main.2ac727dc.js",
     "static/media/fa-solid-900.ttf": "/aquadata/static/media/fa-solid-900.bacd5de623fb563b961a.ttf",
     "static/media/fa-brands-400.ttf": "/aquadata/static/media/fa-brands-400.60127e352b7a11f7f1bc.ttf",
     "static/media/fa-solid-900.woff2": "/aquadata/static/media/fa-solid-900.4d986b00ff9ca3828fbd.woff2",
@@ -12,11 +12,11 @@
     "static/media/fa-v4compatibility.ttf": "/aquadata/static/media/fa-v4compatibility.c8e090db312b0bea2aa2.ttf",
     "static/media/fa-v4compatibility.woff2": "/aquadata/static/media/fa-v4compatibility.cf7f5903d06b79ad60f1.woff2",
     "index.html": "/aquadata/index.html",
-    "main.4c767fd1.css.map": "/aquadata/static/css/main.4c767fd1.css.map",
-    "main.c1b31cea.js.map": "/aquadata/static/js/main.c1b31cea.js.map"
+    "main.7152c781.css.map": "/aquadata/static/css/main.7152c781.css.map",
+    "main.2ac727dc.js.map": "/aquadata/static/js/main.2ac727dc.js.map"
   },
   "entrypoints": [
-    "static/css/main.4c767fd1.css",
-    "static/js/main.c1b31cea.js"
+    "static/css/main.7152c781.css",
+    "static/js/main.2ac727dc.js"
   ]
 }
