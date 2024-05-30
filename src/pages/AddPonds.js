@@ -60,7 +60,7 @@ const AddPonds = () => {
                 />
               </label>
               <label>
-                Área do viveiro:
+                Área do viveiro (em hectares):
                 <input
                   type="number"
                   name="area"

@@ -11,7 +11,7 @@ const RegisterPage = () => {
     telefone: '',
     enderecoFazenda: '',
     nomeFazenda: '',
-    perfil: 'produtor', // perfil padrão
+    perfil: '', // perfil padrão
     tipoInsumo: '', // tipo de insumo selecionado
   });
   const navigate = useNavigate();
@@ -37,18 +37,12 @@ const RegisterPage = () => {
         <input type="text" name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} required />
         <input type="text" name="enderecoFazenda" placeholder="Endereço da Fazenda" value={form.enderecoFazenda} onChange={handleChange} required />
         <input type="text" name="nomeFazenda" placeholder="Nome da Fazenda" value={form.nomeFazenda} onChange={handleChange} required />
-
-        {/* Dropdown para seleção de perfil */}
-        <div className="select-container">
-          <label htmlFor="perfil">Perfil:</label>
-          <select name="perfil" id="perfil" value={form.perfil} onChange={handleChange}>
-            <option className="placeholder-option" value="" disabled>Perfil</option>
-            <option value="produtor">Produtor</option>
-            <option value="tecnico">Técnico</option>
-            <option value="fornecedor">Fornecedor</option>
-          </select>
-        </div>
-
+        <select name="perfil" value={form.perfil} onChange={handleChange} required>
+          <option value="" disabled>Perfil</option>
+          <option value="produtor">Carcinicultor</option>
+          <option value="tecnico">Piscicultor</option>
+          <option value="fornecedor">Consultor</option>
+        </select>
         <button type="submit">Cadastrar</button>
       </form>
       <p>Já tem uma conta? <Link to="/login">Entrar</Link></p>
