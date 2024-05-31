@@ -8,12 +8,21 @@ const PondDetail = () => {
   const viveiroId = location.state.id;
 
   const [cultivo, setCultivo] = useState(null);
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopupNewCycle, setshowPopupNewCycle] = useState(false);
+  const [showPopupFeed, setShowPopupFeed] = useState(false); // Novo estado para o pop-up de "Anotações de Arraçoamento"
   const [form, setForm] = useState({
     dataPovoamento: '',
     origemPL: '',
     quantidadeEstocada: '',
     testeEstresse: false
+  });
+  const [formFeed, setFormFeed] = useState({
+    data: new Date().toISOString().split('T')[0], // Preenche automaticamente a data atual
+    racaoTotalDia: '',
+    quantidadeTratos: '',
+    observacao1: false,
+    observacao2: false,
+    observacao3: false
   });
 
   useEffect(() => {
@@ -25,7 +34,11 @@ const PondDetail = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+    if (name === 'observacoes') {
+      setFormFeed({ ...formFeed, [value]: checked });
+    } else {
+      setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+    }
   };
 
   const handleSubmit = (e) => {
@@ -36,9 +49,16 @@ const PondDetail = () => {
     };
     localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(newCultivo));
     setCultivo(newCultivo);
-    setShowPopup(false);
+    setshowPopupNewCycle(false);
   };
-  
+
+  const handleFeedSubmit = (e) => {
+    e.preventDefault();
+    // Salvando as anotações de arraçoamento
+    console.log(formFeed);
+    setShowPopupFeed(false);
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
@@ -66,21 +86,21 @@ const PondDetail = () => {
           <p>Quantidade Estocada: {cultivo.quantidadeEstocada}</p>
           <p>Teste de Estresse: {cultivo.testeEstresse ? 'Realizado' : 'Não Realizado'}</p>
           <div className="buttons-container">
-            <button className="pond-button">Anotações de Arraçoamento</button>
-            <button className="pond-button">Parâmetros da Água</button>
-            <button className="pond-button">Análise Presuntiva</button>
-            <button className="pond-button">Anotar biometria</button>
-            <button className="pond-button">Dados de despesca</button>
+            <button className="pond-button" onClick={() => setShowPopupFeed(true)}>Anotações de<br />Arraçoamento</button>
+            <button className="pond-button">Parâmetros<br />da Água</button>
+            <button className="pond-button">Análise<br />Presuntiva</button>
+            <button className="pond-button">Anotar<br />biometria</button>
+            <button className="pond-button">Dados de <br />despesca</button>
           </div>
         </div>
       ) : (
         <div>
           <h3>O viveiro está vazio</h3>
-          <button onClick={() => setShowPopup(true)}>Novo Ciclo de Cultivo</button>
+          <button onClick={() => setshowPopupNewCycle(true)}>Novo Ciclo de Cultivo</button>
         </div>
       )}
 
-      {showPopup && (
+      {showPopupNewCycle && (
         <div className="popup">
           <div className="popup-inner">
             <h3>Novo Ciclo de Cultivo</h3>
@@ -135,7 +155,76 @@ const PondDetail = () => {
                 </div>
               </label>
               <button type="submit">Salvar</button>
-              <button type="button" onClick={() => setShowPopup(false)}>Cancelar</button>
+              <button type="button" onClick={() => setshowPopupNewCycle(false)}>Cancelar</button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showPopupFeed && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Anotações de Arraçoamento</h3>
+            <form onSubmit={handleFeedSubmit}>
+              <label>
+                Data:
+                <input
+                  type="date"
+                  name="data"
+                  value={formFeed.data}
+                  onChange={(e) => setFormFeed({ ...formFeed, data: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Ração total do dia:
+                <input
+                  type="text"
+                  name="racaoTotalDia"
+                  value={formFeed.racaoTotalDia}
+                  onChange={(e) => setFormFeed({ ...formFeed, racaoTotalDia: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Quantidade de tratos:
+                <input
+                  type="number"
+                  name="quantidadeTratos"
+                  value={formFeed.quantidadeTratos}
+                  onChange={(e) => setFormFeed({ ...formFeed, quantidadeTratos: e.target.value })}
+                  required
+                />
+              </label>
+              <div className='obs'>
+              <label>
+                Observações:
+              </label>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="observacao1"
+                    checked={formFeed.observacao1}
+                    onChange={(e) => setFormFeed({ ...formFeed, observacao1: e.target.checked })}
+                  />
+                  Observação-1
+                </label>
+              </div>
+              <div>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="observacao2"
+                    checked={formFeed.observacao2}
+                    onChange={(e) => setFormFeed({ ...formFeed, observacao2: e.target.checked })}
+                  />
+                  Observação-2
+                </label>
+              </div>
+              </div>
+              <button type="submit">Salvar</button>
+              <button type="button" onClick={() => setShowPopupFeed(false)}>Cancelar</button>
             </form>
           </div>
         </div>

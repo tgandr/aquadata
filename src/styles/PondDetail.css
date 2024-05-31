@@ -31,6 +31,7 @@
   border: 1px solid #f8faf8; /* Cor da borda igual à cor de fundo para parecer contínua */
   cursor: pointer;
   margin: 0; /* Remove margens dos botões */
+  min-height: 60px;
 }
 
 .pond-button:hover {
@@ -137,4 +138,23 @@
   .popup-inner input[type="number"] {
     margin-bottom: 10px;
   }
+}
+
+.obs {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
+.obs label {
+  margin-right: 10px; /* Adiciona espaço entre o texto e o checkbox */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.obs input[type="checkbox"] {
+  margin-right: 5px; /* Adiciona espaço entre o checkbox e o texto */
+  max-width: 20%;
+  
 }
