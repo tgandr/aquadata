@@ -440,8 +440,9 @@ const PondDetail = () => {
                   required
                 />
               </label>
+              <h3>Conformação Externa</h3>
               <label>
-                Conformação Externa: Antenas:
+                Antenas:
                 <select name="conformacaoAntenas" value={formAnalysis.conformacaoAntenas} onChange={handleAnalysisChange}>
                   <option value="">Selecione</option>
                   <option value="normais">Normais</option>
@@ -494,8 +495,9 @@ const PondDetail = () => {
                   required
                 />
               </label>
+                <h3>Hepatopâncreas</h3>
               <label>
-                Hepatopâncreas: Integridade dos Túbulos:
+                Integridade dos Túbulos:
                 <input
                   type="number"
                   name="integridadeTubulos"
@@ -514,8 +516,9 @@ const PondDetail = () => {
                   required
                 />
               </label>
+              <h3>Trato Digestório</h3>
               <label>
-                Trato Digestório: Conteúdo:
+                Conteúdo:
                 <input
                   type="number"
                   name="conteudoTrato"
@@ -534,8 +537,9 @@ const PondDetail = () => {
                   required
                 />
               </label>
+              <h3>Presença de Epicomensais</h3>
               <label>
-                Presença de Epicomensais: Brânquias:
+                Brânquias:
                 <input
                   type="number"
                   name="branquiasEpicomensais"
@@ -554,8 +558,9 @@ const PondDetail = () => {
                   required
                 />
               </label>
+              <h3>Necrose</h3>
               <label>
-                Necrose: IMNV:
+                IMNV:
                 <input
                   type="number"
                   name="necroseIMNV"
