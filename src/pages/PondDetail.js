@@ -38,9 +38,21 @@ const PondDetail = () => {
     setCultivo(newCultivo);
     setShowPopup(false);
   };
+  
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   const handleBackClick = () => {
     navigate('/viveiros');
+  };
+
+  const handleStressTestClick = (value) => {
+    setForm({ ...form, testeEstresse: value });
   };
 
   return (
@@ -49,7 +61,7 @@ const PondDetail = () => {
       {cultivo ? (
         <div>
           <h3>Cultivo em Curso</h3>
-          <p>Data de Povoamento: {cultivo.dataPovoamento}</p>
+          <p>Data de Povoamento: {formatDate(cultivo.dataPovoamento)}</p>
           <p>Origem da PL: {cultivo.origemPL}</p>
           <p>Quantidade Estocada: {cultivo.quantidadeEstocada}</p>
           <p>Teste de Estresse: {cultivo.testeEstresse ? 'Realizado' : 'Não Realizado'}</p>
@@ -103,39 +115,30 @@ const PondDetail = () => {
               </label>
               <label>
                 Teste de Estresse:
-                <div>
-                    <label>
-                        <input
-                        type="radio"
-                        name="testeEstresse"
-                        value="Sim"
-                        checked={form.testeEstresse === 'Sim'}
-                        onChange={handleChange}
-                        />
-                        Sim
-                    </label>
+                <div className="stress-test-buttons">
+                  <button
+                    type="button"
+                    className={`stress-test-button ${form.testeEstresse === 'Sim' ? 'active' : ''}`}
+                    onClick={() => handleStressTestClick('Sim')}
+                  >
+                    Sim
+                  </button>
+                  <button
+                    type="button"
+                    className={`stress-test-button ${form.testeEstresse === 'Não' ? 'active' : ''}`}
+                    onClick={() => handleStressTestClick('Não')}
+                  >
+                    Não
+                  </button>
                 </div>
-                <div>
-                <label>
-                    <input
-                        type="radio"
-                        name="testeEstresse"
-                        value="Não"
-                        checked={form.testeEstresse === 'Não'}
-                        onChange={handleChange}
-                        />
-                        Não
-                </label>
-
-                </div>
-</label>
+              </label>
               <button type="submit">Salvar</button>
               <button type="button" onClick={() => setShowPopup(false)}>Cancelar</button>
             </form>
           </div>
         </div>
       )}
-      <button onClick={handleBackClick}>Voltar para Add Ponds</button>
+      <button onClick={handleBackClick}>Voltar para Viveiros</button>
     </div>
   );
 };

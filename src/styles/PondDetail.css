@@ -66,3 +66,40 @@
     margin-right: 10px;
   }
   
+  .stress-test-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .stress-test-button {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .stress-test-button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+  }
+  
+  .stress-test-button:not(.active):hover {
+    background-color: #e0e0e0;
+  }
+  
+  @media (max-width: 600px) {
+    .stress-test-buttons {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+    }
+  
+    .stress-test-button {
+      flex: 1;
+      text-align: center;
+    }
+  }
+  

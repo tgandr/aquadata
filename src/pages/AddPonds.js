@@ -46,7 +46,7 @@ const AddPonds = () => {
 
   return (
     <div className="add-ponds">
-      <h2>Lista de Viveiros</h2>
+      <h2>Viveiros</h2>
       <h3>Fazenda {formData.nomeFazenda}</h3>
       <div className="viveiros-container">
         <button className="adicionar-button" onClick={() => setShowPopup(true)}>Adicionar Viveiro</button>
