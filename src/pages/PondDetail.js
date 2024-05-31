@@ -9,20 +9,50 @@ const PondDetail = () => {
 
   const [cultivo, setCultivo] = useState(null);
   const [showPopupNewCycle, setshowPopupNewCycle] = useState(false);
-  const [showPopupFeed, setShowPopupFeed] = useState(false); // Novo estado para o pop-up de "Anotações de Arraçoamento"
+  const [showPopupFeed, setShowPopupFeed] = useState(false);
+  const [showParamPopup, setShowParamPopup] = useState(false);
+  const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
   const [form, setForm] = useState({
     dataPovoamento: '',
     origemPL: '',
     quantidadeEstocada: '',
-    testeEstresse: false
+    testeEstresse: false,
+    tipoTeste: '',
+    alteracaoNatatoria: '',
+    larvasMortas: '',
   });
   const [formFeed, setFormFeed] = useState({
-    data: new Date().toISOString().split('T')[0], // Preenche automaticamente a data atual
+    data: new Date().toISOString().split('T')[0],
     racaoTotalDia: '',
     quantidadeTratos: '',
     observacao1: false,
     observacao2: false,
-    observacao3: false
+  });
+  const [formParam, setFormParam] = useState({
+    data: new Date().toISOString().split('T')[0],
+    horario: '',
+    oxigenioDissolvido: '',
+    ph: '',
+    amoniaTotal: '',
+  });
+  const [formAnalysis, setFormAnalysis] = useState({
+    data: new Date().toISOString().split('T')[0],
+    quantidadeAnimais: '',
+    pesoMedio: '',
+    conformacaoAntenas: '',
+    uropodos: '',
+    necrosesIMNV: '',
+    camaroesGrampados: '',
+    tempoCoagulacao: '',
+    analiseCefalotorax: '',
+    integridadeTubulos: '',
+    presencaLipideos: '',
+    conteudoTrato: '',
+    replecaoTrato: '',
+    branquiasEpicomensais: '',
+    epipoditoEpicomensais: '',
+    necroseIMNV: '',
+    necroseBlackspot: '',
   });
 
   useEffect(() => {
@@ -34,18 +64,28 @@ const PondDetail = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    if (name === 'observacoes') {
-      setFormFeed({ ...formFeed, [value]: checked });
+    if (type === 'checkbox') {
+      setForm({ ...form, [name]: checked });
     } else {
-      setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+      setForm({ ...form, [name]: value });
     }
+  };
+
+  const handleParamChange = (e) => {
+    const { name, value } = e.target;
+    setFormParam({ ...formParam, [name]: value });
+  };
+
+  const handleAnalysisChange = (e) => {
+    const { name, value } = e.target;
+    setFormAnalysis({ ...formAnalysis, [name]: value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newCultivo = {
       ...form,
-      dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0] // Formata a data
+      dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
     };
     localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(newCultivo));
     setCultivo(newCultivo);
@@ -54,15 +94,26 @@ const PondDetail = () => {
 
   const handleFeedSubmit = (e) => {
     e.preventDefault();
-    // Salvando as anotações de arraçoamento
     console.log(formFeed);
     setShowPopupFeed(false);
+  };
+
+  const handleParamSubmit = (e) => {
+    e.preventDefault();
+    console.log(formParam);
+    setShowParamPopup(false);
+  };
+
+  const handleAnalysisSubmit = (e) => {
+    e.preventDefault();
+    console.log(formAnalysis);
+    setShowAnalysisPopup(false);
   };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
@@ -87,8 +138,8 @@ const PondDetail = () => {
           <p>Teste de Estresse: {cultivo.testeEstresse ? 'Realizado' : 'Não Realizado'}</p>
           <div className="buttons-container">
             <button className="pond-button" onClick={() => setShowPopupFeed(true)}>Anotações de<br />Arraçoamento</button>
-            <button className="pond-button">Parâmetros<br />da Água</button>
-            <button className="pond-button">Análise<br />Presuntiva</button>
+            <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros<br />da Água</button>
+            <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise<br />Presuntiva</button>
             <button className="pond-button">Anotar<br />biometria</button>
             <button className="pond-button">Dados de <br />despesca</button>
           </div>
@@ -154,6 +205,37 @@ const PondDetail = () => {
                   </button>
                 </div>
               </label>
+              {form.testeEstresse === 'Sim' && (
+                <div className="stress-test-details">
+                  <label>
+                    Tipo de Teste:
+                    <select name="tipoTeste" value={form.tipoTeste} onChange={handleChange}>
+                      <option value="">Selecione</option>
+                      <option value="alteracaoSalinidade">Testado com alteração de salinidade</option>
+                      <option value="aguaViveiro">Testado com água do viveiro</option>
+                    </select>
+                  </label>
+                  <label>
+                    Alteração da Resposta Natatória:
+                    <select name="alteracaoNatatoria" value={form.alteracaoNatatoria} onChange={handleChange}>
+                      <option value="">Selecione</option>
+                      <option value="nenhuma">Nenhuma alteração</option>
+                      <option value="pequena">Pequena alteração</option>
+                      <option value="media">Média alteração</option>
+                      <option value="grande">Grande alteração</option>
+                    </select>
+                  </label>
+                  <label>
+                    Larvas Mortas:
+                    <select name="larvasMortas" value={form.larvasMortas} onChange={handleChange}>
+                      <option value="">Selecione</option>
+                      <option value="nenhuma">Nenhuma</option>
+                      <option value="poucas">Poucas</option>
+                      <option value="muitas">Muitas</option>
+                    </select>
+                  </label>
+                </div>
+              )}
               <button type="submit">Salvar</button>
               <button type="button" onClick={() => setshowPopupNewCycle(false)}>Cancelar</button>
             </form>
@@ -179,7 +261,7 @@ const PondDetail = () => {
               <label>
                 Ração total do dia:
                 <input
-                  type="text"
+                  type="number"
                   name="racaoTotalDia"
                   value={formFeed.racaoTotalDia}
                   onChange={(e) => setFormFeed({ ...formFeed, racaoTotalDia: e.target.value })}
@@ -197,31 +279,31 @@ const PondDetail = () => {
                 />
               </label>
               <div className='obs'>
-              <label>
-                Observações:
-              </label>
-              <div>
                 <label>
-                  <input
-                    type="checkbox"
-                    name="observacao1"
-                    checked={formFeed.observacao1}
-                    onChange={(e) => setFormFeed({ ...formFeed, observacao1: e.target.checked })}
-                  />
-                  Observação-1
+                  Observações:
                 </label>
-              </div>
-              <div>
-                <label>
-                  <input
-                    type="checkbox"
-                    name="observacao2"
-                    checked={formFeed.observacao2}
-                    onChange={(e) => setFormFeed({ ...formFeed, observacao2: e.target.checked })}
-                  />
-                  Observação-2
-                </label>
-              </div>
+                <div>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="observacao1"
+                      checked={formFeed.observacao1}
+                      onChange={(e) => setFormFeed({ ...formFeed, observacao1: e.target.checked })}
+                    />
+                    Houve sobras de ração
+                  </label>
+                </div>
+                <div>
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="observacao2"
+                      checked={formFeed.observacao2}
+                      onChange={(e) => setFormFeed({ ...formFeed, observacao2: e.target.checked })}
+                    />
+                    Reduziu ou suspendeu algum trato
+                  </label>
+                </div>
               </div>
               <button type="submit">Salvar</button>
               <button type="button" onClick={() => setShowPopupFeed(false)}>Cancelar</button>
@@ -229,6 +311,241 @@ const PondDetail = () => {
           </div>
         </div>
       )}
+
+      {showParamPopup && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Parâmetros da Água</h3>
+            <form onSubmit={handleParamSubmit}>
+              <label>
+                Data:
+                <input
+                  type="date"
+                  name="data"
+                  value={formParam.data}
+                  onChange={handleParamChange}
+                />
+              </label>
+              <label>
+                Horário:
+                <select name="horario" value={formParam.horario} onChange={handleParamChange}>
+                  <option value="">Selecione um horário</option>
+                  <option value="6:00">6:00</option>
+                  <option value="14:00">14:00</option>
+                  <option value="18:00">18:00</option>
+                  <option value="22:00">22:00</option>
+                </select>
+              </label>
+              <label>
+                Oxigênio Dissolvido:
+                <input
+                  type="number"
+                  name="oxigenioDissolvido"
+                  value={formParam.oxigenioDissolvido}
+                  onChange={handleParamChange}
+                />
+              </label>
+              <label>
+                pH:
+                <input
+                  type="number"
+                  name="ph"
+                  value={formParam.ph}
+                  onChange={handleParamChange}
+                />
+              </label>
+              <label>
+                Amônia Total:
+                <input
+                  type="number"
+                  name="amoniaTotal"
+                  value={formParam.amoniaTotal}
+                  onChange={handleParamChange}
+                />
+              </label>
+              <button type="submit">Salvar</button>
+              <button type="button" onClick={() => setShowParamPopup(false)}>Cancelar</button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showAnalysisPopup && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Análise Presuntiva</h3>
+            <form onSubmit={handleAnalysisSubmit}>
+              <label>
+                Data:
+                <input
+                  type="date"
+                  name="data"
+                  value={formAnalysis.data}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Quantidade de Animais Analisados:
+                <input
+                  type="number"
+                  name="quantidadeAnimais"
+                  value={formAnalysis.quantidadeAnimais}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Peso Médio:
+                <input
+                  type="number"
+                  name="pesoMedio"
+                  value={formAnalysis.pesoMedio}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Conformação Externa: Antenas:
+                <select name="conformacaoAntenas" value={formAnalysis.conformacaoAntenas} onChange={handleAnalysisChange}>
+                  <option value="">Selecione</option>
+                  <option value="normais">Normais</option>
+                  <option value="quebradiças">Quebradiças</option>
+                  <option value="rugosas">Rugosas</option>
+                </select>
+              </label>
+              <label>
+                Urópodos:
+                <select name="uropodos" value={formAnalysis.uropodos} onChange={handleAnalysisChange}>
+                  <option value="">Selecione</option>
+                  <option value="normais">Normais</option>
+                  <option value="luminescentes">Luminescentes</option>
+                  <option value="avermelhados">Avermelhados</option>
+                </select>
+              </label>
+              <label>
+                Presença de Necroses Indicativas de IMNV:
+                <select name="necrosesIMNV" value={formAnalysis.necrosesIMNV} onChange={handleAnalysisChange}>
+                  <option value="">Selecione</option>
+                  <option value="sim">Sim</option>
+                  <option value="não">Não</option>
+                </select>
+              </label>
+              <label>
+                Camarões Grampados:
+                <select name="camaroesGrampados" value={formAnalysis.camaroesGrampados} onChange={handleAnalysisChange}>
+                  <option value="">Selecione</option>
+                  <option value="sim">Sim</option>
+                  <option value="não">Não</option>
+                </select>
+              </label>
+              <label>
+                Tempo de Coagulação da Hemolinfa:
+                <input
+                  type="number"
+                  name="tempoCoagulacao"
+                  value={formAnalysis.tempoCoagulacao}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Análise de Cefalotórax:
+                <input
+                  type="number"
+                  name="analiseCefalotorax"
+                  value={formAnalysis.analiseCefalotorax}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Hepatopâncreas: Integridade dos Túbulos:
+                <input
+                  type="number"
+                  name="integridadeTubulos"
+                  value={formAnalysis.integridadeTubulos}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Presença de Lipídeos:
+                <input
+                  type="number"
+                  name="presencaLipideos"
+                  value={formAnalysis.presencaLipideos}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Trato Digestório: Conteúdo:
+                <input
+                  type="number"
+                  name="conteudoTrato"
+                  value={formAnalysis.conteudoTrato}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Repleação:
+                <input
+                  type="number"
+                  name="replecaoTrato"
+                  value={formAnalysis.replecaoTrato}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Presença de Epicomensais: Brânquias:
+                <input
+                  type="number"
+                  name="branquiasEpicomensais"
+                  value={formAnalysis.branquiasEpicomensais}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Epipodito:
+                <input
+                  type="number"
+                  name="epipoditoEpicomensais"
+                  value={formAnalysis.epipoditoEpicomensais}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Necrose: IMNV:
+                <input
+                  type="number"
+                  name="necroseIMNV"
+                  value={formAnalysis.necroseIMNV}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <label>
+                Blackspot:
+                <input
+                  type="number"
+                  name="necroseBlackspot"
+                  value={formAnalysis.necroseBlackspot}
+                  onChange={handleAnalysisChange}
+                  required
+                />
+              </label>
+              <button type="submit">Salvar</button>
+              <button type="button" onClick={() => setShowAnalysisPopup(false)}>Cancelar</button>
+            </form>
+          </div>
+        </div>
+      )}
+
       <button onClick={handleBackClick}>Voltar para Viveiros</button>
     </div>
   );
