@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/aquadata/static/css/main.1ec4b3cf.css",
+    "main.css": "/aquadata/static/css/main.08ccf887.css",
     "main.js": "/aquadata/static/js/main.d36566c4.js",
     "static/media/fa-solid-900.ttf": "/aquadata/static/media/fa-solid-900.bacd5de623fb563b961a.ttf",
     "static/media/fa-brands-400.ttf": "/aquadata/static/media/fa-brands-400.60127e352b7a11f7f1bc.ttf",
@@ -12,11 +12,11 @@
     "static/media/fa-v4compatibility.ttf": "/aquadata/static/media/fa-v4compatibility.c8e090db312b0bea2aa2.ttf",
     "static/media/fa-v4compatibility.woff2": "/aquadata/static/media/fa-v4compatibility.cf7f5903d06b79ad60f1.woff2",
     "index.html": "/aquadata/index.html",
-    "main.1ec4b3cf.css.map": "/aquadata/static/css/main.1ec4b3cf.css.map",
+    "main.08ccf887.css.map": "/aquadata/static/css/main.08ccf887.css.map",
     "main.d36566c4.js.map": "/aquadata/static/js/main.d36566c4.js.map"
   },
   "entrypoints": [
-    "static/css/main.1ec4b3cf.css",
+    "static/css/main.08ccf887.css",
     "static/js/main.d36566c4.js"
   ]
 }
