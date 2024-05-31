@@ -33,6 +33,7 @@ const PondDetail = () => {
   const [formParam, setFormParam] = useState({
     data: new Date().toISOString().split('T')[0],
     horario: '',
+    temperartura:'',
     oxigenioDissolvido: '',
     ph: '',
     amoniaTotal: '',
@@ -132,7 +133,13 @@ const PondDetail = () => {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    const today = new Date().getTime()
+    const dayStart = new Date(dateString).getTime()
+    const days = Math.floor((today - dayStart) / 86400000)
+    return {
+        date: `${day}/${month}/${year}`,
+        days: days
+    }
   };
 
   const handleBackClick = () => {
@@ -149,16 +156,18 @@ const PondDetail = () => {
       {cultivo ? (
         <div>
           <h3>Cultivo em Curso</h3>
-          <p>Data de Povoamento: {formatDate(cultivo.dataPovoamento)}</p>
+          <p>Data de Povoamento: {formatDate(cultivo.dataPovoamento).date}</p>
+          <p>{formatDate(cultivo.dataPovoamento).days} dias de cultivo</p>
           <p>Origem da PL: {cultivo.origemPL}</p>
           <p>Quantidade Estocada: {cultivo.quantidadeEstocada}</p>
           <p>Teste de Estresse: {cultivo.testeEstresse ? 'Realizado' : 'Não Realizado'}</p>
           <div className="buttons-container">
-            <button className="pond-button" onClick={() => setShowPopupFeed(true)}>Anotações de<br />Arraçoamento</button>
-            <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros<br />da Água</button>
-            <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise<br />Presuntiva</button>
-            <button className="pond-button" onClick={() => setShowBiometry(true)}>Anotar<br />biometria</button>
-            <button className="pond-button">Dados de <br />despesca</button>
+            <button className="pond-button" onClick={() => setShowPopupFeed(true)}>Anotações de Arraçoamento</button>
+            <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros da Água</button>
+            <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise Presuntiva</button>
+            <button className="pond-button" onClick={() => setShowBiometry(true)}>Anotar biometria</button>
+            <button className="pond-button">Dados de despesca</button>
+            <button className="pond-button">Relatório</button>
           </div>
         </div>
       ) : (
@@ -352,6 +361,15 @@ const PondDetail = () => {
                   <option value="18:00">18:00</option>
                   <option value="22:00">22:00</option>
                 </select>
+              </label>
+              <label>
+                Temperatura:
+                <input
+                  type="number"
+                  name="temperatura"
+                  value={formParam.temperartura}
+                  onChange={handleParamChange}
+                />
               </label>
               <label>
                 Oxigênio Dissolvido:
