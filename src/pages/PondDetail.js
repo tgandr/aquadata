@@ -67,8 +67,10 @@ const PondDetail = () => {
           <p>Teste de Estresse: {cultivo.testeEstresse ? 'Realizado' : 'Não Realizado'}</p>
           <div className="buttons-container">
             <button className="pond-button">Anotações de Arraçoamento</button>
-            <button className="pond-button">Monitoramento de Parâmetros da Água</button>
+            <button className="pond-button">Parâmetros da Água</button>
             <button className="pond-button">Análise Presuntiva</button>
+            <button className="pond-button">Anotar biometria</button>
+            <button className="pond-button">Dados de despesca</button>
           </div>
         </div>
       ) : (
