@@ -49,6 +49,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: auto; /* Adiciona rolagem vertical ao pop-up */
+  padding: 10px;
 }
 
 .popup-inner {
@@ -56,8 +58,9 @@
   padding: 20px;
   border-radius: 10px;
   text-align: left;
-  width: 90%; /* Define a largura do popup para 90% da tela no modo padrão */
-  max-width: 500px; /* Define um limite máximo de largura */
+  max-width: 90%; /* Limita a largura máxima do pop-up */
+  max-height: 90%; /* Limita a altura máxima do pop-up */
+  overflow-y: auto; /* Adiciona rolagem vertical ao conteúdo do pop-up */
 }
 
 .popup-inner h3 {
@@ -130,10 +133,6 @@
   .stress-test-button {
     flex: 1;
     text-align: center;
-  }
-
-  .popup-inner {
-    width: 95%; /* Ajuste a largura do popup para 95% da tela em dispositivos móveis */
   }
 
   .popup-inner label,
