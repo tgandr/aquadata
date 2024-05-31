@@ -12,6 +12,8 @@ const PondDetail = () => {
   const [showPopupFeed, setShowPopupFeed] = useState(false);
   const [showParamPopup, setShowParamPopup] = useState(false);
   const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
+  const [showBiometry, setShowBiometry] = useState(false);
+  
   const [form, setForm] = useState({
     dataPovoamento: '',
     origemPL: '',
@@ -54,6 +56,12 @@ const PondDetail = () => {
     necroseIMNV: '',
     necroseBlackspot: '',
   });
+  const [formBiometry, setFormBiometry] = useState({
+    data: new Date().toISOString().split('T')[0], // Pre-filled with current date
+    Pesagem: '',
+    Contagem: '',
+    pesoMedio: null, // To store the calculated average weight
+  });
 
   useEffect(() => {
     const storedCultivo = JSON.parse(localStorage.getItem(`cultivo-${viveiroId}`));
@@ -80,6 +88,15 @@ const PondDetail = () => {
     const { name, value } = e.target;
     setFormAnalysis({ ...formAnalysis, [name]: value });
   };
+
+  const handleBiometrySubmit = (e) => {
+    e.preventDefault();
+    const { Pesagem, Contagem } = formBiometry;
+    if (Pesagem && Contagem) {
+      const pesoMedio = Pesagem / Contagem; // Calculate average weight
+      setFormBiometry({ ...formBiometry, pesoMedio }); // Update state with calculated average weight
+    }
+}
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -140,7 +157,7 @@ const PondDetail = () => {
             <button className="pond-button" onClick={() => setShowPopupFeed(true)}>Anotações de<br />Arraçoamento</button>
             <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros<br />da Água</button>
             <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise<br />Presuntiva</button>
-            <button className="pond-button">Anotar<br />biometria</button>
+            <button className="pond-button" onClick={() => setShowBiometry(true)}>Anotar<br />biometria</button>
             <button className="pond-button">Dados de <br />despesca</button>
           </div>
         </div>
@@ -542,6 +559,51 @@ const PondDetail = () => {
               <button type="submit">Salvar</button>
               <button type="button" onClick={() => setShowAnalysisPopup(false)}>Cancelar</button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showBiometry && ( // Render biometry popup if showBiometry is true
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Anotar Biometria</h3>
+            <form onSubmit={handleBiometrySubmit}>
+              <label>
+                Data:
+                <input
+                  type="date"
+                  name="data"
+                  value={formBiometry.data}
+                  onChange={(e) => setFormBiometry({ ...formBiometry, data: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Pesagem (em gramas):
+                <input
+                  type="number"
+                  name="Pesagem"
+                  value={formBiometry.Pesagem}
+                  onChange={(e) => setFormBiometry({ ...formBiometry, Pesagem: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Contagem:
+                <input
+                  type="number"
+                  name="Contagem"
+                  value={formBiometry.Contagem}
+                  onChange={(e) => setFormBiometry({ ...formBiometry, Contagem: e.target.value })}
+                  required
+                />
+              </label>
+              <button type="submit">Calcular o peso médio</button>
+            </form>
+            {formBiometry.pesoMedio && ( // Render average weight if calculated
+              <p>Peso Médio: {formBiometry.pesoMedio} g</p>
+            )}
+            <button type="button" onClick={() => setShowBiometry(false)}>Fechar</button> {/* Close button */}
           </div>
         </div>
       )}
