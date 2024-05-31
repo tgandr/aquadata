@@ -52,7 +52,8 @@ const AddPonds = () => {
         <button className="adicionar-button" onClick={() => setShowPopup(true)}>Adicionar Viveiro</button>
         {viveiros.length > 0 ? (
           viveiros.map(viveiro => (
-            <Link to={`/viveiro-${viveiro.id}`} key={viveiro.id}>
+            // <Link to={`/viveiro-${viveiro.id}`} key={viveiro.id}>
+            <Link to={`/viveiro/${viveiro.id}`}  state={viveiro} key={viveiro.id}>
               <button className="viveiro-button">
                 <span className="viveiro-titulo">{viveiro.nome}</span>
                 <span className="viveiro-data">{viveiro.area} ha</span>
