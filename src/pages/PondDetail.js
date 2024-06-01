@@ -6,6 +6,7 @@ const PondDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const viveiroId = location.state.id;
+  const viveiroName = location.state.nome;
 
   const [cultivo, setCultivo] = useState(null);
   const [showPopupNewCycle, setshowPopupNewCycle] = useState(false);
@@ -13,7 +14,11 @@ const PondDetail = () => {
   const [showParamPopup, setShowParamPopup] = useState(false);
   const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
   const [showBiometry, setShowBiometry] = useState(false);
-  
+  const [showHarvest, setShowHarvest] = useState(false);
+  const [survivalRate, setSurvivalRate] = useState(null);
+  const [biometryData, setBiometryData] = useState(null);
+  const [newPesagem, setNewPesagem] = useState({ weight: '', count: '' });
+
   const [form, setForm] = useState({
     dataPovoamento: '',
     origemPL: '',
@@ -62,6 +67,15 @@ const PondDetail = () => {
     Pesagem: '',
     Contagem: '',
     pesoMedio: null, // To store the calculated average weight
+  });
+
+  const [harvestData, setHarvestData] = useState({
+    date: new Date().toISOString().split('T')[0],
+    despesca: 'total',
+    biomass: '',
+    pesagens: [{ weight: '', count: '' }],
+    comprador: '',
+    precoVenda: ''
   });
 
   useEffect(() => {
@@ -128,6 +142,74 @@ const PondDetail = () => {
     setShowAnalysisPopup(false);
   };
 
+  const handleHarvestChange = (e) => {
+    const { name, value } = e.target;
+    setHarvestData({
+      ...harvestData,
+      [name]: value
+    });
+  };
+
+  const handlePesagensChange = (event) => {
+    const { name, value } = event.target;
+    setNewPesagem((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const calcAverageWeight  = () => {
+    const totalWeight = harvestData.pesagens.reduce((accumulator, current) => {
+        return accumulator + (parseFloat(current.weight) || 0);
+      }, 0);
+    const totalCount = harvestData.pesagens.reduce((accumulator, current) => {
+        return accumulator + (parseFloat(current.count) || 0);
+      }, 0);
+    // const sumCount = harvestData.pesagens.map((cont) => {
+    //     return sumCount + cont;
+    // })
+    return totalWeight / totalCount;
+  }
+
+  const handleHarvestConfirm = () => {
+    const totalWeight = harvestData.pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.weight || 0), 0);
+    const totalCount = harvestData.pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.count || 0), 0);
+    const averageWeight = totalCount ? totalWeight / totalCount : 0;
+    if (harvestData.despesca === 'total') {
+      const survivalRate = (harvestData.biomass / averageWeight).toFixed(1);
+      setSurvivalRate(survivalRate);
+    } else {
+      setSurvivalRate(null);
+    }
+  };
+
+const handleBiometryCalcSubmit = () => {
+    // Add the new sample to harvestData.pesagens
+    const updatedPesagens = [];
+    harvestData.pesagens[0].weight != '' ? updatedPesagens.push(newPesagem) : updatedPesagens[0] = newPesagem;
+    
+    // Calculate biometry with the updated pesagens
+    const calculatedData = calculateBiometry(updatedPesagens);
+    setBiometryData(calculatedData);
+
+    // Clear the fields for new inputs
+    setNewPesagem({ weight: '', count: '' });
+  };
+
+const calculateBiometry = (pesagens) => {
+    harvestData.pesagens[0].weight != '' ? harvestData.pesagens.push(newPesagem) : harvestData.pesagens = [newPesagem];
+    const totalWeight = pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.weight), 0);
+    const totalCount = pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.count), 0);
+    const averageWeight = calcAverageWeight();
+    return { totalWeight, totalCount, averageWeight };
+  };
+    
+const handleSave = () => {
+    // Save the harvest data
+    setShowHarvest(false);
+    console.log('Harvest data saved:', harvestData);
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
@@ -152,7 +234,7 @@ const PondDetail = () => {
 
   return (
     <div className="pond-detail">
-      <h2>Detalhes do Viveiro {viveiroId}</h2>
+      <h2>Detalhes do {viveiroName}</h2>
       {cultivo ? (
         <div>
           <h3>Cultivo em Curso</h3>
@@ -162,11 +244,11 @@ const PondDetail = () => {
           <p>Quantidade Estocada: {cultivo.quantidadeEstocada}</p>
           <p>Teste de Estresse: {cultivo.testeEstresse ? 'Realizado' : 'Não Realizado'}</p>
           <div className="buttons-container">
-            <button className="pond-button" onClick={() => setShowPopupFeed(true)}>Anotações de Arraçoamento</button>
+            <button className="pond-button" onClick={() => setShowPopupFeed(true)}>Ração</button>
             <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros da Água</button>
             <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise Presuntiva</button>
-            <button className="pond-button" onClick={() => setShowBiometry(true)}>Anotar biometria</button>
-            <button className="pond-button">Dados de despesca</button>
+            <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
+            <button className="pond-button" onClick={() => setShowHarvest(true)}>Dados de despesca</button>
             <button className="pond-button">Relatório</button>
           </div>
         </div>
@@ -630,6 +712,62 @@ const PondDetail = () => {
           </div>
         </div>
       )}
+
+{showHarvest && (
+  <div className="popup">
+    <div className="popup-inner">
+      <h2>Dados de Despesca</h2>
+      <form>
+        <label>Data:
+          <input type="date" name="date" value={harvestData.date} onChange={handleHarvestChange} />
+        </label>
+        <label>Despesca:
+          <select name="despesca" value={harvestData.despesca} onChange={handleHarvestChange}>
+            <option value="total">Total</option>
+            <option value="parcial">Parcial</option>
+          </select>
+        </label>
+        <label>Biomassa colhida (kg):
+          <input type="number" name="biomass" value={harvestData.biomass} onChange={handleHarvestChange} />
+        </label>
+        <label>Biometria:</label>
+        <div>
+            <label>Pesagem:
+              <input type="number" name="weight" value={newPesagem.weight} onChange={handlePesagensChange} />
+            </label>    
+            <label>Contagem:
+              <input type="number" name="count" value={newPesagem.count} onChange={handlePesagensChange} />
+            </label>
+          </div>
+        <button type="button" onClick={handleBiometryCalcSubmit}>Calcular Biometria</button>
+        {biometryData && (
+            <h3>Resultado da Biometria:</h3>
+        )}
+        {biometryData && harvestData.pesagens.map((pesagem, index) => 
+          (<div key={index}>
+            <p>Amostra {index + 1}: 
+            {harvestData.pesagens[index].weight} g, 
+            {harvestData.pesagens[index].count} camarões - 
+            Peso médio {harvestData.pesagens[index].weight / harvestData.pesagens[index].count} g
+            </p>
+          </div>)
+        )}
+        {biometryData && (
+            <p>Peso médio: {biometryData.averageWeight} g</p>
+        )}
+        <label>Comprador:
+          <input type="text" name="comprador" value={harvestData.comprador} onChange={handleHarvestChange} />
+        </label>
+        <label>Preço de venda:
+          <input type="number" name="precoVenda" value={harvestData.precoVenda} onChange={handleHarvestChange} />
+        </label>
+        <button type="button" onClick={handleHarvestConfirm}>Confirmar dados</button>
+      </form>
+      <button onClick={handleSave}>Salvar</button>
+      <button onClick={() => setShowHarvest(false)}>Cancelar</button>
+    </div>
+  </div>
+)}
 
       <button onClick={handleBackClick}>Voltar para Viveiros</button>
     </div>
