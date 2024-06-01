@@ -174,10 +174,13 @@ const PondDetail = () => {
   const handleHarvestConfirm = () => {
     const totalWeight = harvestData.pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.weight || 0), 0);
     const totalCount = harvestData.pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.count || 0), 0);
-    const averageWeight = totalCount ? totalWeight / totalCount : 0;
+    const averageWeight = totalCount ? (totalWeight / totalCount) / 1000 : 0;
     if (harvestData.despesca === 'total') {
-      const survivalRate = (harvestData.biomass / averageWeight).toFixed(1);
+      const survivalRate = ((harvestData.biomass / averageWeight) / cultivo.quantidadeEstocada).toFixed(1);
       setSurvivalRate(survivalRate);
+
+      console.log(harvestData.biomass)
+      console.log(survivalRate)
     } else {
       setSurvivalRate(null);
     }
@@ -754,6 +757,9 @@ const handleSave = () => {
         )}
         {biometryData && (
             <p>Peso médio: {biometryData.averageWeight} g</p>
+        )}
+        {survivalRate && (
+            <p>Sobrevivência: {survivalRate * 100}%</p>
         )}
         <label>Comprador:
           <input type="text" name="comprador" value={harvestData.comprador} onChange={handleHarvestChange} />
