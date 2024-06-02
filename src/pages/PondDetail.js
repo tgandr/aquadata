@@ -18,6 +18,7 @@ const PondDetail = () => {
   const [survivalRate, setSurvivalRate] = useState(null);
   const [biometryData, setBiometryData] = useState(null);
   const [newPesagem, setNewPesagem] = useState({ weight: '', count: '' });
+  const [biometrics, setBiometrics] = useState(null);
 
   const [form, setForm] = useState({
     dataPovoamento: '',
@@ -63,7 +64,7 @@ const PondDetail = () => {
     necroseBlackspot: '',
   });
   const [formBiometry, setFormBiometry] = useState({
-    data: new Date().toISOString().split('T')[0], // Pre-filled with current date
+    data: new Date().toISOString().split('T')[0],
     Pesagem: '',
     Contagem: '',
     pesoMedio: null, // To store the calculated average weight
@@ -77,6 +78,13 @@ const PondDetail = () => {
     comprador: '',
     precoVenda: ''
   });
+
+  const initialFormBiometryState = {
+    data: new Date().toISOString().split('T')[0],
+    Pesagem: '',
+    Contagem: '',
+    pesoMedio: null, // To store the calculated average weight
+  };
 
   useEffect(() => {
     const storedCultivo = JSON.parse(localStorage.getItem(`cultivo-${viveiroId}`));
@@ -106,12 +114,29 @@ const PondDetail = () => {
 
   const handleBiometrySubmit = (e) => {
     e.preventDefault();
-    const { Pesagem, Contagem } = formBiometry;
+    const { data, Pesagem, Contagem } = formBiometry;
     if (Pesagem && Contagem) {
-      const pesoMedio = Pesagem / Contagem; // Calculate average weight
-      setFormBiometry({ ...formBiometry, pesoMedio }); // Update state with calculated average weight
+      const pesoMedio = (Pesagem / Contagem).toFixed(1);
+      const biom = { data, Pesagem, Contagem, pesoMedio };
+      const viveiroData = JSON.parse(localStorage.getItem(`cultivo-${viveiroId}`));
+      viveiroData.biometrics ? viveiroData.biometrics.push(biom) : viveiroData.biometrics = [biom];
+      setBiometrics(viveiroData.biometrics);
+      console.log(biometrics)
+      localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(viveiroData));
+      setFormBiometry(initialFormBiometryState); // Reset form fields
     }
 }
+useEffect(() => {
+  // Recuperar dados do localStorage
+  const viveiroData = localStorage.getItem(`cultivo-${viveiroId}`);
+  if (viveiroData) {
+    const parsedData = JSON.parse(viveiroData);
+    if (parsedData.biometrics) {
+      setBiometrics(parsedData.biometrics);
+    }
+  }
+}, [viveiroId]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -165,10 +190,7 @@ const PondDetail = () => {
     const totalCount = harvestData.pesagens.reduce((accumulator, current) => {
         return accumulator + (parseFloat(current.count) || 0);
       }, 0);
-    // const sumCount = harvestData.pesagens.map((cont) => {
-    //     return sumCount + cont;
-    // })
-    return totalWeight / totalCount;
+    return (totalWeight / totalCount).toFixed(1);
   }
 
   const handleHarvestConfirm = () => {
@@ -178,9 +200,6 @@ const PondDetail = () => {
     if (harvestData.despesca === 'total') {
       const survivalRate = ((harvestData.biomass / averageWeight) / cultivo.quantidadeEstocada).toFixed(1);
       setSurvivalRate(survivalRate);
-
-      console.log(harvestData.biomass)
-      console.log(survivalRate)
     } else {
       setSurvivalRate(null);
     }
@@ -671,7 +690,7 @@ const handleSave = () => {
         </div>
       )}
 
-      {showBiometry && ( // Render biometry popup if showBiometry is true
+      {showBiometry && (
         <div className="popup">
           <div className="popup-inner">
             <h3>Anotar Biometria</h3>
@@ -708,10 +727,10 @@ const handleSave = () => {
               </label>
               <button type="submit">Calcular o peso médio</button>
             </form>
-            {formBiometry.pesoMedio && ( // Render average weight if calculated
+            {formBiometry.pesoMedio && ( 
               <p>Peso Médio: {formBiometry.pesoMedio} g</p>
             )}
-            <button type="button" onClick={() => setShowBiometry(false)}>Fechar</button> {/* Close button */}
+            <button type="button" onClick={() => setShowBiometry(false)}>Fechar</button>
           </div>
         </div>
       )}
@@ -748,10 +767,10 @@ const handleSave = () => {
         )}
         {biometryData && harvestData.pesagens.map((pesagem, index) => 
           (<div key={index}>
-            <p>Amostra {index + 1}: 
+            <p>Amostra {index + 1}: {' '}
             {harvestData.pesagens[index].weight} g, 
             {harvestData.pesagens[index].count} camarões - 
-            Peso médio {harvestData.pesagens[index].weight / harvestData.pesagens[index].count} g
+            Peso médio {(harvestData.pesagens[index].weight / harvestData.pesagens[index].count).toFixed(1)} g
             </p>
           </div>)
         )}
@@ -776,6 +795,25 @@ const handleSave = () => {
 )}
 
       <button onClick={handleBackClick}>Voltar para Viveiros</button>
+      <div>
+        {cultivo && biometrics ? (
+          <div>
+          <h2>Biometrias</h2>
+          <ul>
+            {biometrics.map((biometry, index) => (
+              <li key={index}>
+              <strong>{formatDate(biometry.data).date}</strong>,{' '}
+              {/* <span>{formatDate(biometry.data).days} dias de cultivo, </span> está calculando até o dia atual*/}
+              Peso Médio: {biometry.pesoMedio} g
+            </li>            
+            ))}
+          </ul>
+        </div>
+        ) : (
+          <p>Nenhuma biometria realizada </p>
+        )
+        }
+      </div>
     </div>
   );
 };

@@ -153,10 +153,28 @@
   margin-right: 10px; /* Adiciona espaço entre o texto e o checkbox */
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: left;
 }
 
 .obs input[type="checkbox"] {
   margin-right: 5px; /* Adiciona espaço entre o checkbox e o texto */
-  max-width: 20%;
+  appearance: none; /* Remove o estilo padrão do sistema operacional */
+  -webkit-appearance: none; /* Para navegadores baseados em Webkit, como Chrome e Safari */
+  -moz-appearance: none; /* Para navegadores baseados em Gecko, como Firefox */
+  width: 20px; /* Define a largura do checkbox */
+  height: 20px; /* Define a altura do checkbox */
+  border: 2px solid #ccc; /* Adiciona uma borda ao redor do checkbox */
+  border-radius: 4px; /* Define o raio da borda do checkbox */
+  outline: none; /* Remove o contorno ao focar */
+  cursor: pointer; /* Altera o cursor ao passar o mouse */
+}
+
+ul {
+  list-style-type: none; /* Remove o marcador da lista */
+  padding: 0; /* Remove o preenchimento padrão */
+  margin: 0; /* Remove a margem padrão */
+}
+
+li {
+  margin-bottom: 10px; /* Adiciona espaçamento entre os itens, se necessário */
 }
