@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/AddPonds.css';
 
 const AddPonds = () => {
@@ -44,6 +44,8 @@ const AddPonds = () => {
     });
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="add-ponds">
       <h2>Viveiros</h2>
@@ -62,6 +64,8 @@ const AddPonds = () => {
         ) : (
           <p>Nenhum viveiro cadastrado.</p>
         )}
+        <button onClick={() => navigate('/dashboard')} className="voltar-button">Voltar</button>
+
       </div>
 
       {showPopup && (

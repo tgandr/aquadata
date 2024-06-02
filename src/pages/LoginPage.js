@@ -11,7 +11,7 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     const storedData = JSON.parse(localStorage.getItem('formData'));
     if (storedData.email === email) {
-      navigate('/viveiros');
+      navigate('/dashboard');
     } else {
       alert('Email ou senha inválidos!');
     }

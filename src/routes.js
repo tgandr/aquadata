@@ -6,6 +6,10 @@ import ConfirmationPage from './pages/ConfirmationPage';
 import LoginPage from './pages/LoginPage';
 import AddPonds from './pages/AddPonds'; 
 import PondDetail from './pages/PondDetail';
+import Dashboard from './pages/Dashboard';
+import Stock from './pages/Stock';
+import Financial from './pages/Financial';
+
 
 const AppRoutes = () => {
   return (
@@ -17,6 +21,9 @@ const AppRoutes = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/viveiros" element={<AddPonds />} />
         <Route path="/viveiro/:id" element={<PondDetail />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/estoque" element={<Stock />} />
+        <Route path="/financeiro" element={<Financial />} />
         <Route path="/aquadata" element={<HomePage />} />
         <Route path="*" element={<HomePage />} />
       </Routes>
