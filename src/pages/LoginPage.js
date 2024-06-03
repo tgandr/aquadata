@@ -11,6 +11,8 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     const storedData = JSON.parse(localStorage.getItem('formData'));
     if (storedData.email === email) {
+      storedData.saveLogin = true;
+      localStorage.setItem('formData', JSON.stringify(storedData));
       navigate('/dashboard');
     } else {
       alert('Email ou senha inválidos!');
