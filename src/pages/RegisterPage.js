@@ -13,6 +13,7 @@ const RegisterPage = () => {
     nomeFazenda: '',
     perfil: '', // perfil padrão
     tipoInsumo: '', // tipo de insumo selecionado
+    saveLogin: true,
   });
   const navigate = useNavigate();
 
