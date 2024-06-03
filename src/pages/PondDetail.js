@@ -19,6 +19,7 @@ const PondDetail = () => {
   const [biometryData, setBiometryData] = useState(null);
   const [newPesagem, setNewPesagem] = useState({ weight: '', count: '' });
   const [biometrics, setBiometrics] = useState(null);
+  const [showBiomCalculated, setShowBiomCalculated] = useState(0);
 
   const [form, setForm] = useState({
     dataPovoamento: '',
@@ -112,20 +113,22 @@ const PondDetail = () => {
     setFormAnalysis({ ...formAnalysis, [name]: value });
   };
 
-  const handleBiometrySubmit = (e) => {
-    e.preventDefault();
-    const { data, Pesagem, Contagem } = formBiometry;
-    if (Pesagem && Contagem) {
-      const pesoMedio = (Pesagem / Contagem).toFixed(1);
-      const biom = { data, Pesagem, Contagem, pesoMedio };
-      const viveiroData = JSON.parse(localStorage.getItem(`cultivo-${viveiroId}`));
-      viveiroData.biometrics ? viveiroData.biometrics.push(biom) : viveiroData.biometrics = [biom];
-      setBiometrics(viveiroData.biometrics);
-      console.log(biometrics)
-      localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(viveiroData));
-      setFormBiometry(initialFormBiometryState); // Reset form fields
-    }
-}
+   const handleBiometrySubmit = (e) => {
+     e.preventDefault();
+     const { data, Pesagem, Contagem } = formBiometry;
+     if (Pesagem && Contagem) {
+       const pesoMedio = (Pesagem / Contagem).toFixed(1);
+       const biom = { data, Pesagem, Contagem, pesoMedio };
+       const viveiroData = JSON.parse(localStorage.getItem(`cultivo-${viveiroId}`));
+       viveiroData.biometrics ? viveiroData.biometrics.push(biom) : viveiroData.biometrics = [biom];
+       setBiometrics(viveiroData.biometrics);
+       localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(viveiroData));
+       setFormBiometry(initialFormBiometryState);
+       setShowBiomCalculated(pesoMedio);
+       console.log(showBiomCalculated)
+     }
+  }
+
 useEffect(() => {
   // Recuperar dados do localStorage
   const viveiroData = localStorage.getItem(`cultivo-${viveiroId}`);
@@ -694,6 +697,7 @@ const handleSave = () => {
         <div className="popup">
           <div className="popup-inner">
             <h3>Anotar Biometria</h3>
+            <h3>Peso Médio: {showBiomCalculated} g</h3> 
             <form onSubmit={handleBiometrySubmit}>
               <label>
                 Data:
@@ -727,9 +731,6 @@ const handleSave = () => {
               </label>
               <button type="submit">Calcular o peso médio</button>
             </form>
-            {formBiometry.pesoMedio && ( 
-              <p>Peso Médio: {formBiometry.pesoMedio} g</p>
-            )}
             <button type="button" onClick={() => setShowBiometry(false)}>Fechar</button>
           </div>
         </div>
