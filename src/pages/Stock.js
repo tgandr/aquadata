@@ -202,6 +202,40 @@ const Stock = () => {
           </div>
         </div>
       )}
+      
+      {showPopup.probiotics && (
+        <div className="popup">
+        <div className="popup-inner">
+          <h3>Adicionar Probióticos</h3>
+          <form onSubmit={(e) => handleSubmit(e, formProbiotics, setFormProbiotics, 'probiotics')}>
+              <label>
+                Data da Compra:
+                <input type="date" name="dataCompra" value={formProbiotics.dataCompra} onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)} required />
+              </label>
+              <label>
+                Fornecedor:
+                <select name="fornecedor" value={formProbiotics.fornecedor} onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)} required>
+                  <option value="">Selecione</option>
+                  <option value="Biotrends">Biotrends</option>
+                  <option value="Phibro">Phibro</option>
+                  <option value="DB Aqua">DB Aqua</option>
+                  <option value="Outro">Outro - Informar</option>
+                </select>
+              </label>
+              <label>
+                Quantidade:
+                <input type="number" name="quantidade" value={formProbiotics.quantidade} onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)} required />
+              </label>
+              <label>
+                Preço:
+                <input type="number" name="preco" value={formProbiotics.preco} onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)} required />
+              </label>
+              <button type="submit">Salvar</button>
+              <button type="button" onClick={() => setShowPopup({ ...showPopup, probiotics: false })}>Cancelar</button>
+            </form>
+          </div>
+          </div>
+      )}
 
       {showPopup.fertilizers && (
         <div className="popup">
