@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Stock.css';
+import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 
 const Stock = () => {
   const navigate = useNavigate();
@@ -101,7 +102,22 @@ const Stock = () => {
       <button onClick={() => setShowPopup({ ...showPopup, probiotics: true })}>Probióticos</button>
       <button onClick={() => setShowPopup({ ...showPopup, fertilizers: true })}>Fertilizantes</button>
       <button onClick={() => setShowPopup({ ...showPopup, others: true })}>Outros</button>
-      <button onClick={() => navigate('/dashboard')}>Voltar</button>
+      <div>
+        <br />
+        <br />
+        <br />
+        <br />
+        <img 
+          src={aquaDataIcon}
+          alt="Aqua Data Icon"
+          style={{ width: '100px', height: '100px' }}
+          onClick={() => navigate('/dashboard')}
+          />
+      </div>
+      <br />
+        <br />
+        <br />
+      
 
       {showPopup.ration && !showRationOptions && (
         <div className="popup">

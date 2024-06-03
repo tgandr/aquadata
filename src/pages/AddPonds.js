@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/AddPonds.css';
+import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 
 const AddPonds = () => {
   const [viveiros, setViveiros] = useState([]);
@@ -64,8 +65,15 @@ const AddPonds = () => {
         ) : (
           <p>Nenhum viveiro cadastrado.</p>
         )}
-        <button onClick={() => navigate('/dashboard')} className="voltar-button">Voltar</button>
-
+        {/* <button onClick={() => navigate('/dashboard')} className="voltar-button">Voltar</button> */}
+        <div>
+          <img 
+            src={aquaDataIcon}
+            alt="Aqua Data Icon"
+            style={{ width: '100px', height: '100px' }}
+            onClick={() => navigate('/dashboard')}
+            />
+        </div>
       </div>
 
       {showPopup && (
