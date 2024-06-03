@@ -66,7 +66,9 @@ const AddPonds = () => {
           <p>Nenhum viveiro cadastrado.</p>
         )}
         {/* <button onClick={() => navigate('/dashboard')} className="voltar-button">Voltar</button> */}
-        <div>
+        
+      </div>
+      <div>
           <img 
             src={aquaDataIcon}
             alt="Aqua Data Icon"
@@ -74,8 +76,6 @@ const AddPonds = () => {
             onClick={() => navigate('/dashboard')}
             />
         </div>
-      </div>
-
       {showPopup && (
         <div className="popup">
           <div className="popup-inner">
