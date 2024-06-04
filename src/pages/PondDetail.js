@@ -211,7 +211,7 @@ useEffect(() => {
 const handleBiometryCalcSubmit = () => {
     // Add the new sample to harvestData.pesagens
     const updatedPesagens = [];
-    harvestData.pesagens[0].weight != '' ? updatedPesagens.push(newPesagem) : updatedPesagens[0] = newPesagem;
+    harvestData.pesagens[0].weight !== '' ? updatedPesagens.push(newPesagem) : updatedPesagens[0] = newPesagem;
     
     // Calculate biometry with the updated pesagens
     const calculatedData = calculateBiometry(updatedPesagens);
@@ -222,7 +222,7 @@ const handleBiometryCalcSubmit = () => {
   };
 
 const calculateBiometry = (pesagens) => {
-    harvestData.pesagens[0].weight != '' ? harvestData.pesagens.push(newPesagem) : harvestData.pesagens = [newPesagem];
+    harvestData.pesagens[0].weight !== '' ? harvestData.pesagens.push(newPesagem) : harvestData.pesagens = [newPesagem];
     const totalWeight = pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.weight), 0);
     const totalCount = pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.count), 0);
     const averageWeight = calcAverageWeight();
@@ -266,7 +266,7 @@ const handleSave = () => {
           <p>Data de Povoamento: {formatDate(cultivo.dataPovoamento).date}</p>
           <p>{formatDate(cultivo.dataPovoamento).days} dias de cultivo</p>
           <p>Origem da PL: {cultivo.origemPL}</p>
-          <p>Quantidade Estocada: {cultivo.quantidadeEstocada}</p>
+          <p>Quantidade Estocada: {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
           <p>Teste de Estresse: {cultivo.testeEstresse ? 'Realizado' : 'Não Realizado'}</p>
           <div className="buttons-container">
             <button className="pond-button" onClick={() => setShowPopupFeed(true)}>Ração</button>
@@ -314,7 +314,7 @@ const handleSave = () => {
                 <input
                   type="number"
                   name="quantidadeEstocada"
-                  value={form.quantidadeEstocada}
+                  value={form.quantidadeEstocada.toLocaleString('pt-br')}
                   onChange={handleChange}
                   required
                 />
@@ -810,8 +810,8 @@ const handleSave = () => {
             ))}
           </ul>
         </div>
-        ) : (
-          <p>Nenhuma biometria realizada </p>
+        ) : (cultivo ? <p>Nenhuma biometria realizada </p>  :
+          <p>Aguardando lançamento</p>
         )
         }
       </div>
