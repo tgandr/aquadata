@@ -10,9 +10,20 @@ const AddPonds = () => {
     numeroViveiro: '',
     area: ''
   });
+  const [cultivos, setCultivos] = useState([]);
+  // const [cycleDays, setCycleDays] = useState('');
 
   useEffect(() => {
     const storedViveiros = JSON.parse(localStorage.getItem('viveiros'));
+    let keyNumber = 1;
+    let key = 'cultivo-' + keyNumber;
+    const currentFarming = [];
+    while (JSON.parse(localStorage.getItem(key))) {
+      currentFarming.push(JSON.parse(localStorage.getItem(key)));
+      keyNumber = keyNumber + 1;
+      key = 'cultivo-' + keyNumber;
+      setCultivos(currentFarming);
+    }
     if (storedViveiros) {
       setViveiros(storedViveiros);
     }
@@ -45,6 +56,31 @@ const AddPonds = () => {
     });
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const today = new Date().getTime()
+    const dayStart = new Date(dateString).getTime()
+    const days = Math.floor((today - dayStart) / 86400000)
+    return {
+        date: `${day}/${month}/${year}`,
+        days: days
+    }
+  };
+
+  const days = ((id) => {
+    if (cultivos.length > 0) {
+      // console.log(cultivos)
+      for (let i = 0; i < cultivos.length; i++) {
+        if (cultivos[i].viveiro === id) {
+          return(formatDate(cultivos[i].dataPovoamento).days);
+        }
+    }
+  }
+})
+
   const navigate = useNavigate();
 
   return (
@@ -55,10 +91,17 @@ const AddPonds = () => {
         <button className="adicionar-button" onClick={() => setShowPopup(true)}>Adicionar Viveiro</button>
         {viveiros.length > 0 ? (
           viveiros.map(viveiro => (
-            <Link to={`/viveiro/${viveiro.id}`}  state={viveiro} key={viveiro.id}>
+            <Link to={`/viveiro/${viveiro.id}`}  state={viveiro} key={viveiro.id} className="link-style">
               <button className="viveiro-button">
                 <span className="viveiro-titulo">{viveiro.nome}</span>
                 <span className="viveiro-data">{viveiro.area} ha</span>
+                {days(viveiro.id) ? ( 
+                  <span className="viveiro-data">
+                    {days(viveiro.id) === 1 ? '1 dia de cultivo' : `${days(viveiro.id)} dias de cultivo`}
+                  </span>
+                ) : (
+                  <span className="viveiro-data">Desocupado</span>
+                )}
               </button>
             </Link>
           ))

@@ -85,4 +85,8 @@
     margin-top: 10px;
   }
 
+  .link-style {
+    text-decoration: none; /* Remove a sublinhado do link */
+    color: inherit; /* Herda a cor do pai para manter a cor do texto original */
+  }
   

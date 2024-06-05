@@ -146,7 +146,9 @@ useEffect(() => {
     const newCultivo = {
       ...form,
       dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
+      viveiro: viveiroId,
     };
+    console.log(viveiroId)
     localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(newCultivo));
     setCultivo(newCultivo);
     setshowPopupNewCycle(false);
@@ -274,7 +276,8 @@ const handleSave = () => {
             <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise Presuntiva</button>
             <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
             <button className="pond-button" onClick={() => setShowHarvest(true)}>Dados de despesca</button>
-            <button className="pond-button">Relatório</button>
+            <button className="pond-button">Fertilização</button>
+            <button className="pond-button">Relatório Parcial</button>
           </div>
         </div>
       ) : (
