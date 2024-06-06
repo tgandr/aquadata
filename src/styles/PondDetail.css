@@ -1,3 +1,16 @@
+.infos {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: center;
+  gap: 0;
+  height: 120px;
+}
+
+.infos h3, .infos p {
+  margin: 0;
+}
+
 /* Estilos para o contêiner de detalhes */
 .pond-detail {
   text-align: center;

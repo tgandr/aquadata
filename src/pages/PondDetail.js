@@ -125,12 +125,10 @@ const PondDetail = () => {
        localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(viveiroData));
        setFormBiometry(initialFormBiometryState);
        setShowBiomCalculated(pesoMedio);
-       console.log(showBiomCalculated)
      }
   }
 
 useEffect(() => {
-  // Recuperar dados do localStorage
   const viveiroData = localStorage.getItem(`cultivo-${viveiroId}`);
   if (viveiroData) {
     const parsedData = JSON.parse(viveiroData);
@@ -143,12 +141,12 @@ useEffect(() => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const vivNumber = JSON.parse(localStorage.getItem('viveiros'))[viveiroId - 1];
     const newCultivo = {
       ...form,
       dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
-      viveiro: viveiroId,
+      viveiro: parseInt(vivNumber.nome.match(/\d+/)[0])
     };
-    console.log(viveiroId)
     localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(newCultivo));
     setCultivo(newCultivo);
     setshowPopupNewCycle(false);
@@ -264,12 +262,12 @@ const handleSave = () => {
       <h2>Detalhes do {viveiroName}</h2>
       {cultivo ? (
         <div>
-          <h3>Cultivo em Curso</h3>
-          <p>Data de Povoamento: {formatDate(cultivo.dataPovoamento).date}</p>
-          <p>{formatDate(cultivo.dataPovoamento).days} dias de cultivo</p>
-          <p>Origem da PL: {cultivo.origemPL}</p>
-          <p>Quantidade Estocada: {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
-          <p>Teste de Estresse: {cultivo.testeEstresse ? 'Realizado' : 'Não Realizado'}</p>
+          <div className="infos">
+            <h3>Cultivo em Curso</h3>
+            <p>Povoamento em {formatDate(cultivo.dataPovoamento).date}, {formatDate(cultivo.dataPovoamento).days} dias de cultivo</p>
+            <p>Origem da PL: {cultivo.origemPL}</p>
+            <p>Quantidade Estocada: {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
+          </ div>
           <div className="buttons-container">
             <button className="pond-button" onClick={() => setShowPopupFeed(true)}>Ração</button>
             <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros da Água</button>
@@ -277,6 +275,7 @@ const handleSave = () => {
             <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
             <button className="pond-button" onClick={() => setShowHarvest(true)}>Dados de despesca</button>
             <button className="pond-button">Fertilização</button>
+            <button className="pond-button">Histórico</button>
             <button className="pond-button">Relatório Parcial</button>
           </div>
         </div>
@@ -753,9 +752,6 @@ const handleSave = () => {
             <option value="parcial">Parcial</option>
           </select>
         </label>
-        <label>Biomassa colhida (kg):
-          <input type="number" name="biomass" value={harvestData.biomass} onChange={handleHarvestChange} />
-        </label>
         <label>Biometria:</label>
         <div>
             <label>Pesagem:
@@ -772,7 +768,7 @@ const handleSave = () => {
         {biometryData && harvestData.pesagens.map((pesagem, index) => 
           (<div key={index}>
             <p>Amostra {index + 1}: {' '}
-            {harvestData.pesagens[index].weight} g, 
+            {harvestData.pesagens[index].weight} g, {' '}
             {harvestData.pesagens[index].count} camarões - 
             Peso médio {(harvestData.pesagens[index].weight / harvestData.pesagens[index].count).toFixed(1)} g
             </p>
@@ -784,6 +780,9 @@ const handleSave = () => {
         {survivalRate && (
             <p>Sobrevivência: {survivalRate * 100}%</p>
         )}
+        <label>Biomassa colhida (kg):
+          <input type="number" name="biomass" value={harvestData.biomass} onChange={handleHarvestChange} />
+        </label>
         <label>Comprador:
           <input type="text" name="comprador" value={harvestData.comprador} onChange={handleHarvestChange} />
         </label>
