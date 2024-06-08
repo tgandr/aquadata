@@ -1,59 +1,126 @@
+.identify-data {
+  height: 10%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  color: #033569;
+}
+
+.identify-data h3 {
+  height: 5%;
+  margin-top: 2%;
+}
+
+.identify-data h2 {
+  height: 5%;
+  margin-top: 0%;
+}
+
 .dashboard-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f4f4f9;
-    padding: 20px;
-  }
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  background-color: #f4f4f9;
+  padding: 20px;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.btn-container {
+  height: 40%;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.dashboard-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f3f5f0; /* Cor de fundo azul */
+  color: #007bff;
+  border: 1px solid #007bff; /* Espessura e cor da borda */
+  border-radius: 10px;
+  width: 120px;
+  height: 120px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s; /* Transição suave para a cor da borda */
+  text-align: center;
+  position: relative; /* Necessário para posicionamento absoluto dos spans */
+  overflow: hidden; /* Garante que o conteúdo não transborde */
+}
+
+.dashboard-button:hover {
+  background-color: #0056b3; /* Cor de fundo azul mais escura ao passar o mouse */
+  border-color: #0056b3; /* Cor da borda ao passar o mouse */
+}
+
+.icon-wrapper {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  width: 100%; /* Ocupar toda a largura do botão */
+  height: 70%; /* Ocupar 60% da altura do botão */
+  padding-top: 10%;
   
-  h2 {
-    margin-bottom: 20px;
-  }
-  
-  .btn-container {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 30px;
-  }
-  
-  .dashboard-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    width: 120px;
-    height: 120px;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    text-align: center;
-  }
-  
-  .dashboard-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .dashboard-button .fa-icon {
-    font-size: 36px;
-    margin-bottom: 10px;
-  }
-  
-  .icon-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 50px;
-  }
-  
-  .icon-container img {
-    width: 100px;
-    height: 100px;
-  }
-  
+}
+
+.icon {
+  font-size: 36px; /* Tamanho maior do ícone */
+}
+
+.text-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%; /* Ocupar toda a largura do botão */
+  height: 30%; /* Ocupar 40% da altura do botão */
+  background-color: #007bff; /* Cor de fundo do texto */
+  color: white; /* Cor do texto */
+  text-align: center; /* Centralizar o texto */
+  position: relative;
+  bottom: 0; /* Alinhar ao fundo */
+  left: 0; /* Alinhar à esquerda */
+  right: 0; /* Alinhar à direita */
+  padding: 5px 0; /* Espaçamento interno */
+  position: absolute;
+
+}
+
+.text-wrapper span {
+  width: 100%; /* Ocupar toda a largura do botão */
+  bottom: 0; /* Alinhar ao fundo */
+  left: 0; /* Alinhar à esquerda */
+  right: 0; /* Alinhar à direita */
+  padding: 5px 0; /* Espaçamento interno */
+
+}
+
+.icon-container {
+  height: 20%;
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.icon-container img {
+  width: 100px;
+  height: 100px;
+}
+
+.releases {
+  height: 30%;
+  color: #033569;
+}
