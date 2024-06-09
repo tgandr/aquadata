@@ -182,7 +182,7 @@ useEffect(() => {
         viveiro: parseInt(vivNumber.nome.match(/\d+/)[0]),
         viveiroId,
         id: history.length + 1,
-        totalHarvest: false
+        hasShrimp: true
       };
       history = [...history, newCultivo];
       cultivoKey = history.length;
