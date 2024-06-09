@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/PondDetail.css';
+import Webcam from 'react-webcam';
 
 const PondDetail = () => {
   const location = useLocation();
@@ -9,18 +10,37 @@ const PondDetail = () => {
   const viveiroName = location.state.nome;
 
   const [cultivo, setCultivo] = useState(null);
-  const [showPopupNewCycle, setshowPopupNewCycle] = useState(false);
+  const [showPopupNewCycle, setShowPopupNewCycle] = useState(false);
+  const [showPopupStressTest, setShowPopupStressTest] = useState(false);
+  const [showPopupCountPL, setShowPopupCountPL] = useState(false);
+  const [showPopupCamCount, setShowPopupCamCount] = useState(false);
   const [showPopupFeed, setShowPopupFeed] = useState(false);
   const [showParamPopup, setShowParamPopup] = useState(false);
   const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
   const [showBiometry, setShowBiometry] = useState(false);
   const [showHarvest, setShowHarvest] = useState(false);
+  const [showWeightInput, setShowWeightInput] = useState(false);
+  const [adjustedCount, setAdjustedCount] = useState(false);
+  const [weight, setWeight] = useState(false);
   const [survivalRate, setSurvivalRate] = useState(null);
   const [biometryData, setBiometryData] = useState(null);
   const [newPesagem, setNewPesagem] = useState({ weight: '', count: '' });
   const [biometrics, setBiometrics] = useState(null);
   const [showBiomCalculated, setShowBiomCalculated] = useState(0);
-
+  const webcamRef = useRef(null);
+  const [darkPoints, setDarkPoints] = useState(0);
+  const [showCamera, setShowCamera] = useState(false);
+  const [threshold, setThreshold] = useState(50);
+  const [userCount, setUserCount] = useState('');
+  const [processedImage, setProcessedImage] = useState(null);
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [textButtonCount, setTextButtonCount] = useState('Contar')
+  
+  const [showAdjustCount, setShowAdjustCount] = useState({
+    show: false,
+    buttonText: 'Ajustar contagem'
+  });
+  
   const [form, setForm] = useState({
     dataPovoamento: '',
     origemPL: '',
@@ -30,6 +50,12 @@ const PondDetail = () => {
     alteracaoNatatoria: '',
     larvasMortas: '',
   });
+
+  const [countPLbyPhoto, setCountPLbyPhoto] = useState({
+    showPopupCountPL: false,
+    weight: '',
+    amount: ''
+  })
   const [formFeed, setFormFeed] = useState({
     data: new Date().toISOString().split('T')[0],
     racaoTotalDia: '',
@@ -68,7 +94,7 @@ const PondDetail = () => {
     data: new Date().toISOString().split('T')[0],
     Pesagem: '',
     Contagem: '',
-    pesoMedio: null, // To store the calculated average weight
+    pesoMedio: null,
   });
 
   const [harvestData, setHarvestData] = useState({
@@ -84,7 +110,7 @@ const PondDetail = () => {
     data: new Date().toISOString().split('T')[0],
     Pesagem: '',
     Contagem: '',
-    pesoMedio: null, // To store the calculated average weight
+    pesoMedio: null,
   };
 
   useEffect(() => {
@@ -138,7 +164,6 @@ useEffect(() => {
   }
 }, [viveiroId]);
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const vivNumber = JSON.parse(localStorage.getItem('viveiros'))[viveiroId - 1];
@@ -149,7 +174,7 @@ useEffect(() => {
     };
     localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(newCultivo));
     setCultivo(newCultivo);
-    setshowPopupNewCycle(false);
+    setShowPopupNewCycle(false);
   };
 
   const handleFeedSubmit = (e) => {
@@ -209,15 +234,10 @@ useEffect(() => {
   };
 
 const handleBiometryCalcSubmit = () => {
-    // Add the new sample to harvestData.pesagens
     const updatedPesagens = [];
     harvestData.pesagens[0].weight !== '' ? updatedPesagens.push(newPesagem) : updatedPesagens[0] = newPesagem;
-    
-    // Calculate biometry with the updated pesagens
     const calculatedData = calculateBiometry(updatedPesagens);
     setBiometryData(calculatedData);
-
-    // Clear the fields for new inputs
     setNewPesagem({ weight: '', count: '' });
   };
 
@@ -230,7 +250,6 @@ const calculateBiometry = (pesagens) => {
   };
     
 const handleSave = () => {
-    // Save the harvest data
     setShowHarvest(false);
     console.log('Harvest data saved:', harvestData);
   };
@@ -255,7 +274,124 @@ const handleSave = () => {
 
   const handleStressTestClick = (value) => {
     setForm({ ...form, testeEstresse: value });
+    if (value === 'Sim') {
+      setShowPopupStressTest(true);
+      setShowPopupNewCycle(false);
+    }
   };
+
+  const handleCountPLbyPhoto = (value) => {
+    setCountPLbyPhoto({ ...countPLbyPhoto, showPopupCountPL: value });
+    if (value === 'Sim') {
+      setShowPopupCountPL(true);
+      setShowPopupNewCycle(false);
+    }
+  };
+
+  const capture = React.useCallback(() => {
+    if (webcamRef.current) {
+      const imageSrc = webcamRef.current.getScreenshot();
+      countDarkPoints(imageSrc, threshold);
+      setCapturedImage(imageSrc);
+      setShowCamera(false);
+      setTextButtonCount('Refazer contagem')
+    } else {
+      setShowCamera(true);
+    }
+}, [webcamRef, threshold]);
+
+  const countDarkPoints = (imageSrc, threshold) => {
+    const img = new Image();
+    img.src = imageSrc;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+      const width = canvas.width;
+      const height = canvas.height;
+      let darkCount = 0;
+
+      const brightnessData = [];
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        const brightness = (r + g + b) / 3;
+        brightnessData.push(brightness < threshold ? 1 : 0);
+      }
+
+      const visited = new Array(width * height).fill(false);
+      const dfs = (x, y) => {
+        const stack = [[x, y]];
+        while (stack.length > 0) {
+          const [cx, cy] = stack.pop();
+          const index = cy * width + cx;
+          if (cx >= 0 && cy >= 0 && cx < width && cy < height && !visited[index] && brightnessData[index] === 1) {
+            visited[index] = true;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 2, 0, 2 * Math.PI);
+            ctx.fillStyle = 'red';
+            ctx.fill();
+            stack.push([cx + 1, cy]);
+            stack.push([cx - 1, cy]);
+            stack.push([cx, cy + 1]);
+            stack.push([cx, cy - 1]);
+          }
+        }
+      };
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const index = y * width + x;
+          if (brightnessData[index] === 1 && !visited[index]) {
+            darkCount++;
+            dfs(x, y);
+          }
+        }
+      }
+
+      setDarkPoints(darkCount);
+      setCountPLbyPhoto({...countPLbyPhoto, amount: darkCount})
+      setProcessedImage(canvas.toDataURL());
+    };
+  };
+
+  const handleUserCountChange = (e) => {
+    setUserCount(e.target.value);
+  };
+
+  const handleWeightChange = (e) => {
+    console.log(e.target.value, 'valor do form')
+    console.log(countPLbyPhoto.amount, 'contagem da câmera')
+    console.log(countPLbyPhoto.weight, 'peso informado no form')
+    setCountPLbyPhoto({...countPLbyPhoto, weight: e.target.value})
+  }
+
+  const adjustThreshold = () => {
+    const realCount = parseInt(userCount, 10);
+    if (!isNaN(realCount) && realCount > 0) {
+      const difference = darkPoints - realCount;
+      const adjustment = difference / 10;
+      setThreshold((prevThreshold) => Math.max(prevThreshold - adjustment, 0));
+    }
+  };
+
+  const handleWeightSave = (e) => {
+    console.log(e); // incluir no LocalStorage com as demais informações de registro do estoque
+  }
+
+  const handleAdjustCount = (e) => {
+    console.log(e); // incluir no LocalStorage com as demais informações de registro do estoque
+  }
+
+  const handleSavePLcount = () => {
+    console.log('terminar')
+  }
 
   return (
     <div className="pond-detail">
@@ -282,7 +418,7 @@ const handleSave = () => {
       ) : (
         <div>
           <h3>O viveiro está vazio</h3>
-          <button onClick={() => setshowPopupNewCycle(true)}>Novo Ciclo de Cultivo</button>
+          <button onClick={() => setShowPopupNewCycle(true)}>Novo Ciclo de Cultivo</button>
         </div>
       )}
 
@@ -316,7 +452,7 @@ const handleSave = () => {
                 <input
                   type="number"
                   name="quantidadeEstocada"
-                  value={form.quantidadeEstocada.toLocaleString('pt-br')}
+                  value={form.quantidadeEstocada}
                   onChange={handleChange}
                   required
                 />
@@ -340,43 +476,232 @@ const handleSave = () => {
                   </button>
                 </div>
               </label>
-              {form.testeEstresse === 'Sim' && (
-                <div className="stress-test-details">
-                  <label>
-                    Tipo de Teste:
-                    <select name="tipoTeste" value={form.tipoTeste} onChange={handleChange}>
-                      <option value="">Selecione</option>
-                      <option value="alteracaoSalinidade">Testado com alteração de salinidade</option>
-                      <option value="aguaViveiro">Testado com água do viveiro</option>
-                    </select>
-                  </label>
-                  <label>
-                    Alteração da Resposta Natatória:
-                    <select name="alteracaoNatatoria" value={form.alteracaoNatatoria} onChange={handleChange}>
-                      <option value="">Selecione</option>
-                      <option value="nenhuma">Nenhuma alteração</option>
-                      <option value="pequena">Pequena alteração</option>
-                      <option value="media">Média alteração</option>
-                      <option value="grande">Grande alteração</option>
-                    </select>
-                  </label>
-                  <label>
-                    Larvas Mortas:
-                    <select name="larvasMortas" value={form.larvasMortas} onChange={handleChange}>
-                      <option value="">Selecione</option>
-                      <option value="nenhuma">Nenhuma</option>
-                      <option value="poucas">Poucas</option>
-                      <option value="muitas">Muitas</option>
-                    </select>
-                  </label>
+              <label>
+                Calcular PL/grama por foto?:
+                <div className="stress-test-buttons">
+                  <button
+                    type="button"
+                    className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Sim' ? 'active' : ''}`}
+                    onClick={() => handleCountPLbyPhoto('Sim')}
+                  >
+                    Sim
+                  </button>
+                  <button
+                    type="button"
+                    className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Não' ? 'active' : ''}`}
+                    onClick={() => handleCountPLbyPhoto('Não')}
+                  >
+                    Não
+                  </button>
                 </div>
-              )}
-              <button type="submit">Salvar</button>
-              <button type="button" onClick={() => setshowPopupNewCycle(false)}>Cancelar</button>
+              </label>
+              <button type="button" onClick={() => (handleSavePLcount)}>Salvar</button>
+              <button type="button" onClick={() => setShowPopupNewCycle(false)}>Cancelar</button>
             </form>
           </div>
         </div>
       )}
+
+      {showPopupStressTest && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Teste de Estresse</h3>
+            <form>
+              <label>
+                Tipo de Teste:
+                <select name="tipoTeste" value={form.tipoTeste} onChange={handleChange}>
+                  <option value="">Selecione</option>
+                  <option value="alteracaoSalinidade">Testado com alteração de salinidade</option>
+                  <option value="aguaViveiro">Testado com água do viveiro</option>
+                </select>
+              </label>
+              <label>
+                Alteração da Resposta Natatória:
+                <select name="alteracaoNatatoria" value={form.alteracaoNatatoria} onChange={handleChange}>
+                  <option value="">Selecione</option>
+                  <option value="nenhuma">Nenhuma alteração</option>
+                  <option value="pequena">Pequena alteração</option>
+                  <option value="media">Média alteração</option>
+                  <option value="grande">Grande alteração</option>
+                </select>
+              </label>
+              <label>
+                Larvas Mortas:
+                <select name="larvasMortas" value={form.larvasMortas} onChange={handleChange}>
+                  <option value="">Selecione</option>
+                  <option value="nenhuma">Nenhuma</option>
+                  <option value="poucas">Poucas</option>
+                  <option value="muitas">Muitas</option>
+                </select>
+              </label>
+              <button type="button" onClick={() => setShowPopupStressTest(false)}>Salvar</button>
+              <button type="button" onClick={() => { setShowPopupStressTest(false); setShowPopupNewCycle(true); }}>Cancelar</button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showPopupCountPL && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Calcular PL/grama por foto</h3>
+            <div className="results">
+              {darkPoints ? <p>Contagem: {darkPoints} pós-larvas</p> : <p>Aguardando contagem</p>} 
+              
+              {weight && <p>Pesagem: {weight} gramas</p>}
+              {countPLbyPhoto.weight && <p>PL/grama: {(countPLbyPhoto.amount / countPLbyPhoto.weight)}</p>}
+            </div>
+            <button onClick={() => {
+              setShowPopupCountPL(false);
+              setShowCamera(true);
+              setShowPopupCamCount(true)
+              } }>
+              Foto para contagem
+            </button>
+            <button>Pesagem</button>
+            <button type="button" onClick={ handleSavePLcount() }>Salvar</button>
+            <button type="button" onClick={() => { setShowPopupCountPL(false); setShowPopupNewCycle(true); setShowCamera(false); }}>Cancelar</button>
+          </div>
+        </div>
+      )}
+
+      {showPopupCamCount && (
+        <div className="popup">
+          <div className="popup-inner">
+            {showCamera ? (
+              <Webcam
+                audio={false}
+                ref={webcamRef}
+                screenshotFormat="image/jpeg"
+                width={640}
+                height={480}
+                className="webcam"
+              />
+            ) : (
+              <div>
+                <img
+                  src={processedImage} 
+                  alt="Processed"
+                />
+              </div>
+            )}
+            <p>Quantidade: {userCount ? userCount : darkPoints }</p>
+            {showAdjustCount.show && (
+              <span>
+                <label>
+                  Se a contagem necessita ajuste, indique abaixo a real contagem de PLs
+                  <input
+                    type="number"
+                    value={userCount}
+                    onChange={handleUserCountChange}
+                  />
+                </label>
+              </span>
+            )}
+            <button onClick={capture}>{textButtonCount}</button>
+            <button onClick={ () => {
+              if (showAdjustCount.buttonText === 'Ajustar contagem') {
+                setShowAdjustCount({show: true, buttonText: 'Confirmar ajuste'});
+              } else {
+                setShowAdjustCount({show: false, buttonText: 'Ajustar contagem'});
+                adjustThreshold();
+              }
+            }}>
+              {showAdjustCount.buttonText}</button>
+            <button>Salvar</button>
+            <button onClick={ () => { setShowPopupCamCount(false); setShowPopupCountPL(true) }}>Cancelar</button>
+          </div>
+        </ div>
+      )};
+
+{/* <div className="webcam-container">
+              {showCamera && (
+                
+              )}
+              <label>
+                Pesagem:
+                <input
+                  type="number"
+                  value={countPLbyPhoto.weight}
+                  onChange={handleWeightChange}
+                />
+              </label>
+              {(countPLbyPhoto.amount / countPLbyPhoto.weight) == !isNaN && (
+                <div>
+                  <p>{(countPLbyPhoto.amount / countPLbyPhoto.weight)}</p>
+                  <p>{countPLbyPhoto.weight}</p>
+                </div>
+              )}
+              {processedImage && (
+                <div>
+                  <h3>Processed Image:</h3>
+                  <img src={processedImage} alt="Processed" />
+                </div>
+              )}
+              <div>
+                
+                <button onClick={adjustThreshold}>Confirmar</button>
+              </div>
+            </div> */}
+
+    {/* {showPopupCountPL && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Calcular PL/grama por foto</h3>
+            
+            <div className="buttons-container">
+              <button onClick={() => setShowCamera(true)}>Foto para contagem</button>
+              <button onClick={() => setShowWeightInput(true)}>Pesagem</button>
+              <button onClick={handleSave}>Salvar</button>
+              <button onClick={() => setShowPopupCountPL(false)}>Cancelar</button>
+            </div>
+            {showCamera && (
+              <div className="webcam-container">
+                <Webcam
+                  audio={false}
+                  ref={webcamRef}
+                  screenshotFormat="image/jpeg"
+                  width={640}
+                  height={480}
+                  className="webcam"
+                />
+                <button onClick={capture}>Contar</button>
+                <button onClick={() => setShowAdjustCount(true)}>Ajustar Contagem</button>
+                <button onClick={() => { setShowCamera(false); }}>Cancelar</button>
+              </div>
+            )}
+            {showWeightInput && (
+              <div>
+                <label>
+                  Pesagem:
+                  <input
+                    type="number"
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                  />
+                </label>
+                <button onClick={handleWeightSave}>Salvar Pesagem</button>
+                <button onClick={() => setShowWeightInput(false)}>Cancelar</button>
+              </div>
+            )}
+            {showAdjustCount && (
+              <div>
+                <label>
+                  Contagem corrigida:
+                  <input
+                    type="number"
+                    value={adjustedCount}
+                    onChange={(e) => setAdjustedCount(e.target.value)}
+                  />
+                </label>
+                <button onClick={handleAdjustCount}>Confirmar Ajuste</button>
+                <button onClick={() => setShowAdjustCount(false)}>Cancelar</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )} */}
+
 
       {showPopupFeed && (
         <div className="popup">
@@ -738,64 +1063,64 @@ const handleSave = () => {
         </div>
       )}
 
-{showHarvest && (
-  <div className="popup">
-    <div className="popup-inner">
-      <h2>Dados de Despesca</h2>
-      <form>
-        <label>Data:
-          <input type="date" name="date" value={harvestData.date} onChange={handleHarvestChange} />
-        </label>
-        <label>Despesca:
-          <select name="despesca" value={harvestData.despesca} onChange={handleHarvestChange}>
-            <option value="total">Total</option>
-            <option value="parcial">Parcial</option>
-          </select>
-        </label>
-        <label>Biometria:</label>
-        <div>
-            <label>Pesagem:
-              <input type="number" name="weight" value={newPesagem.weight} onChange={handlePesagensChange} />
-            </label>    
-            <label>Contagem:
-              <input type="number" name="count" value={newPesagem.count} onChange={handlePesagensChange} />
-            </label>
+      {showHarvest && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h2>Dados de Despesca</h2>
+            <form>
+              <label>Data:
+                <input type="date" name="date" value={harvestData.date} onChange={handleHarvestChange} />
+              </label>
+              <label>Despesca:
+                <select name="despesca" value={harvestData.despesca} onChange={handleHarvestChange}>
+                  <option value="total">Total</option>
+                  <option value="parcial">Parcial</option>
+                </select>
+              </label>
+              <label>Biometria:</label>
+              <div>
+                  <label>Pesagem:
+                    <input type="number" name="weight" value={newPesagem.weight} onChange={handlePesagensChange} />
+                  </label>    
+                  <label>Contagem:
+                    <input type="number" name="count" value={newPesagem.count} onChange={handlePesagensChange} />
+                  </label>
+                </div>
+              <button type="button" onClick={handleBiometryCalcSubmit}>Calcular Biometria</button>
+              {biometryData && (
+                  <h3>Resultado da Biometria:</h3>
+              )}
+              {biometryData && harvestData.pesagens.map((pesagem, index) => 
+                (<div key={index}>
+                  <p>Amostra {index + 1}: {' '}
+                  {harvestData.pesagens[index].weight} g, {' '}
+                  {harvestData.pesagens[index].count} camarões - 
+                  Peso médio {(harvestData.pesagens[index].weight / harvestData.pesagens[index].count).toFixed(1)} g
+                  </p>
+                </div>)
+              )}
+              {biometryData && (
+                  <p>Peso médio: {biometryData.averageWeight} g</p>
+              )}
+              {survivalRate && (
+                  <p>Sobrevivência: {survivalRate * 100}%</p>
+              )}
+              <label>Biomassa colhida (kg):
+                <input type="number" name="biomass" value={harvestData.biomass} onChange={handleHarvestChange} />
+              </label>
+              <label>Comprador:
+                <input type="text" name="comprador" value={harvestData.comprador} onChange={handleHarvestChange} />
+              </label>
+              <label>Preço de venda:
+                <input type="number" name="precoVenda" value={harvestData.precoVenda} onChange={handleHarvestChange} />
+              </label>
+              <button type="button" onClick={handleHarvestConfirm}>Confirmar dados</button>
+            </form>
+            <button onClick={handleSave}>Salvar</button>
+            <button onClick={() => setShowHarvest(false)}>Cancelar</button>
           </div>
-        <button type="button" onClick={handleBiometryCalcSubmit}>Calcular Biometria</button>
-        {biometryData && (
-            <h3>Resultado da Biometria:</h3>
-        )}
-        {biometryData && harvestData.pesagens.map((pesagem, index) => 
-          (<div key={index}>
-            <p>Amostra {index + 1}: {' '}
-            {harvestData.pesagens[index].weight} g, {' '}
-            {harvestData.pesagens[index].count} camarões - 
-            Peso médio {(harvestData.pesagens[index].weight / harvestData.pesagens[index].count).toFixed(1)} g
-            </p>
-          </div>)
-        )}
-        {biometryData && (
-            <p>Peso médio: {biometryData.averageWeight} g</p>
-        )}
-        {survivalRate && (
-            <p>Sobrevivência: {survivalRate * 100}%</p>
-        )}
-        <label>Biomassa colhida (kg):
-          <input type="number" name="biomass" value={harvestData.biomass} onChange={handleHarvestChange} />
-        </label>
-        <label>Comprador:
-          <input type="text" name="comprador" value={harvestData.comprador} onChange={handleHarvestChange} />
-        </label>
-        <label>Preço de venda:
-          <input type="number" name="precoVenda" value={harvestData.precoVenda} onChange={handleHarvestChange} />
-        </label>
-        <button type="button" onClick={handleHarvestConfirm}>Confirmar dados</button>
-      </form>
-      <button onClick={handleSave}>Salvar</button>
-      <button onClick={() => setShowHarvest(false)}>Cancelar</button>
-    </div>
-  </div>
-)}
+        </div>
+      )}
 
       <button onClick={handleBackClick}>Voltar para Viveiros</button>
       <div>

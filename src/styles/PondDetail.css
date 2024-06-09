@@ -154,6 +154,10 @@
   .popup-inner input[type="number"] {
     margin-bottom: 10px;
   }
+
+  .webcam-container {
+    width: 100%;
+  }
 }
 
 .obs {
@@ -190,4 +194,27 @@ ul {
 
 li {
   margin-bottom: 10px; /* Adiciona espaçamento entre os itens, se necessário */
+}
+
+.webcam-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 640px;
+}
+
+.webcam {
+  width: 100%;
+  height: auto;
+}
+
+.results {
+  background-color: rgba(8, 8, 184, 0.80);
+  color: white;
+  height: 80px; 
+  width: 90%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
 }
