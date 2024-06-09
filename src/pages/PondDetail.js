@@ -118,7 +118,8 @@ const PondDetail = () => {
   };
 
   useEffect(() => {
-    const storedCultivo = JSON.parse(localStorage.getItem(`cultivo-${viveiroId}`));
+    const storedCultivos = JSON.parse(localStorage.getItem(`history`));
+    const storedCultivo = storedCultivos && storedCultivos.find((viv) => viv.viveiroId === viveiroId);
     if (storedCultivo) {
       setCultivo(storedCultivo);
     }
@@ -171,12 +172,33 @@ useEffect(() => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const vivNumber = JSON.parse(localStorage.getItem('viveiros'))[viveiroId - 1];
-    const newCultivo = {
-      ...form,
-      dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
-      viveiro: parseInt(vivNumber.nome.match(/\d+/)[0])
-    };
-    localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(newCultivo));
+    let history = JSON.parse(localStorage.getItem('history'));
+    let newCultivo = {};
+    let cultivoKey = 1;
+    if (history) {
+      newCultivo = {
+        ...form,
+        dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
+        viveiro: parseInt(vivNumber.nome.match(/\d+/)[0]),
+        viveiroId,
+        id: history.length + 1,
+        totalHarvest: false
+      };
+      history = [...history, newCultivo];
+      cultivoKey = history.length;
+    } else {
+      newCultivo = {
+        ...form,
+        dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
+        viveiro: parseInt(vivNumber.nome.match(/\d+/)[0]),
+        viveiroId,
+        id: 1,
+        hasShrimp: true
+      };
+      history = [newCultivo];
+    }
+    localStorage.setItem('history', JSON.stringify(history));
+    localStorage.setItem(`cultivo-${cultivoKey}`, JSON.stringify(newCultivo));
     setCultivo(newCultivo);
     setShowPopupNewCycle(false);
   };
@@ -499,7 +521,7 @@ const handleSave = () => {
                   </button>
                 </div>
               </label>
-              <button type="button" onClick={() => (handleSavePLcount)}>Salvar</button>
+              <button type="submit">Salvar</button>
               <button type="button" onClick={() => setShowPopupNewCycle(false)}>Cancelar</button>
             </form>
           </div>
@@ -563,7 +585,14 @@ const handleSave = () => {
             </button>
             <button>Pesagem</button>
             <button type="button" onClick={ handleSavePLcount() }>Salvar</button>
-            <button type="button" onClick={() => { setShowPopupCountPL(false); setShowPopupNewCycle(true); setShowCamera(false); }}>Cancelar</button>
+            <button type="button" onClick={() => {
+              setShowPopupCountPL(false);
+              setShowPopupNewCycle(true);
+              setShowCamera(false)
+              }}>
+              Cancelar
+            </button>
+            <p>Utilize uma bandeja branca e certifique-se que o local é bem iluminado</p>
           </div>
         </div>
       )}

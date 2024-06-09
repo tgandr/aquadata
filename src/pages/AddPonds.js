@@ -10,34 +10,14 @@ const AddPonds = () => {
     numeroViveiro: '',
     area: ''
   });
-  const [cultivos, setCultivos] = useState([]);
+  const [cultivos, setCultivos] = useState(JSON.parse(localStorage.getItem('history')));
 
   useEffect(() => {
     const storedViveiros = JSON.parse(localStorage.getItem('viveiros'));
-    let keyNumber = 1;
-    hasCultivoKey() && (keyNumber = hasCultivoKey());
-    let key = 'cultivo-' + keyNumber;
-    const currentFarming = [];
-    while (JSON.parse(localStorage.getItem(key))) {
-      currentFarming.push(JSON.parse(localStorage.getItem(key)));
-      keyNumber = keyNumber + 1;
-      key = 'cultivo-' + keyNumber;
-      setCultivos(currentFarming);
-    }
     if (storedViveiros) {
       setViveiros(storedViveiros);
     }
   }, []);
-
-  const hasCultivoKey = () => {
-    const maxRange = 100; // Ajuste este valor conforme necessário
-    for (let i = 1; i <= maxRange; i++) {
-      const key = `cultivo-${i}`;
-      if (localStorage.getItem(key) !== null) {
-        return i;
-      }}
-    return false;
-  }
 
   const saveViveirosToLocalStorage = (viveiros) => {
     localStorage.setItem('viveiros', JSON.stringify(viveiros));
@@ -80,16 +60,14 @@ const AddPonds = () => {
     }
   };
 
-  const days = ((id) => {
-    console.log(cultivos)
-    if (cultivos.length > 0) {
-      for (let i = 0; i < cultivos.length; i++) {
-        if (cultivos[i].viveiro === id) {
-          return(formatDate(cultivos[i].dataPovoamento).days);
-        }
+  const days = (id) => {
+    if (cultivos && cultivos.length > 0) {
+      const cultivo = cultivos.find(cultivo => cultivo.viveiroId === id);
+      if (cultivo && cultivo.hasShrimp) {
+        return formatDate(cultivo.dataPovoamento).days;
+      }
     }
-  }
-})
+  };
 
   const navigate = useNavigate();
 
