@@ -35,6 +35,10 @@ const PondDetail = () => {
   const [processedImage, setProcessedImage] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [textButtonCount, setTextButtonCount] = useState('Contar')
+
+  const videoConstraints = {
+    facingMode: { exact: "environment" } // Utiliza a câmera traseira
+  }
   
   const [showAdjustCount, setShowAdjustCount] = useState({
     show: false,
@@ -547,7 +551,6 @@ const handleSave = () => {
             <h3>Calcular PL/grama por foto</h3>
             <div className="results">
               {darkPoints ? <p>Contagem: {darkPoints} pós-larvas</p> : <p>Aguardando contagem</p>} 
-              
               {weight && <p>Pesagem: {weight} gramas</p>}
               {countPLbyPhoto.weight && <p>PL/grama: {(countPLbyPhoto.amount / countPLbyPhoto.weight)}</p>}
             </div>
@@ -576,6 +579,7 @@ const handleSave = () => {
                 width={640}
                 height={480}
                 className="webcam"
+                videoConstraints={videoConstraints}
               />
             ) : (
               <div>
