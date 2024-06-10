@@ -212,9 +212,19 @@ li {
 .results {
   background-color: rgba(8, 8, 184, 0.80);
   color: white;
-  height: 80px; 
-  width: 90%;
+  height: 100px; 
+  width: 280px;
   margin-top: 10px;
   padding: 10px;
   border-radius: 5px;
+}
+
+.results input {
+  width: 50px !important;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none; /* Ajuste a cor da borda conforme necessário */
+  color: #fdfcfc; /* Cor do texto */
+  padding: 5px;
+  border-radius: 4px;
 }

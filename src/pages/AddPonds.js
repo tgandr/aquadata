@@ -88,7 +88,7 @@ const AddPonds = () => {
                     {days(viveiro.id) === 1 ? '1 dia de cultivo' : `${days(viveiro.id)} dias de cultivo`}
                   </span>
                 ) : (
-                  <span className="viveiro-data">Desocupado {viveiro.id} </span>
+                  <span className="viveiro-data">Desocupado</span>
                 )}
               </button>
             </Link>

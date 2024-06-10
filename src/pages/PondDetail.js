@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/PondDetail.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import Webcam from 'react-webcam';
 
 const PondDetail = () => {
@@ -19,7 +21,8 @@ const PondDetail = () => {
   const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
   const [showBiometry, setShowBiometry] = useState(false);
   const [showHarvest, setShowHarvest] = useState(false);
-  const [showWeightInput, setShowWeightInput] = useState(false);
+  const [showWeightInput, setShowWeightInput] = useState({show: false, buttonText: 'Pesagem'});
+  const [showPLgrama, setShowPLgrama] = useState(false);
   const [adjustedCount, setAdjustedCount] = useState(false);
   const [weight, setWeight] = useState(false);
   const [survivalRate, setSurvivalRate] = useState(null);
@@ -37,7 +40,7 @@ const PondDetail = () => {
   const [textButtonCount, setTextButtonCount] = useState('Contar')
 
   const videoConstraints = {
-    facingMode: { exact: "environment" } // Utiliza a câmera traseira
+    facingMode: { exact: "environment" }
   }
   
   const [showAdjustCount, setShowAdjustCount] = useState({
@@ -396,6 +399,7 @@ const handleSave = () => {
     console.log(countPLbyPhoto.amount, 'contagem da câmera')
     console.log(countPLbyPhoto.weight, 'peso informado no form')
     setCountPLbyPhoto({...countPLbyPhoto, weight: e.target.value})
+    setWeight(e.target.value)
   }
 
   const adjustThreshold = () => {
@@ -572,9 +576,23 @@ const handleSave = () => {
           <div className="popup-inner">
             <h3>Calcular PL/grama por foto</h3>
             <div className="results">
-              {darkPoints ? <p>Contagem: {darkPoints} pós-larvas</p> : <p>Aguardando contagem</p>} 
-              {weight && <p>Pesagem: {weight} gramas</p>}
-              {countPLbyPhoto.weight && <p>PL/grama: {(countPLbyPhoto.amount / countPLbyPhoto.weight)}</p>}
+              {darkPoints ? <span>Contagem: {userCount ? userCount : darkPoints} pós-larvas</span> : <span>Aguardando contagem</span>} 
+              {showWeightInput.show ? (<p>Pesagem: {showWeightInput && (
+                <input
+                type="number"
+                value={countPLbyPhoto.weight}
+                onChange={handleWeightChange}
+              />
+              )
+                } gramas</p>) : (
+                  <span>
+                    <p>{weight && <span>{weight} gramas</span>} </p>
+                  </span>
+                )}
+                {showPLgrama && (
+                  userCount ? <span>PL/Grama { weight / userCount}</span> : 
+                  <span>PL/Grama { weight / darkPoints}</span>)
+                }
             </div>
             <button onClick={() => {
               setShowPopupCountPL(false);
@@ -583,7 +601,14 @@ const handleSave = () => {
               } }>
               Foto para contagem
             </button>
-            <button>Pesagem</button>
+            <button onClick={() => {
+              if (showWeightInput.buttonText === 'Pesagem') {
+                setShowWeightInput({show: true, buttonText: 'Calcular PL/grama'});
+                } else {
+                  setShowWeightInput({show: false, buttonText: 'Pesagem'});
+                  setShowPLgrama(true);
+              }
+            }}>{showWeightInput.buttonText}</button>
             <button type="button" onClick={ handleSavePLcount() }>Salvar</button>
             <button type="button" onClick={() => {
               setShowPopupCountPL(false);
@@ -631,7 +656,9 @@ const handleSave = () => {
                 </label>
               </span>
             )}
-            <button onClick={capture}>{textButtonCount}</button>
+            <button onClick={capture}>
+              <FontAwesomeIcon icon={faCamera} className="icon" />
+            </button>
             <button onClick={ () => {
               if (showAdjustCount.buttonText === 'Ajustar contagem') {
                 setShowAdjustCount({show: true, buttonText: 'Confirmar ajuste'});
@@ -641,100 +668,10 @@ const handleSave = () => {
               }
             }}>
               {showAdjustCount.buttonText}</button>
-            <button>Salvar</button>
-            <button onClick={ () => { setShowPopupCamCount(false); setShowPopupCountPL(true) }}>Cancelar</button>
+            <button onClick={ () => { setShowPopupCamCount(false); setShowPopupCountPL(true) }}>Voltar</button>
           </div>
         </ div>
-      )};
-
-{/* <div className="webcam-container">
-              {showCamera && (
-                
-              )}
-              <label>
-                Pesagem:
-                <input
-                  type="number"
-                  value={countPLbyPhoto.weight}
-                  onChange={handleWeightChange}
-                />
-              </label>
-              {(countPLbyPhoto.amount / countPLbyPhoto.weight) == !isNaN && (
-                <div>
-                  <p>{(countPLbyPhoto.amount / countPLbyPhoto.weight)}</p>
-                  <p>{countPLbyPhoto.weight}</p>
-                </div>
-              )}
-              {processedImage && (
-                <div>
-                  <h3>Processed Image:</h3>
-                  <img src={processedImage} alt="Processed" />
-                </div>
-              )}
-              <div>
-                
-                <button onClick={adjustThreshold}>Confirmar</button>
-              </div>
-            </div> */}
-
-    {/* {showPopupCountPL && (
-        <div className="popup">
-          <div className="popup-inner">
-            <h3>Calcular PL/grama por foto</h3>
-            
-            <div className="buttons-container">
-              <button onClick={() => setShowCamera(true)}>Foto para contagem</button>
-              <button onClick={() => setShowWeightInput(true)}>Pesagem</button>
-              <button onClick={handleSave}>Salvar</button>
-              <button onClick={() => setShowPopupCountPL(false)}>Cancelar</button>
-            </div>
-            {showCamera && (
-              <div className="webcam-container">
-                <Webcam
-                  audio={false}
-                  ref={webcamRef}
-                  screenshotFormat="image/jpeg"
-                  width={640}
-                  height={480}
-                  className="webcam"
-                />
-                <button onClick={capture}>Contar</button>
-                <button onClick={() => setShowAdjustCount(true)}>Ajustar Contagem</button>
-                <button onClick={() => { setShowCamera(false); }}>Cancelar</button>
-              </div>
-            )}
-            {showWeightInput && (
-              <div>
-                <label>
-                  Pesagem:
-                  <input
-                    type="number"
-                    value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
-                  />
-                </label>
-                <button onClick={handleWeightSave}>Salvar Pesagem</button>
-                <button onClick={() => setShowWeightInput(false)}>Cancelar</button>
-              </div>
-            )}
-            {showAdjustCount && (
-              <div>
-                <label>
-                  Contagem corrigida:
-                  <input
-                    type="number"
-                    value={adjustedCount}
-                    onChange={(e) => setAdjustedCount(e.target.value)}
-                  />
-                </label>
-                <button onClick={handleAdjustCount}>Confirmar Ajuste</button>
-                <button onClick={() => setShowAdjustCount(false)}>Cancelar</button>
-              </div>
-            )}
-          </div>
-        </div>
-      )} */}
-
+      )}
 
       {showPopupFeed && (
         <div className="popup">
