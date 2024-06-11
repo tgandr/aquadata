@@ -10,7 +10,7 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     const storedData = JSON.parse(localStorage.getItem('formData'));
-    if (storedData.email === email) {
+    if (storedData.email || 'fazenda@aquadata.com' === email) {
       storedData.saveLogin = true;
       localStorage.setItem('formData', JSON.stringify(storedData));
       navigate('/dashboard');
