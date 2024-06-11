@@ -20,12 +20,16 @@
   
   .btn-financial-container {
     display: flex;
+    width: 100%;
     flex-direction: column;
+    align-items: center;
     gap: 10px;
   }
   
   .financial-button {
     display: flex;
+    height: 60px;
+    width: 80%;
     align-items: center;
     padding: 10px;
     font-size: 18px;
@@ -42,6 +46,7 @@
   
   .financial-icon {
     margin-right: 10px;
+    height: 30px;
   }
   
   .popup {

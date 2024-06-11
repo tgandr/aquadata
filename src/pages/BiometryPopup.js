@@ -22,10 +22,17 @@ const BiometryPopup = ({
         if (Pesagem && Contagem) {
             const pesoMedio = (Pesagem / Contagem).toFixed(1);
             const biom = { data, Pesagem, Contagem, pesoMedio };
-            let viveiroData = JSON.parse(localStorage.getItem(`cultivo-${viveiroId}`));
-            viveiroData.biometrics ? viveiroData.biometrics.push(biom) : viveiroData = {...viveiroData, biometrics: [biom]};
-            setBiometrics(viveiroData.biometrics);
-            localStorage.setItem(`cultivo-${viveiroId}`, JSON.stringify(viveiroData));
+            const storedCultivos = JSON.parse(localStorage.getItem(`history`));
+            let storedCultivo = storedCultivos && storedCultivos.find((viv) => viv.viveiroId === viveiroId);
+            storedCultivo.biometrics ? 
+              storedCultivo.biometrics.push(biom) : 
+              storedCultivo = {...storedCultivo, biometrics: [biom]};
+            setBiometrics(storedCultivo.biometrics);
+            storedCultivos.forEach((elem, i) => {
+              elem.id === storedCultivo.id && (storedCultivos[i] = storedCultivo)
+            })
+            localStorage.setItem(`cultivo-${storedCultivo.id}`, JSON.stringify(storedCultivo));
+            localStorage.setItem('history', JSON.stringify(storedCultivos));
             setFormBiometry(initialFormBiometryState);
             setShowBiomCalculated(pesoMedio);
         }

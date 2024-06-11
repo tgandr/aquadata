@@ -47,15 +47,15 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f3f5f0; /* Cor de fundo azul */
+  background-color: #f3f5f0; 
   color: #007bff;
-  border: 1px solid #007bff; /* Espessura e cor da borda */
+  border: 1px solid #007bff; 
   border-radius: 10px;
   width: 120px;
   height: 120px;
   font-size: 18px;
   cursor: pointer;
-  transition: background-color 0.3s, border-color 0.3s; /* Transição suave para a cor da borda */
+  transition: background-color 0.3s, border-color 0.3s;
   text-align: center;
   position: relative; /* Necessário para posicionamento absoluto dos spans */
   overflow: hidden; /* Garante que o conteúdo não transborde */
