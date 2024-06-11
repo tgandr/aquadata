@@ -1,12 +1,26 @@
+:root {
+  --color-blue-dark: #1E3A8A;
+  --color-blue-medium: #2563EB;
+  --color-blue-light: #93C5FD;
+  --color-white: #FFFFFF;
+  --color-orange-dark: #EA580C;
+  --color-orange-medium: #FB923C;
+  --color-orange-light: #FED7AA;
+}
+
 .identify-data {
-  height: 10%;
+  height: 100px;
+  width: 100%;
+  position: fixed;
+  top: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-  color: #033569;
+  color: var(--color-white);
+  background-color: var(--color-blue-dark) ;
 }
 
 .identify-data h3 {
@@ -21,13 +35,14 @@
 
 .dashboard-container {
   height: 100%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   height: 100vh;
   background-color: #f4f4f9;
-  padding: 20px;
+  padding: 0;
 }
 
 h2 {
@@ -36,11 +51,13 @@ h2 {
 
 .btn-container {
   height: 40%;
+  margin-top: 120px;
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
   justify-content: center;
   margin-bottom: 30px;
+  padding-top: 20px;
 }
 
 .dashboard-button {
@@ -48,8 +65,9 @@ h2 {
   flex-direction: column;
   align-items: center;
   background-color: #f3f5f0; 
-  color: #007bff;
-  border: 1px solid #007bff; 
+  color: var(--color-blue-medium);
+  border: 1px solid;
+  border-color: var(--color-blue-medium);
   border-radius: 10px;
   width: 120px;
   height: 120px;
@@ -62,8 +80,8 @@ h2 {
 }
 
 .dashboard-button:hover {
-  background-color: #0056b3; /* Cor de fundo azul mais escura ao passar o mouse */
-  border-color: #0056b3; /* Cor da borda ao passar o mouse */
+  background-color: var(--color-blue-dark); /* Cor de fundo azul mais escura ao passar o mouse */
+  border-color: var(--color-blue-medium); /* Cor da borda ao passar o mouse */
 }
 
 .icon-wrapper {
@@ -87,7 +105,7 @@ h2 {
   align-items: center;
   width: 100%; /* Ocupar toda a largura do botão */
   height: 30%; /* Ocupar 40% da altura do botão */
-  background-color: #007bff; /* Cor de fundo do texto */
+  background-color: var(--color-blue-medium); /* Cor de fundo do texto */
   color: white; /* Cor do texto */
   text-align: center; /* Centralizar o texto */
   position: relative;
@@ -109,18 +127,26 @@ h2 {
 }
 
 .icon-container {
-  height: 20%;
+  height: 10%;
+  width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 50px;
+  position: fixed;
+  border-top: 2px solid var(--color-orange-dark);
+  bottom: 0;
+  padding: 1rem 0;
+  z-index: 1000;
 }
 
 .icon-container img {
-  width: 100px;
-  height: 100px;
+  /* width: 100px; */
+  height: 100%;
+  
 }
 
-.releases {
-  height: 30%;
-  color: #033569;
+.medias {
+  height: fit-content;
+  color: var(--color-blue-dark);
+  position: fixed;
+  bottom: 15%;
 }

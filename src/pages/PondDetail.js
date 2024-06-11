@@ -7,6 +7,7 @@ import FeedPopup from './FeedPopup';
 import NewCyclePopup from './NewCyclePopup';
 import BiometryPopup from './BiometryPopup';
 import HarvestPopup from './HarvestPopup';
+import FertilizationPopup from './FertilizationPopup';
 
 const PondDetail = () => {
   const location = useLocation();
@@ -37,6 +38,7 @@ const PondDetail = () => {
   const [userCount, setUserCount] = useState('');
   const [processedImage, setProcessedImage] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
+  const [showFertilizationPopup, setShowFertilizationPopup] = useState(false);
   
   const [form, setForm] = useState({
     dataPovoamento: '',
@@ -67,20 +69,19 @@ const PondDetail = () => {
   useEffect(() => {
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
     const storedCultivo = storedCultivos && storedCultivos.find((viv) => viv.viveiroId === viveiroId);
+    
     if (storedCultivo) {
       setCultivo(storedCultivo);
+      const viveiroData = localStorage.getItem(`cultivo-${storedCultivo.id}`);
+
+      if (viveiroData) {
+        const parsedData = JSON.parse(viveiroData);
+        if (parsedData.biometrics) {
+          setBiometrics(parsedData.biometrics);
+        }
+      }
     }
   }, [viveiroId]);
-
-useEffect(() => {
-  const viveiroData = localStorage.getItem(`cultivo-${viveiroId}`);
-  if (viveiroData) {
-    const parsedData = JSON.parse(viveiroData);
-    if (parsedData.biometrics) {
-      setBiometrics(parsedData.biometrics);
-    }
-  }
-}, [viveiroId]);
 
   const formatDate = (dateString) => {
      const date = new Date(dateString);
@@ -117,7 +118,7 @@ useEffect(() => {
             <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise Presuntiva</button>
             <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
             <button className="pond-button" onClick={() => setShowHarvest(true)}>Dados de despesca</button>
-            <button className="pond-button">Fertilização</button>
+            <button className="pond-button" onClick={() => setShowFertilizationPopup(true)}>Fertilização</button>
             <button className="pond-button">Histórico</button>
             <button className="pond-button">Relatório Parcial</button>
           </div>
@@ -171,6 +172,8 @@ useEffect(() => {
         newPesagem={newPesagem}
         setNewPesagem={setNewPesagem}
         setShowHarvest={setShowHarvest} />}
+      
+      {showFertilizationPopup && <FertilizationPopup setShowFertilizationPopup={setShowFertilizationPopup} />}
 
       <button onClick={handleBackClick}>Voltar para Viveiros</button>
       <div>

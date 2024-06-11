@@ -60,12 +60,13 @@ const Dashboard = () => {
           </div>
         </button>
       </div>
+      <div className="medias">
+        <FontAwesomeIcon icon={faInstagram} /><span> data.aqua</span>
+      </div>
       <div className="icon-container">
         <img src={aquaDataIcon} alt="Aqua Data Icon" />
       </div>
-      <div className="releases">
-        <FontAwesomeIcon icon={faInstagram} /><span> data.aqua</span>
-      </div>
+
     </div>
 
   );
