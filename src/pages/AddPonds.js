@@ -73,23 +73,29 @@ const AddPonds = () => {
 
   return (
     <div className="add-ponds">
-      <h2>Viveiros</h2>
-      <h3>Fazenda {formData.nomeFazenda}</h3>
+      <div className="identify-data">
+        <h2>Viveiros</h2>
+        <h3>Fazenda {formData.nomeFazenda}</h3>
+      </div>
       <div className="viveiros-container">
         <button className="adicionar-button" onClick={() => setShowPopup(true)}>Adicionar Viveiro</button>
         {viveiros.length > 0 ? (
           viveiros.map(viveiro => (
             <Link to={`/viveiro/${viveiro.id}`}  state={viveiro} key={viveiro.id} className="link-style">
               <button className="viveiro-button">
-                <span className="viveiro-titulo">{viveiro.nome}</span>
-                <span className="viveiro-data">{viveiro.area} ha</span>
-                {days(viveiro.id) ? ( 
-                  <span className="viveiro-data">
-                    {days(viveiro.id) === 1 ? '1 dia de cultivo' : `${days(viveiro.id)} dias de cultivo`}
-                  </span>
-                ) : (
-                  <span className="viveiro-data">Desocupado</span>
-                )}
+                <div className="infos-wrapper">
+                  <span className="viveiro-data">{viveiro.area} ha</span>
+                  {days(viveiro.id) ? ( 
+                    <span className="viveiro-data">
+                      {days(viveiro.id) === 1 ? '1 dia de cultivo' : `${days(viveiro.id)} dias de cultivo`}
+                    </span>
+                  ) : (
+                    <span className="viveiro-data">Desocupado</span>
+                  )}
+                </div>
+                <div className="text-add-pond-wrapper">
+                  <span className="viveiro-titulo">{viveiro.nome}</span>
+                </div>
               </button>
             </Link>
           ))
@@ -99,7 +105,7 @@ const AddPonds = () => {
         {/* <button onClick={() => navigate('/dashboard')} className="voltar-button">Voltar</button> */}
         
       </div>
-      <div>
+      <div className="icon-container">
           <img 
             src={aquaDataIcon}
             alt="Aqua Data Icon"

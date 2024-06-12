@@ -61,7 +61,13 @@ const Dashboard = () => {
         </button>
       </div>
       <div className="medias">
-        <FontAwesomeIcon icon={faInstagram} /><span> data.aqua</span>
+        <a href="https://www.instagram.com/data.aqua" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          <FontAwesomeIcon icon={faInstagram} /><span> data.aqua</span>
+        </a>
       </div>
       <div className="icon-container">
         <img src={aquaDataIcon} alt="Aqua Data Icon" />

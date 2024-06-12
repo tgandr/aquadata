@@ -1,18 +1,55 @@
-.add-ponds {
-    padding: 20px;
+:root {
+  --color-blue-dark: #1E3A8A;
+  --color-blue-medium: #2563EB;
+  --color-blue-light: #93C5FD;
+  --color-white: #FFFFFF;
+  --color-orange-dark: #EA580C;
+  --color-orange-medium: #FB923C;
+  --color-orange-light: #FED7AA;
+}
+  .add-ponds {
+      display: flex;
+      flex-flow: column;
+    }
+
+  .identify-data {
+    height: 100px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-white);
+    background-color: var(--color-blue-dark) ;
   }
   
+  .identify-data h3 {
+    height: 5%;
+    margin-top: 2%;
+  }
+  
+  .identify-data h2 {
+    height: 5%;
+    margin-top: 0%;
+  }
+
+
   .viveiros-container {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
+    padding-top: 120px;
   }
   
   .adicionar-button {
     padding: 10px;
-    background-color: #4CAF50;
+    background-color: var(--color-orange-medium);
     color: white;
     border: none;
     cursor: pointer;
@@ -23,12 +60,14 @@
     height: 100px;
     background-color: #f1f1f1;
     border: 1px solid #ddd;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-decoration: none;
     color: black;
+    padding: 0px !important;
   }
   
   .viveiro-titulo {
@@ -40,6 +79,35 @@
     color: #888;
     font-size: 12px;
   }
+
+  .infos-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Ocupar toda a largura do botão */
+    height: 70%; 
+  }
+
+  .text-add-pond-wrapper {
+    justify-items: center;
+    align-content: center;
+    width: 100%; /* Ocupar toda a largura do botão */
+    height: 30%; 
+    background-color: var(--color-blue-medium); /* Cor de fundo do texto */
+    color: white; /* Cor do texto */
+    text-align: center; /* Centralizar o texto */
+    margin-bottom: 0px; /* Espaçamento interno */
+    border-radius: 0px 0px 5px 5px;
+    
+  }
+  
+  .text-add-pond-wrapper span {
+    padding: 5px 0; /* Espaçamento interno */
+    margin: 0px;
+    align-self: center;
+  }  
   
   .popup {
     position: fixed;
@@ -90,3 +158,20 @@
     color: inherit; /* Herda a cor do pai para manter a cor do texto original */
   }
   
+  .icon-container {
+    height: 10%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    border-top: 2px solid var(--color-orange-dark);
+    bottom: 0;
+    padding: 1rem 0;
+    z-index: 1000;
+  }
+  
+  .icon-container img {
+    width: 100px;
+    height: 100px;
+    
+  }
