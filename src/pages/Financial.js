@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileInvoiceDollar, faShoppingCart, faLightbulb, faTools, faEllipsisH, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faFileInvoiceDollar, faShoppingCart, faLightbulb, faTools, faEllipsisH, faChartBar } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Financial.css';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
+import LaborPopup from './LaborPopup';
 
 const Financial = () => {
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(null);
+  const [showLaborPopup, setShowLaborPopup] = useState(false);
+  const [workersList, setWorkersList] = useState([]);
+  const [laborTotalByMonth, setLaborTotalByMonth] = useState([]);
+  const [laborMonth, setLaborMonth] = useState({
+    month: '',
+    total: '',
+    setWorkers: []
+  })
 
   const handlePopup = (type) => {
     setShowPopup(type);
@@ -23,7 +32,7 @@ const Financial = () => {
         <h2>Financeiro</h2>
       </div>
       <div className="btn-financial-container">
-        <button className="financial-button" onClick={() => handlePopup('pessoal')}>
+        <button className="financial-button" onClick={() => setShowLaborPopup(true)}>
           <FontAwesomeIcon icon={faFileInvoiceDollar} className="financial-icon" />
           <span>Despesas com Pessoal</span>
         </button>
@@ -43,6 +52,10 @@ const Financial = () => {
           <FontAwesomeIcon icon={faEllipsisH} className="financial-icon" />
           <span>Outros</span>
         </button>
+        <button className="financial-button">
+          <FontAwesomeIcon icon={faChartBar} className="financial-icon" />
+          <span>Relatório Mensal</span>
+        </button>
       </div>
       <div>
           <img 
@@ -53,6 +66,15 @@ const Financial = () => {
             />
         </div>
       
+      {showLaborPopup && <LaborPopup 
+        setShowLaborPopup={setShowLaborPopup}
+        workersList={workersList}
+        setWorkersList={setWorkersList}
+        setLaborTotalByMonth={setLaborTotalByMonth}
+        setLaborMonth={setLaborMonth}
+        />
+      }
+
       {showPopup && (
         <div className="popup">
           <div className="popup-content">

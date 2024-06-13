@@ -6,6 +6,7 @@
   --color-orange-dark: #EA580C;
   --color-orange-medium: #FB923C;
   --color-orange-light: #FED7AA;
+  --color-white2: #f3f5f0;
 }
   .add-ponds {
       display: flex;
@@ -44,12 +45,12 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 10px;
-    padding-top: 120px;
+    padding: 120px 30px 140px 30px;
   }
   
   .adicionar-button {
     padding: 10px;
-    background-color: var(--color-orange-medium);
+    background-color: var(--color-blue-medium);
     color: white;
     border: none;
     cursor: pointer;
@@ -95,8 +96,8 @@
     align-content: center;
     width: 100%; /* Ocupar toda a largura do botão */
     height: 30%; 
-    background-color: var(--color-blue-medium); /* Cor de fundo do texto */
-    color: white; /* Cor do texto */
+    background-color: var(--color-blue-light); /* Cor de fundo do texto */
+    color: var(--color-blue-dark); /* Cor do texto */
     text-align: center; /* Centralizar o texto */
     margin-bottom: 0px; /* Espaçamento interno */
     border-radius: 0px 0px 5px 5px;
@@ -168,6 +169,7 @@
     bottom: 0;
     padding: 1rem 0;
     z-index: 1000;
+    background-color: var(--color-white2);
   }
   
   .icon-container img {
