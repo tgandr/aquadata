@@ -1,22 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileInvoiceDollar, faShoppingCart, faLightbulb, faTools, faEllipsisH, faChartBar } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faLightbulb, faTools, faEllipsisH, faChartBar, faUsers } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Financial.css';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import LaborPopup from './LaborPopup';
+import Purchases from './Purchases';
 
 const Financial = () => {
   const navigate = useNavigate();
+  const formData = JSON.parse(localStorage.getItem('formData'));
   const [showPopup, setShowPopup] = useState(null);
   const [showLaborPopup, setShowLaborPopup] = useState(false);
-  const [workersList, setWorkersList] = useState([]);
-  const [laborTotalByMonth, setLaborTotalByMonth] = useState([]);
-  const [laborMonth, setLaborMonth] = useState({
-    month: '',
-    total: '',
-    setWorkers: []
-  })
+  const [showPurchasesPopup, setShowPurchasesPopup] = useState(false);
 
   const handlePopup = (type) => {
     setShowPopup(type);
@@ -28,57 +24,75 @@ const Financial = () => {
 
   return (
     <div className="financial-container">
-      <div className="header">
+      <div className="identify-data">
         <h2>Financeiro</h2>
+        <h3>Fazenda {formData.nomeFazenda}</h3>
       </div>
       <div className="btn-financial-container">
         <button className="financial-button" onClick={() => setShowLaborPopup(true)}>
-          <FontAwesomeIcon icon={faFileInvoiceDollar} className="financial-icon" />
+        <div className="icon-wrapper">
+          <FontAwesomeIcon icon={faUsers} className="financial-icon" />
+        </div>
+        <div className="text-financial-wrapper">
           <span>Despesas com Pessoal</span>
+        </div>
         </button>
-        <button className="financial-button" onClick={() => handlePopup('insumos')}>
+        <button className="financial-button" onClick={() => setShowPurchasesPopup(true)}>
+        <div className="icon-wrapper">
           <FontAwesomeIcon icon={faShoppingCart} className="financial-icon" />
-          <span>Compras de Insumos</span>
-        </button>
-        <button className="financial-button" onClick={() => handlePopup('energia')}>
-          <FontAwesomeIcon icon={faLightbulb} className="financial-icon" />
-          <span>Energia Elétrica</span>
-        </button>
-        <button className="financial-button" onClick={() => handlePopup('servicos')}>
-          <FontAwesomeIcon icon={faTools} className="financial-icon" />
-          <span>Serviços</span>
-        </button>
-        <button className="financial-button" onClick={() => handlePopup('outros')}>
-          <FontAwesomeIcon icon={faEllipsisH} className="financial-icon" />
-          <span>Outros</span>
+        </div>
+          <div className="text-financial-wrapper">
+            <span>Compras de Insumos</span>
+          </div>
         </button>
         <button className="financial-button">
+        <div className="icon-wrapper">
+          <FontAwesomeIcon icon={faLightbulb} className="financial-icon" />
+        </div>
+          <div className="text-financial-wrapper">
+            <span>Energia Elétrica</span>
+          </div>
+        </button>
+        <button className="financial-button" onClick={() => handlePopup('servicos')}>
+        <div className="icon-wrapper">
+          <FontAwesomeIcon icon={faTools} className="financial-icon" />
+        </div>
+          <div className="text-financial-wrapper">
+            <span>Serviços</span>
+          </div>
+        </button>
+        <button className="financial-button" onClick={() => handlePopup('outros')}>
+        <div className="icon-wrapper">
+          <FontAwesomeIcon icon={faEllipsisH} className="financial-icon" />
+        </div>
+          <div className="text-financial-wrapper">
+            <span>Outros</span>
+          </div>
+        </button>
+        <button className="financial-button">
+        <div className="icon-wrapper">
           <FontAwesomeIcon icon={faChartBar} className="financial-icon" />
-          <span>Relatório Mensal</span>
+        </div>
+          <div className="text-financial-wrapper">
+            <span>Relatório Mensal</span>
+          </div>
         </button>
       </div>
-      <div>
-          <img 
-            src={aquaDataIcon}
-            alt="Aqua Data Icon"
-            style={{ width: '100px', height: '100px' }}
-            onClick={() => navigate('/dashboard')}
-            />
-        </div>
-      
-      {showLaborPopup && <LaborPopup 
-        setShowLaborPopup={setShowLaborPopup}
-        workersList={workersList}
-        setWorkersList={setWorkersList}
-        setLaborTotalByMonth={setLaborTotalByMonth}
-        setLaborMonth={setLaborMonth}
+      <div className="icon-container">
+        <img 
+          src={aquaDataIcon}
+          alt="Aqua Data Icon"
+          onClick={() => navigate('/dashboard')}
         />
-      }
+      </div>
+      
+      {showLaborPopup && <LaborPopup setShowLaborPopup={setShowLaborPopup} />}
+
+      {showPurchasesPopup && <Purchases setShowPurchasesPopup={setShowPurchasesPopup} />}
 
       {showPopup && (
         <div className="popup">
-          <div className="popup-content">
-            <button className="close-button" onClick={handleClosePopup}>X</button>
+          <div className="popup-inner">
             <h3>Lançamento de {showPopup}</h3>
             <form>
               <label>Mês:</label>

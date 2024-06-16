@@ -17,6 +17,11 @@ const RegisterPage = () => {
   });
   const navigate = useNavigate();
 
+  const storedData = JSON.parse(localStorage.getItem('formData')) || {};
+    if (storedData.eraseLocalStorageAfterLogout) {
+      localStorage.clear();
+    }
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };

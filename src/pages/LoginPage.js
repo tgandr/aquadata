@@ -1,21 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // Certifique-se de que tudo está importado corretamente
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/LoginPage.css';
+import Example from './Example';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [redirectToMain, setRedirectToMain] = useState(false);
+  const [redirectToExample, setRedirectToExample] = useState(true);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    const storedData = JSON.parse(localStorage.getItem('formData'));
-    if (storedData.email || 'fazenda@aquadata.com' === email) {
-      storedData.saveLogin = true;
-      localStorage.setItem('formData', JSON.stringify(storedData));
+  const handleSubmit = () => {
+    const storedData = JSON.parse(localStorage.getItem('formData')) || {};
+    if (storedData.eraseLocalStorageAfterLogout) {
+      localStorage.clear();
+    }
+    if (email === 'fazenda@aquadata.com') {
+      Example(redirectToExample);
       navigate('/dashboard');
     } else {
-      alert('Email ou senha inválidos!');
+      if (storedData.email === email) {
+        storedData.saveLogin = true;
+        localStorage.setItem('formData', JSON.stringify(storedData));
+        navigate('/dashboard');
+      } else {
+        alert('Email ou senha inválidos!');
+      }
     }
   };  // Login verifica apenas o e-mail. Objetivo de demonstração.
 

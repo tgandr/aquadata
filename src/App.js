@@ -7,7 +7,6 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 
-// Adicione ícones ao pacote (você pode adicionar apenas os ícones que for usar)
 library.add(fas, fab);
 
 

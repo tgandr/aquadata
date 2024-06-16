@@ -8,7 +8,7 @@
     font-size: 12px; /* Tamanho de fonte menor */
     padding: 5px 10px; /* Reduzindo o padding */
     border-radius: 5px;
-    z-index: 1000; /* Garantir que fique na frente dos popups */
+    z-index: 1002; /* Garantir que fique na frente dos popups */
     animation: fadeOut 2s forwards;
 }
 
@@ -21,4 +21,10 @@
         opacity: 0;
         top: 30%; /* Deslocamento para cima */
     }
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 10px;
+    font-size: 14px;
 }

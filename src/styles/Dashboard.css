@@ -21,6 +21,7 @@
   align-items: center;
   color: var(--color-white);
   background-color: var(--color-blue-dark) ;
+  border-bottom: 5px solid var(--color-orange-dark);
 }
 
 .identify-data h3 {
@@ -53,6 +54,8 @@ h2 {
   height: 40%;
   margin-top: 120px;
   display: flex;
+  display: grid; /* Use CSS Grid */
+  grid-template-columns: repeat(2, 1fr); /* Cria duas colunas de igual largura */
   gap: 20px;
   flex-wrap: wrap;
   justify-content: center;

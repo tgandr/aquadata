@@ -165,7 +165,7 @@
     display: flex;
     justify-content: center;
     position: fixed;
-    border-top: 2px solid var(--color-orange-dark);
+    /* border-top: 2px solid var(--color-orange-dark); */
     bottom: 0;
     padding: 1rem 0;
     z-index: 1000;

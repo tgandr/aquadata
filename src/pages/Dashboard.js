@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,6 +8,24 @@ import '../styles/Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const formData = JSON.parse(localStorage.getItem('formData'));
+
+  useEffect(() => {
+    if (formData.eraseLocalStorageAfterLogout) {
+      console.log(formData.eraseLocalStorageAfterLogout)
+      const handleUnload = () => {
+        localStorage.clear();
+      };
+  
+      window.addEventListener('beforeunload', handleUnload);
+  
+      // Cleanup event listener on component unmount
+      return () => {
+        window.removeEventListener('beforeunload', handleUnload);
+      };
+    }
+  }, []);
+
 
   const handleLogout = () => {
     const formData = JSON.parse(localStorage.getItem('formData'));
@@ -18,13 +36,11 @@ const Dashboard = () => {
     navigate('/login');
   };
 
-  const formData = JSON.parse(localStorage.getItem('formData'));
 
   return (
     <div className="dashboard-container">
       <div className="identify-data">
-        <h2>Início</h2>
-        <h3>Fazenda {formData.nomeFazenda}</h3>
+        <h2>Fazenda {formData.nomeFazenda}</h2>
       </div>
       <div className="btn-container">
         <button className="dashboard-button" onClick={() => navigate('/viveiros')}>
