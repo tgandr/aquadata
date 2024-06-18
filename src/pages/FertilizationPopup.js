@@ -58,7 +58,7 @@ const saveFertilizersList = (newFert) => {
 
   return (
     <div className="popup">
-      <div className="popup-content">
+      <div className="popup-inner">
         <h2>Fertilização</h2>
         <label>Data:</label>
         <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
@@ -82,7 +82,7 @@ const saveFertilizersList = (newFert) => {
 
             {addNewFert && (
               <div className="popup">
-                <div className="popup-content">
+                <div className="popup-inner">
                   <label>Novo Fertilizante Químico:</label>
                   <input
                     type="text"

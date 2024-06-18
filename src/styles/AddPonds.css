@@ -159,21 +159,8 @@
     color: inherit; /* Herda a cor do pai para manter a cor do texto original */
   }
   
-  .icon-container {
-    height: 10%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    position: fixed;
-    /* border-top: 2px solid var(--color-orange-dark); */
-    bottom: 0;
-    padding: 1rem 0;
-    z-index: 1000;
-    background-color: var(--color-white2);
+  .icon-plus {
+    font-size: 36px; /* Tamanho maior do ícone */
+    color: var(--color-orange-dark);
   }
-  
-  .icon-container img {
-    width: 100px;
-    height: 100px;
-    
-  }
+

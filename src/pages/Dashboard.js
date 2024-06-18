@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShrimp, faBox, faDollarSign, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram } from '@fortawesome/free-brands-svg-icons'
 import '../styles/Dashboard.css';
 
@@ -53,7 +53,7 @@ const Dashboard = () => {
         </button>
         <button className="dashboard-button" onClick={() => navigate('/estoque')}>
           <div className="icon-wrapper">
-            <FontAwesomeIcon icon={faBox} className="icon" />
+            <FontAwesomeIcon icon={faWarehouse} className="icon" />
           </div>
           <div className="text-wrapper">
             <span>Controle de Estoque</span>
@@ -86,7 +86,9 @@ const Dashboard = () => {
         </a>
       </div>
       <div className="icon-container">
-        <img src={aquaDataIcon} alt="Aqua Data Icon" />
+        <div className="icon-container-inner">
+          <img src={aquaDataIcon} alt="Aqua Data Icon" className="centered-image" />
+        </div>
       </div>
 
     </div>

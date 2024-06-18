@@ -14,7 +14,6 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
         prizePerBag: '',
         feedType: ''
     });
-    const [addBrand, setAddBrand] = useState('');
     const [brands, setBrands] = useState(["Aquavita", "Biotê", "Guabi", "Integral", "Poli Nutri", "Presence", "Samaria", "Total"]);
     const [showFieldNewBrand, setShowFieldNewBrand] = useState(false);
 
@@ -34,16 +33,14 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
     }, [formRation.brand]);
 
     useEffect(() => {
-        if (addBrand === 'custom') {
+        if (addNewBrand === 'custom') {
             setShowFieldNewBrand(true);
-        } else {
-            setShowFieldNewBrand(false);
+            setAddNewBrand('');
         }
-    }, [addBrand]);
+    }, [addNewBrand]);
 
     const handleChange = (e) => {
         setFormRation({ ...formRation, [e.target.name]: e.target.value });
-        console.log(e.target.value);
     };
 
     const handleSubmit = (e) => {
@@ -108,6 +105,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
         setFormRation({ ...formRation, brand: addNewBrand });
         setRationsBrands(stockData.brandRatioList);
         setAddNewBrand('');
+        setShowFieldNewBrand(false);
         setShowSavedMessage(true);
         setTimeout(() => setShowSavedMessage(false), 2000);
     }
@@ -209,8 +207,8 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                         <label>Cadastrar novo fabricante:</label>
                         <select
                             name="addBrand"
-                            value={addBrand}
-                            onChange={(e) => setAddBrand(e.target.value)}>
+                            value={addNewBrand}
+                            onChange={(e) => setAddNewBrand(e.target.value)}>
                             <option value="">Selecione um fabricante</option>
                             {brands.map((brand, i) => (
                                 <option key={i} value={brand}>{brand}</option>

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Stock.css';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShrimp, faDollarSign, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Stock = () => {
   const navigate = useNavigate();
@@ -97,12 +99,24 @@ const Stock = () => {
         <button onClick={() => setShowPopup({ ...showPopup, others: true })}>Outros</button>
       </div>
       <div className="icon-container">
-        <img 
-          src={aquaDataIcon}
-          alt="Aqua Data Icon"
-          style={{ width: '100px', height: '100px' }}
-          onClick={() => navigate('/dashboard')}
+        <div className="icon-container-inner">
+          <button className="side-icon-button" onClick={() => navigate('/viveiros')}>
+            <div>
+              <FontAwesomeIcon icon={faShrimp} className="icon" />
+            </div>
+          </button>
+          <img 
+            src={aquaDataIcon}
+            alt="Aqua Data Icon"
+            onClick={() => navigate('/dashboard')}
+            className="centered-image"
           />
+          <button className="side-icon-button" onClick={() => navigate('/financeiro')}>
+            <div>
+              <FontAwesomeIcon icon={faDollarSign} className="icon" />
+            </div>
+          </button>
+        </div>
       </div>
 
       {showPopup.ration && !showRationOptions && (

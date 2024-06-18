@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faLightbulb, faTools, faEllipsisH, faChartBar, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Financial.css';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import LaborPopup from './LaborPopup';
@@ -79,11 +80,24 @@ const Financial = () => {
         </button>
       </div>
       <div className="icon-container">
-        <img 
-          src={aquaDataIcon}
-          alt="Aqua Data Icon"
-          onClick={() => navigate('/dashboard')}
-        />
+        <div className="icon-container-inner">
+          <button className="side-icon-button" onClick={() => navigate('/viveiros')}>
+            <div>
+              <FontAwesomeIcon icon={faShrimp} className="icon" />
+            </div>
+          </button>
+          <img 
+            src={aquaDataIcon}
+            alt="Aqua Data Icon"
+            onClick={() => navigate('/dashboard')}
+            className="centered-image"
+          />
+          <button className="side-icon-button" onClick={() => navigate('/estoque')}>
+            <div>
+              <FontAwesomeIcon icon={faWarehouse} className="icon" />
+            </div>
+          </button>
+        </div>
       </div>
       
       {showLaborPopup && <LaborPopup setShowLaborPopup={setShowLaborPopup} />}

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWarehouse, faDollarSign, faPlus } from '@fortawesome/free-solid-svg-icons';
 import '../styles/AddPonds.css';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 
@@ -78,7 +80,6 @@ const AddPonds = () => {
         <h3>Fazenda {formData.nomeFazenda}</h3>
       </div>
       <div className="viveiros-container">
-        <button className="adicionar-button" onClick={() => setShowPopup(true)}>Adicionar Viveiro</button>
         {viveiros.length > 0 ? (
           viveiros.map(viveiro => (
             <Link to={`/viveiro/${viveiro.id}`}  state={viveiro} key={viveiro.id} className="link-style">
@@ -103,16 +104,37 @@ const AddPonds = () => {
           <p>Nenhum viveiro cadastrado.</p>
         )}
         {/* <button onClick={() => navigate('/dashboard')} className="voltar-button">Voltar</button> */}
-        
+        <button className="viveiro-button" onClick={() => setShowPopup(true)}>
+          <div className="infos-wrapper">
+            <FontAwesomeIcon icon={faPlus} className="icon-plus" />
+          </div>
+          <div className="text-add-pond-wrapper">
+            <span className="viveiro-titulo">Adicionar</span> 
+          </div>
+          </button>
       </div>
       <div className="icon-container">
-          <img 
-            src={aquaDataIcon}
-            alt="Aqua Data Icon"
-            style={{ width: '100px', height: '100px' }}
-            onClick={() => navigate('/dashboard')}
-            />
+        <div className="icon-container-inner">
+            <button className="side-icon-button" onClick={() => navigate('/financeiro')}>
+                <div>
+                  <FontAwesomeIcon icon={faDollarSign} className="icon" />
+                </div>
+            </button>
+            <img 
+              src={aquaDataIcon}
+              alt="Aqua Data Icon"
+              style={{ width: '100px', height: '100px' }}
+              onClick={() => navigate('/dashboard')}
+              className="centered-image"
+              />
+            <button className="side-icon-button" onClick={() => navigate('/estoque')}>
+              <div>
+                <FontAwesomeIcon icon={faWarehouse} className="icon" />
+              </div>
+            </button>
+          </div>
         </div>
+
       {showPopup && (
         <div className="popup">
           <div className="popup-inner">
