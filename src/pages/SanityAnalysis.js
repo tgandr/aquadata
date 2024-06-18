@@ -1,15 +1,29 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/SanityAnalysis.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 
-const SanityAnalysis = ({ setShowAnalysisPopup }) => {
+const SanityAnalysis = ({ setShowAnalysisPopup, saveData }) => {
+    const [showForm, setShowForm] = useState(false);
+    const [startSample, setStartSample] = useState(true);
+    const [checkScreen, setCheckScreen] = useState(false);
+    const [showReport, setShowReport] = useState(false);
+    const [analysisId, setAnalysisId] = useState({
+        origin: '',
+        pond: '',
+        date: new Date().toISOString().split('T')[0],
+        shrimpsPinned: false
+    })
+    const [analysis, setAnalysis] = useState({
+        id: {},
+        samples: []
+    });
     const [formAnalysis, setFormAnalysis] = useState({
-        data: new Date().toISOString().split('T')[0],
-        quantidadeAnimais: '',
-        pesoMedio: '',
+        sampleId: '',
+        peso: '',
         conformacaoAntenas: '',
         uropodos: '',
         necrosesIMNV: '',
-        camaroesGrampados: '',
         tempoCoagulacao: '',
         analiseCefalotorax: '',
         integridadeTubulos: '',
@@ -30,258 +44,389 @@ const SanityAnalysis = ({ setShowAnalysisPopup }) => {
     const handleAnalysisChangeClick = (e, obs, value) => {
         e.preventDefault();
         setFormAnalysis({ ...formAnalysis, [obs]: value });
-        console.log(obs, value);
     };
 
     const handleAnalysisSubmit = (e) => {
         e.preventDefault();
-        console.log(formAnalysis);
-        setShowAnalysisPopup(false);
+        const sampleId = analysis.samples.length + 1;
+        const sample = { ...formAnalysis, sampleId: sampleId }
+        if (analysis.id.origin) {
+            setAnalysis({ ...analysis, samples: [...analysis.samples, sample] })
+        } else {
+            setAnalysis({ id: analysisId, samples: [sample] })
+        }
+        setFormAnalysis({
+            sampleId: '',
+            peso: '',
+            conformacaoAntenas: '',
+            uropodos: '',
+            necrosesIMNV: '',
+            camaroesGrampados: '',
+            tempoCoagulacao: '',
+            analiseCefalotorax: '',
+            integridadeTubulos: '',
+            presencaLipideos: '',
+            conteudoTrato: '',
+            replecaoTrato: '',
+            branquiasEpicomensais: '',
+            epipoditoEpicomensais: '',
+            necroseIMNV: '',
+            necroseBlackspot: '',
+        });
+        setCheckScreen(true);
+        setShowForm(false);
+        console.log(analysis)
     };
 
+    const handleStartSample = () => {
+        setStartSample(false);
+        setShowForm(true);
+    }
+
+    const onClose = () => {
+        setCheckScreen(false);
+        setShowForm(true);
+    };
+
+    useEffect(() => {
+        
+        if (checkScreen) {
+            const timer = setTimeout(onClose, 2000);
+            return () => clearTimeout(timer);
+        }
+    }, [checkScreen]);
+
+    const logoutSanity = () => {
+        const sampleId = analysis.samples.length + 1;
+        const sample = { ...formAnalysis, sampleId: sampleId }
+        saveData({ ...analysis, samples: [...analysis.samples, sample] })
+        setShowReport(true);
+        setShowAnalysisPopup(false);
+        // implementar código para não deixar salvar um único camarão
+    }
+
     return (
-        <div className="popup-sanity">
-            <div className="popup-inner-sanity">
-                <h2 className="sanity-title">Análise Presuntiva</h2>
-                <div className="fade-out-sup" />
-                <div className="main-content">
-                    <div className="main-content-start" />
-                    {/* <form onSubmit={handleAnalysisSubmit} > */}
-                    <form>
-                        <div className="form-content">
-                            <label>
-                                Peso:
+        <>
+            {startSample && (
+                <div className="popup-sanity">
+                    <div className="popup-inner-sanity">
+                        <form onSubmit={handleStartSample} className="start-form">
+                            {/* <label>
+                                <span>Fazenda:</span>
                                 <input
-                                    type="number"
-                                    name="pesoMedio"
-                                    value={formAnalysis.pesoMedio}
-                                    onChange={handleAnalysisChange}
+                                    type="text"
+                                    name="origin"
+                                    value={analysisId.origin}
+                                    onChange={(e) => setAnalysisId({ ...analysisId, origin: e.target.value })}
                                     required
                                 />
                             </label>
-                            <h3>Conformação Externa</h3>
                             <label>
-                                Antenas:
-                                <select
-                                    name="conformacaoAntenas"
-                                    value={formAnalysis.conformacaoAntenas}
-                                    onChange={handleAnalysisChange}
-                                >
-                                    <option value="">Selecione</option>
-                                    <option value="normais">Normais</option>
-                                    <option value="quebradiças">Quebradiças</option>
-                                    <option value="rugosas">Rugosas</option>
-                                </select>
-                            </label>
-                            <label>
-                                Urópodos:
-                                <select
-                                    name="uropodos"
-                                    value={formAnalysis.uropodos}
-                                    onChange={handleAnalysisChange}
-                                >
-                                    <option value="">Selecione</option>
-                                    <option value="normais">Normais</option>
-                                    <option value="luminescentes">Luminescentes</option>
-                                    <option value="avermelhados">Avermelhados</option>
-                                </select>
-                            </label>
-                            <label>
-                                Presença de Necroses Indicativas de IMNV:
-                                <select
-                                    name="necrosesIMNV"
-                                    value={formAnalysis.necrosesIMNV}
-                                    onChange={handleAnalysisChange}
-                                >
-                                    <option value="">Selecione</option>
-                                    <option value="sim">Sim</option>
-                                    <option value="não">Não</option>
-                                </select>
-                            </label>
-                            <label>
-                                Camarões Grampados:
-                                <select
-                                    name="camaroesGrampados"
-                                    value={formAnalysis.camaroesGrampados}
-                                    onChange={handleAnalysisChange}
-                                >
-                                    <option value="">Selecione</option>
-                                    <option value="sim">Sim</option>
-                                    <option value="não">Não</option>
-                                </select>
-                            </label>
-                            <p>________________</p>
-                            <br />
-                            <label>
-                                <h3>Tempo de Coagulação da Hemolinfa:</h3>
+                                <span>Viveiro:</span>
                                 <input
-                                    type="number"
-                                    name="tempoCoagulacao"
-                                    value={formAnalysis.tempoCoagulacao}
-                                    onChange={handleAnalysisChange}
+                                    type="text"
+                                    name="pond"
+                                    value={analysisId.pond}
+                                    onChange={(e) => setAnalysisId({ ...analysisId, pond: e.target.value })}
+                                    required
+                                />
+                            </label> */} {/*Receber via props*/}
+                            <label>
+                                <span>Data:</span>
+                                <input
+                                    type="date"
+                                    name="date"
+                                    value={analysisId.date}
+                                    onChange={(e) => setAnalysisId({ ...analysisId, date: e.target.value })}
                                     required
                                 />
                             </label>
-                            <p>________________</p>
-                            <br />
                             <label>
-                                Análise de Cefalotórax:
-                                <div className="button-container">
-                                    {[0, 1, 2, 3, 4].map((num) => (
-                                        <button
-                                            key={num}
-                                            className={`analysis-button ${formAnalysis.analiseCefalotorax === num.toString() ? 'selected' : ''
-                                                }`}
-                                            onClick={(e) => handleAnalysisChangeClick(e, 'analiseCefalotorax', num.toString())}
-                                        >
-                                            {num}
-                                        </button>
-                                    ))}
-                                </div>
+                                <span>Camarões grampados?</span>
+                                <select
+                                    name="shrimpsPinned"
+                                    value={analysisId.shrimpsPinned}
+                                    onChange={(e) => setAnalysisId({ ...analysisId, shrimpsPinned: e.target.value })}
+                                >
+                                    <option value={true}>Sim</option>
+                                    <option value={false}>Não</option>
+                                </select>
                             </label>
-                            <p>________________</p>
-                            <br />
-                            <h3>Hepatopâncreas</h3>
-                            <label>
-                                Integridade dos Túbulos:
-                                <div className="button-container">
-                                    {[0, 1, 2, 3, 4].map((num) => (
-                                        <button
-                                            key={num}
-                                            className={`analysis-button ${formAnalysis.integridadeTubulos === num.toString() ? 'selected' : ''
-                                                }`}
-                                            onClick={(e) => handleAnalysisChangeClick(e, 'integridadeTubulos', num.toString())}
-                                        >
-                                            {num}
-                                        </button>
-                                    ))}
-                                </div>
-                            </label>
-                            <label>
-                                Presença de Lipídeos:
-                                <div className="button-container">
-                                    {[0, 1, 2, 3, 4].map((num) => (
-                                        <button
-                                            key={num}
-                                            className={`analysis-button-lipids ${formAnalysis.presencaLipideos === num.toString() ? 'selected' : ''
-                                                }`}
-                                            onClick={(e) => handleAnalysisChangeClick(e, 'presencaLipideos', num.toString())}
-                                        >
-                                            {num}
-                                        </button>
-                                    ))}
-                                </div>
-                            </label>
-                            <p>________________</p>
-                            <br />
-                            <h3>Trato Digestório</h3>
-                            <label>
-                                Conteúdo:
-                                <div className="button-container">
-                                    {[0, 1, 2, 3, 4].map((num) => (
-                                        <button
-                                            key={num}
-                                            className={`analysis-button ${formAnalysis.conteudoTrato === num.toString() ? 'selected' : ''
-                                                }`}
-                                            onClick={(e) => handleAnalysisChangeClick(e, 'conteudoTrato', num.toString())}
-                                        >
-                                            {num}
-                                        </button>
-                                    ))}
-                                </div>
-                            </label>
-                            <label>
-                                Repleação:
-                                <div className="button-container">
-                                    {[0, 1, 2, 3, 4].map((num) => (
-                                        <button
-                                            key={num}
-                                            className={`analysis-button ${formAnalysis.replecaoTrato === num.toString() ? 'selected' : ''
-                                                }`}
-                                            onClick={(e) => handleAnalysisChangeClick(e, 'replecaoTrato', num.toString())}
-                                        >
-                                            {num}
-                                        </button>
-                                    ))}
-                                </div>
-                            </label>
-                            <p>________________</p>
-                            <br />
-                            <h3>Presença de Epicomensais</h3>
-                            <label>
-                                Brânquias:
-                                <div className="button-container">
-                                    {[0, 1, 2, 3, 4].map((num) => (
-                                        <button
-                                            key={num}
-                                            className={`analysis-button ${formAnalysis.branquiasEpicomensais === num.toString() ? 'selected' : ''
-                                                }`}
-                                            onClick={(e) => handleAnalysisChangeClick(e, 'branquiasEpicomensais', num.toString())}
-                                        >
-                                            {num}
-                                        </button>
-                                    ))}
-                                </div>
-                            </label>
-                            <label>
-                                Epipodito:
-                                <div className="button-container">
-                                    {[0, 1, 2, 3, 4].map((num) => (
-                                        <button
-                                            key={num}
-                                            className={`analysis-button ${formAnalysis.epipoditoEpicomensais === num.toString() ? 'selected' : ''
-                                                }`}
-                                            onClick={(e) => handleAnalysisChangeClick(e, 'epipoditoEpicomensais', num.toString())}
-                                        >
-                                            {num}
-                                        </button>
-                                    ))}
-                                </div>
-                            </label>
-                            <p>________________</p>
-                            <br />
-                            <h3>Necroses</h3>
-                            <label>
-                                IMNV:
-                                <div className="button-container">
-                                    {[0, 1, 2, 3, 4].map((num) => (
-                                        <button
-                                            key={num}
-                                            className={`analysis-button ${formAnalysis.necroseIMNV === num.toString() ? 'selected' : ''
-                                            }`}
-                                            onClick={(e) => handleAnalysisChangeClick(e, 'necroseIMNV', num.toString())}
-                                        >
-                                            {num}
-                                        </button>
-                                    ))}
-                                </div>
-                            </label>
-                            <label>
-                                Blackspot:
-                                <div className="button-container">
-                                    {[0, 1, 2, 3, 4].map((num) => (
-                                        <button
-                                            key={num}
-                                            className={`analysis-button ${formAnalysis.necroseBlackspot === num.toString() ? 'selected' : ''
-                                                }`}
-                                            onClick={(e) => handleAnalysisChangeClick(e, 'necroseBlackspot', num.toString())}
-                                        >
-                                            {num}
-                                        </button>
-                                    ))}
-                                </div>
-                            </label>
-                        </div>
-                        <div className="buttons">
-                            <button type="submit">Salvar</button>{' '}
-                            <button type="button" onClick={() => setShowAnalysisPopup(false)}>Cancelar</button>
-                        </div>
-                    </form>
-                    <div className="main-content-bottom" />
+                            <button type="submit" className="saveStart">Lançar observações</button>
+                            <button
+                                type="button"
+                                className="saveStart"
+                                onClick={() => setStartSample(false)}>
+                                Cancelar
+                            </button>
+                        </form>
+                    </div>
                 </div>
-                <div className="fade-out-inf" />
-            </div>
-        </div>
+            )}
+            {showForm && (
+                <div className="popup-sanity">
+                    <div className="popup-inner-sanity">
+                        <h2 className="sanity-title">Análise Presuntiva</h2>
+                        <div className="fade-out-sup" />
+                        <div className="main-content">
+                            <div className="main-content-start" />
+                            <form onSubmit={handleAnalysisSubmit} >
+                                <div className="form-content">
+                                    <label>
+                                        Peso:
+                                        <input
+                                            type="number"
+                                            name="peso"
+                                            value={formAnalysis.peso}
+                                            onChange={handleAnalysisChange}
+                                            required
+                                        />
+                                    </label>
+                                    <h3>Conformação Externa</h3>
+                                    <label>
+                                        Antenas:
+                                        <div className="button-container-classes">
+                                            {["Normais", "Quebradiças", "Rugosas"].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button-classes ${formAnalysis.conformacaoAntenas === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'conformacaoAntenas', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <label>
+                                        <br />
+                                        Urópodos:
+                                        <div className="button-container-classes">
+                                            {["Normais", "Luminescentes", "Avermelhados"].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button-classes ${formAnalysis.uropodos === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'uropodos', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <label>
+                                        <br />
+                                        Presença de Necroses Indicativas de IMNV:
+                                        <div className="button-container-classes">
+                                            {["Sim", "Não"].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button-classes ${formAnalysis.necrosesIMNV === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'necrosesIMNV', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <p>________________</p>
+                                    <label>
+                                        <h3>Tempo de Coagulação da Hemolinfa:</h3>
+                                        <input
+                                            type="number"
+                                            name="tempoCoagulacao"
+                                            value={formAnalysis.tempoCoagulacao}
+                                            onChange={handleAnalysisChange}
+                                            required
+                                        />
+                                    </label>
+                                    <p>________________</p>
+                                    <br />
+                                    <label>
+                                        Análise de Cefalotórax:
+                                        <div className="button-container">
+                                            {[1, 2, 3, 4].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button ${formAnalysis.analiseCefalotorax === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'analiseCefalotorax', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <p>________________</p>
+                                    <br />
+                                    <h3>Hepatopâncreas</h3>
+                                    <label>
+                                        Integridade dos Túbulos:
+                                        <div className="button-container">
+                                            {[1, 2, 3, 4].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button ${formAnalysis.integridadeTubulos === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'integridadeTubulos', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <label>
+                                        Presença de Lipídeos:
+                                        <div className="button-container">
+                                            {[1, 2, 3, 4].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button-lipids ${formAnalysis.presencaLipideos === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'presencaLipideos', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <p>________________</p>
+                                    <br />
+                                    <h3>Trato Digestório</h3>
+                                    <label>
+                                        Conteúdo:
+                                        <div className="button-container">
+                                            {[1, 2, 3, 4].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button ${formAnalysis.conteudoTrato === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'conteudoTrato', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <label>
+                                        Repleação:
+                                        <div className="button-container">
+                                            {[1, 2, 3, 4].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button ${formAnalysis.replecaoTrato === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'replecaoTrato', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <p>________________</p>
+                                    <br />
+                                    <h3>Presença de Epicomensais</h3>
+                                    <label>
+                                        Brânquias:
+                                        <div className="button-container">
+                                            {[1, 2, 3, 4].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button ${formAnalysis.branquiasEpicomensais === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'branquiasEpicomensais', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <label>
+                                        Epipodito:
+                                        <div className="button-container">
+                                            {[1, 2, 3, 4].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button ${formAnalysis.epipoditoEpicomensais === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'epipoditoEpicomensais', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <p>________________</p>
+                                    <br />
+                                    <h3>Necroses</h3>
+                                    <label>
+                                        IMNV:
+                                        <div className="button-container">
+                                            {[1, 2, 3, 4].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button ${formAnalysis.necroseIMNV === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'necroseIMNV', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                    <label>
+                                        Blackspot:
+                                        <div className="button-container">
+                                            {[1, 2, 3, 4].map((num) => (
+                                                <button
+                                                    type="button"
+                                                    key={num}
+                                                    className={`analysis-button ${formAnalysis.necroseBlackspot === num.toString() ? 'selected' : ''
+                                                        }`}
+                                                    onClick={(e) => handleAnalysisChangeClick(e, 'necroseBlackspot', num.toString())}
+                                                >
+                                                    {num}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </label>
+                                </div>
+                                <div className="buttons">
+                                    <button type="submit">Adicionar</button>
+                                    <button type="button" onClick={() => setShowAnalysisPopup(false)}>Voltar</button>
+                                    <button
+                                        type="button"
+                                        onClick={() => logoutSanity()}>
+                                        Finalizar
+                                    </button>
+                                </div>
+                            </form>
+                            <div className="main-content-bottom" />
+                        </div>
+
+                    </div>
+                </div>
+            )}
+            {checkScreen && (
+                <div className="popup">
+                    <div className="popup-inner-check">
+                        <FontAwesomeIcon icon={faCheck} size="4x" />
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 

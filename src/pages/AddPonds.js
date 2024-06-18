@@ -101,7 +101,7 @@ const AddPonds = () => {
             </Link>
           ))
         ) : (
-          <p>Nenhum viveiro cadastrado.</p>
+          <h3>Nenhum viveiro cadastrado.</h3>
         )}
         {/* <button onClick={() => navigate('/dashboard')} className="voltar-button">Voltar</button> */}
         <button className="viveiro-button" onClick={() => setShowPopup(true)}>
@@ -156,12 +156,13 @@ const AddPonds = () => {
                   type="number"
                   name="area"
                   value={form.area}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    if (/^\d+(\.\d{0,1})?$/.test(value)) {
-                      handleChange(e);
-                    }
-                  }}
+                  // onChange={(e) => {
+                  //   const value = e.target.value;
+                  //   if (/^\d+(\.\d{0,1})?$/.test(value)) {
+                  //     handleChange(e);
+                  //   }
+                  // }}
+                  onChange={handleChange}
                   required
                   step="0.1"
                   min="0"

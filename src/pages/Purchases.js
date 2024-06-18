@@ -13,6 +13,7 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                     <button onClick={() => setShowRationPurchasesPopup(true)}>Ração</button>
                     <button>Probióticos</button>
                     <button>Fertilizantes</button>
+                    <button>Outros</button>
                     <button onClick={() => setShowPurchasesPopup(false)}>Voltar</button>
                 </div>
             </div>

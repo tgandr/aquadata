@@ -25,7 +25,7 @@ const PondDetail = () => {
   const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
   const [showBiometry, setShowBiometry] = useState(false);
   const [showHarvest, setShowHarvest] = useState(false);
-  const [showWeightInput, setShowWeightInput] = useState({show: false, buttonText: 'Pesagem'});
+  const [showWeightInput, setShowWeightInput] = useState({ show: false, buttonText: 'Pesagem' });
   const [showPLgrama, setShowPLgrama] = useState(false);
   const [weight, setWeight] = useState(false);
   const [survivalRate, setSurvivalRate] = useState(null);
@@ -39,7 +39,7 @@ const PondDetail = () => {
   const [processedImage, setProcessedImage] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [showFertilizationPopup, setShowFertilizationPopup] = useState(false);
-  
+
   const [form, setForm] = useState({
     dataPovoamento: '',
     origemPL: '',
@@ -49,7 +49,7 @@ const PondDetail = () => {
     alteracaoNatatoria: '',
     larvasMortas: '',
   });
-  
+
   const [formBiometry, setFormBiometry] = useState({
     data: new Date().toISOString().split('T')[0],
     Pesagem: '',
@@ -66,13 +66,16 @@ const PondDetail = () => {
     precoVenda: ''
   });
 
+  const [storedPondData, setStoredPondData] = useState({}) // para mandar via props
+
   useEffect(() => {
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
     const storedCultivo = storedCultivos && storedCultivos.find((viv) => viv.viveiroId === viveiroId);
-    
+
     if (storedCultivo) {
       setCultivo(storedCultivo);
       const viveiroData = localStorage.getItem(`cultivo-${storedCultivo.id}`);
+      setStoredPondData(JSON.parse(viveiroData));
 
       if (viveiroData) {
         const parsedData = JSON.parse(viveiroData);
@@ -83,18 +86,35 @@ const PondDetail = () => {
     }
   }, [viveiroId]);
 
+  const saveData = (data) => {
+    const storedCultivos = JSON.parse(localStorage.getItem(`history`));
+    const i = storedCultivos && storedCultivos.findIndex((viv) => viv.viveiroId === viveiroId);
+    if ('sanity' in storedCultivos[i]) {
+      const sanity = [...storedCultivos[i].sanity, data];
+      const checkOut = { ...storedCultivos[i], sanity: sanity };
+      storedCultivos[i] = checkOut;
+      // localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
+      localStorage.setItem('history', JSON.stringify(storedCultivos));
+    } else {
+      const checkOut = { ...storedCultivos[i], sanity: [data] };
+      storedCultivos[i] = checkOut;
+      // localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
+      localStorage.setItem('history', JSON.stringify(storedCultivos));
+    }
+  }
+
   const formatDate = (dateString) => {
-     const date = new Date(dateString);
-     const day = String(date.getDate()).padStart(2, '0');
-     const month = String(date.getMonth() + 1).padStart(2, '0');
-     const year = date.getFullYear();
-     const today = new Date().getTime()
-     const dayStart = new Date(dateString).getTime()
-     const days = Math.floor((today - dayStart) / 86400000)
-     return {
-         date: `${day}/${month}/${year}`,
-         days: days
-     }
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    const today = new Date().getTime()
+    const dayStart = new Date(dateString).getTime()
+    const days = Math.floor((today - dayStart) / 86400000)
+    return {
+      date: `${day}/${month}/${year}`,
+      days: days
+    }
   };
 
   const handleBackClick = () => {
@@ -131,20 +151,20 @@ const PondDetail = () => {
       )}
 
       {showNewCyclePopup && <NewCyclePopup
-        showNewCyclePopup={showNewCyclePopup}       setShowNewCyclePopup={setShowNewCyclePopup}
-        showStressTestPopup={showStressTestPopup}   setShowStressTestPopup={setShowStressTestPopup}
-        showCountPlPopup={showCountPlPopup}         setShowCountPlPopup={setShowCountPlPopup}
-        showCamCountPopup={showCamCountPopup}       setShowCamCountPopup={setShowCamCountPopup}
-        showWeightInput={showWeightInput}           setShowWeightInput={setShowWeightInput}
-        showPLgrama={showPLgrama}                   setShowPLgrama={setShowPLgrama}
-        darkPoints={darkPoints}                     setDarkPoints={setDarkPoints}               
-        threshold={threshold}                       setThreshold={setThreshold}
-        userCount={userCount}                       setUserCount={setUserCount}
-        processedImage={processedImage}             setProcessedImage={setProcessedImage}
-        capturedImage={capturedImage}               setCapturedImage={setCapturedImage}
-        weight={weight}                             setWeight={setWeight}
-        showCamera={showCamera}                     setShowCamera={setShowCamera}
-        form={form}                                 setForm={setForm}
+        showNewCyclePopup={showNewCyclePopup} setShowNewCyclePopup={setShowNewCyclePopup}
+        showStressTestPopup={showStressTestPopup} setShowStressTestPopup={setShowStressTestPopup}
+        showCountPlPopup={showCountPlPopup} setShowCountPlPopup={setShowCountPlPopup}
+        showCamCountPopup={showCamCountPopup} setShowCamCountPopup={setShowCamCountPopup}
+        showWeightInput={showWeightInput} setShowWeightInput={setShowWeightInput}
+        showPLgrama={showPLgrama} setShowPLgrama={setShowPLgrama}
+        darkPoints={darkPoints} setDarkPoints={setDarkPoints}
+        threshold={threshold} setThreshold={setThreshold}
+        userCount={userCount} setUserCount={setUserCount}
+        processedImage={processedImage} setProcessedImage={setProcessedImage}
+        capturedImage={capturedImage} setCapturedImage={setCapturedImage}
+        weight={weight} setWeight={setWeight}
+        showCamera={showCamera} setShowCamera={setShowCamera}
+        form={form} setForm={setForm}
         viveiroId={viveiroId}
         setCultivo={setCultivo} />}
 
@@ -152,45 +172,49 @@ const PondDetail = () => {
 
       {showParamPopup && <ParamPopup setShowParamPopup={setShowParamPopup} />}
 
-      {showAnalysisPopup && <SanityAnalysis setShowAnalysisPopup={setShowAnalysisPopup} />}
+      {showAnalysisPopup &&
+        <SanityAnalysis
+          setShowAnalysisPopup={setShowAnalysisPopup}
+          saveData={saveData}
+        />}
 
-      {showBiometry && <BiometryPopup 
+      {showBiometry && <BiometryPopup
         viveiroId={viveiroId}
         formBiometry={formBiometry}
         setShowBiometry={setShowBiometry}
-        setFormBiometry={setFormBiometry} 
+        setFormBiometry={setFormBiometry}
         setBiometrics={setBiometrics} />}
 
-      {showHarvest && <HarvestPopup 
+      {showHarvest && <HarvestPopup
         cultivo={cultivo}
         harvestData={harvestData}
         setHarvestData={setHarvestData}
         survivalRate={survivalRate}
         setSurvivalRate={setSurvivalRate}
         biometryData={biometryData}
-        setBiometryData={setBiometryData} 
+        setBiometryData={setBiometryData}
         newPesagem={newPesagem}
         setNewPesagem={setNewPesagem}
         setShowHarvest={setShowHarvest} />}
-      
+
       {showFertilizationPopup && <FertilizationPopup setShowFertilizationPopup={setShowFertilizationPopup} />}
 
       <button onClick={handleBackClick}>Voltar para Viveiros</button>
       <div>
         {cultivo && biometrics ? (
           <div>
-          <h2>Biometrias</h2>
-          <ul>
-            {biometrics.map((biometry, index) => (
-              <li key={index}>
-              <strong>{formatDate(biometry.data).date}</strong>,{' '}
-              {/* <span>{formatDate(biometry.data).days} dias de cultivo, </span> está calculando até o dia atual*/}
-              Peso Médio: {biometry.pesoMedio} g
-            </li>            
-            ))}
-          </ul>
-        </div>
-        ) : (cultivo ? <p>Nenhuma biometria realizada </p>  :
+            <h2>Biometrias</h2>
+            <ul>
+              {biometrics.map((biometry, index) => (
+                <li key={index}>
+                  <strong>{formatDate(biometry.data).date}</strong>,{' '}
+                  {/* <span>{formatDate(biometry.data).days} dias de cultivo, </span> está calculando até o dia atual*/}
+                  Peso Médio: {biometry.pesoMedio} g
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (cultivo ? <p>Nenhuma biometria realizada </p> :
           <p>Aguardando lançamento</p>
         )
         }
