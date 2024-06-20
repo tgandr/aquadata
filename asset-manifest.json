@@ -1,7 +1,10 @@
 {
   "files": {
-    "main.css": "/aquadata/static/css/main.53b5bcda.css",
-    "main.js": "/aquadata/static/js/main.ea1b71e9.js",
+    "main.css": "/aquadata/static/css/main.666ba97d.css",
+    "main.js": "/aquadata/static/js/main.8e27b6fe.js",
+    "static/js/239.954b91b8.chunk.js": "/aquadata/static/js/239.954b91b8.chunk.js",
+    "static/js/213.781b1ca2.chunk.js": "/aquadata/static/js/213.781b1ca2.chunk.js",
+    "static/js/732.3de3678e.chunk.js": "/aquadata/static/js/732.3de3678e.chunk.js",
     "static/media/fa-solid-900.ttf": "/aquadata/static/media/fa-solid-900.bacd5de623fb563b961a.ttf",
     "static/media/aqua-data-icon-512.png": "/aquadata/static/media/aqua-data-icon-512.c826060f7474e95b4b14.png",
     "static/media/fa-brands-400.ttf": "/aquadata/static/media/fa-brands-400.60127e352b7a11f7f1bc.ttf",
@@ -13,11 +16,14 @@
     "static/media/fa-v4compatibility.ttf": "/aquadata/static/media/fa-v4compatibility.c8e090db312b0bea2aa2.ttf",
     "static/media/fa-v4compatibility.woff2": "/aquadata/static/media/fa-v4compatibility.cf7f5903d06b79ad60f1.woff2",
     "index.html": "/aquadata/index.html",
-    "main.53b5bcda.css.map": "/aquadata/static/css/main.53b5bcda.css.map",
-    "main.ea1b71e9.js.map": "/aquadata/static/js/main.ea1b71e9.js.map"
+    "main.666ba97d.css.map": "/aquadata/static/css/main.666ba97d.css.map",
+    "main.8e27b6fe.js.map": "/aquadata/static/js/main.8e27b6fe.js.map",
+    "239.954b91b8.chunk.js.map": "/aquadata/static/js/239.954b91b8.chunk.js.map",
+    "213.781b1ca2.chunk.js.map": "/aquadata/static/js/213.781b1ca2.chunk.js.map",
+    "732.3de3678e.chunk.js.map": "/aquadata/static/js/732.3de3678e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.53b5bcda.css",
-    "static/js/main.ea1b71e9.js"
+    "static/css/main.666ba97d.css",
+    "static/js/main.8e27b6fe.js"
   ]
 }
