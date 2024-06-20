@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import '../styles/SanityAnalysis.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
-const SanityAnalysis = ({ setShowAnalysisPopup, saveData }) => {
+const SanityAnalysis = ({ setShowAnalysisPopup }) => {
     const [showForm, setShowForm] = useState(false);
     const [startSample, setStartSample] = useState(true);
     const [checkScreen, setCheckScreen] = useState(false);
-    const [showReport, setShowReport] = useState(false);
+    const [storedPonds, setStoredPonds] = useState({});
     const [analysisId, setAnalysisId] = useState({
         origin: '',
         pond: '',
@@ -89,20 +90,45 @@ const SanityAnalysis = ({ setShowAnalysisPopup, saveData }) => {
     };
 
     useEffect(() => {
-        
+
         if (checkScreen) {
             const timer = setTimeout(onClose, 2000);
             return () => clearTimeout(timer);
         }
     }, [checkScreen]);
 
+    useEffect(() => {
+        const storedData = JSON.parse(localStorage.getItem('history')) || {};
+        if (storedData) {
+            setStoredPonds(storedData);
+        }
+    }, []);
+
     const logoutSanity = () => {
         const sampleId = analysis.samples.length + 1;
         const sample = { ...formAnalysis, sampleId: sampleId }
-        saveData({ ...analysis, samples: [...analysis.samples, sample] })
-        setShowReport(true);
+        saveData({ ...analysis, samples: [...analysis.samples, sample] }, 'sanity')
         setShowAnalysisPopup(false);
         // implementar código para não deixar salvar um único camarão
+    }
+
+    const saveData = (data, key) => {
+        const storedCultivos = JSON.parse(localStorage.getItem(`history`));
+        const i = storedCultivos && storedCultivos.findIndex((viv) => viv.id == Number(data.id.pond));
+        if (key in storedCultivos[i]) {
+            const sanity = [...storedCultivos[i].sanity, data];
+            const checkOut = { ...storedCultivos[i], sanity: sanity };
+            storedCultivos[i] = checkOut;
+            console.log(storedCultivos[i])
+            console.log(storedCultivos[i].id)
+            localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
+            localStorage.setItem('history', JSON.stringify(storedCultivos));
+        } else {
+            const checkOut = { ...storedCultivos[i], sanity: [data] };
+            storedCultivos[i] = checkOut;
+            localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
+            localStorage.setItem('history', JSON.stringify(storedCultivos));
+        }
     }
 
     return (
@@ -120,17 +146,30 @@ const SanityAnalysis = ({ setShowAnalysisPopup, saveData }) => {
                                     onChange={(e) => setAnalysisId({ ...analysisId, origin: e.target.value })}
                                     required
                                 />
-                            </label>
+                            </label> */}
                             <label>
                                 <span>Viveiro:</span>
-                                <input
+                                <select
+                                    name="pond"
+                                    value={analysisId.pond}
+                                    onChange={(e) => setAnalysisId({ ...analysisId, pond: e.target.value })}
+                                    required>
+                                    <option value="">Selecione o viveiro</option>
+                                    {storedPonds.length > 0 ? (
+                                        storedPonds.map((pond, index) => (
+                                            <option value={pond.id} key={index}>{pond.viveiro}</option>
+                                        ))
+                                    ) : (<option value="">Nenhum cultivo cadastrado</option>)}
+                                </select>
+
+                                {/* <input
                                     type="text"
                                     name="pond"
                                     value={analysisId.pond}
                                     onChange={(e) => setAnalysisId({ ...analysisId, pond: e.target.value })}
                                     required
-                                />
-                            </label> */} {/*Receber via props*/}
+                                /> */}
+                            </label>
                             <label>
                                 <span>Data:</span>
                                 <input
@@ -406,6 +445,9 @@ const SanityAnalysis = ({ setShowAnalysisPopup, saveData }) => {
                                 <div className="buttons">
                                     <button type="submit">Adicionar</button>
                                     <button type="button" onClick={() => setShowAnalysisPopup(false)}>Voltar</button>
+                                    {/* <Link to={{ pathname: '/sanidade', state: { 1 } }}>
+                                        <button>Ver Relatório</button>
+                                    </Link> */}
                                     <button
                                         type="button"
                                         onClick={() => logoutSanity()}>

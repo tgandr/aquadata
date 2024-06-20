@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios'; 
+
 import '../styles/RegisterPage.css';
 
 const RegisterPage = () => {
@@ -15,21 +17,44 @@ const RegisterPage = () => {
     tipoInsumo: '', // tipo de insumo selecionado
     saveLogin: true,
   });
-  const navigate = useNavigate();
 
-  const storedData = JSON.parse(localStorage.getItem('formData')) || {};
-    if (storedData.eraseLocalStorageAfterLogout) {
-      localStorage.clear();
-    }
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem('formData', JSON.stringify(form));
-    navigate('/dashboard');
+    const {email, senha} = form;
+    
+    try {
+      // Enviar os dados do formulário para o backend
+      const response = await axios.post('http://localhost:5000/aquadata/api/users/register', { email, senha });
+      console.log('passei aqui')
+      
+      console.log('Resposta do backend:', response.data);
+
+      // Limpar o formulário após o envio
+      setForm({
+        nomeCompleto: '',
+        email: '',
+        senha: '',
+        confirmarSenha: '',
+        telefone: '',
+        enderecoFazenda: '',
+        nomeFazenda: '',
+        perfil: '',
+        tipoInsumo: '',
+        saveLogin: true,
+      });
+
+      // Navegar para a página de dashboard após o registro
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Erro ao registrar usuário:', error);
+      // Aqui você pode adicionar tratamento de erro, exibir uma mensagem, etc.
+    }
   };
 
   return (

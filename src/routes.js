@@ -9,7 +9,8 @@ import PondDetail from './pages/PondDetail';
 import Dashboard from './pages/Dashboard';
 import Stock from './pages/Stock';
 import Financial from './pages/Financial';
-
+import VerifyEmailPage from './pages/VerifyEmailPage';
+import AnalysisReport from './pages/AnalysisReport';
 
 const AppRoutes = () => {
   return (
@@ -17,6 +18,7 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="verify-email" element={<VerifyEmailPage />} />
         <Route path="/confirmation" element={<ConfirmationPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/viveiros" element={<AddPonds />} />
@@ -24,6 +26,7 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/estoque" element={<Stock />} />
         <Route path="/financeiro" element={<Financial />} />
+        <Route path="/sanidade" element={<AnalysisReport />} />
         <Route path="/aquadata" element={<HomePage />} />
         <Route path="*" element={<HomePage />} />
       </Routes>

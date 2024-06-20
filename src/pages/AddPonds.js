@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWarehouse, faDollarSign, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faWarehouse, faDollarSign, faPlus, faSyringe } from '@fortawesome/free-solid-svg-icons';
 import '../styles/AddPonds.css';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
+import SanityAnalysis from './SanityAnalysis';
+import AnalysisReport from './AnalysisReport';
 
 const AddPonds = () => {
   const [viveiros, setViveiros] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
+  const [showAnalysisPopupPrevious, setShowAnalysisPopupPrevious] = useState(false);
   const [form, setForm] = useState({
     numeroViveiro: '',
     area: ''
@@ -112,6 +116,14 @@ const AddPonds = () => {
             <span className="viveiro-titulo">Adicionar</span> 
           </div>
           </button>
+          <button className="viveiro-button" onClick={() => setShowAnalysisPopupPrevious(true)}>
+          <div className="infos-wrapper">
+            <FontAwesomeIcon icon={faSyringe} className="icon-plus" />
+          </div>
+          <div className="text-add-pond-wrapper">
+            <span className="viveiro-titulo">Sanidade</span> 
+          </div>
+          </button>
       </div>
       <div className="icon-container">
         <div className="icon-container-inner">
@@ -174,6 +186,24 @@ const AddPonds = () => {
           </div>
         </div>
       )}
+
+      {showAnalysisPopupPrevious && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Análise Presuntiva</h3>
+            <button 
+              type="button"
+              onClick={() => (setShowAnalysisPopup(true), setShowAnalysisPopupPrevious(false))}>
+                Realizar Análise Presuntiva
+            </button>
+            <button type="button" onClick={() => AnalysisReport(JSON.parse(localStorage.getItem('history')))}>Visualizar Relatório</button>
+            <button type="button" onClick={() => setShowAnalysisPopupPrevious(false)}>Voltar</button>
+          </div>
+        </div>
+      )}
+      
+      {showAnalysisPopup && (<SanityAnalysis setShowAnalysisPopup={setShowAnalysisPopup}/>)}
+      
     </div>
   );
 };

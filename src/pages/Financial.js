@@ -46,7 +46,7 @@ const Financial = () => {
             <span>Compras de Insumos</span>
           </div>
         </button>
-        <button className="financial-button">
+        <button className="financial-button"  onClick={() => handlePopup('energia')}>
         <div className="icon-wrapper">
           <FontAwesomeIcon icon={faLightbulb} className="financial-icon" />
         </div>

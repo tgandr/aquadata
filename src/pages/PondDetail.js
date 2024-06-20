@@ -66,8 +66,6 @@ const PondDetail = () => {
     precoVenda: ''
   });
 
-  const [storedPondData, setStoredPondData] = useState({}) // para mandar via props
-
   useEffect(() => {
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
     const storedCultivo = storedCultivos && storedCultivos.find((viv) => viv.viveiroId === viveiroId);
@@ -75,8 +73,7 @@ const PondDetail = () => {
     if (storedCultivo) {
       setCultivo(storedCultivo);
       const viveiroData = localStorage.getItem(`cultivo-${storedCultivo.id}`);
-      setStoredPondData(JSON.parse(viveiroData));
-
+      
       if (viveiroData) {
         const parsedData = JSON.parse(viveiroData);
         if (parsedData.biometrics) {
@@ -86,19 +83,21 @@ const PondDetail = () => {
     }
   }, [viveiroId]);
 
-  const saveData = (data) => {
+  const saveData = (data, key) => {
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
     const i = storedCultivos && storedCultivos.findIndex((viv) => viv.viveiroId === viveiroId);
-    if ('sanity' in storedCultivos[i]) {
+    if (key in storedCultivos[i]) {
       const sanity = [...storedCultivos[i].sanity, data];
       const checkOut = { ...storedCultivos[i], sanity: sanity };
       storedCultivos[i] = checkOut;
-      // localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
+      console.log(storedCultivos[i])
+      console.log(storedCultivos[i].id)
+      localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
       localStorage.setItem('history', JSON.stringify(storedCultivos));
     } else {
       const checkOut = { ...storedCultivos[i], sanity: [data] };
       storedCultivos[i] = checkOut;
-      // localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
+      localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
       localStorage.setItem('history', JSON.stringify(storedCultivos));
     }
   }
@@ -135,7 +134,7 @@ const PondDetail = () => {
           <div className="buttons-container">
             <button className="pond-button" onClick={() => setshowFeedPopup(true)}>Ração</button>
             <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros da Água</button>
-            <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise Presuntiva</button>
+            {/* <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise Presuntiva</button> */}
             <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
             <button className="pond-button" onClick={() => setShowHarvest(true)}>Dados de despesca</button>
             <button className="pond-button" onClick={() => setShowFertilizationPopup(true)}>Fertilização</button>

@@ -203,7 +203,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
 
             {addNewBrandPopup && (
                 <div className="popup">
-                    <div className="popup-content">
+                    <div className="popup-inner">
                         <label>Cadastrar novo fabricante:</label>
                         <select
                             name="addBrand"
