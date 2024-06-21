@@ -13,8 +13,8 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const storedData = JSON.parse(localStorage.getItem('formData')) || {};
-      localStorage.clear();
     if (storedData.eraseLocalStorageAfterLogout) {
+      localStorage.clear();
     }
     if (email === 'fazenda@aquadata.com') {
       Example(redirectToExample);

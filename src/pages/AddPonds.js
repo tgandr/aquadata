@@ -11,7 +11,7 @@ const AddPonds = () => {
   const [viveiros, setViveiros] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
-  const [showAnalysisPopupPrevious, setShowAnalysisPopupPrevious] = useState(false);
+  const [showAnalysisPopupPrevious, setShowAnalysisPopupPrevious] = useState({start: false, previous: false});
   const [form, setForm] = useState({
     numeroViveiro: '',
     area: ''
@@ -61,8 +61,8 @@ const AddPonds = () => {
     const dayStart = new Date(dateString).getTime()
     const days = Math.floor((today - dayStart) / 86400000)
     return {
-        date: `${day}/${month}/${year}`,
-        days: days
+      date: `${day}/${month}/${year}`,
+      days: days
     }
   };
 
@@ -86,11 +86,15 @@ const AddPonds = () => {
       <div className="viveiros-container">
         {viveiros.length > 0 ? (
           viveiros.map(viveiro => (
-            <Link to={`/viveiro/${viveiro.id}`}  state={viveiro} key={viveiro.id} className="link-style">
+            <Link 
+            to={`/viveiro/${viveiro.id}`} 
+            state={{viveiro: viveiro, farmName: formData.nomeFazenda}} 
+            key={viveiro.id} 
+            className="link-style">
               <button className="viveiro-button">
                 <div className="infos-wrapper">
                   <span className="viveiro-data">{viveiro.area} ha</span>
-                  {days(viveiro.id) ? ( 
+                  {days(viveiro.id) ? (
                     <span className="viveiro-data">
                       {days(viveiro.id) === 1 ? '1 dia de cultivo' : `${days(viveiro.id)} dias de cultivo`}
                     </span>
@@ -113,39 +117,39 @@ const AddPonds = () => {
             <FontAwesomeIcon icon={faPlus} className="icon-plus" />
           </div>
           <div className="text-add-pond-wrapper">
-            <span className="viveiro-titulo">Adicionar</span> 
+            <span className="viveiro-titulo">Adicionar</span>
           </div>
-          </button>
-          <button className="viveiro-button" onClick={() => setShowAnalysisPopupPrevious(true)}>
+        </button>
+        <button className="viveiro-button" onClick={() => setShowAnalysisPopupPrevious({start: false, previous: true})}>
           <div className="infos-wrapper">
             <FontAwesomeIcon icon={faSyringe} className="icon-plus" />
           </div>
           <div className="text-add-pond-wrapper">
-            <span className="viveiro-titulo">Sanidade</span> 
+            <span className="viveiro-titulo">Sanidade</span>
           </div>
-          </button>
+        </button>
       </div>
       <div className="icon-container">
         <div className="icon-container-inner">
-            <button className="side-icon-button" onClick={() => navigate('/financeiro')}>
-                <div>
-                  <FontAwesomeIcon icon={faDollarSign} className="icon" />
-                </div>
-            </button>
-            <img 
-              src={aquaDataIcon}
-              alt="Aqua Data Icon"
-              style={{ width: '100px', height: '100px' }}
-              onClick={() => navigate('/dashboard')}
-              className="centered-image"
-              />
-            <button className="side-icon-button" onClick={() => navigate('/estoque')}>
-              <div>
-                <FontAwesomeIcon icon={faWarehouse} className="icon" />
-              </div>
-            </button>
-          </div>
+          <button className="side-icon-button" onClick={() => navigate('/financeiro')}>
+            <div>
+              <FontAwesomeIcon icon={faDollarSign} className="icon" />
+            </div>
+          </button>
+          <img
+            src={aquaDataIcon}
+            alt="Aqua Data Icon"
+            style={{ width: '100px', height: '100px' }}
+            onClick={() => navigate('/dashboard')}
+            className="centered-image"
+          />
+          <button className="side-icon-button" onClick={() => navigate('/estoque')}>
+            <div>
+              <FontAwesomeIcon icon={faWarehouse} className="icon" />
+            </div>
+          </button>
         </div>
+      </div>
 
       {showPopup && (
         <div className="popup">
@@ -187,23 +191,31 @@ const AddPonds = () => {
         </div>
       )}
 
-      {showAnalysisPopupPrevious && (
+      {showAnalysisPopupPrevious.previous && (
         <div className="popup">
           <div className="popup-inner">
             <h3>Análise Presuntiva</h3>
-            <button 
+            <p>Trata-se do exame minucioso de camarões em busca de sinais que indiquem seu estado de saúde.
+              Com a análise presuntiva você poderá ver ameaças antes que seja tarde.
+              É necessário um treinamento bem simples e o uso de ferramentas básicas.</p>
+            <button
               type="button"
-              onClick={() => (setShowAnalysisPopup(true), setShowAnalysisPopupPrevious(false))}>
-                Realizar Análise Presuntiva
+              onClick={() => (setShowAnalysisPopup(true), setShowAnalysisPopupPrevious({start:true, previous: false}))}>
+              Realizar Análise Presuntiva
             </button>
-            <button type="button" onClick={() => AnalysisReport(JSON.parse(localStorage.getItem('history')))}>Visualizar Relatório</button>
-            <button type="button" onClick={() => setShowAnalysisPopupPrevious(false)}>Voltar</button>
+            <button type="button" onClick={() => AnalysisReport(JSON.parse(localStorage.getItem('history')))}>Baixar Relatório</button>
+            <button type="button" onClick={() => setShowAnalysisPopupPrevious({start:false, previous: false})}>Voltar</button>
           </div>
         </div>
       )}
-      
-      {showAnalysisPopup && (<SanityAnalysis setShowAnalysisPopup={setShowAnalysisPopup}/>)}
-      
+
+      {showAnalysisPopup && (
+        <SanityAnalysis
+          setShowAnalysisPopup={setShowAnalysisPopup}
+          showAnalysisPopupPrevious={showAnalysisPopupPrevious}
+          setShowAnalysisPopupPrevious={setShowAnalysisPopupPrevious}
+          />)}
+
     </div>
   );
 };

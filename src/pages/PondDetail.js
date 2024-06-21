@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../styles/PondDetail.css';
+import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShrimp, faWarehouse } from '@fortawesome/free-solid-svg-icons';
 import SanityAnalysis from './SanityAnalysis';
 import ParamPopup from './ParamPopup';
 import FeedPopup from './FeedPopup';
@@ -12,8 +15,9 @@ import FertilizationPopup from './FertilizationPopup';
 const PondDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const viveiroId = location.state.id;
-  const viveiroName = location.state.nome;
+  const viveiroId = location.state.viveiro.id;
+  const viveiroName = location.state.viveiro.nome;
+  const farmName = location.state.farmName;
 
   const [cultivo, setCultivo] = useState(null);
   const [showNewCyclePopup, setShowNewCyclePopup] = useState(false);
@@ -67,13 +71,14 @@ const PondDetail = () => {
   });
 
   useEffect(() => {
+    console.log(location.state)
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
     const storedCultivo = storedCultivos && storedCultivos.find((viv) => viv.viveiroId === viveiroId);
 
     if (storedCultivo) {
       setCultivo(storedCultivo);
       const viveiroData = localStorage.getItem(`cultivo-${storedCultivo.id}`);
-      
+
       if (viveiroData) {
         const parsedData = JSON.parse(viveiroData);
         if (parsedData.biometrics) {
@@ -90,8 +95,6 @@ const PondDetail = () => {
       const sanity = [...storedCultivos[i].sanity, data];
       const checkOut = { ...storedCultivos[i], sanity: sanity };
       storedCultivos[i] = checkOut;
-      console.log(storedCultivos[i])
-      console.log(storedCultivos[i].id)
       localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
       localStorage.setItem('history', JSON.stringify(storedCultivos));
     } else {
@@ -122,7 +125,10 @@ const PondDetail = () => {
 
   return (
     <div className="pond-detail">
-      <h2>Detalhes do {viveiroName}</h2>
+      <div className="identify-data">
+        <h2>{viveiroName}</h2>
+        <h3>{farmName}</h3>
+      </div>
       {cultivo ? (
         <div>
           <div className="infos">
@@ -199,25 +205,46 @@ const PondDetail = () => {
       {showFertilizationPopup && <FertilizationPopup setShowFertilizationPopup={setShowFertilizationPopup} />}
 
       <button onClick={handleBackClick}>Voltar para Viveiros</button>
-      <div>
-        {cultivo && biometrics ? (
-          <div>
-            <h2>Biometrias</h2>
-            <ul>
-              {biometrics.map((biometry, index) => (
-                <li key={index}>
-                  <strong>{formatDate(biometry.data).date}</strong>,{' '}
-                  {/* <span>{formatDate(biometry.data).days} dias de cultivo, </span> está calculando até o dia atual*/}
-                  Peso Médio: {biometry.pesoMedio} g
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : (cultivo ? <p>Nenhuma biometria realizada </p> :
-          <p>Aguardando lançamento</p>
-        )
-        }
+      {cultivo && biometrics ? (
+        <div>
+          <h2 className="infos">Biometrias</h2>
+          <ul>
+            {biometrics.map((biometry, index) => (
+              <li key={index}>
+                <strong>{formatDate(biometry.data).date}</strong>,{' '}
+                {/* <span>{formatDate(biometry.data).days} dias de cultivo, </span> está calculando até o dia atual*/}
+                Peso Médio: {biometry.pesoMedio} g
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (cultivo ? <p className="infos">Nenhuma biometria realizada </p> :
+        <p className="infos">Aguardando lançamento</p>
+      )
+      }
+
+      <div className="icon-container">
+        <div className="icon-container-inner">
+          <button className="side-icon-button" onClick={() => navigate('/viveiros')}>
+            <div>
+              <FontAwesomeIcon icon={faShrimp} className="icon" />
+            </div>
+          </button>
+          <img
+            src={aquaDataIcon}
+            alt="Aqua Data Icon"
+            style={{ width: '100px', height: '100px' }}
+            onClick={() => navigate('/dashboard')}
+            className="centered-image"
+          />
+          <button className="side-icon-button" onClick={() => navigate('/estoque')}>
+            <div>
+              <FontAwesomeIcon icon={faWarehouse} className="icon" />
+            </div>
+          </button>
+        </div>
       </div>
+
     </div>
   );
 };

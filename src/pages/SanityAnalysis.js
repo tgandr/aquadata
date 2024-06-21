@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
-const SanityAnalysis = ({ setShowAnalysisPopup }) => {
+const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setShowAnalysisPopupPrevious }) => {
     const [showForm, setShowForm] = useState(false);
-    const [startSample, setStartSample] = useState(true);
+    // const [startSample, setStartSample] = useState(true);
     const [checkScreen, setCheckScreen] = useState(false);
     const [storedPonds, setStoredPonds] = useState({});
     const [analysisId, setAnalysisId] = useState({
@@ -80,7 +80,8 @@ const SanityAnalysis = ({ setShowAnalysisPopup }) => {
     };
 
     const handleStartSample = () => {
-        setStartSample(false);
+        // setStartSample(false);
+        setShowAnalysisPopupPrevious({start:false, previous: false})
         setShowForm(true);
     }
 
@@ -90,7 +91,6 @@ const SanityAnalysis = ({ setShowAnalysisPopup }) => {
     };
 
     useEffect(() => {
-
         if (checkScreen) {
             const timer = setTimeout(onClose, 2000);
             return () => clearTimeout(timer);
@@ -104,11 +104,18 @@ const SanityAnalysis = ({ setShowAnalysisPopup }) => {
         }
     }, []);
 
+    // useEffect(() => {
+    //     if (!showAnalysisPopupPrevious) {
+    //         setStartSample(true);
+    //     }
+    // }, [showAnalysisPopupPrevious]);
+
     const logoutSanity = () => {
         const sampleId = analysis.samples.length + 1;
         const sample = { ...formAnalysis, sampleId: sampleId }
         saveData({ ...analysis, samples: [...analysis.samples, sample] }, 'sanity')
-        setShowAnalysisPopup(false);
+        setShowForm(false);
+        setShowAnalysisPopupPrevious({start: true, previous: false})
         // implementar código para não deixar salvar um único camarão
     }
 
@@ -133,7 +140,7 @@ const SanityAnalysis = ({ setShowAnalysisPopup }) => {
 
     return (
         <>
-            {startSample && (
+            {showAnalysisPopupPrevious.start && (
                 <div className="popup-sanity">
                     <div className="popup-inner-sanity">
                         <form onSubmit={handleStartSample} className="start-form">
@@ -191,12 +198,15 @@ const SanityAnalysis = ({ setShowAnalysisPopup }) => {
                                     <option value={false}>Não</option>
                                 </select>
                             </label>
-                            <button type="submit" className="saveStart">Lançar observações</button>
+                            <button 
+                            type="submit"
+                            className="saveStart">
+                                Lançar observações</button>
                             <button
                                 type="button"
                                 className="saveStart"
-                                onClick={() => setStartSample(false)}>
-                                Cancelar
+                                onClick={() => (setShowAnalysisPopupPrevious({start:false, previous: true}))}>
+                                Voltar
                             </button>
                         </form>
                     </div>
@@ -356,7 +366,7 @@ const SanityAnalysis = ({ setShowAnalysisPopup }) => {
                                         </div>
                                     </label>
                                     <label>
-                                        Repleação:
+                                        Repleção:
                                         <div className="button-container">
                                             {[1, 2, 3, 4].map((num) => (
                                                 <button
@@ -444,7 +454,7 @@ const SanityAnalysis = ({ setShowAnalysisPopup }) => {
                                 </div>
                                 <div className="buttons">
                                     <button type="submit">Adicionar</button>
-                                    <button type="button" onClick={() => setShowAnalysisPopup(false)}>Voltar</button>
+                                    <button type="button" onClick={() => (setShowForm(false), setShowAnalysisPopupPrevious({start: true, previous: false}))}>Voltar</button>
                                     {/* <Link to={{ pathname: '/sanidade', state: { 1 } }}>
                                         <button>Ver Relatório</button>
                                     </Link> */}
