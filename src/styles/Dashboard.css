@@ -168,7 +168,6 @@ h2 {
   padding: 1rem 0;
   z-index: 1000;
   background-color: var(--color-white2);
-
 }
 
 .icon-container-inner {
@@ -176,9 +175,18 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100%;
+  width: 70%;
+  justify-content: space-around;
 }
 
+.centered-image {
+  max-width: 100%;
+  height: 100px;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  padding-top: 5px;
+}
 
 .side-icon-button {
   all: unset;
@@ -193,20 +201,6 @@ h2 {
 
 .side-icon-button:last-child {
   right: 0;
-}
-
-.icon-container-inner {
-  width: 70%;
-  display: flex;
-  justify-content: space-around;
-}
-
-.centered-image {
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0%);
 }
 
 .popup {
@@ -251,4 +245,5 @@ h2 {
   padding: 5px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  
 }
