@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import '../styles/SanityAnalysis.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
 
 const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setShowAnalysisPopupPrevious }) => {
     const [showForm, setShowForm] = useState(false);
-    // const [startSample, setStartSample] = useState(true);
     const [checkScreen, setCheckScreen] = useState(false);
     const [storedPonds, setStoredPonds] = useState({});
     const [analysisId, setAnalysisId] = useState({
@@ -81,7 +79,7 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
 
     const handleStartSample = () => {
         // setStartSample(false);
-        setShowAnalysisPopupPrevious({start:false, previous: false})
+        setShowAnalysisPopupPrevious({ start: false, previous: false })
         setShowForm(true);
     }
 
@@ -104,18 +102,12 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
         }
     }, []);
 
-    // useEffect(() => {
-    //     if (!showAnalysisPopupPrevious) {
-    //         setStartSample(true);
-    //     }
-    // }, [showAnalysisPopupPrevious]);
-
     const logoutSanity = () => {
         const sampleId = analysis.samples.length + 1;
         const sample = { ...formAnalysis, sampleId: sampleId }
         saveData({ ...analysis, samples: [...analysis.samples, sample] }, 'sanity')
         setShowForm(false);
-        setShowAnalysisPopupPrevious({start: true, previous: false})
+        setShowAnalysisPopupPrevious({ start: true, previous: false })
         // implementar código para não deixar salvar um único camarão
     }
 
@@ -126,8 +118,6 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
             const sanity = [...storedCultivos[i].sanity, data];
             const checkOut = { ...storedCultivos[i], sanity: sanity };
             storedCultivos[i] = checkOut;
-            console.log(storedCultivos[i])
-            console.log(storedCultivos[i].id)
             localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
             localStorage.setItem('history', JSON.stringify(storedCultivos));
         } else {
@@ -198,14 +188,14 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
                                     <option value={false}>Não</option>
                                 </select>
                             </label>
-                            <button 
-                            type="submit"
-                            className="saveStart">
+                            <button
+                                type="submit"
+                                className="saveStart">
                                 Lançar observações</button>
                             <button
                                 type="button"
                                 className="saveStart"
-                                onClick={() => (setShowAnalysisPopupPrevious({start:false, previous: true}))}>
+                                onClick={() => (setShowAnalysisPopupPrevious({ start: false, previous: true }))}>
                                 Voltar
                             </button>
                         </form>
@@ -454,14 +444,17 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
                                 </div>
                                 <div className="buttons">
                                     <button type="submit">Adicionar</button>
-                                    <button type="button" onClick={() => (setShowForm(false), setShowAnalysisPopupPrevious({start: true, previous: false}))}>Voltar</button>
-                                    {/* <Link to={{ pathname: '/sanidade', state: { 1 } }}>
-                                        <button>Ver Relatório</button>
-                                    </Link> */}
                                     <button
                                         type="button"
                                         onClick={() => logoutSanity()}>
                                         Finalizar
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => (
+                                            setShowForm(false),
+                                            setShowAnalysisPopupPrevious({ start: true, previous: false }))}>
+                                        Voltar
                                     </button>
                                 </div>
                             </form>

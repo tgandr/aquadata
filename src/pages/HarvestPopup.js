@@ -1,134 +1,329 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 const HarvestPopup = ({
-    cultivo,
-    harvestData,
-    setHarvestData,
-    survivalRate,
-    setSurvivalRate,
-    biometryData,
-    setBiometryData,
-    newPesagem,
-    setNewPesagem,
-    setShowHarvest
+  cultivo,
+  saveData,
+  harvestData,
+  setHarvestData,
+  survivalRate,
+  setSurvivalRate,
+  biometryData,
+  setBiometryData,
+  newPesagem,
+  setNewPesagem,
+  showHarvest,
+  setShowHarvest
 }) => {
-    const handleHarvestChange = (e) => {
-        const { name, value } = e.target;
-        setHarvestData({
-          ...harvestData,
-          [name]: value
-        });
-      };
+  const [previousHarvestData, setPreviousHarvestData] = useState(true);
+  const [totalBiomassHarvested, setTotalBiomassHarvested] = useState('');
+  const [finishingHarvest, setFinishingHarvest] = useState({
+    show: false,
+    buttonText: "Anotar biomassa"
+  });
+  const [biometrySamples, setBiometrySamples] = useState(false);
+  const [revenue, setRevenue] = useState('');
+  const [harvestTotals, setHarvestTotals] = useState({
+    id: {},
+    data: {}
+  })
+  const [finalize, setFinalize] = useState(false);
+  const [checkHarvestTotalOrParcial, setCheckHarvestTotalOrParcial] = useState('');
+  const [showPercentual, setShowPercentual] = useState(false)
+  const handleHarvestChange = (e) => {
+    const { name, value } = e.target;
+    setHarvestData({
+      ...harvestData,
+      [name]: value
+    });
+  };
 
-    const handlePesagensChange = (event) => {
-        const { name, value } = event.target;
-        setNewPesagem((prev) => ({
-          ...prev,
-          [name]: value
-        }));
-    };
-    
-    const calcAverageWeight  = () => {
-        const totalWeight = harvestData.pesagens.reduce((accumulator, current) => {
-            return accumulator + (parseFloat(current.weight) || 0);
-          }, 0);
-        const totalCount = harvestData.pesagens.reduce((accumulator, current) => {
-            return accumulator + (parseFloat(current.count) || 0);
-          }, 0);
-        return (totalWeight / totalCount).toFixed(1);
-    ;}
-    
-    const handleHarvestConfirm = () => {
-        const totalWeight = harvestData.pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.weight || 0), 0);
-        const totalCount = harvestData.pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.count || 0), 0);
-        const averageWeight = totalCount ? (totalWeight / totalCount) / 1000 : 0;
-        if (harvestData.despesca === 'total') {
-          const survivalRate = ((harvestData.biomass / averageWeight) / cultivo.quantidadeEstocada).toFixed(1);
-          setSurvivalRate(survivalRate);
-        } else {
-          setSurvivalRate(null);
+  const handlePesagensChange = (event) => {
+    const { name, value } = event.target;
+    setNewPesagem((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const calcAverageWeight = () => {
+    const totalWeight = harvestData.weighings.reduce((accumulator, current) => {
+      return accumulator + (parseFloat(current.weight) || 0);
+    }, 0);
+    const totalCount = harvestData.weighings.reduce((accumulator, current) => {
+      return accumulator + (parseFloat(current.count) || 0);
+    }, 0);
+    return (totalWeight / totalCount).toFixed(1);
+    ;
+  }
+
+  const handleHarvestConfirm = (e) => {
+    e.preventDefault();
+    if (harvestTotals.id.totalOrParcial === 'total') {
+      const totalBiomassHarvested = cultivo.harvest.reduce((total, harv) =>
+        total + parseInt(harv.data.biomass), 0) + parseInt(harvestData.biomass);
+      const surviversBefore = cultivo.harvest.reduce((total, harv) => total + parseInt(
+
+        parseInt(harv.data.biomass * 1000) / (
+          harv.data.biometries.reduce((total, biom) => total + parseInt(biom.weight), 0) /
+          harv.data.biometries.reduce((total, biom) => total + parseInt(biom.count), 0)
+        )), 0);
+      const surviversAtTotalHarvest = (parseInt(harvestData.biomass) * 1000) / parseInt(biometryData.averageWeight);
+      const survivers = surviversAtTotalHarvest + parseInt(surviversBefore);
+      const survivalRate = (parseInt(survivers) / parseInt(cultivo.quantidadeEstocada));
+      setTotalBiomassHarvested(totalBiomassHarvested);
+      setSurvivalRate(survivalRate);
+      // calcRevenue();
+      setHarvestTotals({
+        ...harvestTotals,
+        data: {
+          ...harvestTotals.data,
+          biometries: harvestData.weighings,
+          biomassAtFinalHarvest: harvestData.biomass,
+          totalBiomassHarvested: totalBiomassHarvested,
+          survivalRate: survivalRate
         }
-    };
-    
-    const handleBiometryCalcSubmit = () => {
-        const updatedPesagens = [];
-        harvestData.pesagens[0].weight !== '' ? updatedPesagens.push(newPesagem) : updatedPesagens[0] = newPesagem;
-        const calculatedData = calculateBiometry(updatedPesagens);
-        setBiometryData(calculatedData);
-        setNewPesagem({ weight: '', count: '' });
-    };
-    
-    const calculateBiometry = (pesagens) => {
-        harvestData.pesagens[0].weight !== '' ? harvestData.pesagens.push(newPesagem) : harvestData.pesagens = [newPesagem];
-        const totalWeight = pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.weight), 0);
-        const totalCount = pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.count), 0);
-        const averageWeight = calcAverageWeight();
-        return { totalWeight, totalCount, averageWeight };
-    };
-        
-    const handleSave = () => {
-        setShowHarvest(false);
-        console.log('Harvest data saved:', harvestData);
+      });
+
+    } else {
+      setSurvivalRate(null);
+    }
+    if (harvestTotals.id.totalOrParcial === 'parcial') {
+      setShowPercentual(true);
+      setHarvestTotals({
+        ...harvestTotals,
+        data: {
+          ...harvestTotals.data,
+          biomass: harvestData.biomass,
+          biometries: harvestData.weighings,
+        }
+      })
     };
 
-    return (
+    setHarvestData({
+      ...harvestData,
+      biomass: '',
+      weighings: [{ weight: '', count: '' }]
+    });
+    setFinishingHarvest({ ...finishingHarvest, buttonText: "Corrigir biomassa colhida" });
+  };
+
+  const calcRevenue = () => {
+    console.log(harvestTotals)
+    const previousRevenues = cultivo.harvest.reduce((total, harv) => total + parseInt(harv.id.price * harv.data.biomass), 0);
+    const finalRevenue = parseInt(harvestTotals.id.price) * parseInt(harvestTotals.data.biomassAtFinalHarvest);
+    const revenue = parseInt(previousRevenues + finalRevenue);
+    // setRevenue(revenue);
+    return revenue;
+  }
+
+  const handleConfirmId = (e) => {
+    console.log(harvestData.despesca)
+    e.preventDefault();
+    setHarvestTotals({
+      ...harvestTotals, id: {
+        date: harvestData.date,
+        totalOrParcial: harvestData.despesca,
+        buyer: harvestData.comprador,
+        price: harvestData.precoVenda
+      }
+    });
+    setCheckHarvestTotalOrParcial(harvestData.despesca);
+    setHarvestData({
+      ...harvestData,
+      date: new Date().toISOString().split('T')[0],
+      despesca: '',
+      comprador: '',
+      precoVenda: ''
+    })
+    setPreviousHarvestData(false);
+    setBiometrySamples(true);
+  };
+
+  const handleBiometryCalcSubmit = (e) => {
+    e.preventDefault();
+    const updatedPesagens = [];
+    harvestData.weighings[0].weight !== '' ? updatedPesagens.push(newPesagem) : updatedPesagens[0] = newPesagem;
+    const calculatedData = calculateBiometry(updatedPesagens);
+    setBiometryData(calculatedData);
+    setNewPesagem({ weight: '', count: '' });
+  };
+
+  const calculateBiometry = (pesagens) => {
+    harvestData.weighings[0].weight !== '' ? harvestData.weighings.push(newPesagem) : harvestData.weighings = [newPesagem];
+    const totalWeight = pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.weight), 0);
+    const totalCount = pesagens.reduce((acc, pesagem) => acc + parseFloat(pesagem.count), 0);
+    const averageWeight = calcAverageWeight();
+    return { totalWeight, totalCount, averageWeight };
+  };
+
+  const handleSave = () => {
+    saveData(harvestTotals, 'harvest')
+    setShowHarvest(false);
+  };
+
+  return (
+    <>
+      {previousHarvestData && (
         <div className="popup">
           <div className="popup-inner">
             <h2>Dados de Despesca</h2>
-            <form>
+            <form onSubmit={handleConfirmId}>
               <label>Data:
-                <input type="date" name="date" value={harvestData.date} onChange={handleHarvestChange} />
+                <input
+                  type="date"
+                  name="date"
+                  value={harvestData.date}
+                  onChange={handleHarvestChange}
+                  required />
               </label>
               <label>Despesca:
-                <select name="despesca" value={harvestData.despesca} onChange={handleHarvestChange}>
+                <select
+                  name="despesca"
+                  value={harvestData.despesca}
+                  onChange={handleHarvestChange}
+                  required>
+                  <option value="">Total ou Parcial?</option>
                   <option value="total">Total</option>
                   <option value="parcial">Parcial</option>
                 </select>
               </label>
-              <label>Biometria:</label>
-              <div>
-                  <label>Pesagem:
-                    <input type="number" name="weight" value={newPesagem.weight} onChange={handlePesagensChange} />
-                  </label>    
-                  <label>Contagem:
-                    <input type="number" name="count" value={newPesagem.count} onChange={handlePesagensChange} />
-                  </label>
-                </div>
-              <button type="button" onClick={handleBiometryCalcSubmit}>Calcular Biometria</button>
-              {biometryData && (
-                  <h3>Resultado da Biometria:</h3>
-              )}
-              {biometryData && harvestData.pesagens.map((pesagem, index) => 
-                (<div key={index}>
-                  <p>Amostra {index + 1}: {' '}
-                  {harvestData.pesagens[index].weight} g, {' '}
-                  {harvestData.pesagens[index].count} camarões - 
-                  Peso médio {(harvestData.pesagens[index].weight / harvestData.pesagens[index].count).toFixed(1)} g
-                  </p>
-                </div>)
-              )}
-              {biometryData && (
-                  <p>Peso médio: {biometryData.averageWeight} g</p>
-              )}
-              {survivalRate && (
-                  <p>Sobrevivência: {survivalRate * 100}%</p>
-              )}
-              <label>Biomassa colhida (kg):
-                <input type="number" name="biomass" value={harvestData.biomass} onChange={handleHarvestChange} />
-              </label>
               <label>Comprador:
-                <input type="text" name="comprador" value={harvestData.comprador} onChange={handleHarvestChange} />
+                <input
+                  type="text"
+                  name="comprador"
+                  value={harvestData.comprador}
+                  onChange={handleHarvestChange}
+                  required />
               </label>
               <label>Preço de venda:
-                <input type="number" name="precoVenda" value={harvestData.precoVenda} onChange={handleHarvestChange} />
+                <input
+                  type="number"
+                  name="precoVenda"
+                  value={harvestData.precoVenda}
+                  onChange={handleHarvestChange}
+                  required />
               </label>
-              <button type="button" onClick={handleHarvestConfirm}>Confirmar dados</button>
+              <button type="submit">Confirmar dados</button>
             </form>
+            <button onClick={() => (setShowHarvest(false))}>Voltar</button>
+          </div>
+        </div>
+      )}
+
+      {biometrySamples && (
+        <div className="popup">
+          <div className="popup-inner">
+            <label>Biometria:</label>
+            <div>
+              <form onSubmit={handleBiometryCalcSubmit}>
+                <label>Pesagem:
+                  <input
+                    type="number"
+                    name="weight"
+                    value={newPesagem.weight}
+                    onChange={handlePesagensChange}
+                    required />
+                </label>
+                <label>Contagem:
+                  <input
+                    type="number"
+                    name="count"
+                    value={newPesagem.count}
+                    onChange={handlePesagensChange}
+                    required />
+                </label>
+                <button type="submit">Calcular Biometria</button>
+              </form>
+            </div>
+            <button type="button" onClick={() => (setBiometrySamples(false), setFinishingHarvest({ ...finishingHarvest, show: true }))}>Finalizar despesca</button>
+            <button type="button" onClick={() => (setBiometrySamples(false), setPreviousHarvestData(true))}>Voltar</button>
+            {biometryData && (
+              <h3>Resultado da Biometria:</h3>
+            )}
+            {biometryData && harvestData.weighings.map((pesagem, index) =>
+            (<div key={index}>
+              <p>Amostra {index + 1}: {' '}
+                {harvestData.weighings[index].weight} g, {' '}
+                {harvestData.weighings[index].count} camarões -
+                Peso médio {parseFloat(harvestData.weighings[index].weight / harvestData.weighings[index].count).toLocaleString('pt-BR', {
+                  minimumFractionDigits: 1,
+                  maximumFractionDigits: 1
+                })} g
+              </p>
+            </div>)
+            )}
+            {biometryData && (<p>Peso médio: {parseFloat(biometryData.averageWeight).toLocaleString('pt-BR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1
+            })} g</p>)}
+          </div>
+        </div>
+      )}
+
+      {finishingHarvest.show && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Despesca {harvestTotals.id.totalOrParcial}</h3><br />
+            <label>Biomassa colhida (kg):
+              <input type="number" name="biomass" value={harvestData.biomass} onChange={handleHarvestChange} />
+            </label>
+            <p>Quantidade Estocada: {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
+
+            {cultivo?.harvest?.length > 0 && cultivo.harvest.some(harvestTotals => harvestTotals.id.totalOrParcial === 'total') &&
+              <p>Produção anterior: {
+                cultivo.harvest.reduce((total, harvest) => total + parseInt(harvest.data.biomass), 0).toLocaleString('pt-BR')
+              } kg </p>}
+
+            {biometryData && (<p>Peso médio: {parseFloat(biometryData.averageWeight).toLocaleString('pt-BR', {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1
+            })} g</p>)}
+
+            {(showPercentual && checkHarvestTotalOrParcial === 'parcial') && (
+              <>
+                <p>Biomassa colhida: {parseInt(harvestTotals.data.biomass).toLocaleString('pt-BR')} kg</p>
+                <p>Receita apurada: {(harvestTotals.data.biomass * harvestTotals.id.price).toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}</p>
+                <p>Foram colhidos aproxidamente {(((1000 * harvestTotals.data.biomass) /
+                  (biometryData.averageWeight * cultivo.quantidadeEstocada)) * 100).toFixed(1)}% da população estocada</p>
+              </>)}
+            {(checkHarvestTotalOrParcial === 'total') && (
+              survivalRate && (
+                <>
+                  <p>Produção total do viveiro: {totalBiomassHarvested.toLocaleString('pt-BR')} kg</p>
+                  <p>Sobrevivência: {(survivalRate * 100).toLocaleString('pt-BR', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}%</p>
+                  <p>Receita do cultivo: {calcRevenue().toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}</p>
+                  <button type="button" onClick={() => (setFinalize(false), setFinishingHarvest({ ...finishingHarvest, show: false }))}>
+                    Voltar
+                  </button>
+                </>
+              ))}
+
+
+            <button type="button" onClick={handleHarvestConfirm}>
+              {finishingHarvest.buttonText}
+            </button> {/* colocar esse botão ao lado do input */}
             <button onClick={handleSave}>Salvar</button>
             <button onClick={() => setShowHarvest(false)}>Cancelar</button>
           </div>
         </div>
-    )
+      )}
+
+
+    </>
+  )
 
 }
 

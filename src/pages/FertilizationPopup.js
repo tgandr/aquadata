@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const FertilizationPopup = ({ setShowFertilizationPopup }) => {
+const FertilizationPopup = ({ setShowFertilizationPopup, saveData }) => {
   const [data, setData] = useState(new Date().toISOString().split('T')[0]);
   const [fertilizerType, setFertilizerType] = useState('');
   const [chemicalFertilizer, setChemicalFertilizer] = useState('');
@@ -14,15 +14,17 @@ const FertilizationPopup = ({ setShowFertilizationPopup }) => {
   ]);
 
   const handleSave = () => {
-    console.log('Data:', data);
-    console.log('Tipo de Fertilizante:', fertilizerType);
-    console.log('Fertilizante Químico:', chemicalFertilizer || customChemicalFertilizer);
-    console.log('Quantidade:', quantity);
+    const dataToSave = {
+      data: data,
+      tipoFertilizante: fertilizerType,
+      fertilizanteQuimico: chemicalFertilizer,
+      quantidade: quantity
+    }
 
     if (fertilizerType === 'Químico' && customChemicalFertilizer) {
       setFertilizers(prevFertilizers => [...prevFertilizers, customChemicalFertilizer]);
     }
-
+    saveData(dataToSave, 'fertilizers')
     setShowFertilizationPopup(false);
   };
 

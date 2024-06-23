@@ -26,7 +26,7 @@ const PondDetail = () => {
   const [showCamCountPopup, setShowCamCountPopup] = useState(false);
   const [showFeedPopup, setshowFeedPopup] = useState(false);
   const [showParamPopup, setShowParamPopup] = useState(false);
-  const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
+  // const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
   const [showBiometry, setShowBiometry] = useState(false);
   const [showHarvest, setShowHarvest] = useState(false);
   const [showWeightInput, setShowWeightInput] = useState({ show: false, buttonText: 'Pesagem' });
@@ -63,15 +63,14 @@ const PondDetail = () => {
 
   const [harvestData, setHarvestData] = useState({
     date: new Date().toISOString().split('T')[0],
-    despesca: 'total',
+    despesca: '',
     biomass: '',
-    pesagens: [{ weight: '', count: '' }],
+    weighings: [{ weight: '', count: '' }],
     comprador: '',
     precoVenda: ''
   });
 
   useEffect(() => {
-    console.log(location.state)
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
     const storedCultivo = storedCultivos && storedCultivos.find((viv) => viv.viveiroId === viveiroId);
 
@@ -92,13 +91,13 @@ const PondDetail = () => {
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
     const i = storedCultivos && storedCultivos.findIndex((viv) => viv.viveiroId === viveiroId);
     if (key in storedCultivos[i]) {
-      const sanity = [...storedCultivos[i].sanity, data];
-      const checkOut = { ...storedCultivos[i], sanity: sanity };
+      const toStore = [...storedCultivos[i][key], data];
+      const checkOut = { ...storedCultivos[i], [key]: toStore };
       storedCultivos[i] = checkOut;
       localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
       localStorage.setItem('history', JSON.stringify(storedCultivos));
     } else {
-      const checkOut = { ...storedCultivos[i], sanity: [data] };
+      const checkOut = { ...storedCultivos[i], [key]: [data] };
       storedCultivos[i] = checkOut;
       localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
       localStorage.setItem('history', JSON.stringify(storedCultivos));
@@ -142,17 +141,17 @@ const PondDetail = () => {
             <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros da Água</button>
             {/* <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise Presuntiva</button> */}
             <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
-            <button className="pond-button" onClick={() => setShowHarvest(true)}>Dados de despesca</button>
             <button className="pond-button" onClick={() => setShowFertilizationPopup(true)}>Fertilização</button>
+            <button className="pond-button" onClick={() => setShowHarvest(true)}>Dados de despesca</button>
             <button className="pond-button">Histórico</button>
             <button className="pond-button">Relatório Parcial</button>
           </div>
         </div>
       ) : (
-        <div>
+        <>
           <h3>O viveiro está vazio</h3>
           <button onClick={() => setShowNewCyclePopup(true)}>Novo Ciclo de Cultivo</button>
-        </div>
+        </>
       )}
 
       {showNewCyclePopup && <NewCyclePopup
@@ -173,15 +172,9 @@ const PondDetail = () => {
         viveiroId={viveiroId}
         setCultivo={setCultivo} />}
 
-      {showFeedPopup && <FeedPopup setshowFeedPopup={setshowFeedPopup} />}
+      {showFeedPopup && <FeedPopup setshowFeedPopup={setshowFeedPopup} saveData={saveData} />}
 
-      {showParamPopup && <ParamPopup setShowParamPopup={setShowParamPopup} />}
-
-      {showAnalysisPopup &&
-        <SanityAnalysis
-          setShowAnalysisPopup={setShowAnalysisPopup}
-          saveData={saveData}
-        />}
+      {showParamPopup && <ParamPopup setShowParamPopup={setShowParamPopup} saveData={saveData} />}
 
       {showBiometry && <BiometryPopup
         viveiroId={viveiroId}
@@ -192,6 +185,7 @@ const PondDetail = () => {
 
       {showHarvest && <HarvestPopup
         cultivo={cultivo}
+        saveData={saveData}
         harvestData={harvestData}
         setHarvestData={setHarvestData}
         survivalRate={survivalRate}
@@ -200,14 +194,17 @@ const PondDetail = () => {
         setBiometryData={setBiometryData}
         newPesagem={newPesagem}
         setNewPesagem={setNewPesagem}
+        showHarvest={showHarvest}
         setShowHarvest={setShowHarvest} />}
 
-      {showFertilizationPopup && <FertilizationPopup setShowFertilizationPopup={setShowFertilizationPopup} />}
+      {showFertilizationPopup && <FertilizationPopup
+        setShowFertilizationPopup={setShowFertilizationPopup}
+        saveData={saveData} />}
 
       <button onClick={handleBackClick}>Voltar para Viveiros</button>
       {cultivo && biometrics ? (
-        <div>
-          <h2 className="infos">Biometrias</h2>
+        <div className="biom">
+          <h3>Biometrias</h3>
           <ul>
             {biometrics.map((biometry, index) => (
               <li key={index}>

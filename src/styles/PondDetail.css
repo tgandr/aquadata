@@ -4,7 +4,16 @@
   justify-content: flex-start;
   align-content: center;
   gap: 0;
-  height: 120px;
+  color: var(--color-blue-dark);
+}
+
+.biom {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-content: center;
+  
+  gap: 0;
   color: var(--color-blue-dark);
 }
 
@@ -111,29 +120,28 @@
 }
 
 .obs {
-  display: flex;
+  /* display: flex;
   flex-direction: column;
-  width: 80%;
+  width: 100%; */
+  text-align: center;
+  margin-bottom: 10px;
+  width: 90%;
 }
 
-.obs label {
+/* .obs span {
   margin-right: 10px;
-  /* Adiciona espaço entre o texto e o checkbox */
+  
   display: flex;
   flex-direction: row;
   justify-content: left;
-}
+  
+} */
 
 .obs input[type="checkbox"] {
   margin-right: 5px;
   /* Adiciona espaço entre o checkbox e o texto */
-  appearance: none;
-  /* Remove o estilo padrão do sistema operacional */
-  -webkit-appearance: none;
-  /* Para navegadores baseados em Webkit, como Chrome e Safari */
-  -moz-appearance: none;
-  /* Para navegadores baseados em Gecko, como Firefox */
-  width: 20px;
+
+  max-width: 20px;
   /* Define a largura do checkbox */
   height: 20px;
   /* Define a altura do checkbox */
@@ -145,6 +153,24 @@
   /* Remove o contorno ao focar */
   cursor: pointer;
   /* Altera o cursor ao passar o mouse */
+}
+
+.obs-in {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+
+.obs-in label {
+  display: flex;
+  width: 100%;
+  text-align: left;
+}
+
+.obs-in span {
+  margin-left: 10px;
 }
 
 ul {
