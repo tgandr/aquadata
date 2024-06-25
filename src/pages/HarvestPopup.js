@@ -1,31 +1,23 @@
 import React, { useState } from 'react';
 
 const HarvestPopup = ({
-  cultivo,
-  saveData,
-  harvestData,
-  setHarvestData,
-  survivalRate,
-  setSurvivalRate,
-  biometryData,
-  setBiometryData,
-  newPesagem,
-  setNewPesagem,
-  showHarvest,
-  setShowHarvest
-}) => {
+  cultivo, saveData, harvestData, setHarvestData, survivalRate, setSurvivalRate,
+  biometryData, setBiometryData, newPesagem, setNewPesagem, showHarvest, setShowHarvest }) => {
+
   const [previousHarvestData, setPreviousHarvestData] = useState(true);
   const [totalBiomassHarvested, setTotalBiomassHarvested] = useState('');
   const [finishingHarvest, setFinishingHarvest] = useState({
     show: false,
     buttonText: "Ok"
   });
+
   const [biometrySamples, setBiometrySamples] = useState(false);
   const [revenue, setRevenue] = useState('');
   const [harvestTotals, setHarvestTotals] = useState({
     id: {},
     data: {}
   })
+
   const [finalize, setFinalize] = useState(false);
   const [checkHarvestTotalOrParcial, setCheckHarvestTotalOrParcial] = useState('');
   const [showPercentual, setShowPercentual] = useState(false)
@@ -62,7 +54,6 @@ const HarvestPopup = ({
       const totalBiomassHarvested = cultivo.harvest.reduce((total, harv) =>
         total + parseInt(harv.data.biomass), 0) + parseInt(harvestData.biomass);
       const surviversBefore = cultivo.harvest.reduce((total, harv) => total + parseInt(
-
         parseInt(harv.data.biomass * 1000) / (
           harv.data.biometries.reduce((total, biom) => total + parseInt(biom.weight), 0) /
           harv.data.biometries.reduce((total, biom) => total + parseInt(biom.count), 0)
@@ -72,7 +63,6 @@ const HarvestPopup = ({
       const survivalRate = (parseInt(survivers) / parseInt(cultivo.quantidadeEstocada));
       setTotalBiomassHarvested(totalBiomassHarvested);
       setSurvivalRate(survivalRate);
-      // calcRevenue();
       setHarvestTotals({
         ...harvestTotals,
         data: {
@@ -82,11 +72,8 @@ const HarvestPopup = ({
           totalBiomassHarvested: totalBiomassHarvested,
           survivalRate: survivalRate
         }
-      });
+      })} else { setSurvivalRate(null) }
 
-    } else {
-      setSurvivalRate(null);
-    }
     if (harvestTotals.id.totalOrParcial === 'parcial') {
       setShowPercentual(true);
       setHarvestTotals({
@@ -111,7 +98,6 @@ const HarvestPopup = ({
     const previousRevenues = cultivo.harvest.reduce((total, harv) => total + parseInt(harv.id.price * harv.data.biomass), 0);
     const finalRevenue = parseInt(harvestTotals.id.price) * parseInt(harvestTotals.data.biomassAtFinalHarvest);
     const revenue = parseInt(previousRevenues + finalRevenue);
-    // setRevenue(revenue);
     return revenue;
   }
 
@@ -281,66 +267,6 @@ const HarvestPopup = ({
         </div>
       )}
 
-      {/* {biometrySamples && (
-        <div className="popup">
-          <div className="popup-inner">
-            <form onSubmit={handleBiometryCalcSubmit}>
-              <div className="form-group">
-                <label>Pesagem:</label>
-                <input
-                  type="number"
-                  name="weight"
-                  value={newPesagem.weight}
-                  onChange={handlePesagensChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Contagem:</label>
-                <input
-                  type="number"
-                  name="count"
-                  value={newPesagem.count}
-                  onChange={handlePesagensChange}
-                  required
-                />
-              </div>
-              <button type="submit" className="first-class-button">Calcular Biometria</button>
-            </form>
-
-            {biometryData && (
-              <div className="result-box">
-                <h3>Resultado da Biometria:</h3>
-                {harvestData.weighings.map((pesagem, index) => (
-                  <div key={index}>
-                    <p>Amostra {index + 1}: {' '}
-                      {pesagem.weight} g, {' '}
-                      {pesagem.count} camarões - Peso médio {parseFloat(pesagem.weight / pesagem.count).toLocaleString('pt-BR', {
-                        minimumFractionDigits: 1,
-                        maximumFractionDigits: 1
-                      })} g
-                    </p>
-                  </div>
-                ))}
-                <p>Peso médio: {parseFloat(biometryData.averageWeight).toLocaleString('pt-BR', {
-                  minimumFractionDigits: 1,
-                  maximumFractionDigits: 1
-                })} g</p>
-              </div>
-            )}
-
-            <div className="bottom-buttons">
-              <button type="button" onClick={() => (setBiometrySamples(false), setFinishingHarvest({ ...finishingHarvest, show: true }))} className="first-class-button">
-                Finalizar despesca
-              </button>
-              <button type="button" onClick={() => (setBiometrySamples(false), setPreviousHarvestData(true))} className="cancel-button">
-                Voltar
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
-
       {finishingHarvest.show && (
         <div className="popup">
           <div className="popup-inner">
@@ -382,8 +308,10 @@ const HarvestPopup = ({
                     maximumFractionDigits: 2,
                   })}</p>
                   <p>Foram colhidos aproxidamente {(((1000 * harvestTotals.data.biomass) /
-                    (biometryData.averageWeight * cultivo.quantidadeEstocada)) * 100).toFixed(1)}% da população estocada</p>
+                    (biometryData.averageWeight * cultivo.quantidadeEstocada)) * 100)
+                    .toFixed(1)}% da população estocada</p>
                 </>)}
+                
               {(checkHarvestTotalOrParcial === 'total') && (
                 survivalRate && (
                   <>

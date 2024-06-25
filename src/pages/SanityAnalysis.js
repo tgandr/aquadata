@@ -133,7 +133,8 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
             {showAnalysisPopupPrevious.start && (
                 <div className="popup-sanity">
                     <div className="popup-inner-sanity">
-                        <form onSubmit={handleStartSample} className="start-form">
+                        <h3>Análise Presuntiva</h3>
+                        <form onSubmit={handleStartSample} className="harv-form">
                             {/* <label>
                                 <span>Fazenda:</span>
                                 <input
@@ -178,7 +179,7 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
                                 />
                             </label>
                             <label>
-                                <span>Camarões grampados?</span>
+                                <span style={{ textAlign: 'left' }}>Camarões grampados?</span>
                                 <select
                                     name="shrimpsPinned"
                                     value={analysisId.shrimpsPinned}
@@ -188,16 +189,22 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
                                     <option value={false}>Não</option>
                                 </select>
                             </label>
-                            <button
-                                type="submit"
-                                className="saveStart">
-                                Lançar observações</button>
-                            <button
-                                type="button"
-                                className="saveStart"
-                                onClick={() => (setShowAnalysisPopupPrevious({ start: false, previous: true }))}>
-                                Voltar
-                            </button>
+                            <br />
+                            <br />
+                            <br />
+                            <br />
+                            <div className="bottom-buttons">
+                                <button
+                                    type="button"
+                                    className="cancel-button"
+                                    onClick={() => (setShowAnalysisPopupPrevious({ start: false, previous: true }))}>
+                                    Voltar
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="first-class-button">
+                                    Lançar observações</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -205,7 +212,7 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
             {showForm && (
                 <div className="popup-sanity">
                     <div className="popup-inner-sanity">
-                        <h2 className="sanity-title">Análise Presuntiva</h2>
+                        <h3 className="sanity-title">Análise Presuntiva</h3>
                         <div className="fade-out-sup" />
                         <div className="main-content">
                             <div className="main-content-start" />
@@ -442,23 +449,35 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
                                         </div>
                                     </label>
                                 </div>
-                                <div className="buttons">
-                                    <button type="submit">Adicionar</button>
-                                    <button
-                                        type="button"
-                                        onClick={() => logoutSanity()}>
-                                        Finalizar
-                                    </button>
+                                <span>
+
+                                    <button type="submit" className="add-shrimp">+</button>
+
+                                </span>
+                                <br />
+                                <br />
+                                <br />
+                                <br />
+                                <br />
+                                <div className="bottom-buttons">
                                     <button
                                         type="button"
                                         onClick={() => (
                                             setShowForm(false),
-                                            setShowAnalysisPopupPrevious({ start: true, previous: false }))}>
+                                            setShowAnalysisPopupPrevious({ start: true, previous: false }))}
+                                        className="cancel-button">
                                         Voltar
                                     </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => logoutSanity()}
+                                        className="first-class-button">
+                                        Finalizar
+                                    </button>
+
                                 </div>
                             </form>
-                            <div className="main-content-bottom" />
+                            {/* <div className="main-content-bottom" /> */}
                         </div>
 
                     </div>

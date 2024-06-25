@@ -43,7 +43,7 @@ const BiometryPopup = ({
           <div className="popup-inner">
             <h3>Anotar Biometria</h3>
             <h3>Peso Médio: {showBiomCalculated} g</h3> 
-            <form onSubmit={handleBiometrySubmit}>
+            <form onSubmit={handleBiometrySubmit} className="harv-form">
               <label>
                 Data:
                 <input
@@ -74,9 +74,14 @@ const BiometryPopup = ({
                   required
                 />
               </label>
-              <button type="submit">Calcular o peso médio</button>
+              <br />
+              <br />
+              <br />
+              <div className="bottom-buttons">
+                <button type="button" onClick={() => setShowBiometry(false)} className="cancel-button">Voltar</button>
+                <button type="submit" className="first-class-button">Calcular o peso médio</button>
+              </div>
             </form>
-            <button type="button" onClick={() => setShowBiometry(false)}>Fechar</button>
           </div>
         </div>
     )

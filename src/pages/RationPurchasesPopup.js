@@ -115,7 +115,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
             <div className="popup">
                 <div className="popup-inner">
                     <h3>Adicionar Ração</h3>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} className="harv-form">
                         <label>
                             Data da Compra:
                             <input
@@ -132,7 +132,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                                 value={formRation.brand}
                                 onChange={handleChange}
                                 required>
-                                <option value="">Indique o fabricante de ração</option>
+                                <option value="">Fabricante de ração</option>
                                 {rationsBrands.map((brand, i) => (
                                     <option key={i} value={brand}>{brand}</option>
                                 ))}
@@ -195,8 +195,21 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                                 onChange={handleChange}
                                 required />
                         </label>
-                        <button type="submit">Salvar</button>
-                        <button type="button" onClick={() => setShowRationPurchasesPopup(false)}>Cancelar</button>
+                        <br />
+                        <br />
+                        <br />
+                        <div className="bottom-buttons">
+                            <button
+                                type="button"
+                                onClick={() => setShowRationPurchasesPopup(false)}
+                                className="cancel-button">
+                                Voltar</button>
+                            <button
+                                type="submit"
+                                className="first-class-button">
+                                Salvar</button>
+
+                        </div>
                     </form>
                 </div>
             </div>
@@ -204,17 +217,21 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
             {addNewBrandPopup && (
                 <div className="popup">
                     <div className="popup-inner">
-                        <label>Cadastrar novo fabricante:</label>
-                        <select
-                            name="addBrand"
-                            value={addNewBrand}
-                            onChange={(e) => setAddNewBrand(e.target.value)}>
-                            <option value="">Selecione um fabricante</option>
-                            {brands.map((brand, i) => (
-                                <option key={i} value={brand}>{brand}</option>
-                            ))}
-                            <option value="custom">Adicionar fabricante</option>
-                        </select>
+                        <form className="harv-form">
+                            <label>Cadastrar novo fabricante:
+                                <select
+                                    name="addBrand"
+                                    value={addNewBrand}
+                                    onChange={(e) => setAddNewBrand(e.target.value)}>
+                                    <option value="">Selecione um fabricante</option>
+                                    {brands.map((brand, i) => (
+                                        <option key={i} value={brand}>{brand}</option>
+                                    ))}
+                                    <option value="custom">Adicionar fabricante</option>
+                                </select>
+                            </label>
+                        </form>
+
                         {showFieldNewBrand && (
                             <div>
                                 <label>Adicione novo fabricante</label>
@@ -225,8 +242,16 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                                 />
                             </div>
                         )}
-                        <button onClick={saveNewBrand}>Confirmar</button>
-                        <button onClick={() => setAddNewBrandPopup(false)}>Voltar</button>
+                            <br />
+                            <br />
+                        <div className="bottom-buttons">
+                            <button
+                                onClick={() => setAddNewBrandPopup(false)}
+                                className="cancel-button">Voltar</button>
+                            <button
+                                onClick={saveNewBrand}
+                                className="first-class-button">Confirmar</button>
+                        </div>
                     </div>
                 </div>
             )}

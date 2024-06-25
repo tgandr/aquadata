@@ -13,7 +13,8 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData }) => {
     "Sulfato de Amônio"
   ]);
 
-  const handleSave = () => {
+  const handleSave = (e) => {
+    e.preventDefault();
     const dataToSave = {
       data: data,
       tipoFertilizante: fertilizerType,
@@ -28,25 +29,27 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData }) => {
     setShowFertilizationPopup(false);
   };
 
-const saveFertilizersList = (newFert) => {
+  const saveFertilizersList = (newFert) => {
     if (newFert != '') {
-        setFertilizers([...fertilizers, newFert]);
-        setChemicalFertilizer(newFert);
-        setCustomChemicalFertilizer('');
-        let fertilizersList = JSON.parse(localStorage.getItem('fertilizersList'));
-        if (fertilizersList) {
-            fertilizersList.push(newFert);
-        } else {
-            fertilizersList = [...fertilizers, newFert]
-        }
-    localStorage.setItem('fertilizersList', JSON.stringify(fertilizersList));
+      setFertilizers([...fertilizers, newFert]);
+      setChemicalFertilizer(newFert);
+      setCustomChemicalFertilizer('');
+      let fertilizersList = JSON.parse(localStorage.getItem('stockData'));
+      if ('fertilizersList' in fertilizersList) {
+        fertilizersList.fertilizersList.push(newFert);
+      } else {
+        fertilizersList.fertilizersList = [...fertilizers, newFert]
+      }
+      localStorage.setItem('stockData', JSON.stringify(fertilizersList));
     }
+    setAddNewFert(false);
+
   }
 
   useEffect(() => {
-    const checkFertilizersList = JSON.parse(localStorage.getItem('fertilizersList'));
-    if (checkFertilizersList) {
-      setFertilizers(checkFertilizersList);
+    const checkFertilizersList = JSON.parse(localStorage.getItem('stockData')) || {};
+    if ('fertilizersList' in checkFertilizersList) {
+      setFertilizers(checkFertilizersList.fertilizersList);
     }
   }, []);
 
@@ -62,47 +65,71 @@ const saveFertilizersList = (newFert) => {
     <div className="popup">
       <div className="popup-inner">
         <h2>Fertilização</h2>
-        <label>Data:</label>
-        <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
-        <label>Tipo de Fertilizante:</label>
-        <select value={fertilizerType} onChange={(e) => setFertilizerType(e.target.value)}>
-          <option value="">Selecione o tipo de fertilizante</option>
-          <option value="Probióticos">Probióticos</option>
-          <option value="Bokashi">Bokashi</option>
-          <option value="Químico">Químico</option>
-        </select>
-        {fertilizerType === 'Químico' && (
-          <div>
-            <label>Fertilizante Químico:</label>
-            <select value={chemicalFertilizer} onChange={(e) => setChemicalFertilizer(e.target.value)}>
-              <option value="">Selecione o fertilizante químico</option>
-              {fertilizers.map((fertilizer, index) => (
-                <option key={index} value={fertilizer}>{fertilizer}</option>
-              ))}
-              <option value="custom">Adicionar Fertilizante</option>
+        <form onSubmit={handleSave} className="harv-form">
+          <label>Data:
+            <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
+          </label>
+          <label>Tipo de Fertilizante:
+            <select value={fertilizerType} onChange={(e) => setFertilizerType(e.target.value)}>
+              <option value="">Selecione o tipo de fertilizante</option>
+              <option value="Probióticos">Probióticos</option>
+              <option value="Bokashi">Bokashi</option>
+              <option value="Químico">Químico</option>
             </select>
+          </label>
+          {fertilizerType === 'Químico' && (
+            <div>
+              <label>Fertilizante Químico:
+                <select value={chemicalFertilizer} onChange={(e) => setChemicalFertilizer(e.target.value)}>
+                  <option value="">Selecione o fertilizante químico</option>
+                  {fertilizers.map((fertilizer, index) => (
+                    <option key={index} value={fertilizer}>{fertilizer}</option>
+                  ))}
+                  <option value="custom">Adicionar Fertilizante</option>
+                </select>
+              </label>
 
-            {addNewFert && (
-              <div className="popup">
-                <div className="popup-inner">
-                  <label>Novo Fertilizante Químico:</label>
-                  <input
-                    type="text"
-                    value={customChemicalFertilizer}
-                    onChange={(e) => setCustomChemicalFertilizer(e.target.value)}
-                  />
-                  <button onClick={() => saveFertilizersList(customChemicalFertilizer)}>Confirmar</button>
-                  <button onClick={() => setAddNewFert(false)}>Cancelar</button>
+              {addNewFert && (
+                <div className="popup">
+                  <div className="popup-inner">
+                    <label>Novo Fertilizante Químico:
+                      <input
+                        type="text"
+                        value={customChemicalFertilizer}
+                        onChange={(e) => setCustomChemicalFertilizer(e.target.value)}
+                      />
+                    </label>
+                    <br />
+                    <br />
+                    <div className="bottom-buttons">
+                      <button onClick={() => setAddNewFert(false)} className="cancel-button">Voltar</button>
+                      <button onClick={() => saveFertilizersList(customChemicalFertilizer)}
+                        className="first-class-button">
+                          Confirmar</button>
+                    </ div>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
 
-        <label>Quantidade Aplicada:</label>
-        <input type="text" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
-        <button onClick={handleSave}>Salvar</button>
-        <button onClick={() => setShowFertilizationPopup(false)}>Cancelar</button>
+          <label>Quantidade Aplicada:
+            <input type="text" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+          </label>
+          <br />
+          <br />
+
+          <div className="bottom-buttons">
+            <button
+              type="button"
+              onClick={() => setShowFertilizationPopup(false)}
+              className="cancel-button">
+              Cancelar
+            </button>
+            <button type="submit" className="first-class-button">Salvar</button>
+          </div>
+        </form>
+
       </div>
     </div>
   );

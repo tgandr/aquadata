@@ -68,6 +68,30 @@
     /* Cor de fundo ao passar o mouse */
 }
 
+/* .stress-test-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.stress-test-button {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    background-color: #c0bfbf;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.stress-test-button.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.stress-test-button:not(.active):hover {
+    background-color: #e0e0e0;
+} */
+
 .stress-test-buttons {
     display: flex;
     gap: 10px;
@@ -92,7 +116,6 @@
     background-color: #e0e0e0;
 }
 
-/* Estilos específicos para telas pequenas */
 @media (max-width: 600px) {
     .buttons-container {
         grid-template-columns: 1fr 1fr;
@@ -120,49 +143,44 @@
 }
 
 .obs {
-    /* display: flex;
-    flex-direction: column;
-    width: 100%; */
-    text-align: center;
-    margin-bottom: 10px;
-    width: 90%;
+    text-align: center !important;
+    margin-bottom: 10px !important;
+    width: 90% !important;
 }
 
 .obs input[type="checkbox"] {
-    margin-right: 5px;
-    max-width: 20px;
-    height: 20px;
-    border: 2px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-    cursor: pointer;
+    margin-right: 5px !important;
+    max-width: 20px !important;
+    height: 20px !important;
+    border: 2px solid #ccc !important;
+    border-radius: 4px !important;
+    outline: none !important;
+    cursor: pointer !important;
 }
 
 .obs-in {
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: flex-start;
-    margin-bottom: 10px;
+    display: flex !important;
+    width: 100% !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    margin-bottom: 10px !important;
 }
 
 .obs-in label {
-    display: flex;
-    width: 100%;
-    text-align: left;
+    display: flex !important;
+    width: 100% !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
 }
 
 .obs-in span {
-    margin-left: 10px;
+    margin-left: 10px !important;
 }
 
 ul {
     list-style-type: none;
-    /* Remove o marcador da lista */
     padding: 0;
-    /* Remove o preenchimento padrão */
     margin: 0;
-    /* Remove a margem padrão */
 }
 
 li {
@@ -218,7 +236,7 @@ select {
     box-sizing: border-box;
     align-items: center;
     max-width: 50% !important;
-    padding: 5px !important;
+    padding: 10px !important;
     margin: 0px !important;
 }
 
@@ -231,26 +249,6 @@ select {
     background-color: var(--color-blue-dark) !important;
     color: var(--color-white);
 }
-
-/* .form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    margin-bottom: 5px;
-    font-size: 14px;
-    display: block;
-} */
-
-/* .form-group input {
-    width: calc(100% - 22px);
-    padding: 10px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-} */
 
 .first-class-button,
 .cancel-button {
@@ -328,4 +326,40 @@ select {
     display: inline-block;
     vertical-align: top;
     /* Não está funcionando - ajustar */
+}
+
+.side-icon-button-text {
+    font-size: 14px;
+    color: var(--color-blue-dark);
+    border-top: 1px solid var(--color-blue-dark);
+    margin-top: 10px;
+}
+
+.biometry-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.biometry-table th,
+.biometry-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.biometry-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.biometry-table td {
+    text-align: left;
+}
+
+.biometry-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.biometry-table tr:hover {
+    background-color: #f1f1f1;
 }

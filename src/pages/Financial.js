@@ -85,6 +85,7 @@ const Financial = () => {
             <div>
               <FontAwesomeIcon icon={faShrimp} className="icon" />
             </div>
+            <span className="side-icon-button-text">Viveiros</span>
           </button>
           <img 
             src={aquaDataIcon}
@@ -96,6 +97,7 @@ const Financial = () => {
             <div>
               <FontAwesomeIcon icon={faWarehouse} className="icon" />
             </div>
+            <span className="side-icon-button-text">Estoque</span>
           </button>
         </div>
       </div>

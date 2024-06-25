@@ -11,7 +11,7 @@ const AddPonds = () => {
   const [viveiros, setViveiros] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
-  const [showAnalysisPopupPrevious, setShowAnalysisPopupPrevious] = useState({start: false, previous: false});
+  const [showAnalysisPopupPrevious, setShowAnalysisPopupPrevious] = useState({ start: false, previous: false });
   const [form, setForm] = useState({
     numeroViveiro: '',
     area: ''
@@ -86,21 +86,25 @@ const AddPonds = () => {
       <div className="viveiros-container">
         {viveiros.length > 0 ? (
           viveiros.map(viveiro => (
-            <Link 
-            to={`/viveiro/${viveiro.id}`} 
-            state={{viveiro: viveiro, farmName: formData.nomeFazenda}} 
-            key={viveiro.id} 
-            className="link-style">
+            <Link
+              to={`/viveiro/${viveiro.id}`}
+              state={{ viveiro: viveiro, farmName: formData.nomeFazenda }}
+              key={viveiro.id}
+              className="link-style">
               <button className="viveiro-button">
                 <div className="infos-wrapper">
-                  <span className="viveiro-data">{viveiro.area} ha</span>
+
                   {days(viveiro.id) ? (
                     <span className="viveiro-data">
-                      {days(viveiro.id) === 1 ? '1 dia de cultivo' : `${days(viveiro.id)} dias de cultivo`}
+                      {days(viveiro.id) === 1 ? '1 dia' : `${days(viveiro.id)} dias`}
                     </span>
                   ) : (
                     <span className="viveiro-data">Desocupado</span>
                   )}
+                  <span className="viveiro-data">{parseFloat(viveiro.area).toLocaleString('pt-BR', {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1,
+                  })} ha</span>
                 </div>
                 <div className="text-add-pond-wrapper">
                   <span className="viveiro-titulo">{viveiro.nome}</span>
@@ -120,7 +124,7 @@ const AddPonds = () => {
             <span className="viveiro-titulo">Adicionar</span>
           </div>
         </button>
-        <button className="viveiro-button" onClick={() => setShowAnalysisPopupPrevious({start: false, previous: true})}>
+        <button className="viveiro-button" onClick={() => setShowAnalysisPopupPrevious({ start: false, previous: true })}>
           <div className="infos-wrapper">
             <FontAwesomeIcon icon={faSyringe} className="icon-plus" />
           </div>
@@ -135,6 +139,7 @@ const AddPonds = () => {
             <div>
               <FontAwesomeIcon icon={faDollarSign} className="icon" />
             </div>
+            <span className="side-icon-button-text">Financeiro</span>
           </button>
           <img
             src={aquaDataIcon}
@@ -147,6 +152,7 @@ const AddPonds = () => {
             <div>
               <FontAwesomeIcon icon={faWarehouse} className="icon" />
             </div>
+            <span className="side-icon-button-text">Estoque</span>
           </button>
         </div>
       </div>
@@ -155,9 +161,9 @@ const AddPonds = () => {
         <div className="popup">
           <div className="popup-inner">
             <h3>Adicionar Viveiro</h3>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="harv-form">
               <label>
-                Número do Viveiro:
+                Número do <br />Viveiro:
                 <input
                   type="text"
                   name="numeroViveiro"
@@ -167,25 +173,23 @@ const AddPonds = () => {
                 />
               </label>
               <label>
-                Área do viveiro (em hectares):
+                Área do viveiro <br />(em hectares):
                 <input
                   type="number"
                   name="area"
                   value={form.area}
-                  // onChange={(e) => {
-                  //   const value = e.target.value;
-                  //   if (/^\d+(\.\d{0,1})?$/.test(value)) {
-                  //     handleChange(e);
-                  //   }
-                  // }}
                   onChange={handleChange}
                   required
                   step="0.1"
                   min="0"
                 />
               </label>
-              <button type="submit">Salvar</button>
-              <button type="button" onClick={() => setShowPopup(false)}>Cancelar</button>
+              <br />
+              <br/>
+              <div className="bottom-buttons">
+                <button type="button" onClick={() => setShowPopup(false)} className="cancel-button">Cancelar</button>
+                <button type="submit" className="first-class-button">Salvar</button>
+              </div>
             </form>
           </div>
         </div>
@@ -198,13 +202,28 @@ const AddPonds = () => {
             <p>Trata-se do exame minucioso de camarões em busca de sinais que indiquem seu estado de saúde.
               Com a análise presuntiva você poderá ver ameaças antes que seja tarde.
               É necessário um treinamento bem simples e o uso de ferramentas básicas.</p>
+              <button 
+              type="button" 
+              onClick={() => AnalysisReport(JSON.parse(localStorage.getItem('history')))}
+              className="first-class-button">
+                Baixar <br />Relatório</button>
+            <br />
+            <br />
+            <br />
+            <br />
+            <div className="bottom-buttons">
+            <button 
+              type="button" 
+              onClick={() => setShowAnalysisPopupPrevious({ start: false, previous: false })}
+              className="cancel-button">
+                Voltar</button>
             <button
               type="button"
-              onClick={() => (setShowAnalysisPopup(true), setShowAnalysisPopupPrevious({start:true, previous: false}))}>
+              onClick={() => (setShowAnalysisPopup(true), setShowAnalysisPopupPrevious({ start: true, previous: false }))}
+              className="first-class-button">
               Realizar Análise Presuntiva
             </button>
-            <button type="button" onClick={() => AnalysisReport(JSON.parse(localStorage.getItem('history')))}>Baixar Relatório</button>
-            <button type="button" onClick={() => setShowAnalysisPopupPrevious({start:false, previous: false})}>Voltar</button>
+            </div>
           </div>
         </div>
       )}
@@ -214,7 +233,7 @@ const AddPonds = () => {
           setShowAnalysisPopup={setShowAnalysisPopup}
           showAnalysisPopupPrevious={showAnalysisPopupPrevious}
           setShowAnalysisPopupPrevious={setShowAnalysisPopupPrevious}
-          />)}
+        />)}
 
     </div>
   );

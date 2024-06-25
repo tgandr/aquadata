@@ -26,7 +26,7 @@ const ParamPopup = ({ setShowParamPopup, saveData }) => {
         <div className="popup">
             <div className="popup-inner">
                 <h3>Parâmetros da Água</h3>
-                <form onSubmit={handleParamSubmit}>
+                <form onSubmit={handleParamSubmit} className="harv-form">
                     <label>
                         Data:
                         <input
@@ -82,8 +82,12 @@ const ParamPopup = ({ setShowParamPopup, saveData }) => {
                             onChange={handleParamChange}
                         />
                     </label>
-                    <button type="submit">Salvar</button>
-                    <button type="button" onClick={() => setShowParamPopup(false)}>Cancelar</button>
+                    <br />
+                    <br />
+                    <div className="bottom-buttons">
+                        <button type="button" onClick={() => setShowParamPopup(false)} className="cancel-button">Voltar</button>
+                        <button type="submit" className="first-class-button">Salvar</button>
+                    </div>
                 </form>
             </div>
         </div>

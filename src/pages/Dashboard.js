@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import { faInstagram } from '@fortawesome/free-brands-svg-icons'
+import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt, faClipboardList } from '@fortawesome/free-solid-svg-icons';
+import { faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons'
+// import { Modal, Button } from 'react-bootstrap';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
@@ -16,17 +17,37 @@ const Dashboard = () => {
       const handleUnload = () => {
         localStorage.clear();
       };
-  
+
       window.addEventListener('beforeunload', handleUnload);
-  
-      // Cleanup event listener on component unmount
+
       return () => {
         window.removeEventListener('beforeunload', handleUnload);
       };
     }
   }, []);
 
+  // const [showModal, setShowModal] = useState(false);
 
+  // const handleLogoutClick = () => {
+  //   setShowModal(true);
+  // };
+
+  // const handleConfirmLogout = () => {
+  //   handleLogout();
+  //   setShowModal(false);
+  // };
+
+  // const handleCloseModal = () => {
+  //   setShowModal(false);
+  // };
+
+  const handleLogoutClick = () => {
+    const isConfirmed = window.confirm('Você tem certeza que deseja sair?');
+    if (isConfirmed) {
+      handleLogout();
+    }
+  };
+  
   const handleLogout = () => {
     const formData = JSON.parse(localStorage.getItem('formData'));
     if (formData) {
@@ -36,6 +57,11 @@ const Dashboard = () => {
     navigate('/login');
   };
 
+  const handleWhatsAppClick = () => {
+    const phoneNumber = '5585992612616'; // Número de telefone no formato internacional
+    const url = `https://wa.me/${phoneNumber}`;
+    window.open(url, '_blank');
+  };
 
   return (
     <div className="dashboard-container">
@@ -48,7 +74,7 @@ const Dashboard = () => {
             <FontAwesomeIcon icon={faShrimp} className="icon" />
           </div>
           <div className="text-wrapper">
-            <span>Produção</span>
+            <span>Viveiros</span>
           </div>
         </button>
         <button className="dashboard-button" onClick={() => navigate('/estoque')}>
@@ -56,7 +82,7 @@ const Dashboard = () => {
             <FontAwesomeIcon icon={faWarehouse} className="icon" />
           </div>
           <div className="text-wrapper">
-            <span>Controle de Estoque</span>
+            <span>Estoque</span>
           </div>
         </button>
         <button className="dashboard-button" onClick={() => navigate('/financeiro')}>
@@ -67,19 +93,20 @@ const Dashboard = () => {
             <span>Financeiro</span>
           </div>
         </button>
-        <button className="dashboard-button" onClick={handleLogout}>
+        <button className="dashboard-button">
           <div className="icon-wrapper">
-            <FontAwesomeIcon icon={faSignOutAlt} className="icon" />
+            <FontAwesomeIcon icon={faClipboardList} className="icon" />
           </div>
           <div className="text-wrapper">
-            <span>Sair da Conta</span>
+            <span>Inventário</span>
           </div>
         </button>
+        
       </div>
       <div className="medias">
-        <a href="https://www.instagram.com/data.aqua" 
-          target="_blank" 
-          rel="noopener noreferrer" 
+        <a href="https://www.instagram.com/data.aqua"
+          target="_blank"
+          rel="noopener noreferrer"
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
           <FontAwesomeIcon icon={faInstagram} /><span> data.aqua</span>
@@ -87,7 +114,25 @@ const Dashboard = () => {
       </div>
       <div className="icon-container">
         <div className="icon-container-inner">
-          <img src={aquaDataIcon} alt="Aqua Data Icon" className="centered-image" />
+          <button className="side-icon-button" onClick={handleWhatsAppClick}>
+            <div>
+              <FontAwesomeIcon icon={faWhatsapp} className="icon" />
+            </div>
+            <span className="side-icon-button-text">Whatsapp</span>
+          </button>
+          <img
+            src={aquaDataIcon}
+            alt="Aqua Data Icon"
+            style={{ width: '100px', height: '100px' }}
+            onClick={() => navigate('/dashboard')}
+            className="centered-image"
+          />
+          <button className="side-icon-button" onClick={handleLogoutClick}>
+            <div>
+              <FontAwesomeIcon icon={faSignOutAlt} className="icon" />
+            </div>
+            <span className="side-icon-button-text">Sair</span>
+          </button>
         </div>
       </div>
 

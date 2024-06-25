@@ -192,7 +192,7 @@ const NewCyclePopup = ({
                 <div className="popup">
                     <div className="popup-inner">
                         <h3>Novo Ciclo de Cultivo</h3>
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} className="harv-form">
                             <label>
                                 Data de Povoamento:
                                 <input
@@ -228,7 +228,7 @@ const NewCyclePopup = ({
                                 <div className="stress-test-buttons">
                                     <button
                                         type="button"
-                                        className={`stress-test-button ${form.testeEstresse === 'Sim' ? 'active' : ''}`}
+                                        // className={`stress-test-button ${form.testeEstresse === 'Sim' ? 'active' : ''}`}
                                         onClick={() => (handleStressTestClick('Sim'),
                                             setShowStressTestPopup(true))
                                         }
@@ -237,7 +237,7 @@ const NewCyclePopup = ({
                                     </button>
                                     <button
                                         type="button"
-                                        className={`stress-test-button ${form.testeEstresse === 'Não' ? 'active' : ''}`}
+                                        // className={`stress-test-button ${form.testeEstresse === 'Não' ? 'active' : ''}`}
                                         onClick={() => handleStressTestClick('Não')}
                                     >
                                         Não
@@ -249,22 +249,31 @@ const NewCyclePopup = ({
                                 <div className="stress-test-buttons">
                                     <button
                                         type="button"
-                                        className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Sim' ? 'active' : ''}`}
+                                        // className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Sim' ? 'active' : ''}`}
                                         onClick={() => (handleCountPLbyPhoto('Sim'), setShowCountPlPopup(true))}
                                     >
                                         Sim
                                     </button>
                                     <button
                                         type="button"
-                                        className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Não' ? 'active' : ''}`}
+                                        // className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Não' ? 'active' : ''}`}
                                         onClick={() => handleCountPLbyPhoto('Não')}
                                     >
                                         Não
                                     </button>
                                 </div>
                             </label>
-                            <button type="submit">Salvar</button>
-                            <button type="button" onClick={() => setShowNewCyclePopup(false)}>Cancelar</button>
+                            <br />
+                            <br />
+                            <div className="bottom-buttons">
+                                <button 
+                                type="button" 
+                                onClick={() => setShowNewCyclePopup(false)}
+                                className="cancel-button">
+                                    Cancelar
+                                </button>
+                                <button type="submit" className="first-class-button">Salvar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -274,10 +283,10 @@ const NewCyclePopup = ({
                 <div className="popup">
                     <div className="popup-inner">
                         <h3>Teste de Estresse</h3>
-                        <form>
+                        <form className="harv-form">
                             <label>
                                 Tipo de Teste:
-                                <select name="tipoTeste" value={form.tipoTeste} onChange={handleChange}>
+                                <select name="tipoTeste" value={form.tipoTeste} onChange={handleChange} required>
                                     <option value="">Selecione</option>
                                     <option value="alteracaoSalinidade">Testado com alteração de salinidade</option>
                                     <option value="aguaViveiro">Testado com água do viveiro</option>
@@ -285,7 +294,7 @@ const NewCyclePopup = ({
                             </label>
                             <label>
                                 Alteração da Resposta Natatória:
-                                <select name="alteracaoNatatoria" value={form.alteracaoNatatoria} onChange={handleChange}>
+                                <select name="alteracaoNatatoria" value={form.alteracaoNatatoria} onChange={handleChange} required>
                                     <option value="">Selecione</option>
                                     <option value="nenhuma">Nenhuma alteração</option>
                                     <option value="pequena">Pequena alteração</option>
@@ -295,15 +304,25 @@ const NewCyclePopup = ({
                             </label>
                             <label>
                                 Larvas Mortas:
-                                <select name="larvasMortas" value={form.larvasMortas} onChange={handleChange}>
+                                <select name="larvasMortas" value={form.larvasMortas} onChange={handleChange} required>
                                     <option value="">Selecione</option>
                                     <option value="nenhuma">Nenhuma</option>
                                     <option value="poucas">Poucas</option>
                                     <option value="muitas">Muitas</option>
                                 </select>
                             </label>
-                            <button type="button" onClick={() => setShowStressTestPopup(false)}>Salvar</button>
-                            <button type="button" onClick={() => { setShowStressTestPopup(false); setShowNewCyclePopup(true); }}>Cancelar</button>
+                            <br />
+                            <br />
+                            <div className="bottom-buttons">
+                                <button 
+                                    type="button" 
+                                    onClick={() => { setShowStressTestPopup(false); setShowNewCyclePopup(true); }}
+                                    className="cancel-button">Cancelar</button>
+                                <button 
+                                    type="button" 
+                                    onClick={() => setShowStressTestPopup(false)}
+                                    className="first-class-button">Salvar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -347,15 +366,25 @@ const NewCyclePopup = ({
                                 setShowPLgrama(true);
                             }
                         }}>{showWeightInput.buttonText}</button>
-                        <button type="button" onClick={handleSavePLcount()}>Salvar</button>
+                        <p>Utilize uma bandeja branca e certifique-se que o local é bem iluminado</p>
+                        <br />
+                        <br />
+                        <div className="bottom-buttons">
                         <button type="button" onClick={() => {
                             setShowCountPlPopup(false);
                             setShowNewCyclePopup(true);
                             setShowCamera(false)
-                        }}>
+                        }}
+                        className="cancel-button">
                             Cancelar
                         </button>
-                        <p>Utilize uma bandeja branca e certifique-se que o local é bem iluminado</p>
+                        <button 
+                        type="button" 
+                        onClick={handleSavePLcount()}
+                        className="first-class-button">
+                            Salvar</button>
+                        </div>
+                        
                     </div>
                 </div>
             )}

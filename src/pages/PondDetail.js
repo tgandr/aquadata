@@ -4,7 +4,7 @@ import '../styles/PondDetail.css';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShrimp, faWarehouse } from '@fortawesome/free-solid-svg-icons';
-import SanityAnalysis from './SanityAnalysis';
+// import SanityAnalysis from './SanityAnalysis';
 import ParamPopup from './ParamPopup';
 import FeedPopup from './FeedPopup';
 import NewCyclePopup from './NewCyclePopup';
@@ -131,8 +131,8 @@ const PondDetail = () => {
       {cultivo ? (
         <div>
           <div className="infos">
-            <h3>Cultivo em Curso</h3>
-            <p>Povoamento em {formatDate(cultivo.dataPovoamento).date}, {formatDate(cultivo.dataPovoamento).days} dias de cultivo</p>
+            <p>Povoamento em {formatDate(cultivo.dataPovoamento).date}</p>
+            <p>{formatDate(cultivo.dataPovoamento).days} dias de cultivo</p>
             <p>Origem da PL: {cultivo.origemPL}</p>
             <p>Quantidade Estocada: {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
           </ div>
@@ -201,19 +201,30 @@ const PondDetail = () => {
         setShowFertilizationPopup={setShowFertilizationPopup}
         saveData={saveData} />}
 
-      <button onClick={handleBackClick}>Voltar para Viveiros</button>
+      {/* <button onClick={handleBackClick}>Voltar para Viveiros</button> */}
       {cultivo && biometrics ? (
+        
         <div className="biom">
           <h3>Biometrias</h3>
-          <ul>
-            {biometrics.map((biometry, index) => (
-              <li key={index}>
-                <strong>{formatDate(biometry.data).date}</strong>,{' '}
-                {/* <span>{formatDate(biometry.data).days} dias de cultivo, </span> está calculando até o dia atual*/}
-                Peso Médio: {biometry.pesoMedio} g
-              </li>
-            ))}
-          </ul>
+          <table className="biometry-table">
+            <thead>
+              <tr>
+                <th style={{ textAlign: 'center' }}>Data</th>
+                <th>Peso Médio (g)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {biometrics.map((biometry, index) => (
+                <tr key={index}>
+                  <td><strong>{formatDate(biometry.data).date}</strong></td>
+                  <td style={{ textAlign: 'right' }}>{parseFloat(biometry.pesoMedio).toLocaleString("pt-BR", {
+                      minimumFractionDigits: 1,
+                      maximumFractionDigits: 1,
+                    })} g</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : (cultivo ? <p className="infos">Nenhuma biometria realizada </p> :
         <p className="infos">Aguardando lançamento</p>
@@ -226,6 +237,7 @@ const PondDetail = () => {
             <div>
               <FontAwesomeIcon icon={faShrimp} className="icon" />
             </div>
+            <span className="side-icon-button-text">Viveiros</span>
           </button>
           <img
             src={aquaDataIcon}
@@ -238,6 +250,7 @@ const PondDetail = () => {
             <div>
               <FontAwesomeIcon icon={faWarehouse} className="icon" />
             </div>
+            <span className="side-icon-button-text">Estoque</span>
           </button>
         </div>
       </div>

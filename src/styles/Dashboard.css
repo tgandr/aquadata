@@ -107,7 +107,7 @@ h2 {
 
 .icon {
   font-size: 36px;
-  /* Tamanho maior do ícone */
+  
 }
 
 .text-wrapper {
@@ -175,7 +175,7 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 70%;
+  width: 80%;
   justify-content: space-around;
 }
 
@@ -193,6 +193,10 @@ h2 {
   color: var(--color-orange-dark);
   align-self: center;
   position: absolute;
+  display: flex;
+  flex-direction: column;
+  /* border: 1px solid var(--color-blue-dark);
+  border-radius: 5px; */
 }
 
 .side-icon-button:first-child {
@@ -237,12 +241,14 @@ h2 {
 
 .popup-inner label {
   margin-bottom: 10px;
+  text-align: left;
 }
 
 .popup-inner input,
 .popup-inner textarea {
+  box-sizing: border-box;
   margin-top: 5px;
-  padding: 5px;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
   

@@ -87,22 +87,23 @@ const LaborPopup = ({ setShowLaborPopup }) => {
     }, []);
 
     const saveNewWorker = () => {
+        const workerAdded = capitalizeProperly(addNewWorker);
         let financial = JSON.parse(localStorage.getItem('financial')) || {};
         if (financial) {
             if ('workersList' in financial) {
-                financial.workersList.push(addNewWorker);
+                financial.workersList.push(workerAdded);
             } else {
-                financial = { ...financial, workersList: [addNewWorker] };
+                financial = { ...financial, workersList: [workerAdded] };
             }
         } else {
-            financial = { workersList: [addNewWorker] };
+            financial = { workersList: [workerAdded] };
         }
         localStorage.setItem('financial', JSON.stringify(financial));
         setWorkersList(financial.workersList)
         setAddNewWorker('');
         setWorker({
             ...worker,
-            name: '',
+            name: workerAdded,
             salary: ''
         });
         setShowSavedMessage(true);
@@ -112,6 +113,20 @@ const LaborPopup = ({ setShowLaborPopup }) => {
     const handleChange = (e) => {
         setWorker({ ...worker, [e.target.name]: e.target.value })
     }
+
+    const capitalizeProperly = (str) => {
+        const prepositions = ['de', 'da', 'do', 'das', 'dos'];
+        return str
+            .toLowerCase()
+            .split(' ')
+            .map((word, index) => {
+                if (prepositions.includes(word) && index !== 0) {
+                    return word;
+                }
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            })
+            .join(' ');
+    };
 
     const renderMonth = ({ month, sum }) => {
         const dateParts = month.split('-');
@@ -171,31 +186,45 @@ const LaborPopup = ({ setShowLaborPopup }) => {
                 <div className="popup">
                     <div className="popup-inner">
                         {errorMessage && <div className="error-message">{errorMessage}</div>}
-                        <label>Mês:</label>
-                        <input
-                            type="month"
-                            name="month"
-                            onChange={handleChange}
-                            required />
-                        <label>Funcionário:</label>
-                        <select name='name' value={worker.name} onChange={handleChange}>
-                            <option value="">Indique o funcionário ou total</option>
-                            {workersList.map((worker, index) => (
-                                <option key={index} value={worker}>{worker}</option>
-                            ))}
-                            <option value="total">Folha de pagamento total</option>
-                            <option value="custom">Adicionar funcionário</option>
-                        </select>
-                        <label>Valor:</label>
-                        <input
-                            type="number"
-                            name="salary"
-                            step="0.01"
-                            value={worker.salary}
-                            onChange={handleChange}
-                            required />
-                        <button onClick={saveWorkerByMonth}>Salvar</button>
-                        <button onClick={() => setShowFormInd(false)}>Voltar</button>
+                        <form className="harv-form">
+                            <label>Mês:
+                                <input
+                                    type="month"
+                                    name="month"
+                                    onChange={handleChange}
+                                    required />
+                            </label>
+                            <label>Funcionário:
+                                <select name='name' value={worker.name} onChange={handleChange}>
+                                    <option value="">Indique o funcionário ou total</option>
+                                    {workersList.map((worker, index) => (
+                                        <option key={index} value={worker}>{worker}</option>
+                                    ))}
+                                    <option value="total">Folha de pagamento total</option>
+                                    <option value="custom">Adicionar funcionário</option>
+                                </select>
+                            </label>
+                            <label>Valor:
+                                <input
+                                    type="number"
+                                    name="salary"
+                                    step="0.01"
+                                    value={worker.salary}
+                                    onChange={handleChange}
+                                    required />
+                            </label>
+                            <br />
+                            <br />
+                            <br />
+                            <div className="bottom-buttons">
+                                <button
+                                    onClick={() => setShowFormInd(false)}
+                                    className="cancel-button">Voltar</button>
+                                <button
+                                    onClick={saveWorkerByMonth}
+                                    className="first-class-button">Salvar</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}

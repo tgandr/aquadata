@@ -292,3 +292,12 @@
     background-color: var(--color-blue-light);
     color: var(--color-blue-dark);
 }
+
+.add-shrimp {
+    background-color: var(--color-orange-medium) !important;
+    
+    width: 80px;
+    height: 80px;
+    font-size: 40px;
+    margin-top: 2px !important;
+}

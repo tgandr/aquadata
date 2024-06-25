@@ -77,8 +77,8 @@
   }
   
   .viveiro-data {
-    color: #888;
-    font-size: 12px;
+    color: var(--color-orange-medium);
+    font-size: 14px;
   }
 
   .infos-wrapper {
@@ -96,8 +96,8 @@
     align-content: center;
     width: 100%; /* Ocupar toda a largura do botão */
     height: 30%; 
-    background-color: var(--color-blue-light); /* Cor de fundo do texto */
-    color: var(--color-blue-dark); /* Cor do texto */
+    background-color: var(--color-blue-medium); /* Cor de fundo do texto */
+    color: var(--color-white); /* Cor do texto */
     text-align: center; /* Centralizar o texto */
     margin-bottom: 0px; /* Espaçamento interno */
     border-radius: 0px 0px 5px 5px;
@@ -156,8 +156,8 @@
   }
 
   .link-style {
-    text-decoration: none; /* Remove a sublinhado do link */
-    color: inherit; /* Herda a cor do pai para manter a cor do texto original */
+    text-decoration: none; 
+    color: inherit; 
   }
   
   .icon-plus {

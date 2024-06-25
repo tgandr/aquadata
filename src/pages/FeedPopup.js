@@ -29,7 +29,7 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
     <div className="popup">
       <div className="popup-inner">
         <h3>Anotações de Arraçoamento</h3>
-        <form onSubmit={handleFeedSubmit}>
+        <form onSubmit={handleFeedSubmit} className="harv-form">
           <label>
             Data:
             <input
@@ -86,9 +86,13 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
                 <span>Reduziu ou suspendeu algum trato</span>
               </label>
             </div>
+                <br />
+                <br />
           </div>
-          <button type="submit">Salvar</button>
-          <button type="button" onClick={() => setshowFeedPopup(false)}>Cancelar</button>
+          <div className="bottom-buttons">
+            <button type="button" onClick={() => setshowFeedPopup(false)} className="cancel-button">Cancelar</button>
+            <button type="submit" className="first-class-button">Salvar</button>
+          </div>
         </form>
       </div>
     </div>
