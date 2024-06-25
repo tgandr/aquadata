@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/aquadata/static/css/main.a45278cb.css",
-    "main.js": "/aquadata/static/js/main.25e9bc6a.js",
+    "main.js": "/aquadata/static/js/main.25098360.js",
     "static/js/239.954b91b8.chunk.js": "/aquadata/static/js/239.954b91b8.chunk.js",
     "static/js/213.781b1ca2.chunk.js": "/aquadata/static/js/213.781b1ca2.chunk.js",
     "static/js/732.3de3678e.chunk.js": "/aquadata/static/js/732.3de3678e.chunk.js",
@@ -17,13 +17,13 @@
     "static/media/fa-v4compatibility.woff2": "/aquadata/static/media/fa-v4compatibility.cf7f5903d06b79ad60f1.woff2",
     "index.html": "/aquadata/index.html",
     "main.a45278cb.css.map": "/aquadata/static/css/main.a45278cb.css.map",
-    "main.25e9bc6a.js.map": "/aquadata/static/js/main.25e9bc6a.js.map",
+    "main.25098360.js.map": "/aquadata/static/js/main.25098360.js.map",
     "239.954b91b8.chunk.js.map": "/aquadata/static/js/239.954b91b8.chunk.js.map",
     "213.781b1ca2.chunk.js.map": "/aquadata/static/js/213.781b1ca2.chunk.js.map",
     "732.3de3678e.chunk.js.map": "/aquadata/static/js/732.3de3678e.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a45278cb.css",
-    "static/js/main.25e9bc6a.js"
+    "static/js/main.25098360.js"
   ]
 }
