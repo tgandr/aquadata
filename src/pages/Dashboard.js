@@ -4,7 +4,6 @@ import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt, faClipboardList } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons'
-// import { Modal, Button } from 'react-bootstrap';
 import '../styles/Dashboard.css';
 
 const Dashboard = () => {
@@ -26,21 +25,6 @@ const Dashboard = () => {
     }
   }, []);
 
-  // const [showModal, setShowModal] = useState(false);
-
-  // const handleLogoutClick = () => {
-  //   setShowModal(true);
-  // };
-
-  // const handleConfirmLogout = () => {
-  //   handleLogout();
-  //   setShowModal(false);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setShowModal(false);
-  // };
-
   const handleLogoutClick = () => {
     const isConfirmed = window.confirm('Você tem certeza que deseja sair?');
     if (isConfirmed) {
@@ -58,7 +42,7 @@ const Dashboard = () => {
   };
 
   const handleWhatsAppClick = () => {
-    const phoneNumber = '5585992612616'; // Número de telefone no formato internacional
+    const phoneNumber = '5585992612616';
     const url = `https://wa.me/${phoneNumber}`;
     window.open(url, '_blank');
   };
@@ -93,7 +77,7 @@ const Dashboard = () => {
             <span>Financeiro</span>
           </div>
         </button>
-        <button className="dashboard-button">
+        <button className="dashboard-button" onClick={() => navigate('/inventario')}>
           <div className="icon-wrapper">
             <FontAwesomeIcon icon={faClipboardList} className="icon" />
           </div>

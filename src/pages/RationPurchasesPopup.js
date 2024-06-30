@@ -6,14 +6,16 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
     const [rationsBrands, setRationsBrands] = useState([]);
     const [addNewBrand, setAddNewBrand] = useState('');
     const [formRation, setFormRation] = useState({
-        purchaseDate: '',
-        validityDate: '',
-        brand: '',
-        bagSize: '',
-        bagsQuantity: '',
-        prizePerBag: '',
-        feedType: ''
+        dataCompra: new Date().toISOString().split('T')[0],
+        validade: '',
+        marca: '',
+        tamanhoSaco: '',
+        quantidade: '',
+        quantidadeSacos: '',
+        preco: '',
+        tipo: ''
     });
+
     const [brands, setBrands] = useState(["Aquavita", "Biotê", "Guabi", "Integral", "Poli Nutri", "Presence", "Samaria", "Total"]);
     const [showFieldNewBrand, setShowFieldNewBrand] = useState(false);
 
@@ -25,12 +27,12 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
     }, []);
 
     useEffect(() => {
-        if (formRation.brand === 'custom') {
+        if (formRation.marca === 'custom') {
             setAddNewBrandPopup(true);
         } else {
             setAddNewBrandPopup(false);
         }
-    }, [formRation.brand]);
+    }, [formRation.marca]);
 
     useEffect(() => {
         if (addNewBrand === 'custom') {
@@ -47,13 +49,20 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
         e.preventDefault();
         let financial = JSON.parse(localStorage.getItem('financial')) || {};
         let formRationCheckOut = formRation;
+        const { quantidadeSacos, tamanhoSaco, marca } = formRation;
+        formRationCheckOut = {
+            ...formRationCheckOut,
+            quantidade: parseInt(quantidadeSacos) * parseInt(tamanhoSaco),
+            fornecedor: marca
+        };
+
         if (financial) {
             if ('feedPurchase' in financial) {
                 formRationCheckOut = {
                     ...formRationCheckOut,
                     purchaseId: {
                         purchase: 'ration',
-                        id: financial.feedPurchase.length
+                        id: financial.feedPurchase.length + 1
                     }
                 }
                 financial.feedPurchase.push(formRationCheckOut);
@@ -78,16 +87,27 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
             financial = { feedPurchase: [formRationCheckOut] }
         }
         localStorage.setItem('financial', JSON.stringify(financial));
+        saveInStock(formRationCheckOut);
         setFormRation({
-            purchaseDate: '',
-            validityDate: '',
-            brand: '',
-            bagSize: '',
-            bagsQuantity: '',
-            prizePerBag: '',
-            feedType: ''
+            ...formRation,
+            validade: '',
+            marca: '',
+            tamanhoSaco: '',
+            quantidadeSacos: '',
+            preco: '',
+            tipo: ''
         });
         setShowRationPurchasesPopup(false);
+    }
+
+    const saveInStock = (toSave) => {
+        let stock = JSON.parse(localStorage.getItem('stockData')) || {};
+        if ('feedPurchase' in stock) {
+            stock.feedPurchase.push(toSave);
+        } else {
+            stock = { ...stock, feedPurchase: [toSave] }
+        }
+        localStorage.setItem('stockData', JSON.stringify(stock));
     }
 
     const saveNewBrand = () => {
@@ -102,7 +122,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
             stockData = { brandRatioList: [addNewBrand] };
         }
         localStorage.setItem('stockData', JSON.stringify(stockData));
-        setFormRation({ ...formRation, brand: addNewBrand });
+        setFormRation({ ...formRation, marca: addNewBrand });
         setRationsBrands(stockData.brandRatioList);
         setAddNewBrand('');
         setShowFieldNewBrand(false);
@@ -120,21 +140,21 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                             Data da Compra:
                             <input
                                 type="date"
-                                name="purchaseDate"
-                                value={formRation.purchaseDate}
+                                name="dataCompra"
+                                value={formRation.dataCompra}
                                 onChange={handleChange}
                                 required />
                         </label>
                         <label>
                             Marca da Ração:
                             <select
-                                name="brand"
-                                value={formRation.brand}
+                                name="marca"
+                                value={formRation.marca}
                                 onChange={handleChange}
                                 required>
                                 <option value="">Fabricante de ração</option>
-                                {rationsBrands.map((brand, i) => (
-                                    <option key={i} value={brand}>{brand}</option>
+                                {rationsBrands.map((marca, i) => (
+                                    <option key={i} value={marca}>{marca}</option>
                                 ))}
                                 <option value="custom">Adicionar fabricante</option>
                             </select>
@@ -142,8 +162,8 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                         <label>
                             Tipo de Ração:
                             <select
-                                name="feedType"
-                                value={formRation.feedType}
+                                name="tipo"
+                                value={formRation.tipo}
                                 onChange={handleChange}
                                 required>
                                 <option value="">Selecione</option>
@@ -154,47 +174,49 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                             </select>
                         </label>
                         <label>
-                            Quantidade de Sacos:
-                            <input
-                                type="number"
-                                name="bagsQuantity"
-                                value={formRation.bagsQuantity}
-                                onChange={handleChange}
-                                required />
-                        </label>
-                        <label>
                             Tamanho do Saco:
                             <select
-                                name="bagSize"
-                                value={formRation.bagSize}
+                                name="tamanhoSaco"
+                                value={formRation.tamanhoSaco}
                                 onChange={handleChange}
                                 required>
                                 <option value="">Selecione</option>
-                                <option value="10 kg">10 kg</option>
-                                <option value="15 kg">15 kg</option>
-                                <option value="20 kg">20 kg</option>
-                                <option value="25 kg">25 kg</option>
-                                <option value="30 kg">30 kg</option>
+                                <option value="20">20 kg</option>
+                                <option value="25">25 kg</option>
+                                <option value="30">30 kg</option>
+                                <option value="40">40 kg</option>
                             </select>
                         </label>
                         <label>
                             Data de Validade:
                             <input
                                 type="date"
-                                name="validityDate"
-                                value={formRation.validityDate}
+                                name="validade"
+                                value={formRation.validade}
                                 onChange={handleChange}
                                 required />
                         </label>
                         <label>
-                            Preço por Saco:
+                            Quantidade de Sacos:
                             <input
                                 type="number"
-                                name="prizePerBag"
-                                value={formRation.prizePerBag}
+                                name="quantidadeSacos"
+                                value={formRation.quantidadeSacos}
                                 onChange={handleChange}
                                 required />
                         </label>
+
+                        <label>
+                            Preço por Saco:
+                            <input
+                                type="number"
+                                name="preco"
+                                value={formRation.preco}
+                                onChange={handleChange}
+                                required />
+                        </label>
+                        <p>Total: R$ {(formRation.preco * formRation.quantidadeSacos).toLocaleString('pt-BR',
+                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                         <br />
                         <br />
                         <br />
@@ -224,8 +246,8 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                                     value={addNewBrand}
                                     onChange={(e) => setAddNewBrand(e.target.value)}>
                                     <option value="">Selecione um fabricante</option>
-                                    {brands.map((brand, i) => (
-                                        <option key={i} value={brand}>{brand}</option>
+                                    {brands.map((marca, i) => (
+                                        <option key={i} value={marca}>{marca}</option>
                                     ))}
                                     <option value="custom">Adicionar fabricante</option>
                                 </select>
@@ -242,8 +264,8 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                                 />
                             </div>
                         )}
-                            <br />
-                            <br />
+                        <br />
+                        <br />
                         <div className="bottom-buttons">
                             <button
                                 onClick={() => setAddNewBrandPopup(false)}

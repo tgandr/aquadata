@@ -67,10 +67,17 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData }) => {
         <h2>Fertilização</h2>
         <form onSubmit={handleSave} className="harv-form">
           <label>Data:
-            <input type="date" value={data} onChange={(e) => setData(e.target.value)} />
+            <input
+              type="date"
+              value={data}
+              onChange={(e) => setData(e.target.value)}
+              required />
           </label>
           <label>Tipo de Fertilizante:
-            <select value={fertilizerType} onChange={(e) => setFertilizerType(e.target.value)}>
+            <select
+              value={fertilizerType}
+              onChange={(e) => setFertilizerType(e.target.value)}
+              required>
               <option value="">Selecione o tipo de fertilizante</option>
               <option value="Probióticos">Probióticos</option>
               <option value="Bokashi">Bokashi</option>
@@ -80,7 +87,10 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData }) => {
           {fertilizerType === 'Químico' && (
             <div>
               <label>Fertilizante Químico:
-                <select value={chemicalFertilizer} onChange={(e) => setChemicalFertilizer(e.target.value)}>
+                <select
+                  value={chemicalFertilizer}
+                  onChange={(e) => setChemicalFertilizer(e.target.value)}
+                  required >
                   <option value="">Selecione o fertilizante químico</option>
                   {fertilizers.map((fertilizer, index) => (
                     <option key={index} value={fertilizer}>{fertilizer}</option>
@@ -97,7 +107,7 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData }) => {
                         type="text"
                         value={customChemicalFertilizer}
                         onChange={(e) => setCustomChemicalFertilizer(e.target.value)}
-                      />
+                        required/>
                     </label>
                     <br />
                     <br />
@@ -105,7 +115,7 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData }) => {
                       <button onClick={() => setAddNewFert(false)} className="cancel-button">Voltar</button>
                       <button onClick={() => saveFertilizersList(customChemicalFertilizer)}
                         className="first-class-button">
-                          Confirmar</button>
+                        Confirmar</button>
                     </ div>
                   </div>
                 </div>

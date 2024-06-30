@@ -31,49 +31,49 @@ const Financial = () => {
       </div>
       <div className="btn-financial-container">
         <button className="financial-button" onClick={() => setShowLaborPopup(true)}>
-        <div className="icon-wrapper">
-          <FontAwesomeIcon icon={faUsers} className="financial-icon" />
-        </div>
-        <div className="text-financial-wrapper">
-          <span>Despesas com Pessoal</span>
-        </div>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faUsers} className="financial-icon" />
+          </div>
+          <div className="text-financial-wrapper">
+            <span>Despesas com Pessoal</span>
+          </div>
         </button>
         <button className="financial-button" onClick={() => setShowPurchasesPopup(true)}>
-        <div className="icon-wrapper">
-          <FontAwesomeIcon icon={faShoppingCart} className="financial-icon" />
-        </div>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faShoppingCart} className="financial-icon" />
+          </div>
           <div className="text-financial-wrapper">
             <span>Compras de Insumos</span>
           </div>
         </button>
-        <button className="financial-button"  onClick={() => handlePopup('energia')}>
-        <div className="icon-wrapper">
-          <FontAwesomeIcon icon={faLightbulb} className="financial-icon" />
-        </div>
+        <button className="financial-button" onClick={() => handlePopup('energia')}>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faLightbulb} className="financial-icon" />
+          </div>
           <div className="text-financial-wrapper">
             <span>Energia Elétrica</span>
           </div>
         </button>
         <button className="financial-button" onClick={() => handlePopup('servicos')}>
-        <div className="icon-wrapper">
-          <FontAwesomeIcon icon={faTools} className="financial-icon" />
-        </div>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faTools} className="financial-icon" />
+          </div>
           <div className="text-financial-wrapper">
             <span>Serviços</span>
           </div>
         </button>
         <button className="financial-button" onClick={() => handlePopup('outros')}>
-        <div className="icon-wrapper">
-          <FontAwesomeIcon icon={faEllipsisH} className="financial-icon" />
-        </div>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faEllipsisH} className="financial-icon" />
+          </div>
           <div className="text-financial-wrapper">
             <span>Outros</span>
           </div>
         </button>
         <button className="financial-button">
-        <div className="icon-wrapper">
-          <FontAwesomeIcon icon={faChartBar} className="financial-icon" />
-        </div>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faChartBar} className="financial-icon" />
+          </div>
           <div className="text-financial-wrapper">
             <span>Relatório Mensal</span>
           </div>
@@ -87,7 +87,7 @@ const Financial = () => {
             </div>
             <span className="side-icon-button-text">Viveiros</span>
           </button>
-          <img 
+          <img
             src={aquaDataIcon}
             alt="Aqua Data Icon"
             onClick={() => navigate('/dashboard')}
@@ -101,7 +101,7 @@ const Financial = () => {
           </button>
         </div>
       </div>
-      
+
       {showLaborPopup && <LaborPopup setShowLaborPopup={setShowLaborPopup} />}
 
       {showPurchasesPopup && <Purchases setShowPurchasesPopup={setShowPurchasesPopup} />}
@@ -110,16 +110,27 @@ const Financial = () => {
         <div className="popup">
           <div className="popup-inner">
             <h3>Lançamento de {showPopup}</h3>
-            <form>
-              <label>Mês:</label>
+            <form className="harv-form">
+              <label>Mês:
               <input type="month" name="month" required />
-              <label>Valor:</label>
+              </label>
+              <label>Valor:
               <input type="number" name="value" step="0.01" required />
-              <label>Descrição:</label>
+              </label>
+              <label>Descrição:
               <textarea name="description" rows="4" required></textarea>
-              <div className="button-group">
-                <button type="button" onClick={handleClosePopup}>Voltar</button>
-                <button type="submit">Lançar</button>
+              </label>
+              <br /><br /><br />
+              <div className="bottom-buttons">
+                <button
+                  type="button"
+                  className="cancel-button"
+                  onClick={handleClosePopup}
+                >Voltar</button>
+                <button
+                  type="submit"
+                  className="first-class-button"
+                >Lançar</button>
               </div>
             </form>
           </div>

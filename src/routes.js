@@ -11,6 +11,8 @@ import Stock from './pages/Stock';
 import Financial from './pages/Financial';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import AnalysisReport from './pages/AnalysisReport';
+import Inventory from './pages/Inventory';
+import ReportCycle from './pages/ReportCycle';
 
 const AppRoutes = () => {
   return (
@@ -26,6 +28,8 @@ const AppRoutes = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/estoque" element={<Stock />} />
         <Route path="/financeiro" element={<Financial />} />
+        <Route path="/inventario" element={<Inventory />} />
+        <Route path="/relatorio" element={<ReportCycle />} />
         <Route path="/sanidade" element={<AnalysisReport />} />
         <Route path="/aquadata" element={<HomePage />} />
         <Route path="*" element={<HomePage />} />

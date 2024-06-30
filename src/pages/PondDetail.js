@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import '../styles/PondDetail.css';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShrimp, faWarehouse } from '@fortawesome/free-solid-svg-icons';
-// import SanityAnalysis from './SanityAnalysis';
 import ParamPopup from './ParamPopup';
 import FeedPopup from './FeedPopup';
 import NewCyclePopup from './NewCyclePopup';
 import BiometryPopup from './BiometryPopup';
 import HarvestPopup from './HarvestPopup';
 import FertilizationPopup from './FertilizationPopup';
+import { formatDate } from './utils';
 
 const PondDetail = () => {
   const location = useLocation();
@@ -18,7 +18,6 @@ const PondDetail = () => {
   const viveiroId = location.state.viveiro.id;
   const viveiroName = location.state.viveiro.nome;
   const farmName = location.state.farmName;
-
   const [cultivo, setCultivo] = useState(null);
   const [showNewCyclePopup, setShowNewCyclePopup] = useState(false);
   const [showStressTestPopup, setShowStressTestPopup] = useState(false);
@@ -26,7 +25,6 @@ const PondDetail = () => {
   const [showCamCountPopup, setShowCamCountPopup] = useState(false);
   const [showFeedPopup, setshowFeedPopup] = useState(false);
   const [showParamPopup, setShowParamPopup] = useState(false);
-  // const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
   const [showBiometry, setShowBiometry] = useState(false);
   const [showHarvest, setShowHarvest] = useState(false);
   const [showWeightInput, setShowWeightInput] = useState({ show: false, buttonText: 'Pesagem' });
@@ -43,15 +41,23 @@ const PondDetail = () => {
   const [processedImage, setProcessedImage] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
   const [showFertilizationPopup, setShowFertilizationPopup] = useState(false);
+  const [feedUsed, setFeedUsed] = useState('');
+  const [parcialProduction, setParcialProdution] = useState({});
 
+  // const [form, setForm] = useState({
+  //   dataPovoamento: '',
+  //   origemPL: '',
+  //   quantidadeEstocada: '',
+  //   testeEstresse: false,
+  //   tipoTeste: '',
+  //   alteracaoNatatoria: '',
+  //   larvasMortas: '',
+  // });
   const [form, setForm] = useState({
     dataPovoamento: '',
     origemPL: '',
     quantidadeEstocada: '',
-    testeEstresse: false,
-    tipoTeste: '',
-    alteracaoNatatoria: '',
-    larvasMortas: '',
+    testeEstresse: {},
   });
 
   const [formBiometry, setFormBiometry] = useState({
@@ -85,7 +91,27 @@ const PondDetail = () => {
         }
       }
     }
-  }, [viveiroId]);
+  }, [viveiroId, showFeedPopup]);
+
+  useEffect(() => {
+    if (cultivo) {
+      if ('harvest' in cultivo) {
+        setParcialProdution(processHarvest());
+      }
+    } else {
+      setParcialProdution({})
+    }
+  }, [cultivo, showHarvest]);
+
+
+  useEffect(() => {
+    if (cultivo && 'feed' in cultivo && Array.isArray(cultivo.feed)) {
+      const checkFeed = cultivo.feed.reduce((total, i) => total + parseFloat(i.racaoTotalDia), 0);
+      setFeedUsed(checkFeed);
+    } else {
+      setFeedUsed(0);
+    }
+  }, [cultivo]);
 
   const saveData = (data, key) => {
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
@@ -104,23 +130,34 @@ const PondDetail = () => {
     }
   }
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    const today = new Date().getTime()
-    const dayStart = new Date(dateString).getTime()
-    const days = Math.floor((today - dayStart) / 86400000)
-    return {
-      date: `${day}/${month}/${year}`,
-      days: days
+  const processHarvest = () => {
+    if (!cultivo.harvest || !Array.isArray(cultivo.harvest)) {
+      throw new Error('O array harvest não existe.');
     }
-  };
-
-  const handleBackClick = () => {
-    navigate('/viveiros');
-  };
+    const parcialHarvests = cultivo.harvest.filter(harvest => harvest.id.totalOrParcial === 'parcial');
+    let totalColhida = 0;
+    let totalBiomass = 0;
+    parcialHarvests.forEach(harvest => {
+      const biomasses = harvest.data.biomass ? parseFloat(harvest.data.biomass) : 0;
+      let totalWeight = 0;
+      let totalCount = 0;
+      harvest.data.biometries.forEach(biometry => {
+        const weight = biometry.weight ? parseFloat(biometry.weight) : 0;
+        const count = biometry.count ? parseFloat(biometry.count) : 0;
+        totalWeight += weight;
+        totalCount += count;
+      });
+      const populacaoColhida = (biomasses * 1000) / (totalWeight / totalCount);
+      totalColhida += populacaoColhida;
+      totalBiomass += biomasses;
+    });
+    const quantidadeEstocada = cultivo.quantidadeEstocada ? parseFloat(cultivo.quantidadeEstocada) : 0;
+    const removedRate = totalColhida / quantidadeEstocada;
+    return {
+      totalBiomass: totalBiomass,
+      removedRate: removedRate
+    };
+  }
 
   return (
     <div className="pond-detail">
@@ -130,6 +167,7 @@ const PondDetail = () => {
       </div>
       {cultivo ? (
         <div>
+
           <div className="infos">
             <p>Povoamento em {formatDate(cultivo.dataPovoamento).date}</p>
             <p>{formatDate(cultivo.dataPovoamento).days} dias de cultivo</p>
@@ -137,14 +175,24 @@ const PondDetail = () => {
             <p>Quantidade Estocada: {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
           </ div>
           <div className="buttons-container">
-            <button className="pond-button" onClick={() => setshowFeedPopup(true)}>Ração</button>
+            <button className="pond-button" onClick={() => setshowFeedPopup(true)}>
+              Ração
+              {feedUsed !== 0 ? (<p className="buttons-infos">{feedUsed} kg consumidos</p>) :
+                <p className="buttons-infos">Sem consumo</p>}
+            </button>
             <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros da Água</button>
-            {/* <button className="pond-button" onClick={() => setShowAnalysisPopup(true)}>Análise Presuntiva</button> */}
             <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
             <button className="pond-button" onClick={() => setShowFertilizationPopup(true)}>Fertilização</button>
             <button className="pond-button" onClick={() => setShowHarvest(true)}>Dados de despesca</button>
+            <button className="pond-button">
+              <Link to={ '/relatorio' } 
+              state={ {...location.state, id: `cultivo-${cultivo.id}`} }
+              style={{ textDecoration: 'none', color: 'inherit' }}>
+                Relatório
+              </Link>
+            </button>
             <button className="pond-button">Histórico</button>
-            <button className="pond-button">Relatório Parcial</button>
+            
           </div>
         </div>
       ) : (
@@ -201,9 +249,20 @@ const PondDetail = () => {
         setShowFertilizationPopup={setShowFertilizationPopup}
         saveData={saveData} />}
 
-      {/* <button onClick={handleBackClick}>Voltar para Viveiros</button> */}
+      {parcialProduction.totalBiomass &&
+        <>
+          <h4 style={{ color: '#1E3A8A', backgroundColor: '#f3f5f0' }}>
+            Produção Parcial: <span style={{ color: '#f3f5f0', fontWeight: 'bold', backgroundColor: '#1E3A8A' }}>
+              &nbsp;{parcialProduction.totalBiomass} kg&nbsp;</span><br />
+            Sobrou&nbsp;{(100 - (parcialProduction.removedRate * 100)).toLocaleString("pt-BR", {
+              minimumFractionDigits: 1,
+              maximumFractionDigits: 1,
+            })}% das PLs estocadas
+          </h4>
+        </>
+      }
+
       {cultivo && biometrics ? (
-        
         <div className="biom">
           <h3>Biometrias</h3>
           <table className="biometry-table">
@@ -218,9 +277,9 @@ const PondDetail = () => {
                 <tr key={index}>
                   <td><strong>{formatDate(biometry.data).date}</strong></td>
                   <td style={{ textAlign: 'right' }}>{parseFloat(biometry.pesoMedio).toLocaleString("pt-BR", {
-                      minimumFractionDigits: 1,
-                      maximumFractionDigits: 1,
-                    })} g</td>
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1,
+                  })} g</td>
                 </tr>
               ))}
             </tbody>

@@ -240,6 +240,56 @@ select {
     margin: 0px !important;
 }
 
+/* .harv-biomass-form {
+    display: flex;
+    align-items: baseline;
+}
+
+.harv-biomass-form input {
+    margin-right: 0px;
+    border-radius: 5px 0px 0px 5px !important;
+    
+    margin-top: 10px !important;
+}
+
+.harv-biomass-form button {
+    margin-left: 0px;
+    border-radius: 0px 5px 5px 0px;
+    border: none !important;
+    
+    margin-top: 10px !important;
+} */
+
+.harv-biomass-form {
+    display: flex;
+    align-items: flex-start;
+    height: 40px;
+}
+
+.harv-biomass-form input {
+    margin-right: 0;
+    margin-top: 0 !important;
+    border-radius: 5px 0 0 5px !important;
+    border-right: none !important; 
+    border-color: var(--color-orange-medium) !important;
+    box-sizing: border-box;
+    height: 40px;
+    padding: 10px !important;
+}
+
+.harv-biomass-form button {
+    margin-top: 0 !important;
+    margin-left: 0;
+    border-radius: 0 5px 5px 0;
+    border: 1px solid;
+    border-left: none; 
+    border-color: var(--color-orange-medium);
+    box-sizing: border-box;
+    height: 40px;
+    padding: 10px !important;
+}   
+
+
 .first-class-button {
     background-color: var(--color-orange-medium) !important;
     color: var(--color-white);
@@ -339,6 +389,7 @@ select {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
+    margin-bottom: 40px;
 }
 
 .biometry-table th,
@@ -349,7 +400,7 @@ select {
 
 .biometry-table th {
     background-color: #f2f2f2;
-    text-align: left;
+    text-align: center;
 }
 
 .biometry-table td {
@@ -362,4 +413,66 @@ select {
 
 .biometry-table tr:hover {
     background-color: #f1f1f1;
+}
+
+.td-revenue {
+    text-align: right !important;
+}
+
+.total-text {
+    text-align: center !important;
+}
+
+.total-line {
+    background-color: var(--color-blue-dark) !important;
+    color: white !important;
+}
+
+.buttons-infos {
+    font-size: 14px;
+    margin-top: 2px !important;
+    margin-bottom: 0px !important;
+    padding: 0px !important;
+}
+
+.highlight {
+    display: block;
+    color: white !important;
+    font-weight: bold !important;
+    background-color: var(--color-blue-dark) !important;
+    /* Torna o texto em negrito */
+}
+
+.pls {
+    align-self: flex-end;
+    margin-top: 0 !important;
+}
+
+.report-tables {
+    width: 90%;
+    color: var(--color-blue-dark);
+    margin-top: 20px;
+    overflow: auto;
+}
+
+.report-tables h3 {
+    margin-bottom: 20px;
+    border-top: 1px solid var(--color-blue-dark);
+}
+
+.toggle-title {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.toggle-icon {
+    margin-left: 5px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.rotate-icon {
+    transform: rotate(180deg);
 }

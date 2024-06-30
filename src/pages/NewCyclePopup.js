@@ -23,7 +23,14 @@ const NewCyclePopup = ({
 }) => {
     const webcamRef = useRef(null);
 
+    const [testForm, setTestForm] = useState({
+        tipoTeste: '',
+        alteracaoNatatoria: '',
+        larvasMortas: ''
+    })
+
     const handleStressTestClick = (value) => {
+        // const test = {...form.testeEstresse, }
         setForm({ ...form, testeEstresse: value });
     };
 
@@ -146,7 +153,21 @@ const NewCyclePopup = ({
         } else {
             setForm({ ...form, [name]: value });
         }
-    };
+    }
+
+    const handleChangeStressTest = (e) => {
+        const { name, value } = e.target;
+        setTestForm({ ...testForm, [name]: value });
+        console.log(testForm);
+    }
+
+    const handleStressTestSubtmit = (e) => {
+        e.preventDefault();
+        const stressTestCheckOut = { ...form, testForm };
+        console.log(stressTestCheckOut)
+        setShowStressTestPopup(false);
+        setForm(stressTestCheckOut);
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -154,9 +175,12 @@ const NewCyclePopup = ({
         let history = JSON.parse(localStorage.getItem('history'));
         let newCultivo = {};
         let cultivoKey = 1;
+        const quantEstoc = form.quantidadeEstocada * 1000;
+        const setFormToSubmit = { ...form, quantidadeEstocada: quantEstoc };
+
         if (history) {
             newCultivo = {
-                ...form,
+                ...setFormToSubmit,
                 dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
                 viveiro: parseInt(vivNumber.nome.match(/\d+/)[0]),
                 viveiroId,
@@ -200,8 +224,7 @@ const NewCyclePopup = ({
                                     name="dataPovoamento"
                                     value={form.dataPovoamento}
                                     onChange={handleChange}
-                                    required
-                                />
+                                    required />
                             </label>
                             <label>
                                 Origem da PL:
@@ -210,19 +233,20 @@ const NewCyclePopup = ({
                                     name="origemPL"
                                     value={form.origemPL}
                                     onChange={handleChange}
-                                    required
-                                />
+                                    required />
                             </label>
                             <label>
-                                Quantidade Estocada:
+                                Quantidade Estocada em milheiros:
                                 <input
                                     type="number"
                                     name="quantidadeEstocada"
+                                    // value={form.quantidadeEstocada ? Number(form.quantidadeEstocada).toLocaleString('pt-BR') : ''}
                                     value={form.quantidadeEstocada}
                                     onChange={handleChange}
-                                    required
-                                />
+                                    required />
                             </label>
+                            <span className="pls">{(form.quantidadeEstocada * 1000).toLocaleString('pt-BR')}&nbsp;
+                                pós-larvas</span>
                             <label>
                                 Teste de Estresse:
                                 <div className="stress-test-buttons">
@@ -230,46 +254,43 @@ const NewCyclePopup = ({
                                         type="button"
                                         // className={`stress-test-button ${form.testeEstresse === 'Sim' ? 'active' : ''}`}
                                         onClick={() => (handleStressTestClick('Sim'),
-                                            setShowStressTestPopup(true))
-                                        }
-                                    >
-                                        Sim
+                                            setShowStressTestPopup(true))}>
+                                        Anotar
                                     </button>
-                                    <button
+                                    {/* <button
                                         type="button"
                                         // className={`stress-test-button ${form.testeEstresse === 'Não' ? 'active' : ''}`}
                                         onClick={() => handleStressTestClick('Não')}
                                     >
                                         Não
-                                    </button>
+                                    </button> */}
                                 </div>
                             </label>
                             <label>
-                                Calcular PL/grama por foto?:
+                                Calcular PL/grama por foto?
                                 <div className="stress-test-buttons">
                                     <button
                                         type="button"
                                         // className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Sim' ? 'active' : ''}`}
-                                        onClick={() => (handleCountPLbyPhoto('Sim'), setShowCountPlPopup(true))}
-                                    >
-                                        Sim
+                                        onClick={() => (handleCountPLbyPhoto('Sim'), setShowCountPlPopup(true))}>
+                                        Contar
                                     </button>
-                                    <button
+                                    {/* <button
                                         type="button"
                                         // className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Não' ? 'active' : ''}`}
                                         onClick={() => handleCountPLbyPhoto('Não')}
                                     >
                                         Não
-                                    </button>
+                                    </button> */}
                                 </div>
                             </label>
                             <br />
                             <br />
                             <div className="bottom-buttons">
-                                <button 
-                                type="button" 
-                                onClick={() => setShowNewCyclePopup(false)}
-                                className="cancel-button">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowNewCyclePopup(false)}
+                                    className="cancel-button">
                                     Cancelar
                                 </button>
                                 <button type="submit" className="first-class-button">Salvar</button>
@@ -283,10 +304,10 @@ const NewCyclePopup = ({
                 <div className="popup">
                     <div className="popup-inner">
                         <h3>Teste de Estresse</h3>
-                        <form className="harv-form">
-                            <label>
+                        <form className="harv-form" onSubmit={handleStressTestSubtmit}>
+                            <label>testForm
                                 Tipo de Teste:
-                                <select name="tipoTeste" value={form.tipoTeste} onChange={handleChange} required>
+                                <select name="tipoTeste" value={testForm.tipoTeste} onChange={handleChangeStressTest} required>
                                     <option value="">Selecione</option>
                                     <option value="alteracaoSalinidade">Testado com alteração de salinidade</option>
                                     <option value="aguaViveiro">Testado com água do viveiro</option>
@@ -294,7 +315,7 @@ const NewCyclePopup = ({
                             </label>
                             <label>
                                 Alteração da Resposta Natatória:
-                                <select name="alteracaoNatatoria" value={form.alteracaoNatatoria} onChange={handleChange} required>
+                                <select name="alteracaoNatatoria" value={testForm.alteracaoNatatoria} onChange={handleChangeStressTest} required>
                                     <option value="">Selecione</option>
                                     <option value="nenhuma">Nenhuma alteração</option>
                                     <option value="pequena">Pequena alteração</option>
@@ -304,7 +325,7 @@ const NewCyclePopup = ({
                             </label>
                             <label>
                                 Larvas Mortas:
-                                <select name="larvasMortas" value={form.larvasMortas} onChange={handleChange} required>
+                                <select name="larvasMortas" value={testForm.larvasMortas} onChange={handleChangeStressTest} required>
                                     <option value="">Selecione</option>
                                     <option value="nenhuma">Nenhuma</option>
                                     <option value="poucas">Poucas</option>
@@ -314,13 +335,12 @@ const NewCyclePopup = ({
                             <br />
                             <br />
                             <div className="bottom-buttons">
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     onClick={() => { setShowStressTestPopup(false); setShowNewCyclePopup(true); }}
                                     className="cancel-button">Cancelar</button>
-                                <button 
-                                    type="button" 
-                                    onClick={() => setShowStressTestPopup(false)}
+                                <button
+                                    type="submit"
                                     className="first-class-button">Salvar</button>
                             </div>
                         </form>
@@ -370,21 +390,21 @@ const NewCyclePopup = ({
                         <br />
                         <br />
                         <div className="bottom-buttons">
-                        <button type="button" onClick={() => {
-                            setShowCountPlPopup(false);
-                            setShowNewCyclePopup(true);
-                            setShowCamera(false)
-                        }}
-                        className="cancel-button">
-                            Cancelar
-                        </button>
-                        <button 
-                        type="button" 
-                        onClick={handleSavePLcount()}
-                        className="first-class-button">
-                            Salvar</button>
+                            <button type="button" onClick={() => {
+                                setShowCountPlPopup(false);
+                                setShowNewCyclePopup(true);
+                                setShowCamera(false)
+                            }}
+                                className="cancel-button">
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleSavePLcount()}
+                                className="first-class-button">
+                                Salvar</button>
                         </div>
-                        
+
                     </div>
                 </div>
             )}

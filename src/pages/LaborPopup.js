@@ -21,12 +21,12 @@ const LaborPopup = ({ setShowLaborPopup }) => {
         'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
     ];
 
-    const saveWorkerByMonth = () => {
+    const saveWorkerByMonth = (e) => {
+        e.preventDefault()
         if (!worker.month || !worker.name || !worker.salary) {
             setErrorMessage("Por favor, preencha todos os campos.");
             return;
         }
-
         let financial = JSON.parse(localStorage.getItem('financial')) || {};
         const month = worker.month;
         const w = {
@@ -43,16 +43,13 @@ const LaborPopup = ({ setShowLaborPopup }) => {
                             financial.labor[index] = { ...item, payroll: [...item.payroll, w] };
                         } else {
                             financial.labor[index] = { ...item, payroll: [w] };
-                        }
-                    }
+                        }}
                 });
                 if (!monthFound) {
                     financial.labor.push({ month: month, payroll: [w] });
-                }
-            } else {
+                }} else {
                 financial = { ...financial, labor: [{ month: month, payroll: [w] }] };
-            }
-        } else {
+            }} else {
             financial = { labor: [{ month: month, payroll: [w] }] };
         }
         localStorage.setItem('financial', JSON.stringify(financial));
@@ -62,6 +59,7 @@ const LaborPopup = ({ setShowLaborPopup }) => {
             name: '',
             salary: ''
         });
+        setShowFormInd(false);
         setShowPreviousSalaries(true);
         setErrorMessage('');
         setShowSavedMessage(true);
@@ -164,29 +162,40 @@ const LaborPopup = ({ setShowLaborPopup }) => {
     return (
         <div className="popup">
             <div className="popup-inner">
-                <h2>Folha de Pagamento</h2>
-                <button onClick={() => setShowFormInd(true)}>Lançar valores</button>
-                <button onClick={() => setShowLaborPopup(false)} >Cancelar</button>
-
-                {showPreviousSalaries && (
-                    <div className="year-payments">
-                        <h3>Folha salarial por mês em 2024</h3> {/* automatizar o ano */}
-                        <div className="months">
-                            {monthsWithRegister.map((month, index) => (
-                                <div key={index}>
-                                    {renderMonth(month)?.month}: R$ {renderMonth(month)?.sum.toFixed(2)}
-                                </div>
-                            ))}
+                <h3>Folha de Pagamento</h3>
+                <div className="result-box">
+                    {showPreviousSalaries && (
+                        <div className="year-payments">
+                            <h3>Folha salarial - 2024</h3> {/* automatizar o ano */}
+                            <div className="months">
+                                {monthsWithRegister.map((month, index) => (
+                                    <div key={index}>
+                                        {renderMonth(month)?.month}: {"R$ " + renderMonth(month)?.sum.toLocaleString('pt-BR', 
+                                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
+                <div className="bottom-buttons">
+                    <button
+                        onClick={() => setShowLaborPopup(false)}
+                        className="cancel-button">
+                        Voltar</button>
+                    <button
+                        onClick={() => setShowFormInd(true)}
+                        className="first-class-button">Lançar valores</button>
+                </div>
             </div>
 
             {showFormInd && (
                 <div className="popup">
                     <div className="popup-inner">
                         {errorMessage && <div className="error-message">{errorMessage}</div>}
-                        <form className="harv-form">
+                        <form 
+                        className="harv-form"
+                        onSubmit={saveWorkerByMonth}>
                             <label>Mês:
                                 <input
                                     type="month"
@@ -221,7 +230,7 @@ const LaborPopup = ({ setShowLaborPopup }) => {
                                     onClick={() => setShowFormInd(false)}
                                     className="cancel-button">Voltar</button>
                                 <button
-                                    onClick={saveWorkerByMonth}
+                                    type="submit"
                                     className="first-class-button">Salvar</button>
                             </div>
                         </form>
