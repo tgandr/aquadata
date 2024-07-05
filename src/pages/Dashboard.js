@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt, faClipboardList } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons'
 import '../styles/Dashboard.css';
+import api from '../services/api'; // exemplo
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const Dashboard = () => {
       handleLogout();
     }
   };
-  
+
   const handleLogout = () => {
     const formData = JSON.parse(localStorage.getItem('formData'));
     if (formData) {
@@ -85,8 +86,8 @@ const Dashboard = () => {
             <span>Inventário</span>
           </div>
         </button>
-        
       </div>
+
       <div className="medias">
         <a href="https://www.instagram.com/data.aqua"
           target="_blank"

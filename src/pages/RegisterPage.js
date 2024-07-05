@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios'; 
-
 import '../styles/RegisterPage.css';
 
 const RegisterPage = () => {
@@ -13,8 +12,7 @@ const RegisterPage = () => {
     telefone: '',
     enderecoFazenda: '',
     nomeFazenda: '',
-    perfil: '', // perfil padrão
-    tipoInsumo: '', // tipo de insumo selecionado
+    perfil: '', 
     saveLogin: true,
   });
 
@@ -28,48 +26,21 @@ const RegisterPage = () => {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     localStorage.setItem('formData', JSON.stringify(form));
     navigate('/dashboard');
+    try {
+      const response = await axios.post('http://localhost:3000/api/users/register', form);
+      if (response.status === 201) {
+        
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      console.error('Erro ao registrar usuário:', error);
+    }
   };
-
-  // const handleChange = (e) => {
-  //   setForm({ ...form, [e.target.name]: e.target.value });
-  // };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const {email, senha} = form;
-    
-  //   try {
-  //     // Enviar os dados do formulário para o backend
-  //     const response = await axios.post('http://localhost:5000/aquadata/api/users/register', { email, senha });
-  //     console.log('passei aqui')
-      
-  //     console.log('Resposta do backend:', response.data);
-
-  //     // Limpar o formulário após o envio
-  //     setForm({
-  //       nomeCompleto: '',
-  //       email: '',
-  //       senha: '',
-  //       confirmarSenha: '',
-  //       telefone: '',
-  //       enderecoFazenda: '',
-  //       nomeFazenda: '',
-  //       perfil: '',
-  //       tipoInsumo: '',
-  //       saveLogin: true,
-  //     });
-
-  //     // Navegar para a página de dashboard após o registro
-  //     navigate('/dashboard');
-  //   } catch (error) {
-  //     console.error('Erro ao registrar usuário:', error);
-  //     // Aqui você pode adicionar tratamento de erro, exibir uma mensagem, etc.
-  //   }
-  // };
 
   return (
     <div className="register-page">

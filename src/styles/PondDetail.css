@@ -30,6 +30,7 @@
     display: flex;
     flex-flow: column;
     align-items: center;
+    overflow: auto;
 }
 
 .pond-detail h2 {
@@ -376,13 +377,6 @@ select {
     display: inline-block;
     vertical-align: top;
     /* Não está funcionando - ajustar */
-}
-
-.side-icon-button-text {
-    font-size: 14px;
-    color: var(--color-blue-dark);
-    border-top: 1px solid var(--color-blue-dark);
-    margin-top: 10px;
 }
 
 .biometry-table {

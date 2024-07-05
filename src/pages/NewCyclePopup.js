@@ -158,13 +158,11 @@ const NewCyclePopup = ({
     const handleChangeStressTest = (e) => {
         const { name, value } = e.target;
         setTestForm({ ...testForm, [name]: value });
-        console.log(testForm);
     }
 
     const handleStressTestSubtmit = (e) => {
         e.preventDefault();
         const stressTestCheckOut = { ...form, testForm };
-        console.log(stressTestCheckOut)
         setShowStressTestPopup(false);
         setForm(stressTestCheckOut);
     }
@@ -177,7 +175,6 @@ const NewCyclePopup = ({
         let cultivoKey = 1;
         const quantEstoc = form.quantidadeEstocada * 1000;
         const setFormToSubmit = { ...form, quantidadeEstocada: quantEstoc };
-
         if (history) {
             newCultivo = {
                 ...setFormToSubmit,
@@ -191,7 +188,7 @@ const NewCyclePopup = ({
             cultivoKey = history.length;
         } else {
             newCultivo = {
-                ...form,
+                ...setFormToSubmit,
                 dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
                 viveiro: parseInt(vivNumber.nome.match(/\d+/)[0]),
                 viveiroId,
@@ -236,7 +233,7 @@ const NewCyclePopup = ({
                                     required />
                             </label>
                             <label>
-                                Quantidade Estocada em milheiros:
+                                Quantidade Estocada em Milheiros:
                                 <input
                                     type="number"
                                     name="quantidadeEstocada"

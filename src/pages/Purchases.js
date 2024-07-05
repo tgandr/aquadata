@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import RationPurchasesPopup from './RationPurchasesPopup';
+import { formatDate } from './utils';
+import PostLarvaePurchasePopup from './PostLarvaePurchasePopup';
 
 const Purchases = ({ setShowPurchasesPopup }) => {
     const [showRationPurchasesPopup, setShowRationPurchasesPopup] = useState(false);
     const [addNewFert, setAddNewFert] = useState('');
-    const [addNewPostLarvae, setAddNewPostLarvae] = useState('');
     const [customChemicalFertilizer, setCustomChemicalFertilizer] = useState('');
-    const [customPostLarvae, setCustomPostLarvae] = useState('');
-    const [showSavedMessage, setShowSavedMessage] = useState(false);
+    const [showSavedMessage, setShowSavedMessage] = useState(false); // enviar via props
+    const [purchases, setPurchases] = useState([]);
 
     const [showPopup, setShowPopup] = useState({
         probiotics: false,
@@ -38,13 +39,6 @@ const Purchases = ({ setShowPurchasesPopup }) => {
         preco: ''
     });
 
-    const [formPostLarvae, setFormPostLarvae] = useState({
-        dataCompra: new Date().toISOString().split('T')[0],
-        fornecedor: '',
-        quantidade: '',
-        preco: ''
-    });
-
     const savePurchase = (data) => {
         localStorage.setItem('financial', JSON.stringify(data));
     };
@@ -58,8 +52,6 @@ const Purchases = ({ setShowPurchasesPopup }) => {
         }
         localStorage.setItem('stockData', JSON.stringify(stock));
     }
-
-    const purchases = JSON.parse(localStorage.getItem('financial')) || {};
 
     const handleChange = (e, formSetter, form) => {
         formSetter({ ...form, [e.target.name]: e.target.value });
@@ -75,23 +67,16 @@ const Purchases = ({ setShowPurchasesPopup }) => {
         let resetForm = {};
         keys.forEach((key) => (key !== 'dataCompra' && (resetForm = { ...resetForm, [key]: '' })))
         resetForm = { ...resetForm, dataCompra: form.dataCompra }
-        console.log(resetForm)
         const updatedPurchases = { ...purchases, [category]: [...purchases[category], form] };
         savePurchase(updatedPurchases);
         saveStock(category, form);
-        setShowPopup({ probiotics: false, fertilizers: false, others: false, postLarvae: false });
+        // setShowPopup({ probiotics: false, fertilizers: false, others: false, postLarvae: false });
         formSetter(resetForm);
+        setPurchases(updatedPurchases);
     };
 
     const [fertilizers, setFertilizers] = useState([
-        "NPK",
-        "Fosfato Monopotássico",
-        "Sulfato de Amônio",
-    ]);
-
-    const [postLarvae, setPostLarvae] = useState([
-        "Aquacrusta", "Aquatec", "CELM", "Larvifort"
-    ])
+        "NPK", "Fosfato Monopotássico", "Sulfato de Amônio"]);
 
     const saveFertilizersList = (newFert) => {
         const fert = capitalizeProperly(newFert);
@@ -113,26 +98,6 @@ const Purchases = ({ setShowPurchasesPopup }) => {
         setTimeout(() => setShowSavedMessage(false), 2000);
     };
 
-    const savePostLarvaeList = (l) => {
-        const larvae = capitalizeProperly(l);
-        if (l !== '') {
-            setPostLarvae([...postLarvae, larvae]);
-            setCustomPostLarvae('');
-            let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
-            if ('postLarvaeList' in stockData) {
-                stockData.postLarvaeList.push(larvae);
-            } else {
-                stockData.postLarvaeList = [...postLarvae, larvae];
-            }
-            localStorage.setItem('stockData', JSON.stringify(stockData));
-        }
-        setFormPostLarvae({ ...formPostLarvae, fornecedor: larvae });
-        setAddNewPostLarvae(false);
-        setShowPopup({ ...showPopup, postLarvae: true });
-        setShowSavedMessage(true);
-        setTimeout(() => setShowSavedMessage(false), 2000);
-    };
-
     const capitalizeProperly = (str) => {
         const prepositions = ['de', 'da', 'do', 'das', 'dos'];
         return str
@@ -149,11 +114,10 @@ const Purchases = ({ setShowPurchasesPopup }) => {
 
     useEffect(() => {
         const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
+        const checkPurchases = JSON.parse(localStorage.getItem('financial')) || {};
+        setPurchases(checkPurchases);
         if ('fertilizersList' in checkLists) {
             setFertilizers(checkLists.fertilizersList);
-        }
-        if ('postLarvaeList' in checkLists) {
-            setPostLarvae(checkLists.postLarvaeList);
         }
     }, []);
 
@@ -161,20 +125,10 @@ const Purchases = ({ setShowPurchasesPopup }) => {
         if (formFertilizer.fertilizante === 'custom') {
             setAddNewFert(true);
             setShowPopup({ ...showPopup, fertilizers: false });
-            console.log(formFertilizer.fertilizante);
         } else {
             setAddNewFert(false);
         }
     }, [formFertilizer.fertilizante]);
-
-    useEffect(() => {
-        if (formPostLarvae.fornecedor === 'custom') {
-            setAddNewPostLarvae(true);
-            setShowPopup({ ...showPopup, postLarvae: false });
-        } else {
-            setAddNewPostLarvae(false);
-        }
-    }, [formPostLarvae.fornecedor]);
 
     return (
         <div>
@@ -184,7 +138,6 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                     <div className="purchases-buttons-container">
                         <button onClick={() => setShowRationPurchasesPopup(true)}
                             className="purchases-buttons">Ração</button>
-
                         <button onClick={() => setShowPopup({ ...showPopup, postLarvae: true })}
                             className="purchases-buttons">Pós-Larvas</button>
                         <button onClick={() => setShowPopup({ ...showPopup, probiotics: true })}
@@ -217,7 +170,7 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                     type="date"
                                     name="dataCompra"
                                     value={formProbiotics.dataCompra}
-                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)} 
+                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)}
                                     required />
                             </label>
                             <label>
@@ -225,7 +178,7 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                 <select
                                     name="fornecedor"
                                     value={formProbiotics.fornecedor}
-                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)} 
+                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)}
                                     required>
                                     <option value="">Selecione</option>
                                     <option value="Biotrends">Biotrends</option>
@@ -240,8 +193,8 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                 <input
                                     type="number"
                                     name="quantidade"
-                                    value={formProbiotics.quantidade} 
-                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)} 
+                                    value={formProbiotics.quantidade}
+                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)}
                                     required />
                             </label>
                             <label>
@@ -249,8 +202,8 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                 <input
                                     type="number"
                                     name="preco"
-                                    value={formProbiotics.preco} 
-                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)} 
+                                    value={formProbiotics.preco}
+                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)}
                                     required />
                             </label>
                             <p>Total: R$ {(formProbiotics.preco * formProbiotics.quantidade).toLocaleString('pt-BR',
@@ -286,8 +239,8 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                     <input
                                         type="date"
                                         name="dataCompra"
-                                        value={formFertilizer.dataCompra} 
-                                        onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)} 
+                                        value={formFertilizer.dataCompra}
+                                        onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)}
                                         required />
                                 </label>
                                 <label>Fertilizante:
@@ -310,8 +263,8 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                     <input
                                         type="number"
                                         name="quantidade"
-                                        value={formFertilizer.quantidade} 
-                                        onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)} 
+                                        value={formFertilizer.quantidade}
+                                        onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)}
                                         required />
                                 </label>
                                 <label>
@@ -319,8 +272,8 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                     <input
                                         type="number"
                                         name="preco"
-                                        value={formFertilizer.preco} 
-                                        onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)} 
+                                        value={formFertilizer.preco}
+                                        onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)}
                                         required />
                                 </label>
                                 <p>Total: R$ {(formFertilizer.preco * formFertilizer.quantidade).toLocaleString('pt-BR',
@@ -360,7 +313,7 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                     type="text"
                                     name="fertilizer"
                                     value={customChemicalFertilizer}
-                                    onChange={(e) => setCustomChemicalFertilizer(e.target.value)} 
+                                    onChange={(e) => setCustomChemicalFertilizer(e.target.value)}
                                     required />
                             </label>
                             <br />
@@ -392,8 +345,8 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                 <input
                                     type="date"
                                     name="dataCompra"
-                                    value={formOthers.dataCompra} 
-                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)} 
+                                    value={formOthers.dataCompra}
+                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)}
                                     required />
                             </label>
                             <label>
@@ -401,16 +354,16 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                 <input
                                     type="text"
                                     name="item"
-                                    value={formOthers.item} 
-                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)} 
+                                    value={formOthers.item}
+                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)}
                                     required />
                             </label>
                             <label>
                                 Unidade:
                                 <select
                                     name="unidade"
-                                    value={formOthers.unidade} 
-                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)} 
+                                    value={formOthers.unidade}
+                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)}
                                     required>
                                     <option value="">Selecione</option>
                                     <option value="unidade">Unidade</option>
@@ -427,8 +380,8 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                 <input
                                     type="number"
                                     name="quantidade"
-                                    value={formOthers.quantidade} 
-                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)} 
+                                    value={formOthers.quantidade}
+                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)}
                                     required />
                             </label>
                             <label>
@@ -436,8 +389,8 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                                 <input
                                     type="number"
                                     name="preco"
-                                    value={formOthers.preco} 
-                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)} 
+                                    value={formOthers.preco}
+                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)}
                                     required />
                             </label>
 
@@ -460,112 +413,16 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                 </div>
             )}
 
-            {showPopup.postLarvae && (
-                <div className="popup">
-                    <div className="popup-inner">
-                        <h3>Adicionar Pós-Larvas</h3>
-                        <form
-                            onSubmit={(e) => handleSubmit(e, formPostLarvae, setFormPostLarvae, 'postLarvaePurchase')}
-                            className="harv-form">
-                            <label>
-                                Data da Compra:
-                                <input 
-                                type="date" 
-                                name="dataCompra" value={formPostLarvae.dataCompra} 
-                                onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)} 
-                                required />
-                            </label>
-                            <label>
-                                Fornecedor:
-                                <select 
-                                name="fornecedor" 
-                                value={formPostLarvae.fornecedor} 
-                                onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)} 
-                                required>
-                                    <option value="">Selecione</option>
-                                    {postLarvae.map((pl, index) =>
-                                        <option value={pl} key={index}>{pl}</option>)}
-                                    <option value="custom">Outro - Informar</option>
-                                </select>
-                            </label>
-                            <label>
-                                Milheiros:
-                                <input
-                                    type="number"
-                                    name="quantidade"
-                                    value={formPostLarvae.quantidade} onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)} 
-                                    required />
-                            </label>
-                            <label>
-                                Preço por milheiro:
-                                <input
-                                    type="number"
-                                    name="preco"
-                                    value={formPostLarvae.preco} onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)} 
-                                    required />
-                            </label>
-                            <p>Total: R$ {(formPostLarvae.preco * formPostLarvae.quantidade).toLocaleString('pt-BR',
-                                { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                            <br />
-                            <br />
-                            <div className="bottom-buttons">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPopup({ ...showPopup, postLarvae: false })}
-                                    className="cancel-button">
-                                    Voltar</button>
-                                <button type="submit"
-                                    className="first-class-button">
-                                    Salvar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-
-            {addNewPostLarvae && (
-                <div className="popup">
-                    <div className="popup-inner">
-                        <h3>Informar novo fornecedor de pós-larvas</h3>
-                        <form
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                savePostLarvaeList(customPostLarvae);
-                            }}
-                            className="harv-form">
-                            <label>
-                                Nome:
-                                <input
-                                    type="text"
-                                    name="fertilizer"
-                                    value={customPostLarvae}
-                                    onChange={(e) => setCustomPostLarvae(e.target.value)} 
-                                    required />
-                            </label>
-                            {/* <label>
-                            Município do laboratório:
-                            <input
-                                type="text"
-                                name="fertilizer"
-                                value={customPostLarvae.city}
-                                onChange={(e) => setCustomPostLarvae({...customPostLarvae, city: e.target.value})} required />
-                        </label> */}
-                            <br />
-                            <br />
-                            <div className="bottom-buttons">
-                                <button
-                                    type="button"
-                                    onClick={() => (setAddNewPostLarvae(false), setShowPopup({ ...showPopup, postLarvae: true }))}
-                                    className="cancel-button">
-                                    Voltar</button>
-                                <button type="submit"
-                                    className="first-class-button">
-                                    Salvar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+            {showPopup.postLarvae &&
+                <PostLarvaePurchasePopup
+                    purchases={purchases}
+                    setPurchases={setPurchases} 
+                    showPopup={showPopup}
+                    capitalizeProperly={capitalizeProperly}
+                    setShowPopup={setShowPopup}
+                    setShowSavedMessage={setShowSavedMessage}
+                    handleChange={handleChange}
+                    handleSubmit={handleSubmit}/>}
 
             {showSavedMessage && <div className="saved-message">Salvo!</div>}
 

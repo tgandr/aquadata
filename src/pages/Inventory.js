@@ -6,7 +6,8 @@ import '../styles/Inventory.css';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWarehouse, faPlus, faListAlt, faDollarSign } from '@fortawesome/free-solid-svg-icons';
-import { formatDate } from './utils';
+import { IconContainer, formatDate } from './utils';
+
 
 const Inventory = () => {
     const navigate = useNavigate();
@@ -90,28 +91,7 @@ const Inventory = () => {
                 </button>
             </div>
 
-            <div className="icon-container">
-                <div className="icon-container-inner">
-                    <button className="side-icon-button" onClick={() => navigate('/financeiro')}>
-                        <div>
-                            <FontAwesomeIcon icon={faDollarSign} className="icon" />
-                        </div>
-                        <span className="side-icon-button-text">Financeiro</span>
-                    </button>
-                    <img
-                        src={aquaDataIcon}
-                        alt="Aqua Data Icon"
-                        onClick={() => navigate('/dashboard')}
-                        className="centered-image"
-                    />  
-                    <button className="side-icon-button" onClick={() => navigate('/estoque')}>
-                        <div>
-                            <FontAwesomeIcon icon={faWarehouse} className="icon" />
-                        </div>
-                        <span className="side-icon-button-text">Estoque</span>
-                    </button>
-                </div>
-            </div>
+            <IconContainer />
 
             {showPopup && (
                 <div className="popup">

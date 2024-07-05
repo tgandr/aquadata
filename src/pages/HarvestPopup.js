@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 const HarvestPopup = ({
-  cultivo, saveData, harvestData, setHarvestData, survivalRate, setSurvivalRate,
-  biometryData, setBiometryData, newPesagem, setNewPesagem, showHarvest, setShowHarvest }) => {
+  cultivo, saveData, harvestData, setHarvestData, survivalRate, setSurvivalRate, 
+  biometryData, setBiometryData, newPesagem, setNewPesagem, setShowHarvest }) => {
 
   const [previousHarvestData, setPreviousHarvestData] = useState(true);
   const [totalBiomassHarvested, setTotalBiomassHarvested] = useState('');
@@ -12,7 +12,7 @@ const HarvestPopup = ({
   });
 
   const [biometrySamples, setBiometrySamples] = useState(false);
-  const [revenue, setRevenue] = useState('');
+  // const [revenue, setRevenue] = useState('');
   const [harvestTotals, setHarvestTotals] = useState({
     id: {},
     data: {}
@@ -153,6 +153,10 @@ const HarvestPopup = ({
     } else {
       setErrorMessage('Indique a biomassa colhida')
     }
+    if (harvestTotals.id.totalOrParcial === 'total') {
+      console.log('total')
+    }
+    
   };
 
   const checkBiometry = () => {

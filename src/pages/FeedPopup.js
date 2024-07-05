@@ -35,7 +35,6 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
 
   const handleCheckboxChange = (e) => {
     const { name, checked } = e.target;
-    console.log(name, checked);
     setFormFeed((prevState) => ({
       ...prevState,
       [name]: checked,
@@ -89,7 +88,7 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
                 <select
                   value={formFeed.racaoUsada}
                   onChange={(e) => 
-                    (setFormFeed({ ...formFeed, racaoUsada: e.target.value }), console.log(e.target.value))}
+                    setFormFeed({ ...formFeed, racaoUsada: e.target.value })}
                     required>
                   <option value="">Escolha a ração</option>
                   {uniquePurchases.map((op, index) =>

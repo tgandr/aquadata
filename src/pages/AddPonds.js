@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWarehouse, faDollarSign, faPlus, faSyringe } from '@fortawesome/free-solid-svg-icons';
+import { faWarehouse, faDollarSign, faPlus, faSyringe, faHistory } from '@fortawesome/free-solid-svg-icons';
 import '../styles/AddPonds.css';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import SanityAnalysis from './SanityAnalysis';
 import AnalysisReport from './AnalysisReport';
+import { IconContainer } from './utils';
 
 const AddPonds = () => {
   const [viveiros, setViveiros] = useState([]);
@@ -113,7 +114,7 @@ const AddPonds = () => {
             </Link>
           ))
         ) : (
-          <h3>Nenhum viveiro cadastrado.</h3>
+          <h3>Nenhum viveiro cadastrado</h3>
         )}
         {/* <button onClick={() => navigate('/dashboard')} className="voltar-button">Voltar</button> */}
         <button className="viveiro-button" onClick={() => setShowPopup(true)}>
@@ -122,6 +123,14 @@ const AddPonds = () => {
           </div>
           <div className="text-add-pond-wrapper">
             <span className="viveiro-titulo">Adicionar</span>
+          </div>
+        </button>
+        <button className="viveiro-button">
+          <div className="infos-wrapper">
+            <FontAwesomeIcon icon={faHistory} className="icon-plus" />
+          </div>
+          <div className="text-add-pond-wrapper">
+            <span className="viveiro-titulo">Histórico</span>
           </div>
         </button>
         <button className="viveiro-button" onClick={() => setShowAnalysisPopupPrevious({ start: false, previous: true })}>
@@ -133,30 +142,9 @@ const AddPonds = () => {
           </div>
         </button>
       </div>
-      <div className="icon-container">
-        <div className="icon-container-inner">
-          <button className="side-icon-button" onClick={() => navigate('/financeiro')}>
-            <div>
-              <FontAwesomeIcon icon={faDollarSign} className="icon" />
-            </div>
-            <span className="side-icon-button-text">Financeiro</span>
-          </button>
-          <img
-            src={aquaDataIcon}
-            alt="Aqua Data Icon"
-            style={{ width: '100px', height: '100px' }}
-            onClick={() => navigate('/dashboard')}
-            className="centered-image"
-          />
-          <button className="side-icon-button" onClick={() => navigate('/estoque')}>
-            <div>
-              <FontAwesomeIcon icon={faWarehouse} className="icon" />
-            </div>
-            <span className="side-icon-button-text">Estoque</span>
-          </button>
-        </div>
-      </div>
-
+      
+      <IconContainer />
+      
       {showPopup && (
         <div className="popup">
           <div className="popup-inner">

@@ -7,6 +7,7 @@ import { faShrimp, faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import { faBoxesPacking, faBacteria, faBoxesStacked, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { formatDate } from './utils';
 import { parse } from '@fortawesome/fontawesome-svg-core';
+import { IconContainer } from './utils';
 
 const Stock = () => {
   const navigate = useNavigate();
@@ -133,28 +134,7 @@ const Stock = () => {
         )}
       
       </div>
-      <div className="icon-container">
-        <div className="icon-container-inner">
-          <button className="side-icon-button" onClick={() => navigate('/viveiros')}>
-            <div>
-              <FontAwesomeIcon icon={faShrimp} className="icon" />
-            </div>
-            <span className="side-icon-button-text">Viveiros</span>
-          </button>
-          <img
-            src={aquaDataIcon}
-            alt="Aqua Data Icon"
-            onClick={() => navigate('/dashboard')}
-            className="centered-image"
-          />
-          <button className="side-icon-button" onClick={() => navigate('/financeiro')}>
-            <div>
-              <FontAwesomeIcon icon={faDollarSign} className="icon" />
-            </div>
-            <span className="side-icon-button-text">Financeiro</span>
-          </button>
-        </div>
-      </div>
+      <IconContainer />
 
       {showPopup.ration && (
         <div className="popup">
