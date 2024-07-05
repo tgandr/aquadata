@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/LoginPage.css';
+import axios from 'axios';
 import Example from './Example';
 
 const LoginPage = () => {
@@ -12,41 +13,44 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const storedData = JSON.parse(localStorage.getItem('formData')) || {};
-    if (storedData.eraseLocalStorageAfterLogout) {
-      localStorage.clear();
-    }
-    if (email === 'fazenda@aquadata.com') {
-      Example(redirectToExample);
-      navigate('/dashboard');
-    } else {
-      if (storedData.email === email) {
-        storedData.saveLogin = true;
-        localStorage.setItem('formData', JSON.stringify(storedData));
-        navigate('/dashboard');
-      } else {
-        alert('Email ou senha inválidos!');
-      }
-    }
-    // try {
-    //   const response = await fetch('http://localhost:5000/api/auth/login', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({ email, password }),
-    //   });
-
-    //   const data = await response.json();
-    //   if (response.ok) {
-    //     localStorage.setItem('token', data.token);
+    // const storedData = JSON.parse(localStorage.getItem('formData')) || {};
+    // if (storedData.eraseLocalStorageAfterLogout) {
+    //   localStorage.clear();
+    // }
+    // if (email === 'fazenda@aquadata.com') {
+    //   Example(redirectToExample);
+    //   navigate('/dashboard');
+    // } else {
+    //   if (storedData.email === email) {
+    //     storedData.saveLogin = true;
+    //     localStorage.setItem('formData', JSON.stringify(storedData));
     //     navigate('/dashboard');
     //   } else {
-    //     setError(data.error);
+    //     alert('Email ou senha inválidos!');
     //   }
-    // } catch (error) {
-    //   setError('An error occurred. Please try again.');
     // }
+
+    try {
+      const response = await axios.post('https://aqua-data-bf42d2da5cff.herokuapp.com/api/users/login', {
+        email,
+        senha: password
+      });
+
+      const { token } = response.data;
+
+      if (token) {
+        console.log('deu certo')
+        console.log(token)
+        localStorage.setItem('token', token);
+        navigate('/dashboard');
+      } else {
+        setError('Credenciais inválidas');
+      }
+    } catch (error) {
+      setError('Erro ao tentar fazer login. Por favor, tente novamente.');
+    }
+
+    
   };  // Login verifica apenas o e-mail. Objetivo de demonstração.
 
   return (

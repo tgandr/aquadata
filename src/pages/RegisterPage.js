@@ -32,7 +32,8 @@ const RegisterPage = () => {
     localStorage.setItem('formData', JSON.stringify(form));
     navigate('/dashboard');
     try {
-      const response = await axios.post('http://localhost:3000/api/users/register', form);
+      // const response = await axios.post('http://localhost:3000/api/users/register', form);
+      const response = await axios.post('https://aqua-data-bf42d2da5cff.herokuapp.com/api/users/register', form);
       if (response.status === 201) {
         
         navigate('/dashboard');

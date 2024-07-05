@@ -31,7 +31,6 @@ const Financial = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    console.log(e.target.name)
     setForm({ ...form, [name]: value })
   }
 
@@ -131,7 +130,8 @@ const Financial = () => {
             <span>Outros</span>
           </div>
         </button>
-        <button className="financial-button">
+        <button className="financial-button" 
+        onClick={() => (navigate('/meses'))}>
           <div className="icon-wrapper">
             <FontAwesomeIcon icon={faChartBar} className="financial-icon" />
           </div>

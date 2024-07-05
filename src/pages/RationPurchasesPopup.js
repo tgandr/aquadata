@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { formatDate } from './utils';
 
 const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
     const [addNewBrandPopup, setAddNewBrandPopup] = useState(false);
     const [showSavedMessage, setShowSavedMessage] = useState(false);
     const [rationsBrands, setRationsBrands] = useState([]);
     const [addNewBrand, setAddNewBrand] = useState('');
+    const [rationPurchases, setRationPurchases] = useState([]);
+    const [showRationPurchaseTable, setShowRationPurchaseTable] = useState(false);
     const [formRation, setFormRation] = useState({
         dataCompra: new Date().toISOString().split('T')[0],
         validade: '',
@@ -19,27 +22,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
     const [brands, setBrands] = useState(["Aquavita", "Biotê", "Guabi", "Integral", "Poli Nutri", "Presence", "Samaria", "Total"]);
     const [showFieldNewBrand, setShowFieldNewBrand] = useState(false);
 
-    useEffect(() => {
-        const storedStockData = JSON.parse(localStorage.getItem('stockData')) || {};
-        if ('brandRatioList' in storedStockData) {
-            setRationsBrands(storedStockData.brandRatioList);
-        }
-    }, []);
 
-    useEffect(() => {
-        if (formRation.marca === 'custom') {
-            setAddNewBrandPopup(true);
-        } else {
-            setAddNewBrandPopup(false);
-        }
-    }, [formRation.marca]);
-
-    useEffect(() => {
-        if (addNewBrand === 'custom') {
-            setShowFieldNewBrand(true);
-            setAddNewBrand('');
-        }
-    }, [addNewBrand]);
 
     const handleChange = (e) => {
         setFormRation({ ...formRation, [e.target.name]: e.target.value });
@@ -97,7 +80,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
             preco: '',
             tipo: ''
         });
-        setShowRationPurchasesPopup(false);
+        // setShowRationPurchasesPopup(false);
     }
 
     const saveInStock = (toSave) => {
@@ -129,6 +112,54 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
         setShowSavedMessage(true);
         setTimeout(() => setShowSavedMessage(false), 2000);
     }
+
+    const handleDeletePurchase = (index) => {
+        let stock = JSON.parse(localStorage.getItem('stockData'));
+        let feedStock = stock.feedPurchase;
+        const id = rationPurchases[index].purchaseId.id;
+        feedStock = feedStock.filter(item => item.purchaseId.id !== id); 
+        stock = {...stock, feedPurchase: feedStock}
+        localStorage.setItem('stockData', JSON.stringify(stock));
+
+        const updatedPurchases = [...rationPurchases];
+        updatedPurchases.splice(index, 1);
+        localStorage.setItem('financial', JSON.stringify({ ...JSON.parse(localStorage.getItem('financial')), feedPurchase: updatedPurchases }));
+        setRationPurchases(updatedPurchases);
+    };
+
+    useEffect(() => {
+        const storedStockData = JSON.parse(localStorage.getItem('stockData')) || {};
+        if ('brandRatioList' in storedStockData) {
+            setRationsBrands(storedStockData.brandRatioList);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (formRation.marca === 'custom') {
+            setAddNewBrandPopup(true);
+        } else {
+            setAddNewBrandPopup(false);
+        }
+    }, [formRation.marca]);
+
+    useEffect(() => {
+        if (addNewBrand === 'custom') {
+            setShowFieldNewBrand(true);
+            setAddNewBrand('');
+        }
+    }, [addNewBrand]);
+
+    useEffect(() => {
+        const storedFinancialData = JSON.parse(localStorage.getItem('financial')) || {};
+        if ('feedPurchase' in storedFinancialData) {
+            setRationPurchases(storedFinancialData.feedPurchase.slice(0, 5).reverse());
+            if (storedFinancialData.feedPurchase.length > 0) {
+                setShowRationPurchaseTable(true);
+            } else {
+                setShowRationPurchaseTable(false);
+            }
+        }
+    }, [formRation]);
 
     return (
         <div>
@@ -217,10 +248,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                         </label>
                         <p>Total: R$ {(formRation.preco * formRation.quantidadeSacos).toLocaleString('pt-BR',
                             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                        <br />
-                        <br />
-                        <br />
-                        <div className="bottom-buttons">
+                        <div className="buttons-box">
                             <button
                                 type="button"
                                 onClick={() => setShowRationPurchasesPopup(false)}
@@ -230,9 +258,43 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                                 type="submit"
                                 className="first-class-button">
                                 Salvar</button>
-
                         </div>
                     </form>
+                    <br />
+                    {showRationPurchaseTable && (
+                        <div>
+                            <h3>Últimas Compras de Ração</h3>
+                            <table className="biometry-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Compra</th>
+                                        {/* <th>Tipo</th>
+                                        <th>Tamanho do Saco</th>
+                                        <th>Quantidade</th>
+                                        <th>Preço por Saco</th>
+                                        <th>Total</th> */}
+                                        <th>Excluir</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {rationPurchases.map((purchase, index) => (
+                                        <tr key={index}>
+                                            <td>{formatDate(purchase.dataCompra).date}</td>
+                                            <td>{purchase.marca} - {purchase.tipo} <br />
+                                                R$ {(purchase.preco * purchase.quantidadeSacos).toLocaleString('pt-BR',
+                                                    { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                            <td style={{ textAlign: "center" }}>
+                                                <button className="delete-button" onClick={() => handleDeletePurchase(index)}>
+                                                <i className="fas fa-trash" /></button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+
                 </div>
             </div>
 
