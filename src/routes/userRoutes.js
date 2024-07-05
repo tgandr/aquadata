@@ -7,7 +7,7 @@ const User = require('../models/User');
 // @route   POST api/users/register
 // @desc    Register a user
 // @access  Public
-console.log(router)
+
 router.post('/register', async (req, res) => {
     const { nomeCompleto, email, senha, telefone, enderecoFazenda, nomeFazenda, perfil, saveLogin } = req.body;
 
