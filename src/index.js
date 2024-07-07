@@ -8,7 +8,12 @@ const port = process.env.PORT || 3000;
 const cors = require('cors');
 
 // Middleware para CORS
-app.use(cors());
+// app.use(cors());
+
+app.use(cors({
+    origin: ['http://localhost:3000', 'https://tgandr.github.io'], // Permitir a origem do GitHub Pages
+    credentials: true,
+  }));
 
 
 // Conectar ao MongoDB
