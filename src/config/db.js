@@ -4,7 +4,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Sua URL de conexão com o MongoDB
-const dbURI = process.env.MONGODB_URI || 'your_mongodb_connection_string_here';
+const dbURI = process.env.MONGO_URI || 'mongodb+srv://silvathiago:ENmfaLuVgOmnM6Mq@cluster0.zvbnjqy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 const connectDB = async () => {
     try {
