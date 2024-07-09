@@ -13,7 +13,7 @@ const cors = require('cors');
 app.use(cors({
     origin: ['http://localhost:3000', 'https://tgandr.github.io'], // Permitir a origem do GitHub Pages
     credentials: true,
-  }));
+}));
 
 
 // Conectar ao MongoDB
