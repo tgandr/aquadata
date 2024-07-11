@@ -3,16 +3,15 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const auth = require('../utils/auth');
 
 // @route   POST api/users/register
 // @desc    Register a user
 // @access  Public
-
 router.post('/register', async (req, res) => {
     const { nomeCompleto, email, senha, telefone, enderecoFazenda, nomeFazenda, perfil, saveLogin } = req.body;
 
     try {
-        // Verifica se todos os campos obrigatórios estão presentes
         if (!nomeCompleto || !email || !senha || !telefone || !enderecoFazenda || !nomeFazenda || !perfil) {
             return res.status(400).json({ msg: 'Por favor, preencha todos os campos obrigatórios' });
         }
@@ -68,6 +67,7 @@ router.post('/login', async (req, res) => {
 
     try {
         let user = await User.findOne({ email });
+        console.log(user);
 
         if (!user) {
             return res.status(400).json({ msg: 'Credenciais inválidas' });
@@ -91,9 +91,34 @@ router.post('/login', async (req, res) => {
             { expiresIn: '1h' },
             (err, token) => {
                 if (err) throw err;
-                res.json({ token });
+                const userResponse = {
+                    token,
+                    user: {
+                        nomeCompleto: user.nomeCompleto,
+                        email: user.email,
+                        telefone: user.telefone,
+                        enderecoFazenda: user.enderecoFazenda,
+                        nomeFazenda: user.nomeFazenda,
+                        perfil: user.perfil
+                    }
+                };
+                console.log('Login user response:', userResponse);  // Log da resposta do usuário
+                res.json(userResponse);
             }
         );
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Erro no servidor');
+    }
+});
+
+// @route   GET api/users/me
+// @desc    Get current user
+// @access  Private
+router.get('/me', auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-senha');
+        res.json(user);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Erro no servidor');
