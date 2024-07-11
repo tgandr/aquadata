@@ -114,7 +114,10 @@ const AddPonds = () => {
             </Link>
           ))
         ) : (
-          <h3>Nenhum viveiro cadastrado</h3>
+          <>
+            <h3>Nenhum viveiro cadastrado</h3>
+            <br />
+          </>
         )}
         {/* <button onClick={() => navigate('/dashboard')} className="voltar-button">Voltar</button> */}
         <button className="viveiro-button" onClick={() => setShowPopup(true)}>
@@ -142,9 +145,9 @@ const AddPonds = () => {
           </div>
         </button>
       </div>
-      
+
       <IconContainer />
-      
+
       {showPopup && (
         <div className="popup">
           <div className="popup-inner">
@@ -173,7 +176,7 @@ const AddPonds = () => {
                 />
               </label>
               <br />
-              <br/>
+              <br />
               <div className="bottom-buttons">
                 <button type="button" onClick={() => setShowPopup(false)} className="cancel-button">Cancelar</button>
                 <button type="submit" className="first-class-button">Salvar</button>
@@ -190,27 +193,27 @@ const AddPonds = () => {
             <p>Trata-se do exame minucioso de camarões em busca de sinais que indiquem seu estado de saúde.
               Com a análise presuntiva você poderá ver ameaças antes que seja tarde.
               É necessário um treinamento bem simples e o uso de ferramentas básicas.</p>
-              <button 
-              type="button" 
+            <button
+              type="button"
               onClick={() => AnalysisReport(JSON.parse(localStorage.getItem('history')))}
               className="first-class-button">
-                Baixar <br />Relatório</button>
+              Baixar <br />Relatório</button>
             <br />
             <br />
             <br />
             <br />
             <div className="bottom-buttons">
-            <button 
-              type="button" 
-              onClick={() => setShowAnalysisPopupPrevious({ start: false, previous: false })}
-              className="cancel-button">
+              <button
+                type="button"
+                onClick={() => setShowAnalysisPopupPrevious({ start: false, previous: false })}
+                className="cancel-button">
                 Voltar</button>
-            <button
-              type="button"
-              onClick={() => (setShowAnalysisPopup(true), setShowAnalysisPopupPrevious({ start: true, previous: false }))}
-              className="first-class-button">
-              Realizar Análise Presuntiva
-            </button>
+              <button
+                type="button"
+                onClick={() => (setShowAnalysisPopup(true), setShowAnalysisPopupPrevious({ start: true, previous: false }))}
+                className="first-class-button">
+                Realizar Análise Presuntiva
+              </button>
             </div>
           </div>
         </div>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios'; 
+import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import '../styles/RegisterPage.css';
 
 const RegisterPage = () => {
@@ -12,19 +14,33 @@ const RegisterPage = () => {
     telefone: '',
     enderecoFazenda: '',
     nomeFazenda: '',
-    perfil: '', 
+    perfil: '',
     saveLogin: true,
   });
 
+  const [password, setPassword] = useState({
+    senha: '',
+    confirmarSenha: ''
+});
+
+  const [showPassword, setShowPassword] = useState(false); // Estado para controlar visualização da senha
   const navigate = useNavigate();
 
   const storedData = JSON.parse(localStorage.getItem('formData')) || {};
-    if (storedData.eraseLocalStorageAfterLogout) {
-      localStorage.clear();
-    }
+  if (storedData.eraseLocalStorageAfterLogout) {
+    localStorage.clear();
+  }
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    if (e.target.name !== ('senha' || 'confirmarSenha')) {
+      setForm({ ...form, [e.target.name]: e.target.value });
+    } else {
+      setPassword(e.target.value);
+    }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
@@ -35,7 +51,6 @@ const RegisterPage = () => {
       // const response = await axios.post('http://localhost:3000/api/users/register', form);
       const response = await axios.post('https://aqua-data-bf42d2da5cff.herokuapp.com/api/users/register', form);
       if (response.status === 201) {
-        
         navigate('/dashboard');
       }
     } catch (error) {
@@ -49,8 +64,14 @@ const RegisterPage = () => {
       <form onSubmit={handleSubmit}>
         <input type="text" name="nomeCompleto" placeholder="Nome Completo" value={form.nomeCompleto} onChange={handleChange} required />
         <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
-        <input type="password" name="senha" placeholder="Senha" value={form.senha} onChange={handleChange} required />
-        <input type="password" name="confirmarSenha" placeholder="Confirmar Senha" value={form.confirmarSenha} onChange={handleChange} required />
+        
+        <div className="password-input">
+          <input type={showPassword ? "text" : "password"} name="senha" placeholder="Senha" value={password.senha} onChange={handleChange} required />
+          <button type="button" onClick={togglePasswordVisibility}>
+            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+          </button>
+        </div>
+        <input type="password" name="confirmarSenha" placeholder="Confirmar Senha" value={password.confirmarSenha} onChange={handleChange} required />
         <input type="text" name="telefone" placeholder="Telefone" value={form.telefone} onChange={handleChange} required />
         <input type="text" name="enderecoFazenda" placeholder="Endereço da Fazenda" value={form.enderecoFazenda} onChange={handleChange} required />
         <input type="text" name="nomeFazenda" placeholder="Nome da Fazenda" value={form.nomeFazenda} onChange={handleChange} required />

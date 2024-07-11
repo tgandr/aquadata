@@ -52,14 +52,15 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
     const uniqueSet = new Set();
     const uniquePurchasesLocal = [];
     purchases.forEach(purchase => {
-      const uniqueKey = `${purchase.marca}-${purchase.tipo}-${purchase.validade}`;
+      const uniqueKey = `${purchase.brand}-${purchase.type}-${purchase.validity}`;
+      console.log(uniqueKey)
       if (!uniqueSet.has(uniqueKey)) {
         uniqueSet.add(uniqueKey);
         uniquePurchasesLocal.push({
           id: purchase.purchaseId.id,
-          marca: purchase.marca,
-          tipo: purchase.tipo,
-          validade: purchase.validade
+          marca: purchase.brand,
+          tipo: purchase.type,
+          validade: purchase.validity
         });
       }
     });

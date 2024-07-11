@@ -2,33 +2,19 @@ import React, { useState, useEffect } from 'react';
 import RationPurchasesPopup from './RationPurchasesPopup';
 import PostLarvaePurchasePopup from './PostLarvaePurchasePopup';
 import FertilizersPurchasePopup from './FertilizersPurchasePopup';
-import { formatDate } from './utils';
+import OthersPurchasePopup from './OthersPurchasePopup';
+import ProbioticsPurchasePopup from './ProbioticsPurchasePopup';
 
 const Purchases = ({ setShowPurchasesPopup }) => {
     const [showRationPurchasesPopup, setShowRationPurchasesPopup] = useState(false);
-    const [showSavedMessage, setShowSavedMessage] = useState(false); // enviar via props
-    const [purchases, setPurchases] = useState([]);
+    const [showSavedMessage, setShowSavedMessage] = useState(false);
+    const [purchases, setPurchases] = useState({});
 
     const [showPopup, setShowPopup] = useState({
         probiotics: false,
         fertilizers: false,
         others: false,
         postLarvae: false
-    });
-
-    const [formProbiotics, setFormProbiotics] = useState({
-        dataCompra: new Date().toISOString().split('T')[0],
-        fornecedor: '',
-        quantidade: '',
-        preco: ''
-    });
-
-    const [formOthers, setFormOthers] = useState({
-        dataCompra: new Date().toISOString().split('T')[0],
-        item: '',
-        quantidade: '',
-        unidade: '',
-        preco: ''
     });
 
     const savePurchase = (data) => {
@@ -43,10 +29,14 @@ const Purchases = ({ setShowPurchasesPopup }) => {
             stock = { ...stock, [category]: [toUpdate] }
         }
         localStorage.setItem('stockData', JSON.stringify(stock));
-    }
+    };
 
     const handleChange = (e, formSetter, form) => {
         formSetter({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const generateUniqueId = () => {
+        return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     };
 
     const handleSubmit = (e, form, formSetter, category) => {
@@ -55,14 +45,14 @@ const Purchases = ({ setShowPurchasesPopup }) => {
         if (!purchases[category]) {
             purchases[category] = [];
         }
+        const newForm = { ...form, id: generateUniqueId() };
         const keys = Object.keys(form);
         let resetForm = {};
         keys.forEach((key) => (key !== 'dataCompra' && (resetForm = { ...resetForm, [key]: '' })))
         resetForm = { ...resetForm, dataCompra: form.dataCompra }
-        const updatedPurchases = { ...purchases, [category]: [...purchases[category], form] };
+        const updatedPurchases = { ...purchases, [category]: [...purchases[category], newForm] };
         savePurchase(updatedPurchases);
-        saveStock(category, form);
-        // setShowPopup({ probiotics: false, fertilizers: false, others: false, postLarvae: false });
+        saveStock(category, newForm);
         formSetter(resetForm);
         setPurchases(updatedPurchases);
     };
@@ -79,6 +69,25 @@ const Purchases = ({ setShowPurchasesPopup }) => {
                 return word.charAt(0).toUpperCase() + word.slice(1);
             })
             .join(' ');
+    };
+
+    const updateLocalStorage = (updatedPurchases, category) => {
+        const financialData = JSON.parse(localStorage.getItem('financial')) || {};
+        const stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+        financialData[category] = updatedPurchases;
+        stockData[category] = updatedPurchases;
+        localStorage.setItem('financial', JSON.stringify(financialData));
+        localStorage.setItem('stockData', JSON.stringify(stockData));
+    };
+
+    const handleDeletePurchase = (id, category) => {
+        const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
+
+        if (isConfirmed) {
+            const updatedPurchases = purchases[category].filter(purchase => purchase.id !== id);
+            setPurchases({ ...purchases, [category]: updatedPurchases });
+            updateLocalStorage(updatedPurchases, category);
+        }
     };
 
     return (
@@ -108,166 +117,42 @@ const Purchases = ({ setShowPurchasesPopup }) => {
             {showRationPurchasesPopup &&
                 <RationPurchasesPopup setShowRationPurchasesPopup={setShowRationPurchasesPopup} />}
 
-            {showPopup.probiotics && (
-                <div className="popup">
-                    <div className="popup-inner">
-                        <h3>Adicionar Probióticos</h3>
-                        <form
-                            onSubmit={(e) => handleSubmit(e, formProbiotics, setFormProbiotics, 'probioticsPurchase')}
-                            className="harv-form">
-                            <label>
-                                Data da Compra:
-                                <input
-                                    type="date"
-                                    name="dataCompra"
-                                    value={formProbiotics.dataCompra}
-                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)}
-                                    required />
-                            </label>
-                            <label>
-                                Fornecedor:
-                                <select
-                                    name="fornecedor"
-                                    value={formProbiotics.fornecedor}
-                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)}
-                                    required>
-                                    <option value="">Selecione</option>
-                                    <option value="Biotrends">Biotrends</option>
-                                    <option value="Phibro">Phibro</option>
-                                    <option value="DB Aqua">DB Aqua</option>
-                                    <option value="Outro">Outro - Informar</option>
-                                    {/* ajustar inclusão de novas marcas */}
-                                </select>
-                            </label>
-                            <label>
-                                Quantidade:
-                                <input
-                                    type="number"
-                                    name="quantidade"
-                                    value={formProbiotics.quantidade}
-                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)}
-                                    required />
-                            </label>
-                            <label>
-                                Preço:
-                                <input
-                                    type="number"
-                                    name="preco"
-                                    value={formProbiotics.preco}
-                                    onChange={(e) => handleChange(e, setFormProbiotics, formProbiotics)}
-                                    required />
-                            </label>
-                            <p>Total: R$ {(formProbiotics.preco * formProbiotics.quantidade).toLocaleString('pt-BR',
-                                { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                            <br />
-                            <br />
-                            <br />
-                            <div className="bottom-buttons">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPopup({ ...showPopup, probiotics: false })}
-                                    className="cancel-button">
-                                    Voltar</button>
-                                <button type="submit"
-                                    className="first-class-button">
-                                    Salvar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+            {showPopup.probiotics && // Adicione o novo popup aqui
+                <ProbioticsPurchasePopup
+                    showPopup={showPopup}
+                    setShowPopup={setShowPopup}
+                    capitalizeProperly={(str) => str.charAt(0).toUpperCase() + str.slice(1)}
+                    handleChange={handleChange}
+                    handleSubmit={handleSubmit}
+                    setShowSavedMessage={setShowSavedMessage}
+                    purchases={purchases}
+                    setPurchases={setPurchases}
+                    handleDeletePurchase={handleDeletePurchase}
+                />
+            }
 
             {showPopup.fertilizers && (
                 <FertilizersPurchasePopup
                     showPopup={showPopup}
-                    setShowPopup={setShowPopup} 
+                    setShowPopup={setShowPopup}
                     capitalizeProperly={capitalizeProperly}
                     handleChange={handleChange}
                     handleSubmit={handleSubmit}
+                    purchases={purchases}
                     setPurchases={setPurchases}
                     setShowSavedMessage={setShowSavedMessage}
-                    />
+                    handleDeletePurchase={handleDeletePurchase}
+                />
             )}
 
-            {showPopup.others && (
-                <div className="popup">
-                    <div className="popup-inner">
-                        <h3>Adicionar Outros</h3>
-                        <form
-                            onSubmit={(e) => handleSubmit(e, formOthers, setFormOthers, 'othersPurchase')}
-                            className="harv-form">
-                            <label>
-                                Data da Compra:
-                                <input
-                                    type="date"
-                                    name="dataCompra"
-                                    value={formOthers.dataCompra}
-                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)}
-                                    required />
-                            </label>
-                            <label>
-                                Item:
-                                <input
-                                    type="text"
-                                    name="item"
-                                    value={formOthers.item}
-                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)}
-                                    required />
-                            </label>
-                            <label>
-                                Unidade:
-                                <select
-                                    name="unidade"
-                                    value={formOthers.unidade}
-                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)}
-                                    required>
-                                    <option value="">Selecione</option>
-                                    <option value="unidade">Unidade</option>
-                                    <option value="kg">Kg</option>
-                                    <option value="g">g</option>
-                                    <option value="l">L</option>
-                                    <option value="ml">mL</option>
-                                    <option value="m">m</option>
-                                    <option value="cm">cm</option>
-                                </select>
-                            </label>
-                            <label>
-                                Quantidade:
-                                <input
-                                    type="number"
-                                    name="quantidade"
-                                    value={formOthers.quantidade}
-                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)}
-                                    required />
-                            </label>
-                            <label>
-                                Preço:
-                                <input
-                                    type="number"
-                                    name="preco"
-                                    value={formOthers.preco}
-                                    onChange={(e) => handleChange(e, setFormOthers, formOthers)}
-                                    required />
-                            </label>
-
-                            <p>Total: R$ {(formOthers.preco * formOthers.quantidade).toLocaleString('pt-BR',
-                                { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                            <br />
-                            <br />
-                            <div className="bottom-buttons">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPopup({ ...showPopup, others: false })}
-                                    className="cancel-button">
-                                    Voltar</button>
-                                <button type="submit"
-                                    className="first-class-button">
-                                    Salvar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+            {showPopup.others &&
+                <OthersPurchasePopup
+                    setShowPopup={setShowPopup}
+                    handleChange={handleChange}
+                    handleSubmit={handleSubmit}
+                    purchases={purchases}
+                    setPurchases={setPurchases}
+                    handleDeletePurchase={handleDeletePurchase} />}
 
             {showPopup.postLarvae &&
                 <PostLarvaePurchasePopup

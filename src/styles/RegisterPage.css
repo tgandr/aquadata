@@ -1,15 +1,28 @@
 body {
-    background-color: #f3f5f0;
+  background-color: #f3f5f0;
 }
 
 .register-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* centraliza os itens horizontalmente */
-  padding: 50px;
-  background-color: #f3f5f0;
-  height: 100%;
+display: flex;
+flex-direction: column;
+align-items: center; /* centraliza os itens horizontalmente */
+padding: 50px;
+background-color: #f3f5f0;
+height: 100%;
 }
+
+.register-page form {
+width: 100%; /* garante que o formulário ocupe 100% da largura do contêiner pai */
+max-width: 400px; /* define um limite máximo para a largura */
+}
+
+.register-page input,
+.register-page select,
+.register-page button {
+width: 100%; /* garante que os elementos do formulário ocupem 100% da largura do contêiner pai */
+margin-bottom: 15px; /* adiciona espaçamento inferior entre os elementos do formulário */
+}
+
 
 .register-page form {
   width: 100%; /* garante que o formulário ocupe 100% da largura do contêiner pai */
@@ -24,114 +37,100 @@ body {
 }
 
 
-.register-page form {
-    width: 100%; /* garante que o formulário ocupe 100% da largura do contêiner pai */
-    max-width: 400px; /* define um limite máximo para a largura */
+h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
 }
 
-.register-page input,
-.register-page select,
-.register-page button {
-    width: 100%; /* garante que os elementos do formulário ocupem 100% da largura do contêiner pai */
-    margin-bottom: 15px; /* adiciona espaçamento inferior entre os elementos do formulário */
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-  
+input,
+select {
+  width: 100%;
+  max-width: 400px;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  width: 100%;
+  max-width: 400px;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+p {
+  margin-top: 20px;
+}
+
+p a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+p a:hover {
+  text-decoration: underline;
+}
+
+/* Estilos para os campos Perfil e Tipo de Insumo */
+label {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+select {
+  cursor: pointer;
+  appearance: none; /* remove a aparência padrão do dropdown */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 100%; /* use 100% para garantir que o select ocupe toda a largura do contêiner pai */
+  padding: 10px; /* ajuste o padding conforme necessário */
+  background-color: transparent; /* torna o dropdown transparente */
+  border: 1px solid #ccc; /* adicione uma borda para visibilidade */
+  border-radius: 4px; /* arredonde os cantos */
+  box-sizing: border-box; /* inclua padding e borda no cálculo da largura */
+}
+
+
+.placeholder-option {
+  display: none; /* oculta a primeira opção padrão */
+}
+
+.placeholder-option:before {
+  content: 'Perfil'; /* texto do placeholder */
+  color: #888;
+}
+
+/* Media query para smartphones */
+@media only screen and (max-width: 600px) {
+  .register-page {
+    padding: 20px;
+  }
+
   h2 {
-    font-size: 2rem;
-    margin-bottom: 20px;
+    font-size: 1.5rem;
   }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  input,
-  select {
-    width: 100%;
-    max-width: 400px;
-    margin: 10px 0;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  button {
-    width: 100%;
-    max-width: 400px;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  p {
-    margin-top: 20px;
-  }
-  
-  p a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  p a:hover {
-    text-decoration: underline;
-  }
-  
-  /* Estilos para os campos Perfil e Tipo de Insumo */
-  label {
-    margin-top: 10px;
-    font-weight: bold;
-  }
-  
-  select {
-    cursor: pointer;
-    appearance: none; /* remove a aparência padrão do dropdown */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 100%; /* use 100% para garantir que o select ocupe toda a largura do contêiner pai */
-    padding: 10px; /* ajuste o padding conforme necessário */
-    background-color: transparent; /* torna o dropdown transparente */
-    border: 1px solid #ccc; /* adicione uma borda para visibilidade */
-    border-radius: 4px; /* arredonde os cantos */
-    box-sizing: border-box; /* inclua padding e borda no cálculo da largura */
-}
 
-  
-  .placeholder-option {
-    display: none; /* oculta a primeira opção padrão */
+  input,
+  select,
+  button {
+    max-width: 300px;
   }
-  
-  .placeholder-option:before {
-    content: 'Perfil'; /* texto do placeholder */
-    color: #888;
-  }
-  
-  /* Media query para smartphones */
-  @media only screen and (max-width: 600px) {
-    .register-page {
-      padding: 20px;
-    }
-  
-    h2 {
-      font-size: 1.5rem;
-    }
-  
-    input,
-    select,
-    button {
-      max-width: 300px;
-    }
-  }
-  
+}

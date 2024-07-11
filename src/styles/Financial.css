@@ -193,3 +193,14 @@
     padding: 0px !important;
     background-color: transparent !important;
   }
+
+  .report-table-head {
+    background-color: var(--color-blue-medium) !important;
+    color: var(--color-white);
+  }
+
+  .report-total-line {
+    /* background-color: var(--color-blue-light); */
+    border-top: 2px solid var(--color-blue-dark) !important;
+    border-bottom: 2px solid var(--color-blue-dark) !important;
+  }

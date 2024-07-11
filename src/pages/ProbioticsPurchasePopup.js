@@ -2,92 +2,90 @@ import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { formatDate } from './utils';
 
-
-const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, handleChange,
-    handleSubmit, setShowSavedMessage, purchases, setPurchases, handleDeletePurchase }) => {
-    const [addNewFert, setAddNewFert] = useState('');
-    const [customChemicalFertilizer, setCustomChemicalFertilizer] = useState('');
-    const [showFertilizerPurchasesTable, setShowFertilizerPurchasesTable] = useState(false);
-    const [formFertilizer, setFormFertilizer] = useState({
+const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, handleChange, handleSubmit, setShowSavedMessage, purchases, setPurchases, handleDeletePurchase }) => {
+    const [addNewProbiotic, setAddNewProbiotic] = useState('');
+    const [customProbiotic, setCustomProbiotic] = useState('');
+    const [showProbioticsPurchasesTable, setShowProbioticsPurchasesTable] = useState(false);
+    const [formProbiotic, setFormProbiotic] = useState({
         date: new Date().toISOString().split('T')[0],
         label: '',
         quantity: '',
         value: ''
     });
 
-    const [fertilizers, setFertilizers] = useState([
-        "NPK", "Fosfato Monopotássico", "Sulfato de Amônio"]);
+    const [probiotics, setProbiotics] = useState([
+        "Biotrends", "DB Aqua", "Phibro"]);
 
-    const saveFertilizersList = (newFert) => {
-        const fert = capitalizeProperly(newFert);
-        if (newFert !== '') {
-            setFertilizers([...fertilizers, fert]);
-            setCustomChemicalFertilizer('');
+    const saveProbioticsList = (newProbiotic) => {
+        const probiotic = capitalizeProperly(newProbiotic);
+        if (newProbiotic !== '') {
+            setProbiotics([...probiotics, probiotic]);
+            setCustomProbiotic('');
             let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
-            if ('fertilizersList' in stockData) {
-                stockData.fertilizersList.push(fert);
+            if ('probioticsList' in stockData) {
+                stockData.probioticsList.push(probiotic);
             } else {
-                stockData.fertilizersList = [...fertilizers, fert];
+                stockData.probioticsList = [...probiotics, probiotic];
             }
             localStorage.setItem('stockData', JSON.stringify(stockData));
         }
-        setFormFertilizer({ ...formFertilizer, label: fert });
-        setAddNewFert(false);
-        setShowPopup({ ...showPopup, fertilizers: true });
+        setFormProbiotic({ ...formProbiotic, probiotico: probiotic });
+        setAddNewProbiotic(false);
+        setShowPopup({ ...showPopup, probiotics: true });
         setShowSavedMessage(true);
         setTimeout(() => setShowSavedMessage(false), 2000);
     };
 
     useEffect(() => {
-        if (formFertilizer.label === 'custom') {
-            setAddNewFert(true);
+        if (formProbiotic.label === 'custom') {
+            setAddNewProbiotic(true);
         } else {
-            setAddNewFert(false);
+            setAddNewProbiotic(false);
         }
-    }, [formFertilizer.label]);
+    }, [formProbiotic.label]);
 
     useEffect(() => {
         const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
         const financial = JSON.parse(localStorage.getItem('financial')) || {};
-        const checkPurchases = financial.fertilizersPurchase || [];
+        const checkPurchases = financial.probioticsPurchase || [];
         setPurchases(financial);
-        if ('fertilizersList' in checkLists) {
-            setFertilizers(checkLists.fertilizersList);
+        if ('probioticsList' in checkLists) {
+            setProbiotics(checkLists.probioticsList);
         }
         if (checkPurchases.length > 0) {
-            setShowFertilizerPurchasesTable(true);
+            setShowProbioticsPurchasesTable(true);
         } else {
-            setShowFertilizerPurchasesTable(false);
+            setShowProbioticsPurchasesTable(false);
         }
-    }, [formFertilizer]);
+    }, [formProbiotic]);
 
     return (
         <>
             <div className="popup">
                 <div className="popup-inner">
-                    <h3>Adicionar Fertilizante</h3>
+                    <h3>Adicionar Probiótico</h3>
                     <form
-                        onSubmit={(e) => handleSubmit(e, formFertilizer, setFormFertilizer, 'fertilizersPurchase')}
+                        onSubmit={(e) => handleSubmit(e, formProbiotic, setFormProbiotic, 'probioticsPurchase')}
                         className="harv-form">
                         <label>
                             Data da Compra:
                             <input
                                 type="date"
                                 name="date"
-                                value={formFertilizer.date}
-                                onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)}
+                                value={formProbiotic.date}
+                                onChange={(e) => handleChange(e, setFormProbiotic, formProbiotic)}
                                 required />
                         </label>
-                        <label>Fertilizante:
+                        <label>Probiótico:
                             <select
-                                value={formFertilizer.label}
+                                value={formProbiotic.label}
                                 name="label"
-                                onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)}
+                                onChange={(e) => handleChange(e, setFormProbiotic, formProbiotic)}
                                 required>
-                                <option value="">Selecione o fertilizante químico</option>
-                                {fertilizers.map((fertilizer, index) => (
-                                    <option value={fertilizer} key={index}>
-                                        {fertilizer}
+                                <option value="">Selecione o probiótico</option>
+                                {probiotics.map((probiotic, index) => (
+                                    <option value={probiotic} key={index}>
+                                        {probiotic}
                                     </option>
                                 ))}
                                 <option value="custom">Outro - Informar</option>
@@ -98,8 +96,8 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                             <input
                                 type="number"
                                 name="quantity"
-                                value={formFertilizer.quantity}
-                                onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)}
+                                value={formProbiotic.quantity}
+                                onChange={(e) => handleChange(e, setFormProbiotic, formProbiotic)}
                                 required />
                         </label>
                         <label>
@@ -107,16 +105,16 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                             <input
                                 type="number"
                                 name="value"
-                                value={formFertilizer.value}
-                                onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)}
+                                value={formProbiotic.value}
+                                onChange={(e) => handleChange(e, setFormProbiotic, formProbiotic)}
                                 required />
                         </label>
-                        <p>Total: R$ {(formFertilizer.value * formFertilizer.quantity).toLocaleString('pt-BR',
+                        <p>Total: R$ {(formProbiotic.value * formProbiotic.quantity).toLocaleString('pt-BR',
                             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                         <div className="buttons-box">
                             <button
                                 type="button"
-                                onClick={() => setShowPopup({ ...showPopup, fertilizers: false })}
+                                onClick={() => setShowPopup({ ...showPopup, probiotics: false })}
                                 className="cancel-button">
                                 Voltar</button>
                             <button type="submit"
@@ -125,8 +123,8 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                         </div>
                     </form>
                     <br />
-                    
-                    {showFertilizerPurchasesTable && (
+
+                    {showProbioticsPurchasesTable && (
                         <table className="biometry-table">
                             <thead>
                                 <tr>
@@ -134,10 +132,10 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                                     <th>Compra</th>
                                     <th>Excluir</th>
                                 </tr>
-                            </thead> 
+                            </thead>
                             <tbody>
-                                {purchases.fertilizersPurchase &&
-                                    purchases.fertilizersPurchase.slice(-5).reverse().map((purchase, index) => (
+                                {purchases.probioticsPurchase &&
+                                    purchases.probioticsPurchase.slice(-5).reverse().map((purchase, index) => (
                                         <tr key={index}>
                                             <td>{formatDate(purchase.date).date}</td>
                                             <td>{purchase.label} - <br /> {(purchase.quantity * purchase.value).toLocaleString('pt-BR', {
@@ -146,7 +144,7 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                                             })}</td>
                                             <td style={{ textAlign: "center" }}>
                                                 <button
-                                                    onClick={() => handleDeletePurchase(purchase.id, 'fertilizersPurchase')}
+                                                    onClick={() => handleDeletePurchase(purchase.id, 'probioticsPurchase')}
                                                     className="delete-button">
                                                     <i className="fas fa-trash" />
                                                 </button>
@@ -158,24 +156,23 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                     )}
                 </div>
             </div>
-
-            {addNewFert &&
+            {addNewProbiotic &&
                 <div className="popup">
                     <div className="popup-inner">
-                        <h3>Informar fertilizante químico</h3>
+                        <h3>Informar probiótico</h3>
                         <form
                             onSubmit={(e) => {
                                 e.preventDefault();
-                                saveFertilizersList(customChemicalFertilizer);
+                                saveProbioticsList(customProbiotic);
                             }}
                             className="harv-form">
                             <label>
-                                Nome do fertilizante:
+                                Nome do probiótico:
                                 <input
                                     type="text"
-                                    name="fertilizer"
-                                    value={customChemicalFertilizer}
-                                    onChange={(e) => setCustomChemicalFertilizer(e.target.value)}
+                                    name="probiotic"
+                                    value={customProbiotic}
+                                    onChange={(e) => setCustomProbiotic(e.target.value)}
                                     required />
                             </label>
                             <br />
@@ -183,7 +180,7 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                             <div className="bottom-buttons">
                                 <button
                                     type="button"
-                                    onClick={() => (setAddNewFert(false), setShowPopup({ ...showPopup, fertilizers: true }))}
+                                    onClick={() => (setAddNewProbiotic(false), setShowPopup({ ...showPopup, probiotics: true }))}
                                     className="cancel-button">
                                     Voltar</button>
                                 <button type="submit"
@@ -198,5 +195,4 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
     )
 }
 
-export default FertilizersPurchasePopup;
-
+export default ProbioticsPurchasePopup;

@@ -43,8 +43,6 @@ const Financial = () => {
     }
   }, []);
 
-
-
   const handleSubmit = (e) => {
     e.preventDefault();
     let financial = JSON.parse(localStorage.getItem('financial')) || {};

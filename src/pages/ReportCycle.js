@@ -30,8 +30,8 @@ const ReportCycle = () => {
             const feed = cultivo.feed.reduce(
                 (total, feed) => total + parseFloat(feed.racaoTotalDia),
                 0);
-            const biomass = cultivo.harvest.reduce((total, biom) => total +
-                (parseInt(biom.data.biomass) || parseInt(biom.data.biomassAtFinalHarvest)), 0);
+            const biomass = cultivo.harvest ? cultivo.harvest.reduce((total, biom) => total +
+                (parseInt(biom.data.biomass) || parseInt(biom.data.biomassAtFinalHarvest)), 0) : 0;
             return { feed: feed, biomass: biomass }
         }
     }
@@ -158,14 +158,14 @@ const ReportCycle = () => {
                                 <tbody>
                                     {cultivo.feed.map((feed, index) => {
                                         const purchase = stockData.feedPurchase.find(
-                                            (item) => item.purchaseId.id === parseInt(feed.racaoUsada)
+                                            (item) => item.purchaseId.id === feed.racaoUsada
                                         );
                                         return (
                                             <tr key={index}>
                                                 <td>{formatDate(feed.data).date}</td>
                                                 <td>{feed.quantidadeTratos}</td>
-                                                <td>{purchase?.marca || 'N/A'}</td>
-                                                <td>{purchase?.tipo || 'N/A'}</td>
+                                                <td>{purchase?.brand || 'N/A'}</td>
+                                                <td>{purchase?.type || 'N/A'}</td>
                                                 <td className="td-revenue">{feed.racaoTotalDia}</td>
                                             </tr>
                                         );

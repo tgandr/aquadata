@@ -2,33 +2,15 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/LoginPage.css';
 import axios from 'axios';
-import Example from './Example';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [redirectToExample, setRedirectToExample] = useState(true);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // const storedData = JSON.parse(localStorage.getItem('formData')) || {};
-    // if (storedData.eraseLocalStorageAfterLogout) {
-    //   localStorage.clear();
-    // }
-    // if (email === 'fazenda@aquadata.com') {
-    //   Example(redirectToExample);
-    //   navigate('/dashboard');
-    // } else {
-    //   if (storedData.email === email) {
-    //     storedData.saveLogin = true;
-    //     localStorage.setItem('formData', JSON.stringify(storedData));
-    //     navigate('/dashboard');
-    //   } else {
-    //     alert('Email ou senha inválidos!');
-    //   }
-    // }
 
     try {
       const response = await axios.post('https://aqua-data-bf42d2da5cff.herokuapp.com/api/users/login', {
@@ -38,20 +20,30 @@ const LoginPage = () => {
 
       const { token } = response.data;
 
+      console.log(response);
+
       if (token) {
-        console.log('deu certo')
-        console.log(token)
         localStorage.setItem('token', token);
+
+        // Fetch user details using the token
+        const userResponse = await axios.get('https://aqua-data-bf42d2da5cff.herokuapp.com/api/users/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const user = userResponse.data;
+        let formData = { ...user, saveLogin: true };
+        localStorage.setItem('formData', JSON.stringify(formData));
         navigate('/dashboard');
       } else {
         setError('Credenciais inválidas');
       }
     } catch (error) {
+      console.error('Login error:', error);  // Adicione esta linha para logar o erro
       setError('Erro ao tentar fazer login. Por favor, tente novamente.');
     }
-
-    
-  };  // Login verifica apenas o e-mail. Objetivo de demonstração.
+  };
 
   return (
     <div className="login-page">

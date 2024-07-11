@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { formatDate } from './utils';
 
-const PostLarvaePurchasePopup = ({purchases, setPurchases, showPopup, setShowPopup,
-    setShowSavedMessage, capitalizeProperly, handleChange, handleSubmit}) => {
+const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPopup,
+    setShowSavedMessage, capitalizeProperly, handleChange, handleSubmit }) => {
     const [formPostLarvae, setFormPostLarvae] = useState({
-        dataCompra: new Date().toISOString().split('T')[0],
-        fornecedor: '',
-        quantidade: '',
-        preco: ''
+        date: new Date().toISOString().split('T')[0],
+        label: '',
+        quantity: '',
+        value: ''
     });
 
     const [addNewPostLarvae, setAddNewPostLarvae] = useState('');
@@ -41,22 +41,19 @@ const PostLarvaePurchasePopup = ({purchases, setPurchases, showPopup, setShowPop
     useEffect(() => {
         const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
         const checkPurchases = JSON.parse(localStorage.getItem('financial')) || {};
-        // setPurchases(checkPurchases);
-
+        setPurchases(checkPurchases);
         if ('postLarvaeList' in checkLists) {
             setPostLarvae(checkLists.postLarvaeList);
         }
     }, []);
 
     useEffect(() => {
-        if (formPostLarvae.fornecedor === 'custom') {
-            console.log(formPostLarvae)
+        if (formPostLarvae.label === 'custom') {
             setAddNewPostLarvae(true);
-            // setShowPopup({ ...showPopup, postLarvae: false });
         } else {
             setAddNewPostLarvae(false);
         }
-    }, [formPostLarvae.fornecedor]);
+    }, [formPostLarvae.label]);
 
     useEffect(() => {
         if ('postLarvaePurchase' in purchases) {
@@ -73,9 +70,19 @@ const PostLarvaePurchasePopup = ({purchases, setPurchases, showPopup, setShowPop
         if (isConfirmed) {
             const actualIndex = purchases.postLarvaePurchase.length - 1 - index;
             const updatedPurchases = { ...purchases };
+            const deletedPurchase = updatedPurchases.postLarvaePurchase[actualIndex];
+
             updatedPurchases.postLarvaePurchase.splice(actualIndex, 1);
             localStorage.setItem('financial', JSON.stringify(updatedPurchases));
             setPurchases(updatedPurchases);
+            
+            let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            if ('postLarvaePurchase' in stockData) {
+                console.log(deletedPurchase)
+                console.log(stockData.postLarvaePurchase)
+                stockData.postLarvaePurchase = stockData.postLarvaePurchase.filter(purchase => purchase.id !== deletedPurchase.id);
+            }
+            localStorage.setItem('stockData', JSON.stringify(stockData));
         }
     };
 
@@ -91,16 +98,16 @@ const PostLarvaePurchasePopup = ({purchases, setPurchases, showPopup, setShowPop
                             Data da Compra:
                             <input
                                 type="date"
-                                name="dataCompra"
-                                value={formPostLarvae.dataCompra}
+                                name="date"
+                                value={formPostLarvae.date}
                                 onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
                                 required />
                         </label>
                         <label>
                             Fornecedor:
                             <select
-                                name="fornecedor"
-                                value={formPostLarvae.fornecedor}
+                                name="label"
+                                value={formPostLarvae.label}
                                 onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
                                 required>
                                 <option value="">Selecione</option>
@@ -114,8 +121,8 @@ const PostLarvaePurchasePopup = ({purchases, setPurchases, showPopup, setShowPop
                             Milheiros:
                             <input
                                 type="number"
-                                name="quantidade"
-                                value={formPostLarvae.quantidade}
+                                name="quantity"
+                                value={formPostLarvae.quantity}
                                 onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
                                 required />
                         </label>
@@ -123,12 +130,12 @@ const PostLarvaePurchasePopup = ({purchases, setPurchases, showPopup, setShowPop
                             Preço por milheiro:
                             <input
                                 type="number"
-                                name="preco"
-                                value={formPostLarvae.preco}
+                                name="value"
+                                value={formPostLarvae.value}
                                 onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
                                 required />
                         </label>
-                        <p>Total: R$ {(formPostLarvae.preco * formPostLarvae.quantidade).toLocaleString('pt-BR',
+                        <p>Total: R$ {(formPostLarvae.value * formPostLarvae.quantity).toLocaleString('pt-BR',
                             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                         <div className="buttons-box">
                             <button
@@ -142,17 +149,14 @@ const PostLarvaePurchasePopup = ({purchases, setPurchases, showPopup, setShowPop
                             </button>
                         </div>
                     </form>
-
+                    <br />
+                    
                     {showPostLarvaePurchaseTable &&
                         <>
-                            <h4>Últimas Compras de Pós-Larvas</h4>
                             <table className="biometry-table">
                                 <thead>
                                     <tr>
                                         <th>Data</th>
-                                        {/* <th>Fornecedor</th> */}
-                                        {/* <th>Quantidade (Milheiros)</th> */}
-                                        {/* <th>Preço por Milheiro</th> */}
                                         <th>Compra</th>
                                         <th>Excluir</th>
                                     </tr>
@@ -163,13 +167,10 @@ const PostLarvaePurchasePopup = ({purchases, setPurchases, showPopup, setShowPop
                                         .reverse()
                                         .map((purchase, index) => (
                                             <tr key={index}>
-                                                <td>{formatDate(purchase.dataCompra).date}</td>
-                                                {/* <td>{purchase.fornecedor}</td> */}
-                                                {/* <td>{purchase.quantidade}</td> */}
-                                                {/* <td>R$ {purchase.preco}</td> */}
-                                                <td>R$ {(purchase.preco * purchase.quantidade).toLocaleString('pt-BR',
+                                                <td>{formatDate(purchase.date).date}</td>
+                                                <td>R$ {(purchase.value * purchase.quantity).toLocaleString('pt-BR',
                                                     { minimumFractionDigits: 2, maximumFractionDigits: 2 })} - <br />
-                                                    {purchase.quantidade} mil larvas</td>
+                                                    {purchase.quantity} mil larvas</td>
                                                 <td style={{ textAlign: "center" }}>
                                                     <button
                                                         type="button"
@@ -186,7 +187,6 @@ const PostLarvaePurchasePopup = ({purchases, setPurchases, showPopup, setShowPop
                     }
                 </div>
             </div>
-
 
             {addNewPostLarvae && (
                 <div className="popup">
