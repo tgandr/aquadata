@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faWarehouse, faDollarSign, faPlus, faSyringe, faHistory } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSyringe, faHistory } from '@fortawesome/free-solid-svg-icons';
 import '../styles/AddPonds.css';
-import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import SanityAnalysis from './SanityAnalysis';
 import AnalysisReport from './AnalysisReport';
 import { IconContainer } from './utils';
@@ -119,7 +118,7 @@ const AddPonds = () => {
             <br />
           </>
         )}
-        {/* <button onClick={() => navigate('/dashboard')} className="voltar-button">Voltar</button> */}
+        
         <button className="viveiro-button" onClick={() => setShowPopup(true)}>
           <div className="infos-wrapper">
             <FontAwesomeIcon icon={faPlus} className="icon-plus" />

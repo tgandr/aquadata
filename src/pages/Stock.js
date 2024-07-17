@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { parsePath, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Stock.css';
-import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShrimp, faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import { faBoxesPacking, faBacteria, faBoxesStacked, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { formatDate } from './utils';
-import { parse } from '@fortawesome/fontawesome-svg-core';
 import { IconContainer } from './utils';
 
 const Stock = () => {
@@ -14,7 +11,7 @@ const Stock = () => {
   const [showPopup, setShowPopup] = useState({ ration: false, probiotics: false, fertilizers: false, others: false });
   const formData = JSON.parse(localStorage.getItem('formData'));
   const [showTotalValue, setShowTotalValue] = useState(false);
-  const headers = [['Data', 'dataCompra'], ['Fornecedor', 'fornecedor'], ['Quantidade', 'quantidade']]
+  const headers = [['Data', 'date'], ['Fornecedor', 'label'], ['Quantidade', 'quantity']];
 
   const [stockData, setStockData] = useState({
     feedPurchase: [],
@@ -24,17 +21,16 @@ const Stock = () => {
   });
 
   const calculateTotalValue = (purchaseData) => {
-    
-    const totalFeedPurchases = stockData.feedPurchase.reduce((total, i) => 
-      total + (parseFloat(i.quantidade) * (parseFloat(i.preco)/parseInt(i.tamanhoSaco))), 0);
+    const totalFeedPurchases = stockData.feedPurchase.reduce((total, i) =>
+      total + (parseFloat(i.quantity) * (parseFloat(i.value) / parseInt(i.bagSize))), 0);
     return purchaseData.reduce((total, item) => {
-      return total + (parseFloat(item.quantidade) * parseFloat(item.preco));
+      return total + (parseFloat(item.quantity) * parseFloat(item.value));
     }, totalFeedPurchases);
   };
 
   const totalValue = calculateTotalValue(
     (stockData.othersPurchase ?? [])
-      .concat(stockData.probioticsPurchase ?? [], 
+      .concat(stockData.probioticsPurchase ?? [],
         stockData.fertilizersPurchase ?? [])
   );
 
@@ -53,7 +49,7 @@ const Stock = () => {
       return <p>Aguardando anotação de compras</p>;
     }
     return (
-      <table>
+      <table className="biometry-table">
         <thead>
           <tr>
             {headers.map((header) => (
@@ -62,11 +58,13 @@ const Stock = () => {
           </tr>
         </thead>
         <tbody>
-          
           {data.map((item, index) => (
             <tr key={index}>
               {headers.map((header) => (
-                <td key={header}>{(item[header[1]])}</td>))}
+                <td key={header}>{header[1] === 'date'
+                  ? formatDate(item[header[1]]).date
+                  : (item[header[1]])}</td>
+              ))}
             </tr>
           ))}
         </tbody>
@@ -132,7 +130,6 @@ const Stock = () => {
           <h4>Valor Total em Estoque: R$ {(totalValue).toLocaleString('pt-BR',
             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
         )}
-      
       </div>
       <IconContainer />
 

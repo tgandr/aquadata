@@ -20,8 +20,6 @@ const LoginPage = () => {
 
       const { token } = response.data;
 
-      console.log(response);
-
       if (token) {
         localStorage.setItem('token', token);
 

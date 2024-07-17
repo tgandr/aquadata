@@ -238,7 +238,7 @@ select {
     align-items: center;
     max-width: 50% !important;
     padding: 10px !important;
-    margin: 0px !important;
+    margin: 0px 0px 0px 2px !important;
 }
 
 /* .harv-biomass-form {
@@ -271,7 +271,7 @@ select {
     margin-right: 0;
     margin-top: 0 !important;
     border-radius: 5px 0 0 5px !important;
-    border-right: none !important; 
+    border-right: none !important;
     border-color: var(--color-orange-medium) !important;
     box-sizing: border-box;
     height: 40px;
@@ -283,12 +283,12 @@ select {
     margin-left: 0;
     border-radius: 0 5px 5px 0;
     border: 1px solid;
-    border-left: none; 
+    border-left: none;
     border-color: var(--color-orange-medium);
     box-sizing: border-box;
     height: 40px;
     padding: 10px !important;
-}   
+}
 
 
 .first-class-button {
@@ -454,6 +454,13 @@ select {
     border-top: 1px solid var(--color-blue-dark);
 }
 
+.inventory-table {
+    width: 100%;
+    color: var(--color-blue-dark);
+    margin-top: 20px;
+    overflow: auto;
+}
+
 .toggle-title {
     cursor: pointer;
     display: flex;
@@ -462,11 +469,41 @@ select {
     margin-top: 10px;
 }
 
+.toggle-title.collapsed {
+    color: #c0c0c0;
+    /* Cor de fundo cinza quando colapsado */
+    border-top: 1px solid #c0c0c0 !important;
+}
+
 .toggle-icon {
     margin-left: 5px;
     transition: transform 0.3s ease-in-out;
+    z-index: 999;
 }
 
 .rotate-icon {
     transform: rotate(180deg);
+    z-index: 999;
+}
+
+.box-buttons {
+    display: flex;
+    flex-direction: row;
+    width: 80%;
+}
+
+.feed-table {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.feed-table h4 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    margin: 0;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
 }

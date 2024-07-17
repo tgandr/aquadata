@@ -20,7 +20,7 @@ const PondDetail = () => {
   const [showStressTestPopup, setShowStressTestPopup] = useState(false);
   const [showCountPlPopup, setShowCountPlPopup] = useState(false);
   const [showCamCountPopup, setShowCamCountPopup] = useState(false);
-  const [showFeedPopup, setshowFeedPopup] = useState(false);
+  const [showFeedPopup, setShowFeedPopup] = useState(false);
   const [showParamPopup, setShowParamPopup] = useState(false);
   const [showBiometry, setShowBiometry] = useState(false);
   const [showHarvest, setShowHarvest] = useState(false);
@@ -164,7 +164,7 @@ const PondDetail = () => {
             <p>Quantidade Estocada: {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
           </ div>
           <div className="buttons-container">
-            <button className="pond-button" onClick={() => setshowFeedPopup(true)}>
+            <button className="pond-button" onClick={() => setShowFeedPopup(true)}>
               Ração
               {feedUsed !== 0 ? (<p className="buttons-infos">{feedUsed} kg consumidos</p>) :
                 <p className="buttons-infos">Sem consumo</p>}
@@ -172,7 +172,7 @@ const PondDetail = () => {
             <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros da Água</button>
             <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
             <button className="pond-button" onClick={() => setShowFertilizationPopup(true)}>Fertilização</button>
-            <button className="pond-button" onClick={() => setShowHarvest(true)}>Dados de despesca</button>
+            <button className="pond-button" onClick={() => setShowHarvest(true)}>Despescas</button>
             <button className="pond-button" onClick={() => (navigate('/relatorio', {
               state: { ...location.state, id: `cultivo-${cultivo.id}` }
             }))}>
@@ -207,7 +207,11 @@ const PondDetail = () => {
         viveiroId={viveiroId}
         setCultivo={setCultivo} />}
 
-      {showFeedPopup && <FeedPopup setshowFeedPopup={setshowFeedPopup} saveData={saveData} />}
+      {showFeedPopup && <FeedPopup
+        setShowFeedPopup={setShowFeedPopup}
+        saveData={saveData} 
+        cultivo={cultivo}
+        setCultivo={setCultivo}/>}
 
       {showParamPopup && <ParamPopup setShowParamPopup={setShowParamPopup} saveData={saveData} />}
 

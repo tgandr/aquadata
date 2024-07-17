@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { formatDate, IconContainer } from './utils';
-// import 'bootstrap/dist/css/bootstrap.min.css';
+import { Chart, registerables } from 'chart.js';
+
+
+Chart.register(...registerables);
 
 const ReportFinancial = () => {
     const financial = JSON.parse(localStorage.getItem('financial'));
@@ -47,6 +50,8 @@ const ReportFinancial = () => {
             setOrganizedData(organizedObj);
         }
     }, []);
+
+    const chartInstances = useRef({});
 
     function organizeByMonth(data) {
         const result = {};
@@ -125,14 +130,156 @@ const ReportFinancial = () => {
 
     function calculatePayrollTotal(payroll) {
         return payroll.reduce((total, pay) => {
-            return parseFloat(total) + parseFloat(pay.payroll.reduce((sum, p) => sum + p.salary, 0) || 0); // Garantindo que o valor seja um número ou 0
+            return parseFloat(total) + (pay.payroll.reduce((sum, p) => sum + parseFloat(p.salary), 0) || 0); // Garantindo que o valor seja um número ou 0
         }, 0);
     }
+
+    const isAnyMonthExpanded = () => {
+        return Object.values(show).some(value => value);
+    };
+
+    const destroyChartInstance = (month) => {
+        if (chartInstances.current[month]) {
+            chartInstances.current[month].destroy();
+            delete chartInstances.current[month];
+        }
+    };
+
+    const MonthlyCharts = ({ data }) => {
+        useEffect(() => {
+            return () => {
+                destroyChartInstance(data.month);
+            };
+        }, [data.month]);
+
+        const chartData = {
+            labels: ['Compras\nde insumos', 'Pagamentos\ne serviços', 'Mão-de-obra'],
+            datasets: [
+                {
+
+                    backgroundColor: ['#FB923C', '#93C5FD', '#EF4444'],
+                    borderColor: 'rgba(0, 0, 0, 0)',
+                    borderWidth: 0,
+                    hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+                    hoverBorderColor: 'rgba(255,99,132,1)',
+                    data: [
+                        calculateTotal(data.purchases),
+                        calculatePaymentsTotal(data.payments),
+                        calculatePayrollTotal(data.payroll),
+                    ],
+                },
+            ],
+        };
+
+        const chartOptions = {
+            plugins: {
+                legend: {
+                    display: false,
+                    labels: {
+                        color: '#1E3A8A', 
+                    },
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            return `${context.raw.toFixed(2)} `; 
+                        }
+                    },
+                    bodyColor: '#1E3A8A',
+                }
+            },
+
+            layout: {
+                padding: {
+                    left: 0,
+                    right: 0,
+                    top: 10,
+                    bottom: 10
+                }
+            },
+
+            scales: {
+                y: {
+                    ticks: {
+                        display: false, 
+                        color: '#1E3A8A',
+                    },
+                    beginAtZero: true,
+                    grid: {
+                        display: false
+                    },
+                },
+                x: {
+                    ticks: {
+                        beginAtZero: true,
+                        color: '#1E3A8A',
+                        callback: function (value, index, values) {
+                            const label = chartData.labels[index];
+                            if (typeof label === 'string') {
+                                return label.split('\n'); // Remove quebras de linha ao renderizar ticks no eixo x
+                            }
+                            return label;
+                        }
+                    },
+                    grid: {
+                        color: '#93C5FD',
+                    },
+                },
+            },
+        };
+
+        const customDataLabelsPlugin = {
+            id: 'customDataLabelsPlugin',
+            afterDatasetsDraw: (chart) => {
+                const { ctx, data, chartArea: { top, bottom, left, right, width, height } } = chart;
+
+                ctx.save();
+                data.datasets.forEach((dataset, i) => {
+                    chart.getDatasetMeta(i).data.forEach((bar, index) => {
+                        const value = dataset.data[index];
+                        const formattedValue = `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                        const textWidth = ctx.measureText(formattedValue).width;
+                        const x = bar.x - textWidth / 2; // Centraliza o texto na barra
+                        const y = bar.y - 5; // Ajuste vertical
+                        ctx.fillStyle = '#1E3A8A';
+                        ctx.fillText(formattedValue, x, y);
+                    });
+                });
+                ctx.restore();
+            }
+        };
+
+        useEffect(() => {
+            if (chartInstances.current[data.month]) {
+                destroyChartInstance(data.month);
+            }
+
+            const newChartInstance = new Chart(`chart-${data.month}`, {
+                type: 'bar',
+                data: chartData,
+                options: chartOptions,
+                plugins: [customDataLabelsPlugin],
+            });
+
+            chartInstances.current[data.month] = newChartInstance;
+
+            return () => {
+                destroyChartInstance(data.month);
+            };
+        }, [data.month, chartData, chartOptions]);
+
+        return (
+            <div key={data.month} className="monthly-chart">
+                <canvas id={`chart-${data.month}`}
+                />
+            </div>
+        );
+    };
 
     return (
         <div>
             <div className="identify-data">
-                <h2>Relatório</h2>
+                <h2>Relatório Financeiro</h2>
                 <h3>2024</h3>
             </div>
             <div className="pond-detail">
@@ -140,10 +287,13 @@ const ReportFinancial = () => {
                 <div className="report-tables">
                     {months.map((m, index) => (
                         <div key={index}>
-                            <h3 className="toggle-title" onClick={() => setShow(prevShow => ({
-                                ...prevShow,
-                                [m[1]]: !prevShow[m[1]]
-                            }))}>
+                            <h3
+                                className={`toggle-title ${!show[m[1]] && isAnyMonthExpanded() ? 'collapsed' : ''}`}
+                                onClick={() => setShow(prevShow => ({
+                                    ...prevShow,
+                                    [m[1]]: !prevShow[m[1]]
+                                }))}
+                            >
                                 {m[0]}
                                 {show[m[1]] ? (
                                     <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
@@ -153,12 +303,14 @@ const ReportFinancial = () => {
                             </h3>
                             {show[m[1]] && organizedData[m[2]] ? (
                                 <div className="monthly-data">
-                                    {/* <h4>Compras</h4> */}
+                                    <div className="chart-box">
+                                        <MonthlyCharts data={organizedData[m[2]]} />
+                                    </div>
                                     <table className="biometry-table">
                                         <thead>
                                             <tr>
                                                 <th colSpan="4"
-                                                    className="report-table-head">
+                                                    className="report-table-head inputs-head">
                                                     Compras de Insumos
                                                 </th>
                                             </tr>
@@ -191,10 +343,14 @@ const ReportFinancial = () => {
                                             {organizedData[m[2]].purchases.map((purchase, i) => (
                                                 <tr key={i}>
                                                     <td>{i + 1}</td>
-                                                    <td style={{ textAlign: "right" }}>{purchase.quantity}</td>
+
+                                                    <td style={{ textAlign: "right" }}>{(purchase.quantity).toLocaleString('pt-BR')}</td>
                                                     <td style={{ textAlign: "right" }}>
-                                                        R$ {parseFloat(purchase.value).toLocaleString('pt-BR',
-                                                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                        R$ {purchase.category === "Ração"
+                                                            ? parseFloat(purchase.value / purchase.bagSize).toLocaleString('pt-BR',
+                                                                { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                                            : parseFloat(purchase.value).toLocaleString('pt-BR',
+                                                                { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                     </td>
                                                     <td style={{ textAlign: "right" }}>
                                                         R$ {parseFloat((purchase.bagQuantity || purchase.quantity) * purchase.value).toLocaleString('pt-BR',
@@ -202,7 +358,7 @@ const ReportFinancial = () => {
                                                     </td>
                                                 </tr>
                                             ))}
-                                            <tr>
+                                            <tr className="total-line-inputs">
                                                 <td colSpan="3" style={{ textAlign: "center" }}>
                                                     <strong>Total</strong>
                                                 </td>
@@ -214,12 +370,12 @@ const ReportFinancial = () => {
                                             </tr>
                                         </tbody>
                                     </table>
-                                    {/* <h4>Pagamentos</h4> */}
+
                                     <table className="biometry-table">
                                         <thead>
                                             <tr>
                                                 <th colSpan="3"
-                                                    className="report-table-head">
+                                                    className="report-table-head payments-head">
                                                     Pagamentos e Serviços
                                                 </th>
                                             </tr>
@@ -265,9 +421,8 @@ const ReportFinancial = () => {
                                                         ))}
                                                     </>
                                                 ))}
-                                            <tr>
+                                            <tr className="total-line-payments">
                                                 <td colSpan="2" style={{ textAlign: "center" }}>
-                                                    
                                                     <strong>Total</strong>
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
@@ -278,13 +433,13 @@ const ReportFinancial = () => {
                                             </tr>
                                         </tbody>
                                     </table>
-                                    {/* <h4>Folha de Pagamento</h4> */}
+
                                     <table className="biometry-table">
                                         <thead>
                                             <tr>
                                                 <th
                                                     colSpan="2"
-                                                    className="report-table-head">
+                                                    className="report-table-head labor-head">
                                                     Mão-de-Obra
                                                 </th>
                                             </tr>
@@ -308,7 +463,7 @@ const ReportFinancial = () => {
                                                         ))}
                                                     </>
                                                 ))}
-                                            <tr>
+                                            <tr className="total-line-labor">
                                                 <td style={{ textAlign: "center" }}>
                                                     <strong>Total</strong>
                                                 </td>
@@ -334,5 +489,6 @@ const ReportFinancial = () => {
         </div>
     );
 };
+
 
 export default ReportFinancial;

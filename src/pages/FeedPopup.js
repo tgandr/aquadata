@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { formatDate } from './utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
-const FeedPopup = ({ setshowFeedPopup, saveData }) => {
+const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
   const [purchases, setPurchases] = useState([]);
   const [uniquePurchases, setUniquePurchases] = useState([]);
   const [formFeed, setFormFeed] = useState({
@@ -13,23 +15,58 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
     observacao2: false,
   });
 
+  const [showTablePopup, setShowTablePopup] = useState(false);
+  const [lastFiveFeeds, setLastFiveFeeds] = useState([]);
+  const [showLastFeeds, setShowLastFeeds] = useState(false);
+  const [edit, setEdit] = useState({
+    check: false,
+    id: '',
+    time: '',
+    data: ''
+  });
+  const [isPopup, setIsPopup] = useState(false);
+
   const handleFeedSubmit = (e) => {
     e.preventDefault();
-    saveData(formFeed, 'feed');
+    if (edit.check) {
+      submitEdit(edit);
+      setShowTablePopup(true);
+      setShowLastFeeds(true);
+      setEdit({
+        check: false,
+        id: '',
+        time: '',
+        data: ''
+      });
+      setIsPopup(true);
+      return;
+    }
+
+    const checkOut = { ...formFeed, time: new Date().toLocaleTimeString() }
+    saveData(checkOut, 'feed');
     removeFromStock(formFeed.racaoUsada);
-    setshowFeedPopup(false);
+    updateLastFiveFeeds();
+    setShowTablePopup(true);
+    setShowLastFeeds(true);
+    setIsPopup(true);
+    setEdit({
+      check: false,
+      id: '',
+      time: '',
+      data: ''
+    });
   };
 
   const removeFromStock = (id) => {
     let stock = JSON.parse(localStorage.getItem('stockData'));
     const feedStock = stock.feedPurchase;
     const toUpdate = feedStock.map((item) => {
-      if (Number(item.purchaseId.id) === Number(id)) {
-        return {...item, quantidade: item.quantidade - formFeed.racaoTotalDia}
+      if (item.purchaseId.id === id) {
+        return { ...item, quantity: item.quantity - formFeed.racaoTotalDia }
       }
       return item;
     })
-    stock = {...stock, feedPurchase: toUpdate}
+    stock = { ...stock, feedPurchase: toUpdate }
     localStorage.setItem('stockData', JSON.stringify(stock));
   }
 
@@ -40,6 +77,14 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
       [name]: checked,
     }));
   };
+
+  const updateLastFiveFeeds = () => {
+    cultivo.feed && setLastFiveFeeds(cultivo.feed.slice(-5).reverse());
+  };
+
+  useEffect(() => {
+    updateLastFiveFeeds();
+  }, [cultivo]);
 
   useEffect(() => {
     const checkPurchases = JSON.parse(localStorage.getItem('stockData')) || [];
@@ -53,7 +98,7 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
     const uniquePurchasesLocal = [];
     purchases.forEach(purchase => {
       const uniqueKey = `${purchase.brand}-${purchase.type}-${purchase.validity}`;
-      console.log(uniqueKey)
+
       if (!uniqueSet.has(uniqueKey)) {
         uniqueSet.add(uniqueKey);
         uniquePurchasesLocal.push({
@@ -65,7 +110,138 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
       }
     });
     setUniquePurchases(uniquePurchasesLocal);
-  }, [purchases])
+  }, [purchases]);
+
+  const handleEditItem = (id, time, data) => {
+    setShowLastFeeds(false);
+    setIsPopup(false);
+    setEdit({
+      check: true,
+      id: id,
+      time: time,
+      data: data
+    });
+    const feedToEdit = cultivo.feed.find(
+      (feed) => feed.racaoUsada === id && feed.time === time && feed.data === data
+    );
+
+    if (feedToEdit) {
+      setFormFeed({
+        data: feedToEdit.data,
+        racaoTotalDia: feedToEdit.racaoTotalDia,
+        quantidadeTratos: feedToEdit.quantidadeTratos,
+        racaoUsada: feedToEdit.racaoUsada,
+        observacao1: feedToEdit.observacao1,
+        observacao2: feedToEdit.observacao2,
+      });
+      setShowTablePopup(false);
+    }
+  };
+
+  const submitEdit = (edit) => {
+    const { id, time, data } = edit;
+    let history = JSON.parse(localStorage.getItem('history'));
+    history = history.filter(c => c.id !== cultivo.id);
+    const editFeedFromCultivo = cultivo.feed.filter((feed) =>
+      !(feed.racaoUsada === id && feed.time === time && feed.data === data)
+    );
+    const insertTimeInFormFeed = {...formFeed, time: time}
+    const updateFeedAfterEdit = [...editFeedFromCultivo, insertTimeInFormFeed]
+    const updateCultivo = { ...cultivo, feed: updateFeedAfterEdit }
+    history = [...history, updateCultivo];
+    setCultivo(updateCultivo);
+    localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(updateCultivo));
+    localStorage.setItem(`history`, JSON.stringify(history));
+    updateLastFiveFeeds();
+  }
+
+  const handleDeleteItem = (id, time, data) => {
+    if (window.confirm('Tem certeza de que deseja excluir este item?')) {
+      let history = JSON.parse(localStorage.getItem('history'));
+      history = history.filter(c => c.id !== cultivo.id);
+      const removeFeedFromCultivo = cultivo.feed.filter((feed) =>
+        feed.racaoUsada !== id ||
+        feed.time !== time ||
+        feed.data !== data);
+      const updateCultivo = { ...cultivo, feed: removeFeedFromCultivo }
+      history = [...history, updateCultivo];
+      setCultivo(updateCultivo);
+      localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(updateCultivo));
+      localStorage.setItem(`history`, JSON.stringify(history));
+      updateLastFiveFeeds();
+    }
+  };
+
+  const renderTable = (data) => {
+    let feeds = [];
+    data.forEach((feed) => {
+      const f = purchases.filter(i => i.purchaseId.id === feed.racaoUsada)[0];
+      feeds.push({ ...feed, marca: f.brand, tipo: f.type });
+    });
+
+    const renderTime = (time) => {
+      if (!time) {
+        return "";
+      }
+      const [hours, minutes] = time.split(':');
+      return `${hours}:${minutes}`;
+    };
+
+    if (!data.length) {
+      return <p>Nenhuma alimentação lançada</p>;
+    }
+    return (
+      <div className="feed-table">
+        {isPopup ?
+          (<h3>Últimas anotações</h3>) :
+          (<h4 className="toggle-title" onClick={() => setShowLastFeeds(!showLastFeeds)}>
+            <span>Últimas anotações</span>
+            <span><FontAwesomeIcon
+              icon={faChevronDown}
+              className={`toggle-icon ${showLastFeeds ? '' : 'rotate-icon'}`}
+            /></span>
+          </h4>)
+        }
+        {showLastFeeds && (
+          <table className="biometry-table">
+            <thead>
+              <tr>
+                <th>Data/<br />Hora</th>
+                <th>Ração</th>
+                <th>Editar</th>
+                <th>Excluir</th>
+              </tr>
+            </thead>
+            <tbody>
+              {feeds.map((item, index) => (
+                <tr key={index}>
+                  <td>{formatDate(item.data).date}<br />
+                    {renderTime(item.time)}
+                  </td>
+
+                  <td>{`${item.marca} - ${item.tipo} - ${item.racaoTotalDia}`} kg</td>
+                  <td style={{ textAlign: 'center' }}>
+                    <button
+                      className="delete-button"
+                      onClick={() => (handleEditItem(item.racaoUsada, item.time, item.data),
+                        setShowLastFeeds(false))}
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                  </td>
+                  <td style={{ textAlign: 'center' }}>
+                    <button className="delete-button" onClick={() => handleDeleteItem(item.racaoUsada, item.time, item.data)}>
+                      <FontAwesomeIcon icon={faTrash} />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="popup">
@@ -73,6 +249,7 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
         {purchases.length > 0 ? (
           <>
             <h3>Anotações de Arraçoamento</h3>
+
             <form onSubmit={handleFeedSubmit} className="harv-form">
               <label>
                 Data:
@@ -88,9 +265,9 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
                 Ração usada:
                 <select
                   value={formFeed.racaoUsada}
-                  onChange={(e) => 
+                  onChange={(e) =>
                     setFormFeed({ ...formFeed, racaoUsada: e.target.value })}
-                    required>
+                  required>
                   <option value="">Escolha a ração</option>
                   {uniquePurchases.map((op, index) =>
                     <option value={(op.id)} key={index}>{op.marca}-{op.tipo}-{formatDate(op.validade).date}</option>
@@ -98,7 +275,7 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
                 </select>
               </label>
               <label>
-                Ração total do dia:
+                Ração total do dia (kg):
                 <input
                   type="number"
                   name="racaoTotalDia"
@@ -143,11 +320,10 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
                     <span>Reduziu ou suspendeu algum trato</span>
                   </label>
                 </div>
-                <br />
-                <br />
               </div>
-              <div className="bottom-buttons">
-                <button type="button" onClick={() => setshowFeedPopup(false)} className="cancel-button">Voltar</button>
+              {renderTable(lastFiveFeeds)}
+              <div className="box-buttons">
+                <button type="button" onClick={() => setShowFeedPopup(false)} className="cancel-button">Voltar</button>
                 <button type="submit" className="first-class-button">Salvar</button>
               </div>
             </form>
@@ -155,10 +331,26 @@ const FeedPopup = ({ setshowFeedPopup, saveData }) => {
         ) : (
           <div>
             <p>Sem ração no estoque</p>
-            <button type="button" onClick={() => setshowFeedPopup(false)} className="cancel-button">Voltar</button>
+            <button
+              type="button"
+              onClick={() => setShowFeedPopup(false)} className="cancel-button">
+              Voltar
+            </button>
           </div>
         )}
       </div>
+
+      {showTablePopup && (
+        <div className="popup">
+          <div className="popup-inner">
+            {renderTable(lastFiveFeeds)}
+            <button onClick={() => (setShowTablePopup(false), setShowFeedPopup(false))} className="cancel-button">
+              Fechar
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

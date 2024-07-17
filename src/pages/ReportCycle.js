@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faDollarSign, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { formatDate } from './utils';
 import { IconContainer } from './utils';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ReportCycle = () => {
     const location = useLocation();
-    const navigate = useNavigate();
     const cultivoId = location.state.id;
     const viveiroName = location.state.viveiro.nome;
-    // const farmName = location.state.farmName;
     const cultivo = JSON.parse(localStorage.getItem(cultivoId));
     const stockData = JSON.parse(localStorage.getItem('stockData'));
     const [showStressTest, setShowStressTest] = useState(false);
@@ -100,41 +97,6 @@ const ReportCycle = () => {
                         </table>
                     ) : (<p>Não realizado</p>))}
 
-                    <h3 className="toggle-title" onClick={() => setShowBiometrics(!showBiometrics)}>
-                        Biometrias
-                        {showBiometrics ? (
-                            <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
-                        ) : (
-                            <FontAwesomeIcon icon={faChevronDown} className="toggle-icon rotate-icon" />
-                        )}
-                    </h3>
-
-                    {showBiometrics && (
-                        cultivo.biometrics ? (
-                            <table className="biometry-table">
-                                <thead>
-                                    <tr>
-                                        <th>Data</th>
-                                        <th>Pesagem</th>
-                                        <th>Contagem</th>
-                                        <th>Peso Médio</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {cultivo.biometrics.map((biometric, index) => (
-                                        <tr key={index}>
-                                            <td>{formatDate(biometric.data).date}</td>
-                                            <td style={{ textAlign: "right" }}>{biometric.Pesagem}</td>
-                                            <td style={{ textAlign: "right" }}>{biometric.Contagem}</td>
-                                            <td style={{ textAlign: "right" }}>{parseFloat(biometric.pesoMedio).toLocaleString('pt-BR',
-                                                { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        ) : (<p>Sem registros</p>)
-                    )}
-
                     <h3 className="toggle-title" onClick={() => setShowRacao(!showRacao)}>
                         Ração
                         {showRacao ? (
@@ -187,7 +149,7 @@ const ReportCycle = () => {
                     )}
 
                     <h3 className="toggle-title" onClick={() => setShowParametros(!showParametros)}>
-                        Parâmetros
+                        Parâmetros da Água
                         {showParametros ? (
                             <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
                         ) : (
@@ -223,8 +185,43 @@ const ReportCycle = () => {
                         ) : (<p>Sem registros</p>)
                     )}
 
+<h3 className="toggle-title" onClick={() => setShowBiometrics(!showBiometrics)}>
+                        Biometrias
+                        {showBiometrics ? (
+                            <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
+                        ) : (
+                            <FontAwesomeIcon icon={faChevronDown} className="toggle-icon rotate-icon" />
+                        )}
+                    </h3>
+
+                    {showBiometrics && (
+                        cultivo.biometrics ? (
+                            <table className="biometry-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Pesagem</th>
+                                        <th>Contagem</th>
+                                        <th>Peso Médio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {cultivo.biometrics.map((biometric, index) => (
+                                        <tr key={index}>
+                                            <td>{formatDate(biometric.data).date}</td>
+                                            <td style={{ textAlign: "right" }}>{biometric.Pesagem}</td>
+                                            <td style={{ textAlign: "right" }}>{biometric.Contagem}</td>
+                                            <td style={{ textAlign: "right" }}>{parseFloat(biometric.pesoMedio).toLocaleString('pt-BR',
+                                                { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : (<p>Sem registros</p>)
+                    )}
+
                     <h3 className="toggle-title" onClick={() => setShowFertilizantes(!showFertilizantes)}>
-                        Fertilizantes
+                        Fertilização
                         {showFertilizantes ? (
                             <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
                         ) : (
@@ -256,7 +253,7 @@ const ReportCycle = () => {
                     )}
 
                     <h3 className="toggle-title" onClick={() => setShowProducao(!showProducao)}>
-                        Produção
+                        Despescas
                         {showProducao ? (
                             <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
                         ) : (
@@ -270,7 +267,7 @@ const ReportCycle = () => {
                                     <tr>
                                         <th></th>
                                         <th>Data</th>
-                                        <th>Tipo</th>
+                                        <th>Despesca</th>
                                         <th>Comprador</th>
                                         <th>Peso Médio</th>
                                     </tr>

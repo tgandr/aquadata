@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faLightbulb, faTools, faEllipsisH, faChartBar, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faLightbulb, faTools, faEllipsisH, faChartBar, faUsers, faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Financial.css';
 import LaborPopup from './LaborPopup';
 import Purchases from './Purchases';
@@ -13,13 +13,14 @@ const Financial = () => {
   const [showPopup, setShowPopup] = useState(null);
   const [showLaborPopup, setShowLaborPopup] = useState(false);
   const [showPurchasesPopup, setShowPurchasesPopup] = useState(false);
+  const [showRevenuePopup, setShowRevenuePopup] = useState(false);
   const [form, setForm] = useState({
     date: new Date().toISOString().split('T')[0],
     value: '',
     description: ''
   });
   const [payments, setPayments] = useState([]);
-
+  const [revenues, setRevenues] = useState([]);
 
   const handlePopup = (type) => {
     setShowPopup(type);
@@ -27,12 +28,13 @@ const Financial = () => {
 
   const handleClosePopup = () => {
     setShowPopup(null);
+    setShowRevenuePopup(false);
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm({ ...form, [name]: value })
-  }
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
 
   useEffect(() => {
     const financial = JSON.parse(localStorage.getItem('financial')) || {};
@@ -40,6 +42,11 @@ const Financial = () => {
       setPayments(financial.payments);
     } else {
       setPayments([]);
+    }
+    if ('revenues' in financial) {
+      setRevenues(financial.revenues);
+    } else {
+      setRevenues([]);
     }
   }, []);
 
@@ -50,7 +57,7 @@ const Financial = () => {
       const updatedPayments = payments.map(element => {
         if (element.month === form.date) {
           if ([showPopup] in element) {
-            const previousInfos = element[showPopup]
+            const previousInfos = element[showPopup];
             return {
               ...element, [showPopup]: [...previousInfos,
               { value: form.value, description: form.description }]
@@ -69,7 +76,7 @@ const Financial = () => {
           value: form.value, description: form.description
         }]
       }];
-      setPayments(updatedPayments)
+      setPayments(updatedPayments);
       financial = { ...financial, payments: updatedPayments };
       localStorage.setItem('financial', JSON.stringify(financial));
     }
@@ -79,7 +86,26 @@ const Financial = () => {
       description: ''
     });
     handleClosePopup();
-  }
+  };
+
+  const handleRevenueSubmit = (e) => {
+    e.preventDefault();
+    let financial = JSON.parse(localStorage.getItem('financial')) || {};
+    const updatedRevenues = [...revenues, {
+      date: form.date,
+      value: form.value,
+      description: form.description
+    }];
+    setRevenues(updatedRevenues);
+    financial = { ...financial, revenues: updatedRevenues };
+    localStorage.setItem('financial', JSON.stringify(financial));
+    setForm({
+      date: new Date().toISOString().split('T')[0],
+      value: '',
+      description: ''
+    });
+    handleClosePopup();
+  };
 
   return (
     <div className="financial-container">
@@ -128,8 +154,16 @@ const Financial = () => {
             <span>Outros</span>
           </div>
         </button>
-        <button className="financial-button" 
-        onClick={() => (navigate('/meses'))}>
+        <button className="financial-button" onClick={() => setShowRevenuePopup(true)}>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faDollarSign} className="financial-icon" />
+          </div>
+          <div className="text-financial-wrapper">
+            <span>Receitas</span>
+          </div>
+        </button>
+        <button className="financial-button"
+          onClick={() => (navigate('/meses'))}>
           <div className="icon-wrapper">
             <FontAwesomeIcon icon={faChartBar} className="financial-icon" />
           </div>
@@ -178,6 +212,55 @@ const Financial = () => {
                   ></textarea>
                 </label>
               }
+              <br /><br /><br />
+              <div className="bottom-buttons">
+                <button
+                  type="button"
+                  className="cancel-button"
+                  onClick={handleClosePopup}
+                >Voltar</button>
+                <button
+                  type="submit"
+                  className="first-class-button"
+                >Lançar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showRevenuePopup && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Lançamento de Receita</h3>
+            <form
+              className="harv-form"
+              onSubmit={(e) => handleRevenueSubmit(e)}>
+              <label>Data:
+                <input
+                  type="month"
+                  name="date"
+                  value={form.date}
+                  onChange={handleChange}
+                  required />
+              </label>
+              <label>Valor:
+                <input
+                  type="number"
+                  name="value"
+                  step="0.01"
+                  value={form.value}
+                  onChange={handleChange}
+                  required />
+              </label>
+              <label>Descrição:
+                <textarea
+                  name="description"
+                  rows="4"
+                  value={form.description}
+                  onChange={handleChange}
+                ></textarea>
+              </label>
               <br /><br /><br />
               <div className="bottom-buttons">
                 <button

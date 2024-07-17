@@ -47,7 +47,7 @@ const ParamPopup = ({ setShowParamPopup, saveData }) => {
                         </select>
                     </label>
                     <label>
-                        Temperatura:
+                        Temperatura - ºC:
                         <input
                             type="number"
                             name="temperatura"
@@ -56,7 +56,7 @@ const ParamPopup = ({ setShowParamPopup, saveData }) => {
                         />
                     </label>
                     <label>
-                        Oxigênio Dissolvido:
+                        Oxigênio Dissolvido - mg/L:
                         <input
                             type="number"
                             name="oxigenioDissolvido"
@@ -74,7 +74,7 @@ const ParamPopup = ({ setShowParamPopup, saveData }) => {
                         />
                     </label>
                     <label>
-                        Amônia Total:
+                        Amônia Total - mg/L:
                         <input
                             type="number"
                             name="amoniaTotal"
