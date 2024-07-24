@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 const HarvestPopup = ({
-  cultivo, saveData, harvestData, setHarvestData, survivalRate, setSurvivalRate, 
+  cultivo, setCultivo, saveData, harvestData, setHarvestData, survivalRate, setSurvivalRate,
   biometryData, setBiometryData, newPesagem, setNewPesagem, setShowHarvest }) => {
 
   const [previousHarvestData, setPreviousHarvestData] = useState(true);
@@ -53,13 +53,13 @@ const HarvestPopup = ({
   const handleHarvestConfirm = (e) => {
     e.preventDefault();
     if (harvestTotals.id.totalOrParcial === 'total') {
-      const totalBiomassHarvested = (Array.isArray(cultivo.harvest) ? cultivo.harvest.reduce((total, harv) =>
-        total + parseInt(harv.data.biomass), 0) : 0) + parseInt(harvestData.biomass);
-      const surviversBefore = (Array.isArray(cultivo.harvest) ? cultivo.harvest.reduce((total, harv) => total + parseInt(
-        parseInt(harv.data.biomass * 1000) / (
-          harv.data.biometries.reduce((total, biom) => total + parseInt(biom.weight), 0) /
-          harv.data.biometries.reduce((total, biom) => total + parseInt(biom.count), 0)
-        )), 0) : 0);
+      const totalBiomassHarvested = (Array.isArray(cultivo.harvest)
+        ? cultivo.harvest.reduce((total, harv) => total + parseInt(harv.data.biomass), 0) : 0)
+        + parseInt(harvestData.biomass);
+      const surviversBefore = (Array.isArray(cultivo.harvest)
+        ? cultivo.harvest.reduce((total, harv) => total + parseInt(parseInt(harv.data.biomass * 1000)
+        / (harv.data.biometries.reduce((total, biom) => total + parseInt(biom.weight), 0) 
+        / harv.data.biometries.reduce((total, biom) => total + parseInt(biom.count), 0))), 0) : 0);
       const surviversAtTotalHarvest = (parseInt(harvestData.biomass) * 1000) / parseInt(biometryData.averageWeight);
       const survivers = surviversAtTotalHarvest + parseInt(surviversBefore);
       const survivalRate = (parseInt(survivers) / parseInt(cultivo.quantidadeEstocada));
@@ -148,15 +148,22 @@ const HarvestPopup = ({
 
   const handleSave = () => {
     if (hasBiomass) {
-      saveData(harvestTotals, 'harvest')
+      saveData(harvestTotals, 'harvest');
       setShowHarvest(false);
     } else {
       setErrorMessage('Indique a biomassa colhida')
     }
     if (harvestTotals.id.totalOrParcial === 'total') {
-      console.log('total')
+      console.log(harvestTotals)
+      let history = JSON.parse(localStorage.getItem('history'));
+      let closeCultivo = JSON.parse(localStorage.getItem(`cultivo-${cultivo.id}`));
+      history = history.filter((viv) => viv.id !== cultivo.id);
+      closeCultivo = { ...closeCultivo, hasShrimp: false };
+      history.push(closeCultivo);
+      setCultivo(closeCultivo);
+      localStorage.setItem(`history`, JSON.stringify(history));
+      localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(closeCultivo));
     }
-    
   };
 
   const checkBiometry = () => {

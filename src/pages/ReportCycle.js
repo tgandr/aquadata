@@ -10,7 +10,14 @@ const ReportCycle = () => {
     const location = useLocation();
     const cultivoId = location.state.id;
     const viveiroName = location.state.viveiro.nome;
-    const cultivo = JSON.parse(localStorage.getItem(cultivoId));
+    const findInHistory = () => {
+        const history = JSON.parse(localStorage.getItem("history"));
+        const idWithoutPrefix = cultivoId.split("-").slice(1).join("-");
+        return history.find((cult) => cult.id === idWithoutPrefix)
+    }
+    const cultivo = JSON.parse(localStorage.getItem(cultivoId)) ||
+        findInHistory();
+    
     const stockData = JSON.parse(localStorage.getItem('stockData'));
     const [showStressTest, setShowStressTest] = useState(false);
     const [showBiometrics, setShowBiometrics] = useState(false);
@@ -20,8 +27,7 @@ const ReportCycle = () => {
     const [showProducao, setShowProducao] = useState(false);
     let revenue = 0;
     let survivalRate = 0;
-
-    let CA = checkFeedToCA()
+    let CA = checkFeedToCA();
     function checkFeedToCA() {
         if ('feed' in cultivo) {
             const feed = cultivo.feed.reduce(
@@ -185,7 +191,7 @@ const ReportCycle = () => {
                         ) : (<p>Sem registros</p>)
                     )}
 
-<h3 className="toggle-title" onClick={() => setShowBiometrics(!showBiometrics)}>
+                    <h3 className="toggle-title" onClick={() => setShowBiometrics(!showBiometrics)}>
                         Biometrias
                         {showBiometrics ? (
                             <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
@@ -321,7 +327,16 @@ const ReportCycle = () => {
                                     })}
                                     <tr className="total-line" >
                                         <td colSpan="2" style={{ textAlign: "center" }}><strong>Total</strong></td>
-                                        <td style={{ textAlign: "right" }}>{(CA.biomass).toLocaleString('pt-BR')} kg</td>
+                                        {/* <td style={{ textAlign: "right" }}>{CA ? (CA.biomass).toLocaleString('pt-BR') `kg` :
+                                            "Sem consumo de ração registrado"}</td> */}
+                                        <td style={{ textAlign: "right" }}>
+                                            {cultivo.harvest ?
+                                                `${(cultivo.harvest.reduce((total, biom) => {
+                                                    const biomass = parseInt(biom.data.biomass) || parseInt(biom.data.biomassAtFinalHarvest) || 0;
+                                                    return total + biomass;
+                                                }, 0)).toLocaleString('pt-BR')} kg`
+                                                : 0}
+                                        </td>
                                         <td colSpan="2" className="td-revenue"><strong>R$ {(revenue).toLocaleString('pt-BR',
                                             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></td>
                                     </tr>
@@ -334,8 +349,8 @@ const ReportCycle = () => {
                                             </tr>
                                             <tr>
                                                 <td colSpan="3" style={{ textAlign: "center" }}><strong>Conversão Alimentar</strong></td>
-                                                <td colSpan="2" style={{ textAlign: "center" }}>{parseFloat(parseInt(CA.feed) / parseInt(CA.biomass)).toLocaleString('pt-BR',
-                                                    { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</td>
+                                                <td colSpan="2" style={{ textAlign: "center" }}>{CA ? parseFloat(parseInt(CA.feed) / parseInt(CA.biomass)).toLocaleString('pt-BR',
+                                                    { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "-"}</td>
                                             </tr>
                                         </>
                                     )}

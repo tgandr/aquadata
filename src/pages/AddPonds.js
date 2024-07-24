@@ -6,6 +6,7 @@ import '../styles/AddPonds.css';
 import SanityAnalysis from './SanityAnalysis';
 import AnalysisReport from './AnalysisReport';
 import { IconContainer } from './utils';
+import { v4 as uuidv4 } from 'uuid';
 
 const AddPonds = () => {
   const [viveiros, setViveiros] = useState([]);
@@ -37,8 +38,9 @@ const AddPonds = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const id = uuidv4();
     const novoViveiro = {
-      id: viveiros.length + 1,
+      id: id,
       nome: `Viveiro ${form.numeroViveiro}`,
       area: form.area,
     };
@@ -68,7 +70,7 @@ const AddPonds = () => {
 
   const days = (id) => {
     if (cultivos && cultivos.length > 0) {
-      const cultivo = cultivos.find(cultivo => cultivo.viveiroId === id);
+      const cultivo = cultivos.find(cultivo => cultivo.hasShrimp && cultivo.viveiroId === id);
       if (cultivo && cultivo.hasShrimp) {
         return formatDate(cultivo.dataPovoamento).days;
       }

@@ -23,6 +23,9 @@ const PondDetail = () => {
   const [showFeedPopup, setShowFeedPopup] = useState(false);
   const [showParamPopup, setShowParamPopup] = useState(false);
   const [showBiometry, setShowBiometry] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [showButtons, setShowButtons] = useState(true);
+  const [history, setHistory] = useState([]);
   const [showHarvest, setShowHarvest] = useState(false);
   const [showWeightInput, setShowWeightInput] = useState({ show: false, buttonText: 'Pesagem' });
   const [showPLgrama, setShowPLgrama] = useState(false);
@@ -66,16 +69,20 @@ const PondDetail = () => {
 
   useEffect(() => {
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
-    const storedCultivo = storedCultivos && storedCultivos.find((viv) => viv.viveiroId === viveiroId);
-
+    const storedCultivo = storedCultivos && storedCultivos.filter((viv) =>
+      viv.viveiroId === viveiroId);
     if (storedCultivo) {
-      setCultivo(storedCultivo);
-      const viveiroData = localStorage.getItem(`cultivo-${storedCultivo.id}`);
-
-      if (viveiroData) {
-        const parsedData = JSON.parse(viveiroData);
-        if (parsedData.biometrics) {
-          setBiometrics(parsedData.biometrics);
+      for (const c of storedCultivo) {
+        const data = JSON.parse(localStorage.getItem(`cultivo-${c.id}`));
+        if (data) {
+          const viveiroData = data;
+          setCultivo(viveiroData);
+          if (viveiroData) {
+            if (viveiroData.biometrics) {
+              setBiometrics(viveiroData.biometrics);
+            }
+          }
+          break;
         }
       }
     }
@@ -102,7 +109,9 @@ const PondDetail = () => {
 
   const saveData = (data, key) => {
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
-    const i = storedCultivos && storedCultivos.findIndex((viv) => viv.viveiroId === viveiroId);
+    const i = storedCultivos && storedCultivos.findIndex((viv) =>
+      viv.hasShrimp && viv.viveiroId === viveiroId);
+
     if (key in storedCultivos[i]) {
       const toStore = [...storedCultivos[i][key], data];
       const checkOut = { ...storedCultivos[i], [key]: toStore };
@@ -110,7 +119,6 @@ const PondDetail = () => {
       localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
       localStorage.setItem('history', JSON.stringify(storedCultivos));
       setCultivo(checkOut);
-
     } else {
       const checkOut = { ...storedCultivos[i], [key]: [data] };
       storedCultivos[i] = checkOut;
@@ -149,6 +157,13 @@ const PondDetail = () => {
     };
   }
 
+  const loadHistory = () => {
+    setShowHistory(true);
+    const history = JSON.parse(localStorage.getItem('history'));
+    const storedCultivos = history.filter((viv) => viv.viveiroId === viveiroId);
+    setHistory(storedCultivos);
+  }
+
   return (
     <div className="pond-detail">
       <div className="identify-data">
@@ -156,7 +171,7 @@ const PondDetail = () => {
         <h3>{farmName}</h3>
       </div>
       {cultivo ? (
-        <div>
+        <>
           <div className="infos">
             <p>Povoamento em {formatDate(cultivo.dataPovoamento).date}</p>
             <p>{formatDate(cultivo.dataPovoamento).days} dias de cultivo</p>
@@ -164,30 +179,62 @@ const PondDetail = () => {
             <p>Quantidade Estocada: {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
           </ div>
           <div className="buttons-container">
-            <button className="pond-button" onClick={() => setShowFeedPopup(true)}>
-              Ração
-              {feedUsed !== 0 ? (<p className="buttons-infos">{feedUsed} kg consumidos</p>) :
-                <p className="buttons-infos">Sem consumo</p>}
-            </button>
-            <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros da Água</button>
-            <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
-            <button className="pond-button" onClick={() => setShowFertilizationPopup(true)}>Fertilização</button>
-            <button className="pond-button" onClick={() => setShowHarvest(true)}>Despescas</button>
+            {showButtons && (
+              <>
+                <button className="pond-button" onClick={() => setShowFeedPopup(true)}>
+                  Ração
+                  {feedUsed !== 0 ? (<p className="buttons-infos">{feedUsed} kg consumidos</p>) :
+                    <p className="buttons-infos">Sem consumo</p>}
+                </button>
+                <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros da Água</button>
+                <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
+                <button className="pond-button" onClick={() => setShowFertilizationPopup(true)}>Fertilização</button>
+                <button className="pond-button" onClick={() => setShowHarvest(true)}>Despescas</button>
+              </>
+            )}
             <button className="pond-button" onClick={() => (navigate('/relatorio', {
               state: { ...location.state, id: `cultivo-${cultivo.id}` }
             }))}>
               Relatório
             </button>
-            <button className="pond-button">Histórico</button>
+            <button className="pond-button" onClick={() => loadHistory()}>Histórico</button>
 
           </div>
-        </div>
+        </>
       ) : (
         <>
           <h3>O viveiro está vazio</h3>
           <button onClick={() => setShowNewCyclePopup(true)}>Novo Ciclo de Cultivo</button>
+          <button onClick={() => loadHistory()}>Histórico</button>
         </>
       )}
+
+      {showHistory &&
+        <>
+          <div className="popup">
+            <div className="popup-inner">
+              <h3>Histórico</h3>
+              {history ?
+                (history.length > 0 ?
+                  (history.map((hist, index) => (!hist.hasShrimp &&
+                    <button key={index} onClick={() => (setShowHistory(false),
+                      setCultivo(hist), setShowButtons(false))}>
+                      {formatDate(hist.dataPovoamento).date} a {" "}
+                      {hist.harvest && hist.harvest.length > 0 ? (
+                        formatDate(hist.harvest[hist.harvest.length - 1].id.date).date
+                      ) : (
+                        "Sem data de colheita"
+                      )}
+                    </button>
+                  ))) : <p>Sem cultivos anteriores</p>) :
+                <p>Sem cultivos anteriores</p>
+              }
+              <button className="cancel-button" onClick={() => setShowHistory(false)}>Voltar</button>
+
+            </div>
+          </div>
+        </>
+      }
 
       {showNewCyclePopup && <NewCyclePopup
         showNewCyclePopup={showNewCyclePopup} setShowNewCyclePopup={setShowNewCyclePopup}
@@ -209,9 +256,9 @@ const PondDetail = () => {
 
       {showFeedPopup && <FeedPopup
         setShowFeedPopup={setShowFeedPopup}
-        saveData={saveData} 
+        saveData={saveData}
         cultivo={cultivo}
-        setCultivo={setCultivo}/>}
+        setCultivo={setCultivo} />}
 
       {showParamPopup && <ParamPopup setShowParamPopup={setShowParamPopup} saveData={saveData} />}
 
@@ -224,6 +271,7 @@ const PondDetail = () => {
 
       {showHarvest && <HarvestPopup
         cultivo={cultivo}
+        setCultivo={setCultivo}
         saveData={saveData}
         harvestData={harvestData}
         setHarvestData={setHarvestData}
@@ -242,7 +290,7 @@ const PondDetail = () => {
         setShowFertilizationPopup={setShowFertilizationPopup}
         saveData={saveData} />}
 
-      {parcialProduction.totalBiomass &&
+      {parcialProduction.totalBiomass && cultivo.hasShrimp &&
         <>
           <h4 style={{ color: '#1E3A8A', backgroundColor: '#f3f5f0' }}>
             Produção Parcial: <span style={{ color: '#f3f5f0', fontWeight: 'bold', backgroundColor: '#1E3A8A' }}>
@@ -252,6 +300,27 @@ const PondDetail = () => {
               maximumFractionDigits: 1,
             })}% das PLs estocadas
           </h4>
+        </>
+      }
+
+      {cultivo &&
+        !cultivo.hasShrimp && showButtons &&
+        <>
+          <h4>Despesca total finalizada. <br />Deseja encerrar o viveiro?</h4>
+          <div className="box-buttons">
+            <button className="cancel-button">Não</button>
+            <button
+              className="first-class-button"
+              onClick={() => {
+                localStorage.removeItem(`cultivo-${cultivo.id}`);
+                alert('O viveiro foi encerrado com sucesso.');
+                window.location.reload();
+              }}
+            >
+              Sim
+            </button>
+
+          </div>
         </>
       }
 
@@ -278,8 +347,8 @@ const PondDetail = () => {
             </tbody>
           </table>
         </div>
-      ) : (cultivo ? <p className="infos">Nenhuma biometria realizada </p> :
-        <p className="infos">Aguardando lançamento</p>
+      ) : (!cultivo ? <p className="infos">Aguardando lançamento</p> :
+        (showButtons && <p className="infos">Nenhuma biometria realizada </p>)
       )}
       <br /><br /><br /><br /><br />
 

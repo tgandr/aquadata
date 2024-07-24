@@ -42,6 +42,13 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
       return;
     }
 
+    const selectedPurchase = purchases.find((purchase) => purchase.purchaseId.id === formFeed.racaoUsada);
+
+    if (selectedPurchase && selectedPurchase.quantity - formFeed.racaoTotalDia < 0) {
+      alert(`Quantidade insuficiente no estoque.\nDisponível apenas ${selectedPurchase.quantity} kg`);
+      return;
+    }
+
     const checkOut = { ...formFeed, time: new Date().toLocaleTimeString() }
     saveData(checkOut, 'feed');
     removeFromStock(formFeed.racaoUsada);
@@ -154,20 +161,43 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
     localStorage.setItem(`history`, JSON.stringify(history));
     updateLastFiveFeeds();
   }
-
   const handleDeleteItem = (id, time, data) => {
     if (window.confirm('Tem certeza de que deseja excluir este item?')) {
       let history = JSON.parse(localStorage.getItem('history'));
       history = history.filter(c => c.id !== cultivo.id);
+  
+      // Encontrar o item a ser removido
+      const itemToRemove = cultivo.feed.find((feed) =>
+        feed.racaoUsada === id &&
+        feed.time === time &&
+        feed.data === data
+      );
+  
+      // Remover o item do cultivo.feed
       const removeFeedFromCultivo = cultivo.feed.filter((feed) =>
         feed.racaoUsada !== id ||
         feed.time !== time ||
-        feed.data !== data);
+        feed.data !== data
+      );
+  
+      // Atualizar o cultivo com o item removido
       const updateCultivo = { ...cultivo, feed: removeFeedFromCultivo }
       history = [...history, updateCultivo];
       setCultivo(updateCultivo);
       localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(updateCultivo));
       localStorage.setItem(`history`, JSON.stringify(history));
+  
+      // Devolver a quantidade removida ao estoque
+      let stock = JSON.parse(localStorage.getItem('stockData'));
+      const feedStock = stock.feedPurchase.map((item) => {
+        if (item.purchaseId.id === id) {
+          return { ...item, quantity: parseFloat(item.quantity) + parseFloat(itemToRemove.racaoTotalDia) };
+        }
+        return item;
+      });
+      stock = { ...stock, feedPurchase: feedStock };
+      localStorage.setItem('stockData', JSON.stringify(stock));
+  
       updateLastFiveFeeds();
     }
   };
@@ -179,13 +209,13 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
       feeds.push({ ...feed, marca: f.brand, tipo: f.type });
     });
 
-    const renderTime = (time) => {
-      if (!time) {
-        return "";
-      }
-      const [hours, minutes] = time.split(':');
-      return `${hours}:${minutes}`;
+    const getFeedIndex = (date, time) => {
+      const sameDayFeeds = feeds.filter((feed) => feed.data === date);
+      const sortedFeeds = sameDayFeeds.sort((a, b) => new Date(`1970-01-01T${a.time}`) - new Date(`1970-01-01T${b.time}`));
+      const index = sortedFeeds.findIndex((feed) => feed.time === time);
+      return `${index + 1}º trato`;
     };
+
 
     if (!data.length) {
       return <p>Nenhuma alimentação lançada</p>;
@@ -216,7 +246,8 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
               {feeds.map((item, index) => (
                 <tr key={index}>
                   <td>{formatDate(item.data).date}<br />
-                    {renderTime(item.time)}
+                    {/* {renderTime(item.time)} */}
+                    {getFeedIndex(item.data, item.time)}
                   </td>
 
                   <td>{`${item.marca} - ${item.tipo} - ${item.racaoTotalDia}`} kg</td>
@@ -242,6 +273,15 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
       </div>
     );
   };
+
+  useEffect(() => {
+    if (cultivo.feed) {
+      const lastUsedFeed = purchases.filter((f) => f.purchaseId.id === cultivo.feed[cultivo.feed.length - 1].racaoUsada)[0];
+      if (lastUsedFeed && lastUsedFeed.quantity < 100) {
+        alert(`Atenção: O estoque da ração ${lastUsedFeed.brand}-${lastUsedFeed.type} é ${lastUsedFeed.quantity} kg.`);
+      }
+    }
+  }, [purchases]);
 
   return (
     <div className="popup">
@@ -321,12 +361,13 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
                   </label>
                 </div>
               </div>
-              {renderTable(lastFiveFeeds)}
+              
               <div className="box-buttons">
                 <button type="button" onClick={() => setShowFeedPopup(false)} className="cancel-button">Voltar</button>
                 <button type="submit" className="first-class-button">Salvar</button>
               </div>
             </form>
+            {renderTable(lastFiveFeeds)}
           </>
         ) : (
           <div>

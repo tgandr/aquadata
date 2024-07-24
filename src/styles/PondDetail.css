@@ -69,30 +69,6 @@
     /* Cor de fundo ao passar o mouse */
 }
 
-/* .stress-test-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.stress-test-button {
-    padding: 10px 20px;
-    border: 1px solid #ccc;
-    background-color: #c0bfbf;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-}
-
-.stress-test-button.active {
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
-}
-
-.stress-test-button:not(.active):hover {
-    background-color: #e0e0e0;
-} */
-
 .stress-test-buttons {
     display: flex;
     gap: 10px;
@@ -120,6 +96,7 @@
 @media (max-width: 600px) {
     .buttons-container {
         grid-template-columns: 1fr 1fr;
+        width: 90%;
         /* Duas colunas em telas menores */
     }
 
@@ -145,8 +122,9 @@
 
 .obs {
     text-align: center !important;
-    margin-bottom: 10px !important;
+    margin-bottom: 0px !important;
     width: 90% !important;
+    padding-bottom: 0%;
 }
 
 .obs input[type="checkbox"] {
@@ -496,6 +474,8 @@ select {
     display: flex;
     flex-direction: column;
     width: 100%;
+    padding-top: 10px;
+    
 }
 
 .feed-table h4 {

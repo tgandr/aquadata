@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faLightbulb, faTools, faEllipsisH, faChartBar, faUsers, faDollarSign } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faLightbulb, faTools, faEllipsisH, faChartBar, faUsers, 
+  faDollarSign, faChartPie } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Financial.css';
 import LaborPopup from './LaborPopup';
 import Purchases from './Purchases';
@@ -114,6 +115,14 @@ const Financial = () => {
         <h3>Fazenda {formData.nomeFazenda}</h3>
       </div>
       <div className="btn-financial-container">
+      <button className="financial-button" onClick={() => setShowRevenuePopup(true)}>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faDollarSign} className="financial-icon" />
+          </div>
+          <div className="text-financial-wrapper">
+            <span>Receitas</span>
+          </div>
+        </button>
         <button className="financial-button" onClick={() => setShowLaborPopup(true)}>
           <div className="icon-wrapper">
             <FontAwesomeIcon icon={faUsers} className="financial-icon" />
@@ -154,21 +163,22 @@ const Financial = () => {
             <span>Outros</span>
           </div>
         </button>
-        <button className="financial-button" onClick={() => setShowRevenuePopup(true)}>
-          <div className="icon-wrapper">
-            <FontAwesomeIcon icon={faDollarSign} className="financial-icon" />
-          </div>
-          <div className="text-financial-wrapper">
-            <span>Receitas</span>
-          </div>
-        </button>
         <button className="financial-button"
           onClick={() => (navigate('/meses'))}>
           <div className="icon-wrapper">
             <FontAwesomeIcon icon={faChartBar} className="financial-icon" />
           </div>
           <div className="text-financial-wrapper">
-            <span>Relatório Mensal</span>
+            <span>Movimento Mensal</span>
+          </div>
+        </button>
+        <button className="financial-button"
+          onClick={() => (navigate('/custos'))}>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faChartPie} className="financial-icon" />
+          </div>
+          <div className="text-financial-wrapper">
+            <span>Relatório de Custos</span>
           </div>
         </button>
       </div>

@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import Webcam from 'react-webcam';
+import { v4 as uuidv4 } from 'uuid';
 
 const NewCyclePopup = ({
     showNewCyclePopup, setShowNewCyclePopup,
@@ -169,10 +170,15 @@ const NewCyclePopup = ({
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const vivNumber = JSON.parse(localStorage.getItem('viveiros'))[viveiroId - 1];
+        console.log(viveiroId);
+        const viveiros = JSON.parse(localStorage.getItem('viveiros'));
+        const vivNumber = viveiros.find(viv => viv.id === viveiroId);
+        console.log(vivNumber)
+         // JSON.parse(localStorage.getItem('viveiros'))[viveiroId - 1];
         let history = JSON.parse(localStorage.getItem('history'));
         let newCultivo = {};
-        let cultivoKey = 1;
+        const id = uuidv4();
+        let cultivoKey = id;
         const quantEstoc = form.quantidadeEstocada * 1000;
         const setFormToSubmit = { ...form, quantidadeEstocada: quantEstoc };
         if (history) {
@@ -181,18 +187,19 @@ const NewCyclePopup = ({
                 dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
                 viveiro: parseInt(vivNumber.nome.match(/\d+/)[0]),
                 viveiroId,
-                id: history.length + 1,
+                id,
                 hasShrimp: true
             };
             history = [...history, newCultivo];
-            cultivoKey = history.length;
+            // cultivoKey = id;
         } else {
+
             newCultivo = {
                 ...setFormToSubmit,
                 dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
                 viveiro: parseInt(vivNumber.nome.match(/\d+/)[0]),
                 viveiroId,
-                id: 1,
+                id,
                 hasShrimp: true
             };
             history = [newCultivo];

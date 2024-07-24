@@ -14,6 +14,7 @@ import AnalysisReport from './pages/AnalysisReport';
 import Inventory from './pages/Inventory';
 import ReportCycle from './pages/ReportCycle';
 import ReportFinancial from './pages/ReportFinancial';
+import ReportCosts from './pages/ReportCosts';
 
 const AppRoutes = () => {
   return (
@@ -32,6 +33,7 @@ const AppRoutes = () => {
         <Route path="/inventario" element={<Inventory />} />
         <Route path="/relatorio" element={<ReportCycle />} />
         <Route path="/meses" element={<ReportFinancial />} />
+        <Route path="/custos" element={<ReportCosts />} />
         <Route path="/sanidade" element={<AnalysisReport />} />
         <Route path="/aquadata" element={<HomePage />} />
         <Route path="*" element={<HomePage />} />
