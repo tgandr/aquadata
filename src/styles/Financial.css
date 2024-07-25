@@ -27,6 +27,9 @@
     --color-yellow-dark: #78350F;
     --color-yellow-medium: #F59E0B;
     --color-yellow-light: #FEF3C7;
+
+    --color-ciano-medium: #44BBEF; /* complementar do vermelho médio */
+    --color-magenta-medium: #B91049; /* complementar do verde médio */
   }
   
   .financial-container {
@@ -85,6 +88,22 @@
     position: relative; 
     overflow: hidden; 
   }
+
+  /* .revenue-button {
+    border-color: var(--color-green-medium);
+  }
+
+  .payments-button {
+    border-color: var(--color-red-medium);
+  } */
+
+  .revenue-icon {
+    color: var(--color-green-medium);
+  }
+
+  .payments-icon {
+    color: var(--color-red-medium);
+  }
   
   .financial-icon {
     font-size: 30px;
@@ -126,8 +145,15 @@
     right: 0; /* Alinhar à direita */
     padding: 5px 0; /* Espaçamento interno */
     position: absolute;
-  
   }
+
+  /* .revenue-text {
+    background-color: var(--color-green-medium);
+  }
+
+  .payments-text {
+    background-color: var(--color-red-medium);
+  } */
   
   .text-financial-wrapper span {
     width: 100%; /* Ocupar toda a largura do botão */

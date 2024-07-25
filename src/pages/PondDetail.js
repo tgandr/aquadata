@@ -110,7 +110,8 @@ const PondDetail = () => {
   const saveData = (data, key) => {
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
     const i = storedCultivos && storedCultivos.findIndex((viv) =>
-      viv.hasShrimp && viv.viveiroId === viveiroId);
+      // viv.hasShrimp && viv.viveiroId === viveiroId);
+      viv.viveiroId === viveiroId);
 
     if (key in storedCultivos[i]) {
       const toStore = [...storedCultivos[i][key], data];
@@ -230,7 +231,6 @@ const PondDetail = () => {
                 <p>Sem cultivos anteriores</p>
               }
               <button className="cancel-button" onClick={() => setShowHistory(false)}>Voltar</button>
-
             </div>
           </div>
         </>
@@ -314,7 +314,8 @@ const PondDetail = () => {
               onClick={() => {
                 localStorage.removeItem(`cultivo-${cultivo.id}`);
                 alert('O viveiro foi encerrado com sucesso.');
-                window.location.reload();
+                // window.location.reload();
+                navigate('/viveiros')
               }}
             >
               Sim

@@ -154,7 +154,6 @@ const HarvestPopup = ({
       setErrorMessage('Indique a biomassa colhida')
     }
     if (harvestTotals.id.totalOrParcial === 'total') {
-      console.log(harvestTotals)
       let history = JSON.parse(localStorage.getItem('history'));
       let closeCultivo = JSON.parse(localStorage.getItem(`cultivo-${cultivo.id}`));
       history = history.filter((viv) => viv.id !== cultivo.id);

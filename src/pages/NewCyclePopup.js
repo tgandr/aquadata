@@ -170,11 +170,8 @@ const NewCyclePopup = ({
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(viveiroId);
         const viveiros = JSON.parse(localStorage.getItem('viveiros'));
         const vivNumber = viveiros.find(viv => viv.id === viveiroId);
-        console.log(vivNumber)
-         // JSON.parse(localStorage.getItem('viveiros'))[viveiroId - 1];
         let history = JSON.parse(localStorage.getItem('history'));
         let newCultivo = {};
         const id = uuidv4();
@@ -191,7 +188,6 @@ const NewCyclePopup = ({
                 hasShrimp: true
             };
             history = [...history, newCultivo];
-            // cultivoKey = id;
         } else {
 
             newCultivo = {

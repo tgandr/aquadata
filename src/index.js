@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 // Cria o contêiner raiz
 const container = document.getElementById('root');
@@ -14,14 +15,16 @@ root.render(
   </React.StrictMode>
 );
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(registration => {
-        console.log('ServiceWorker registrado: ', registration);
-      })
-      .catch(registrationError => {
-        console.log('Falha no registro do ServiceWorker: ', registrationError);
-      });
-  });
-}
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     navigator.serviceWorker.register('/service-worker.js')
+//       .then(registration => {
+//         console.log('ServiceWorker registrado: ', registration);
+//       })
+//       .catch(registrationError => {
+//         console.log('Falha no registro do ServiceWorker: ', registrationError);
+//       });
+//   });
+// }
+
+serviceWorkerRegistration.register();
