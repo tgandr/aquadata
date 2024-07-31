@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/aquadata/static/css/main.e8aa17d0.css",
-    "main.js": "/aquadata/static/js/main.41126d8f.js",
+    "main.js": "/aquadata/static/js/main.3bc0a122.js",
     "static/js/239.954b91b8.chunk.js": "/aquadata/static/js/239.954b91b8.chunk.js",
     "static/js/213.781b1ca2.chunk.js": "/aquadata/static/js/213.781b1ca2.chunk.js",
     "static/js/455.a01e93e0.chunk.js": "/aquadata/static/js/455.a01e93e0.chunk.js",
@@ -9,6 +9,10 @@
     "static/media/aqua-data-icon-512.png": "/aquadata/static/media/aqua-data-icon-512.ecafe1b01c1ce03135c8.png",
     "static/media/fa-brands-400.ttf": "/aquadata/static/media/fa-brands-400.60127e352b7a11f7f1bc.ttf",
     "static/media/fa-solid-900.woff2": "/aquadata/static/media/fa-solid-900.4d986b00ff9ca3828fbd.woff2",
+    "static/media/ip04.png": "/aquadata/static/media/ip04.364b2650f067a2bca694.png",
+    "static/media/ip01.png": "/aquadata/static/media/ip01.49bbd6fd7e65e1036337.png",
+    "static/media/ip02.png": "/aquadata/static/media/ip02.fe9e7bfa7140a48d355a.png",
+    "static/media/ip03.png": "/aquadata/static/media/ip03.94e3d2687e79e3c945c9.png",
     "static/media/fa-brands-400.woff2": "/aquadata/static/media/fa-brands-400.455ea818179b4def0c43.woff2",
     "static/media/imnv01.jpg": "/aquadata/static/media/imnv01.e522e736df43ae501bc7.jpg",
     "static/media/back_white.jpeg": "/aquadata/static/media/back_white.b0dc66c861fe0a2a794c.jpeg",
@@ -34,13 +38,13 @@
     "static/media/fa-v4compatibility.woff2": "/aquadata/static/media/fa-v4compatibility.cf7f5903d06b79ad60f1.woff2",
     "index.html": "/aquadata/index.html",
     "main.e8aa17d0.css.map": "/aquadata/static/css/main.e8aa17d0.css.map",
-    "main.41126d8f.js.map": "/aquadata/static/js/main.41126d8f.js.map",
+    "main.3bc0a122.js.map": "/aquadata/static/js/main.3bc0a122.js.map",
     "239.954b91b8.chunk.js.map": "/aquadata/static/js/239.954b91b8.chunk.js.map",
     "213.781b1ca2.chunk.js.map": "/aquadata/static/js/213.781b1ca2.chunk.js.map",
     "455.a01e93e0.chunk.js.map": "/aquadata/static/js/455.a01e93e0.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e8aa17d0.css",
-    "static/js/main.41126d8f.js"
+    "static/js/main.3bc0a122.js"
   ]
 }
