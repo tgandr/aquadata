@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/aquadata/static/css/main.c237e64a.css",
-    "main.js": "/aquadata/static/js/main.5392ffe2.js",
+    "main.css": "/aquadata/static/css/main.e4897186.css",
+    "main.js": "/aquadata/static/js/main.41126d8f.js",
     "static/js/239.954b91b8.chunk.js": "/aquadata/static/js/239.954b91b8.chunk.js",
     "static/js/213.781b1ca2.chunk.js": "/aquadata/static/js/213.781b1ca2.chunk.js",
     "static/js/455.a01e93e0.chunk.js": "/aquadata/static/js/455.a01e93e0.chunk.js",
@@ -10,8 +10,12 @@
     "static/media/fa-brands-400.ttf": "/aquadata/static/media/fa-brands-400.60127e352b7a11f7f1bc.ttf",
     "static/media/fa-solid-900.woff2": "/aquadata/static/media/fa-solid-900.4d986b00ff9ca3828fbd.woff2",
     "static/media/fa-brands-400.woff2": "/aquadata/static/media/fa-brands-400.455ea818179b4def0c43.woff2",
+    "static/media/imnv01.jpg": "/aquadata/static/media/imnv01.e522e736df43ae501bc7.jpg",
     "static/media/back_white.jpeg": "/aquadata/static/media/back_white.b0dc66c861fe0a2a794c.jpeg",
+    "static/media/an01.jpg": "/aquadata/static/media/an01.d1cab49634bb43c6a805.jpg",
     "static/media/fa-regular-400.ttf": "/aquadata/static/media/fa-regular-400.eb91f7b948a42799f678.ttf",
+    "static/media/ur02.jpg": "/aquadata/static/media/ur02.9dda79f08c6d91f2e099.jpg",
+    "static/media/ur01.jpg": "/aquadata/static/media/ur01.56d9e3603c36139870d1.jpg",
     "static/media/hp04.jpg": "/aquadata/static/media/hp04.076efa6584e1dacc0db8.jpg",
     "static/media/ws03.jpg": "/aquadata/static/media/ws03.f85bae072f1fb44bc64d.jpg",
     "static/media/hp01.jpg": "/aquadata/static/media/hp01.5f440301f6d16a955e04.jpg",
@@ -29,14 +33,14 @@
     "static/media/fa-v4compatibility.ttf": "/aquadata/static/media/fa-v4compatibility.c8e090db312b0bea2aa2.ttf",
     "static/media/fa-v4compatibility.woff2": "/aquadata/static/media/fa-v4compatibility.cf7f5903d06b79ad60f1.woff2",
     "index.html": "/aquadata/index.html",
-    "main.c237e64a.css.map": "/aquadata/static/css/main.c237e64a.css.map",
-    "main.5392ffe2.js.map": "/aquadata/static/js/main.5392ffe2.js.map",
+    "main.e4897186.css.map": "/aquadata/static/css/main.e4897186.css.map",
+    "main.41126d8f.js.map": "/aquadata/static/js/main.41126d8f.js.map",
     "239.954b91b8.chunk.js.map": "/aquadata/static/js/239.954b91b8.chunk.js.map",
     "213.781b1ca2.chunk.js.map": "/aquadata/static/js/213.781b1ca2.chunk.js.map",
     "455.a01e93e0.chunk.js.map": "/aquadata/static/js/455.a01e93e0.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.c237e64a.css",
-    "static/js/main.5392ffe2.js"
+    "static/css/main.e4897186.css",
+    "static/js/main.41126d8f.js"
   ]
 }
