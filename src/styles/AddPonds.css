@@ -79,6 +79,7 @@
   .viveiro-data {
     color: var(--color-orange-medium);
     font-size: 14px;
+    padding: 1px;
   }
 
   .infos-wrapper {

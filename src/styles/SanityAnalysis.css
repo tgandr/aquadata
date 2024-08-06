@@ -31,8 +31,17 @@
     overflow: auto;
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
     position: relative;
+}
+
+.sanity-title {
+    margin: 0; 
+    padding: 20px 0; 
+    background-color: white;
+    width: 100%; 
+    height: auto; 
+    text-align: center; 
+    border-bottom: 1px solid #ddd; 
 }
 
 .popup-inner-check {
@@ -70,25 +79,6 @@
     max-width: 80px !important;
 }
 
-.sanity-title {
-    margin-top: 0px;
-    padding-top: 20px;
-    /* Espaço acima do título */
-    position: fixed;
-    background-color: white;
-    width: 80%;
-    height: 50px;
-}
-
-.fade-out-sup {
-    width: 80%;
-    height: 150px;
-    /* Altura do fade-out-sup */
-    margin-top: 70px;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
-    position: fixed;
-}
-
 .main-content {
     overflow: auto;
 }
@@ -101,7 +91,6 @@
     width: 100%;
     height: 200px;
     background-color: white;
-
 }
 
 .form-content {
@@ -146,7 +135,6 @@
     background-color: #f0f0f0;
 }
 
-/* Estilos para os botões numerados */
 .button-container {
     display: flex;
     justify-content: space-around;
@@ -160,13 +148,9 @@
     align-items: center; 
     justify-content: center;
     border: 2px solid transparent;
-    /* Borda inicialmente transparente */
     border-radius: 50%;
-    /* Formato de círculo */
     background-color: #00ff00;
-    /* Cor inicial dos botões, verde */
     color: #ffffff;
-    /* Cor do texto dentro do botão */
     font-size: 16px;
     cursor: pointer;
     outline: none;
@@ -180,22 +164,18 @@
 
 .analysis-button:nth-child(1) {
     background-color: #32CD32;
-    /* Verde claro para o valor 1 */
 }
 
 .analysis-button:nth-child(2) {
     background-color: #90EE90   ;
-    /* Verde mais claro para o valor 2 */
 }
 
 .analysis-button:nth-child(3) {
     background-color: #ff6666;
-    /* Vermelho claro para o valor 3 */
 }
 
 .analysis-button:nth-child(4) {
     background-color: #ff0000;
-    /* Vermelho forte para o valor 4 */
 }
 
 .analysis-button-lipids {
@@ -205,13 +185,9 @@
     align-items: center; 
     justify-content: center;
     border: 2px solid transparent;
-    /* Borda inicialmente transparente */
     border-radius: 50%;
-    /* Formato de círculo */
     background-color: #00ff00;
-    /* Cor inicial dos botões, verde */
     color: #ffffff;
-    /* Cor do texto dentro do botão */
     font-size: 16px;
     cursor: pointer;
     outline: none;
@@ -257,7 +233,6 @@
     align-items: center; 
     justify-content: center;
     border: 2px solid transparent;
-    
     margin: 2px;
     color: #ffffff;
     font-size: 16px;
@@ -267,7 +242,6 @@
 }
 
 .analysis-button-classes.selected {
-    /* border: 4px solid black !important; */
     background-color: var(--color-blue-dark) !important;
     color: white !important;
     font-weight: bold;
@@ -295,9 +269,116 @@
 
 .add-shrimp {
     background-color: var(--color-orange-medium) !important;
-    
     width: 80px;
     height: 80px;
     font-size: 40px;
     margin-top: 2px !important;
+}
+
+.image-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.zoom-icon {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    cursor: pointer;
+    color: var(--color-orange-dark);
+    font-size: 20px;
+}
+
+.zoom-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1002;
+}
+
+.zoom-popup-inner {
+    position: relative;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 90%;
+    max-height: 90%;
+}
+
+.close-zoom-popup {
+    position: absolute;
+    top: 0px !important;
+    right: 0px !important;
+    width: auto;
+    font-size: 24px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background: white;
+    color: var(--color-orange-dark);
+}
+
+.zoom-image {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.images-container {
+    margin-bottom: 20px;
+}
+
+.observacoes-container {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.observacoes-container {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    gap: 2px;
+    margin: 0 auto;
+    width: fit-content;
+}
+
+.observacoes-container div {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.observacoes-container label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.observacoes-container input[type="radio"] {
+    margin: 0;
+}
+
+.observacoes-container input[type="text"] {
+    margin-top: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+.input-container {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.input-container label {
+    margin-right: 4px;
 }

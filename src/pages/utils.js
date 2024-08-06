@@ -59,3 +59,16 @@ export const IconContainer = () => {
     </div>
     )
 }
+
+export const calculateDepreciation = (hasShrimp) => {
+    const inventoryData = JSON.parse(localStorage.getItem("inventoryData"));
+    if (hasShrimp) {
+        return inventoryData.reduce((total, item) => {
+            const meses = parseInt(item.vidaUtil, 10) * 12;
+            const valorInicial = parseFloat(item.valor);
+            const valorFinal = parseFloat(item.valorFinal);
+            const valorMensal = (valorInicial - valorFinal) / meses;
+            return total + valorMensal;
+        }, 0);
+    }; // ajustar para calcular e não atualizar em cultivos encerrados
+    };

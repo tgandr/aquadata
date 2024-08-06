@@ -1,31 +1,136 @@
 import React, { useState } from 'react';
 import { formatDate, IconContainer } from './utils';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { calculateDepreciation } from './utils';
 
 const PondCosts = () => {
     const location = useLocation();
-    const { dataPovoamento, feed, viveiro, hasShrimp, harvest } = location.state.cycle;
+    const { dataPovoamento, feed, viveiro, viveiroId, hasShrimp,
+        harvest, depreciationTotal, id, quantidadeEstocada } = location.state.cycle;
+    console.log(location.state.cycle)
     const financial = JSON.parse(localStorage.getItem('financial'));
     const [showFixedCosts, setShowFixedCosts] = useState(false);
     const [showVariableCosts, setShowVariableCosts] = useState(false);
     const [showTotalCosts, setShowTotalCosts] = useState(false);
 
+
+    const viveiros = JSON.parse(localStorage.getItem('viveiros'));
+    const pond = viveiros.find(viv => viv.id === viveiroId);
+    const totalPondsArea = viveiros.reduce((total, i) => total + parseFloat(i.area), 0);
+
+    const pondArea = parseFloat(pond.area);
+    const pondPercentage = parseFloat((pondArea / totalPondsArea) * 100);
+
     const searchHarvestDate = () => {
-        const finalHarvestDate = harvest.find(harv => harv.id.totalOrParcial === "total")?.id.date;
+        const finalHarvestDate = harvest && harvest.find(harv => harv.id.totalOrParcial === "total")?.id.date;
         return finalHarvestDate ? formatDate(finalHarvestDate).date : "";
     };
 
     const calculateFeedCosts = () => {
-        let totalCost = 0;
-        feed.forEach(feedEntry => {
+        let cost = 0;
+        feed && feed.forEach(feedEntry => {
             const purchase = financial.feedPurchase.find(item => item.purchaseId.id === feedEntry.racaoUsada);
             if (purchase) {
-                totalCost += parseFloat(purchase.value) * parseFloat(feedEntry.racaoTotalDia);
+                cost += parseFloat(purchase.value / purchase.bagSize) * parseFloat(feedEntry.racaoTotalDia);
             }
         });
-        return totalCost.toFixed(2);
+        return cost;
+    };
+
+    const calculateEnergyCost = () => {
+        const startDate = new Date(dataPovoamento);
+        const endDate = hasShrimp ? new Date() : new Date(harvest.find(harv => harv.id.totalOrParcial === "total")?.id.date);
+        // const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+
+        let totalEnergyCost = 0;
+        const getDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
+
+        financial.payments && financial.payments.forEach(entry => {
+            const entryDate = new Date(entry.month + "-01"); // Convert month string to date
+            if (entryDate >= startDate && entryDate <= endDate) {
+                if (entry.energia) {
+                    const entryYear = entryDate.getFullYear();
+                    const entryMonth = entryDate.getMonth() + 1;
+                    const daysInMonth = getDaysInMonth(entryYear, entryMonth);
+                    const monthlyCost = entry.energia.reduce((t, i) => t + parseFloat(i.value), 0);
+                    const dailyCost = monthlyCost / daysInMonth;
+                    totalEnergyCost += dailyCost * daysInMonth;
+                }
+            }
+        });
+
+        const proportionalCost = totalEnergyCost * (pondArea / totalPondsArea);
+        return proportionalCost;
+    };
+
+
+    const calculateLaborCost = () => {
+        const startDate = new Date(dataPovoamento);
+        const endDate = hasShrimp
+            ? new Date()
+            : new Date(harvest.find(harv => harv.id.totalOrParcial === "total")?.id.date);
+        // const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+
+        let totalLaborCost = 0;
+        const getDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
+
+        financial.labor.forEach(entry => {
+            const entryDate = new Date(entry.month + "-01");
+            if (entryDate >= startDate && entryDate <= endDate) {
+                entry.payroll.forEach(payrollEntry => {
+                    const entryYear = entryDate.getFullYear();
+                    const entryMonth = entryDate.getMonth() + 1;
+                    const daysInMonth = getDaysInMonth(entryYear, entryMonth);
+                    const monthlyCost = parseFloat(payrollEntry.salary);
+                    const dailyCost = monthlyCost / daysInMonth;
+                    totalLaborCost += dailyCost * daysInMonth;
+                });
+            }
+        });
+
+        return totalLaborCost * (pondPercentage / 100);
+    };
+
+    const calculatePostLarvaeCosts = () => {
+        const { postLarvaePurchase } = financial;
+        let costs = {};
+        if (postLarvaePurchase) {
+            costs = postLarvaePurchase.find(l => l.dateIn === id);
+        }
+        // let currentCost = 0;
+        if (costs) {
+            return costs.value * costs.quantity;
+        } else {
+            return 0;
+        };
+    };
+
+    const formatCurrency = (value) => {
+        if (value) {
+            return `R$ ${value.toLocaleString('pt-BR',
+                { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+        } else {
+            return "R$ 0,00";
+        }
+    };
+
+    const totalVariableCosts = () => {
+        return calculatePostLarvaeCosts() + calculateFeedCosts() + calculateEnergyCost();
+    };
+
+    const totalFixedsCosts = () => {
+        return parseFloat(calculateLaborCost())
+            + parseFloat((calculateDepreciation(hasShrimp) * pondPercentage / 100) || depreciationTotal)
+    };
+
+    const calculateRevenues = () => {
+        if (harvest) {
+            const rev = harvest.reduce((total, index) => total + (parseFloat(index.id.price) *
+                parseFloat(index.data.biomass || index.data.biomassAtFinalHarvest)), 0);
+            return rev;
+        } else {return 0};
     };
 
     return (
@@ -37,7 +142,86 @@ const PondCosts = () => {
                 </h3>
             </div>
             <div className="pond-detail">
-                <div className="infos"></div>
+                <div className="infos"><h3>
+                    {`${parseFloat(pond.area).toLocaleString('pt-BR',
+                        { minimumFractionDigits: 1, maximumFractionDigits: 1 })} `}
+                    ha - {`${parseFloat(pond.area / totalPondsArea * 100).toLocaleString('pt-BR',
+                        { minimumFractionDigits: 1, maximumFractionDigits: 1 })}% da área total`}</h3></div>
+                <div className="infos">Área total de viveiros: {`${totalPondsArea.toLocaleString('pt-BR',
+                    { minimumFractionDigits: 1, maximumFractionDigits: 1 })} `}
+                    ha</div>
+                {/* <div className="infos">Área do viveiro: {`${parseFloat(pond.area).toLocaleString('pt-BR',
+                    { minimumFractionDigits: 1, maximumFractionDigits: 1 })} `}
+                    ha, {`${parseFloat(pond.area / totalPondsArea * 100).toLocaleString('pt-BR',
+                    { minimumFractionDigits: 1, maximumFractionDigits: 1 })}% `}</div>  */}
+                {/* <div className="card mb-3">
+                    <div className="card-body">
+                        <h5 className="card-title">Informações do Viveiro</h5>
+                        <p className="card-text">
+                            <strong>Área total de viveiros:</strong> {`${totalPondsArea.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} ha`}
+                        </p>
+                        <p className="card-text">
+                            <strong>Área do viveiro:</strong> {`${parseFloat(pond.area).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} ha`}
+                            <br />
+                            <strong>Porcentagem da área total:</strong> {`${parseFloat((pond.area / totalPondsArea) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`}
+                        </p>
+                    </div>
+                </div> */}
+
+                {/* <div className="card mb-3">
+                    <div className="card-body">
+                        <h5 className="card-title">Informações do Viveiro</h5>
+                        <div className="card-text mb-3">
+                            <div className="d-flex align-items-center mb-2">
+                                <i className="fas fa-water fa-lg mr-2 text-primary"></i>
+                                <strong>Área total de viveiros:</strong>
+                            </div>
+                            <div className="ml-4">
+                                {`${totalPondsArea.toLocaleString('pt-BR', {
+                                    minimumFractionDigits: 1,
+                                    maximumFractionDigits: 1,
+                                })} ha`}
+                            </div>
+                        </div>
+                        <div className="card-text mb-3">
+                            <div className="d-flex align-items-center mb-2">
+                                <i className="fas fa-fish fa-lg mr-2 text-info"></i>
+                                <strong>Área do viveiro:</strong>
+                            </div>
+                            <div className="ml-4">
+                                {`${pondArea.toLocaleString('pt-BR', {
+                                    minimumFractionDigits: 1,
+                                    maximumFractionDigits: 1,
+                                })} ha`}
+                            </div>
+                        </div>
+                        <div className="card-text">
+                            <div className="d-flex align-items-center mb-2">
+                                <i className="fas fa-percentage fa-lg mr-2 text-success"></i>
+                                <strong>Porcentagem da área total:</strong>
+                            </div>
+                            <div className="ml-4">
+                                {`${pondPercentage.toLocaleString('pt-BR', {
+                                    minimumFractionDigits: 1,
+                                    maximumFractionDigits: 1,
+                                })}%`}
+                            </div>
+                            <div className="progress mt-2" style={{ height: '20px' }}>
+                                <div
+                                    className="progress-bar"
+                                    role="progressbar"
+                                    style={{ width: `${pondPercentage}%` }}
+                                    aria-valuenow={pondPercentage}
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                >
+                                    {`${pondPercentage.toFixed(1)}%`}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> */}
+
                 <div className="report-tables">
                     <div className="cost-section">
                         <h3 className="toggle-title" onClick={() => setShowFixedCosts(!showFixedCosts)}>
@@ -49,7 +233,7 @@ const PondCosts = () => {
                             )}
                         </h3>
                         {showFixedCosts && (
-                            <table className="cost-table">
+                            <table className="biometry-table">
                                 <thead>
                                     <tr>
                                         <th>Descrição</th>
@@ -58,6 +242,24 @@ const PondCosts = () => {
                                 </thead>
                                 <tbody>
                                     {/* Adicionar custos fixos aqui */}
+                                    <tr>
+                                        <td>
+                                            Depreciação
+                                        </td>
+                                        <td style={{ textAlign: "right" }}>
+                                            {hasShrimp
+                                                ? formatCurrency(calculateDepreciation(hasShrimp) * pondPercentage / 100)
+                                                : formatCurrency(depreciationTotal)}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Mão de Obra</td>
+                                        <td style={{ textAlign: "right" }}>{formatCurrency(calculateLaborCost())}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Custos Fixos</strong></td>
+                                        <td style={{ textAlign: "right" }}><strong>{formatCurrency(totalFixedsCosts())}</strong></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         )}
@@ -65,14 +267,14 @@ const PondCosts = () => {
                     <div className="cost-section">
                         <h3 className="toggle-title" onClick={() => setShowVariableCosts(!showVariableCosts)}>
                             Custos Variáveis
-                            {showFixedCosts ? (
+                            {showVariableCosts ? (
                                 <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
                             ) : (
                                 <FontAwesomeIcon icon={faChevronDown} className="toggle-icon rotate-icon" />
                             )}
                         </h3>
                         {showVariableCosts && (
-                            <table className="cost-table">
+                            <table className="biometry-table">
                                 <thead>
                                     <tr>
                                         <th>Descrição</th>
@@ -82,7 +284,19 @@ const PondCosts = () => {
                                 <tbody>
                                     <tr>
                                         <td>Ração</td>
-                                        <td>{feed && calculateFeedCosts()}</td>
+                                        <td>{feed && formatCurrency(calculateFeedCosts())}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pós-larvas</td>
+                                        <td style={{ textAlign: "right" }}>{financial.postLarvaePurchase && formatCurrency(calculatePostLarvaeCosts())}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Energia Elétrica</td>
+                                        <td style={{ textAlign: "right" }}>{financial.payments && formatCurrency(calculateEnergyCost())}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Custos Variáveis</strong></td>
+                                        <td style={{ textAlign: "right" }}><strong>{formatCurrency(totalVariableCosts())}</strong></td>
                                     </tr>
                                     {/* Adicionar outros custos variáveis aqui */}
                                 </tbody>
@@ -90,7 +304,7 @@ const PondCosts = () => {
                         )}
                         {/* Total Costs */}
                         <h3 className="toggle-title" onClick={() => setShowTotalCosts(!showTotalCosts)}>
-                            Custo Total
+                            Saldo
                             {showTotalCosts ? (
                                 <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
                             ) : (
@@ -99,7 +313,38 @@ const PondCosts = () => {
                         </h3>
                         {showTotalCosts && (
                             <div className="total-cost">
-                                <p>R$ 1500,00</p> {/* Exemplo de custo total, ajuste conforme necessário */}
+                                <table className="biometry-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Custos Fixos</td>
+                                            <td style={{ textAlign: "right" }}>{formatCurrency(totalFixedsCosts())}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Custos Variáveis</td>
+                                            <td style={{ textAlign: "right" }}>{formatCurrency(totalVariableCosts())}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>CUSTO TOTAL</strong></td>
+                                            <td style={{ textAlign: "right" }}>{formatCurrency(parseFloat(totalFixedsCosts()) +
+                                                parseFloat(totalVariableCosts()))}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>RECEITAS</strong></td>
+                                            <td style={{ textAlign: "right" }}>{formatCurrency(calculateRevenues())}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Saldo</td>
+                                            <td style={{ textAlign: "right" }}>{formatCurrency(calculateRevenues() - (parseFloat(totalFixedsCosts()) +
+                                                parseFloat(totalVariableCosts())))}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         )}
                     </div>

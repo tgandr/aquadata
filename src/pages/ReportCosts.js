@@ -13,7 +13,7 @@ const ReportCosts = () => {
         const historyFiltered = history.filter(p => p.viveiroId === id)
         setPondHistory(historyFiltered);
         setShowPondHistory(!showPondHistory);
-    }
+    };
 
     return (
         <div>
@@ -25,25 +25,32 @@ const ReportCosts = () => {
                 <div className="infos"></div>
                 <div className="viveiros-container">
                     {viveiros.length > 0 ? (
-                        viveiros.map(viveiro => (
-                            <button
-                                className="viveiro-button"
-                                onClick={() => handleClick(viveiro.id)}>
-                                <div className="infos-wrapper">
-                                    {viveiro.id && (
-                                        <span className="viveiro-data">
-                                            Teste
-                                        </span>
-                                    )}
-                                    <span className="viveiro-data">{parseFloat(viveiro.area).toLocaleString('pt-BR', {
-                                        minimumFractionDigits: 1,
-                                        maximumFractionDigits: 1,
-                                    })} ha</span>
-                                </div>
-                                <div className="text-add-pond-wrapper">
-                                    <span className="viveiro-titulo">{viveiro.nome}</span>
-                                </div>
-                            </button>
+                        viveiros.map((viveiro, i) => (
+                            <React.Fragment key={i}>
+                                <button
+                                    className="viveiro-button"
+                                    onClick={() => handleClick(viveiro.id)}>
+                                    <div className="infos-wrapper">
+                                        {viveiro.id && (
+                                            <span className="viveiro-data">
+                                                {`${(history.filter(h => h.viveiroId === viveiro.id)).length !== 0
+                                                    ? ((history.filter(h => h.viveiroId === viveiro.id)).length === 1
+                                                        ? "1 cultivo anterior"
+                                                        : `${(history.filter(h => h.viveiroId === viveiro.id)).length} cultivos anteriores`)
+                                                    : "Nenhum cultivo registrado"}`
+                                                }
+                                            </span>
+                                        )}
+                                        <span className="viveiro-data">{parseFloat(viveiro.area).toLocaleString('pt-BR', {
+                                            minimumFractionDigits: 1,
+                                            maximumFractionDigits: 1,
+                                        })} ha</span>
+                                    </div>
+                                    <div className="text-add-pond-wrapper">
+                                        <span className="viveiro-titulo">{viveiro.nome}</span>
+                                    </div>
+                                </button>
+                            </React.Fragment>
                         ))
                     ) : (
                         <>
@@ -66,7 +73,6 @@ const ReportCosts = () => {
                                 key={cycle.id}
                                 className="link-style">
                                 <button key={index}>
-                                    {console.log(cycle)}
                                     {formatDate(cycle.dataPovoamento).date}
                                 </button>
                             </Link>

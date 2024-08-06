@@ -108,6 +108,7 @@ const PondDetail = () => {
   }, [cultivo]);
 
   const saveData = (data, key) => {
+    console.log(data)
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
     const i = storedCultivos && storedCultivos.findIndex((viv) =>
       // viv.hasShrimp && viv.viveiroId === viveiroId);

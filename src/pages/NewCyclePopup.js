@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import Webcam from 'react-webcam';
@@ -28,7 +28,31 @@ const NewCyclePopup = ({
         tipoTeste: '',
         alteracaoNatatoria: '',
         larvasMortas: ''
-    })
+    });
+    const [postLarvae, setPostLarvae] = useState([
+        "Aquacrusta", "Aquatec", "CELM", "Larvifort"]);
+    const [addNewPostLarvae, setAddNewPostLarvae] = useState(false);
+    const [customPostLarvae, setCustomPostLarvae] = useState('');
+    const [showSavedMessage, setShowSavedMessage] = useState(false);
+
+    const savePostLarvaeList = (l) => {
+        if (l !== '') {
+            setPostLarvae([...postLarvae, l]);
+            setCustomPostLarvae('');
+            let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            if ('postLarvaeList' in stockData) {
+                stockData.postLarvaeList.push(l);
+            } else {
+                stockData.postLarvaeList = [...postLarvae, l];
+            }
+            localStorage.setItem('stockData', JSON.stringify(stockData));
+        }
+        // setFormPostLarvae({ ...formPostLarvae, fornecedor: larvae });
+        setAddNewPostLarvae(false);
+        // setShowPopup({ ...showPopup, postLarvae: true });
+        setShowSavedMessage(true);
+        setTimeout(() => setShowSavedMessage(false), 2000);
+    };
 
     const handleStressTestClick = (value) => {
         // const test = {...form.testeEstresse, }
@@ -148,6 +172,7 @@ const NewCyclePopup = ({
     };
 
     const handleChange = (e) => {
+        console.log(e.target.name)
         const { name, value, type, checked } = e.target;
         if (type === 'checkbox') {
             setForm({ ...form, [name]: checked });
@@ -208,7 +233,24 @@ const NewCyclePopup = ({
 
     const handleSavePLcount = () => {
         console.log('terminar')
-    }
+    };
+
+    useEffect(() => {
+        if (form.origemPL === 'custom') {
+            setAddNewPostLarvae(true);
+        } else {
+            setAddNewPostLarvae(false);
+        }
+    }, [form.origemPL]);
+
+    useEffect(() => {
+        const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
+        // const checkPurchases = JSON.parse(localStorage.getItem('financial')) || {};
+        // setPurchases(checkPurchases);
+        if ('postLarvaeList' in checkLists) {
+            setPostLarvae(checkLists.postLarvaeList);
+        }
+    }, []);
 
     return (
         <>
@@ -228,12 +270,23 @@ const NewCyclePopup = ({
                             </label>
                             <label>
                                 Origem da PL:
-                                <input
+                                {/* <input
                                     type="text"
                                     name="origemPL"
                                     value={form.origemPL}
                                     onChange={handleChange}
-                                    required />
+                                    required /> */}
+                                <select
+                                    name="origemPL"
+                                    value={form.origemPL}
+                                    onChange={handleChange}
+                                    required>
+                                    <option value="">Selecione</option>
+                                    {postLarvae.map((pl, index) => (
+                                        <option value={pl} key={index}>{pl}</option>
+                                    ))}
+                                    <option value="custom">Outro - Informar</option>
+                                </select>
                             </label>
                             <label>
                                 Quantidade Estocada em Milheiros:
@@ -459,6 +512,44 @@ const NewCyclePopup = ({
                     </div>
                 </ div>
             )}
+
+            {addNewPostLarvae && (
+                <div className="popup">
+                    <div className="popup-inner">
+                        <h3>Informar novo fornecedor de pós-larvas</h3>
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                savePostLarvaeList(customPostLarvae);
+                            }}
+                            className="harv-form">
+                            <label>
+                                Nome:
+                                <input
+                                    type="text"
+                                    name="fertilizer"
+                                    value={customPostLarvae}
+                                    onChange={(e) => setCustomPostLarvae(e.target.value)}
+                                    required />
+                            </label>
+                            <br />
+                            <br />
+                            <div className="bottom-buttons">
+                                <button
+                                    type="button"
+                                    // onClick={() => (setAddNewPostLarvae(false), setShowPopup({ ...showPopup, postLarvae: true }))}
+                                    onClick={() => (setAddNewPostLarvae(false))}
+                                    className="cancel-button">
+                                    Voltar</button>
+                                <button type="submit"
+                                    className="first-class-button">
+                                    Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+            {showSavedMessage && <div className="saved-message">Salvo!</div>}
         </>
     )
 }

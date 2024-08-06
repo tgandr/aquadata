@@ -3,13 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { formatDate, IconContainer } from './utils';
 import { Chart, registerables } from 'chart.js';
-
+import MonthlyCharts from './MonthlyCharts';
 
 Chart.register(...registerables);
 
 const ReportFinancial = () => {
     const financial = JSON.parse(localStorage.getItem('financial'));
+    const [revenues, setRevenues] = useState([]);
     const [organizedData, setOrganizedData] = useState({});
+    const [revenueData, setRevenueData] = useState([]);
     const [show, setShow] = useState({
         jan: false,
         feb: false,
@@ -51,7 +53,27 @@ const ReportFinancial = () => {
         }
     }, []);
 
-    const chartInstances = useRef({});
+    useEffect(() => {
+        const history = JSON.parse(localStorage.getItem('history'));
+        let revenue = [];
+        if (history) {
+            if (history) {
+                history.forEach((hist) => {
+                    if ("harvest" in hist) {
+                        hist.harvest.forEach((harv) => {
+                            const harvData = {
+                                date: harv.id.date,
+                                price: harv.id.price,
+                                biomass: harv.data.biomass || harv.data.biomassAtFinalHarvest,
+                            };
+                            revenue.push(harvData);
+                        })
+                    }
+                })
+            }
+        }
+        setRevenues(revenue);
+    }, []);
 
     function organizeByMonth(data) {
         const result = {};
@@ -102,6 +124,14 @@ const ReportFinancial = () => {
             addToMonth(month, 'payroll', labor);
         });
 
+        revenues && revenues.forEach(rev => {
+            const month = extractMonth(rev.date);
+            if (!result[month]) {
+                result[month] = { purchases: [], payroll: [], payments: [], revenue: 0 };
+            }
+            result[month].revenue += rev.price * rev.biomass;
+        });
+
         const resultArray = Object.keys(result).map(month => ({ month, ...result[month] }));
 
         return resultArray;
@@ -134,152 +164,23 @@ const ReportFinancial = () => {
         }, 0);
     }
 
+    const revenueByMonth = (month) => {
+        let monthRevenue = [];
+        revenues.forEach((m) => {
+            const monthFiltered = m.date.slice(0, 7);
+            if (month === monthFiltered) monthRevenue.push(m);
+        });
+        return monthRevenue;
+    }
+
     const isAnyMonthExpanded = () => {
         return Object.values(show).some(value => value);
-    };
-
-    const destroyChartInstance = (month) => {
-        if (chartInstances.current[month]) {
-            chartInstances.current[month].destroy();
-            delete chartInstances.current[month];
-        }
-    };
-
-    const MonthlyCharts = ({ data }) => {
-        useEffect(() => {
-            return () => {
-                destroyChartInstance(data.month);
-            };
-        }, [data.month]);
-
-        const chartData = {
-            labels: ['Compras\nde insumos', 'Pagamentos\ne serviços', 'Mão-de-obra'],
-            datasets: [
-                {
-
-                    backgroundColor: ['#FB923C', '#93C5FD', '#EF4444'],
-                    borderColor: 'rgba(0, 0, 0, 0)',
-                    borderWidth: 0,
-                    hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-                    hoverBorderColor: 'rgba(255,99,132,1)',
-                    data: [
-                        calculateTotal(data.purchases),
-                        calculatePaymentsTotal(data.payments),
-                        calculatePayrollTotal(data.payroll),
-                    ],
-                },
-            ],
-        };
-
-        const chartOptions = {
-            plugins: {
-                legend: {
-                    display: false,
-                    labels: {
-                        color: '#1E3A8A', 
-                    },
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            return `${context.raw.toFixed(2)} `; 
-                        }
-                    },
-                    bodyColor: '#1E3A8A',
-                }
-            },
-
-            layout: {
-                padding: {
-                    left: 0,
-                    right: 0,
-                    top: 10,
-                    bottom: 10
-                }
-            },
-
-            scales: {
-                y: {
-                    ticks: {
-                        display: false, 
-                        color: '#1E3A8A',
-                    },
-                    beginAtZero: true,
-                    grid: {
-                        display: false
-                    },
-                },
-                x: {
-                    ticks: {
-                        beginAtZero: true,
-                        color: '#1E3A8A',
-                        callback: function (value, index, values) {
-                            const label = chartData.labels[index];
-                            if (typeof label === 'string') {
-                                return label.split('\n'); // Remove quebras de linha ao renderizar ticks no eixo x
-                            }
-                            return label;
-                        }
-                    },
-                    grid: {
-                        color: '#93C5FD',
-                    },
-                },
-            },
-        };
-
-        const customDataLabelsPlugin = {
-            id: 'customDataLabelsPlugin',
-            afterDatasetsDraw: (chart) => {
-                const { ctx, data, chartArea: { top, bottom, left, right, width, height } } = chart;
-
-                ctx.save();
-                data.datasets.forEach((dataset, i) => {
-                    chart.getDatasetMeta(i).data.forEach((bar, index) => {
-                        const value = dataset.data[index];
-                        const formattedValue = `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                        const textWidth = ctx.measureText(formattedValue).width;
-                        const x = bar.x - textWidth / 2; // Centraliza o texto na barra
-                        const y = bar.y - 5; // Ajuste vertical
-                        ctx.fillStyle = '#1E3A8A';
-                        ctx.fillText(formattedValue, x, y);
-                    });
-                });
-                ctx.restore();
-            }
-        };
-
-        useEffect(() => {
-            if (chartInstances.current[data.month]) {
-                destroyChartInstance(data.month);
-            }
-
-            const newChartInstance = new Chart(`chart-${data.month}`, {
-                type: 'bar',
-                data: chartData,
-                options: chartOptions,
-                plugins: [customDataLabelsPlugin],
-            });
-
-            chartInstances.current[data.month] = newChartInstance;
-
-            return () => {
-                destroyChartInstance(data.month);
-            };
-        }, [data.month, chartData, chartOptions]);
-
-        return (
-            <div key={data.month} className="monthly-chart">
-                <canvas id={`chart-${data.month}`}
-                />
-            </div>
-        );
     };
 
     return (
         <div>
             <div className="identify-data">
-                <h2>Relatório Financeiro</h2>
+                <h2>Movimento Mensal</h2>
                 <h3>2024</h3>
             </div>
             <div className="pond-detail">
@@ -304,8 +205,54 @@ const ReportFinancial = () => {
                             {show[m[1]] && organizedData[m[2]] ? (
                                 <div className="monthly-data">
                                     <div className="chart-box">
-                                        <MonthlyCharts data={organizedData[m[2]]} />
+                                        <MonthlyCharts data={organizedData[m[2]]} revenues={revenues} />
                                     </div>
+
+                                    {revenueByMonth(m[2]).length > 0 ?
+                                        (
+                                            <table className="biometry-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th colSpan="2" className="report-table-head revenue-head">
+                                                            Receitas
+                                                        </th>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Data</th>
+                                                        <th>Valor</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {revenueByMonth(m[2]).map((entry, i) => (
+                                                        <tr key={i}>
+                                                            <td>{new Date(entry.date).toLocaleDateString("pt-BR")}</td>
+                                                            <td style={{ textAlign: "right" }}>
+                                                                R$ {(parseFloat(entry.price) * parseFloat(entry.biomass)).toLocaleString("pt-BR", {
+                                                                    minimumFractionDigits: 2,
+                                                                    maximumFractionDigits: 2
+                                                                })}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                    <tr className="total-line-revenue">
+                                                        <td style={{ textAlign: "center" }}>
+                                                            <strong>Total</strong>
+                                                        </td>
+                                                        <td style={{ textAlign: "right" }}>
+                                                            <strong>
+                                                                R$ {revenueByMonth(m[2]).reduce((total, entry) => total + parseFloat(entry.price) * parseFloat(entry.biomass), 0).toLocaleString("pt-BR", {
+                                                                    minimumFractionDigits: 2,
+                                                                    maximumFractionDigits: 2
+                                                                })}
+                                                            </strong>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        ) : (<h4 className="revenues-obs">Sem receitas no mês</h4>
+                                        )
+                                    }
+
                                     <table className="biometry-table">
                                         <thead>
                                             <tr>
@@ -388,7 +335,7 @@ const ReportFinancial = () => {
                                         <tbody>
                                             {organizedData[m[2]].payments &&
                                                 organizedData[m[2]].payments.map((payment, i) => (
-                                                    <>
+                                                    <React.Fragment key={i}>
                                                         {payment.energia && payment.energia.map((e, idx) => (
                                                             <tr key={`${i}-energia-${idx}`}>
                                                                 <td>Energia</td>
@@ -419,7 +366,7 @@ const ReportFinancial = () => {
                                                                 </td>
                                                             </tr>
                                                         ))}
-                                                    </>
+                                                    </React.Fragment>
                                                 ))}
                                             <tr className="total-line-payments">
                                                 <td colSpan="2" style={{ textAlign: "center" }}>
@@ -451,7 +398,7 @@ const ReportFinancial = () => {
                                         <tbody>
                                             {organizedData[m[2]].payroll &&
                                                 organizedData[m[2]].payroll.map((labor, i) => (
-                                                    <>
+                                                    <React.Fragment key={i}>
                                                         {labor.payroll.map((p, idx) => (
                                                             <tr key={`${i}-payroll-${idx}`}>
                                                                 <td>{p.name}</td>
@@ -461,7 +408,7 @@ const ReportFinancial = () => {
                                                                 </td>
                                                             </tr>
                                                         ))}
-                                                    </>
+                                                    </React.Fragment>
                                                 ))}
                                             <tr className="total-line-labor">
                                                 <td style={{ textAlign: "center" }}>
@@ -489,6 +436,5 @@ const ReportFinancial = () => {
         </div>
     );
 };
-
 
 export default ReportFinancial;

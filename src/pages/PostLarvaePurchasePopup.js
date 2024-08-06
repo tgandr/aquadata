@@ -8,15 +8,20 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
         date: new Date().toISOString().split('T')[0],
         label: '',
         quantity: '',
-        value: ''
+        value: '',
+        pond: '',
+        dateIn: ''
     });
 
     const [addNewPostLarvae, setAddNewPostLarvae] = useState('');
     const [customPostLarvae, setCustomPostLarvae] = useState('');
     const [showPostLarvaePurchaseTable, setShowPostLarvaePurchaseTable] = useState(false);
+    const [datesIn, setDatesIn] = useState('');
 
     const [postLarvae, setPostLarvae] = useState([
-        "Aquacrusta", "Aquatec", "CELM", "Larvifort"])
+        "Aquacrusta", "Aquatec", "CELM", "Larvifort"]);
+    const viveiros = JSON.parse(localStorage.getItem('viveiros'));
+    console.log(formPostLarvae)
 
     const savePostLarvaeList = (l) => {
         const larvae = capitalizeProperly(l);
@@ -65,6 +70,14 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
         }
     }, [purchases]);
 
+    useEffect(() => {
+        if (formPostLarvae.pond !== "") {
+            const history = JSON.parse(localStorage.getItem('history'));
+            const pondHistory = history.filter(pond => (pond.viveiroId === formPostLarvae.pond) && !pond.plPurchase);
+            setDatesIn(pondHistory);
+        }
+    }, [formPostLarvae.pond])
+
     const handleDeletePurchase = (index) => {
         const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
         if (isConfirmed) {
@@ -75,7 +88,7 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
             updatedPurchases.postLarvaePurchase.splice(actualIndex, 1);
             localStorage.setItem('financial', JSON.stringify(updatedPurchases));
             setPurchases(updatedPurchases);
-            
+
             let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
             if ('postLarvaePurchase' in stockData) {
                 console.log(deletedPurchase)
@@ -91,6 +104,9 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
             <div className="popup">
                 <div className="popup-inner">
                     <h3>Adicionar Pós-Larvas</h3>
+                    <p>Observação: anote aqui uma compra por viveiro. Caso dois povoamentos sejam pagos juntos,
+                        anote um primeiro, depois anote o outro.
+                    </p>
                     <form
                         onSubmit={(e) => handleSubmit(e, formPostLarvae, setFormPostLarvae, 'postLarvaePurchase')}
                         className="harv-form">
@@ -118,6 +134,15 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
                             </select>
                         </label>
                         <label>
+                            Preço por milheiro:
+                            <input
+                                type="number"
+                                name="value"
+                                value={formPostLarvae.value}
+                                onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
+                                required />
+                        </label>
+                        <label>
                             Milheiros:
                             <input
                                 type="number"
@@ -127,13 +152,30 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
                                 required />
                         </label>
                         <label>
-                            Preço por milheiro:
-                            <input
-                                type="number"
-                                name="value"
-                                value={formPostLarvae.value}
+                            Viveiro povoado:
+                            <select
+                                name="pond"
+                                value={formPostLarvae.pond}
                                 onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
-                                required />
+                                required>
+                                <option value="">Selecione</option>
+                                {viveiros && viveiros.map((viv, index) => (
+                                    <option value={viv.id} key={index}>{viv.nome}</option>
+                                ))}
+                            </select>
+                        </label>
+                        <label>
+                            Data do povoamento:
+                            <select
+                                name="dateIn"
+                                value={formPostLarvae.dateIn}
+                                onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
+                                required>
+                                <option value="">Selecione</option>
+                                {datesIn && datesIn.map((viv, index) => (
+                                    <option value={viv.id} key={index}>{formatDate(viv.dataPovoamento).date}</option>
+                                ))}
+                            </select>
                         </label>
                         <p>Total: R$ {(formPostLarvae.value * formPostLarvae.quantity).toLocaleString('pt-BR',
                             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
@@ -150,7 +192,7 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
                         </div>
                     </form>
                     <br />
-                    
+
                     {showPostLarvaePurchaseTable &&
                         <>
                             <table className="biometry-table">

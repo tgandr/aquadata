@@ -217,6 +217,10 @@
     margin-bottom: 25px;
   }
 
+  .revenue-head {
+    background-color: var(--color-green-medium) !important;
+  }
+
   .inputs-head {
     background-color: var(--color-orange-medium) !important;
   }
@@ -230,6 +234,10 @@
     background-color: var(--color-red-medium) !important;
   }
 
+  .total-line-revenue{
+    border-bottom: 2px solid var(--color-green-medium);
+  }
+
   .total-line-inputs {
     border-bottom: 2px solid var(--color-orange-medium);
   }
@@ -240,4 +248,36 @@
 
   .total-line-labor {
     border-bottom: 2px solid var(--color-red-medium);
+  }
+
+  .payments-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .container-title {
+    width: 100%;
+    color: var(--color-blue-dark);
+  }
+
+  .container-title h3 {
+    margin: 0%;
+  }
+
+  /* .monthly-chart {
+    border-bottom: 1px solid var(--color-blue-darkest);
+  } */
+
+  .monthly-chart h4 {
+    margin: 0%;
+  }
+
+  .revenues-obs {
+    width: 100%;
+    background-color: var(--color-green-medium);
+    color: var(--color-white);
+    padding: 8px;
   }

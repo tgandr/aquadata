@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faLightbulb, faTools, faEllipsisH, faChartBar, faUsers, 
-  faDollarSign, faChartPie } from '@fortawesome/free-solid-svg-icons';
+import {
+  faShoppingCart, faLightbulb, faTools, faEllipsisH, faChartBar, faUsers,
+  faDollarSign, faChartPie
+} from '@fortawesome/free-solid-svg-icons';
 import '../styles/Financial.css';
 import LaborPopup from './LaborPopup';
 import Purchases from './Purchases';
@@ -115,54 +117,9 @@ const Financial = () => {
         <h3>Fazenda {formData.nomeFazenda}</h3>
       </div>
       <div className="btn-financial-container">
-      <button className="financial-button revenue-button" onClick={() => setShowRevenuePopup(true)}>
-          <div className="icon-wrapper revenue-icon">
-            <FontAwesomeIcon icon={faDollarSign} className="financial-icon" />
-          </div>
-          <div className="text-financial-wrapper revenue-text">
-            <span>Receitas</span>
-          </div>
-        </button>
-        <button className="financial-button payments-button" onClick={() => setShowLaborPopup(true)}>
-          <div className="icon-wrapper payments-icon">
-            <FontAwesomeIcon icon={faUsers} className="financial-icon" />
-          </div>
-          <div className="text-financial-wrapper payments-text">
-            <span>Despesas com Pessoal</span>
-          </div>
-        </button>
-        <button className="financial-button payments-button" onClick={() => setShowPurchasesPopup(true)}>
-          <div className="icon-wrapper payments-icon">
-            <FontAwesomeIcon icon={faShoppingCart} className="financial-icon" />
-          </div>
-          <div className="text-financial-wrapper payments-text">
-            <span>Compras de Insumos</span>
-          </div>
-        </button>
-        <button className="financial-button payments-button" onClick={() => handlePopup('energia')}>
-          <div className="icon-wrapper payments-icon">
-            <FontAwesomeIcon icon={faLightbulb} className="financial-icon" />
-          </div>
-          <div className="text-financial-wrapper payments-text">
-            <span>Energia Elétrica</span>
-          </div>
-        </button>
-        <button className="financial-button payments-button" onClick={() => handlePopup('servicos')}>
-          <div className="icon-wrapper payments-icon">
-            <FontAwesomeIcon icon={faTools} className="financial-icon" />
-          </div>
-          <div className="text-financial-wrapper payments-text">
-            <span>Serviços</span>
-          </div>
-        </button>
-        <button className="financial-button payments-button" onClick={() => handlePopup('outros')}>
-          <div className="icon-wrapper payments-icon">
-            <FontAwesomeIcon icon={faEllipsisH} className="financial-icon" />
-          </div>
-          <div className="text-financial-wrapper payments-text">
-            <span>Outras despesas</span>
-          </div>
-        </button>
+        <div className="container-title">
+          <h3>Relatórios</h3>
+        </div>
         <button className="financial-button"
           onClick={() => (navigate('/meses'))}>
           <div className="icon-wrapper">
@@ -178,9 +135,62 @@ const Financial = () => {
             <FontAwesomeIcon icon={faChartPie} className="financial-icon" />
           </div>
           <div className="text-financial-wrapper">
-            <span>Relatório de Custos</span>
+            <span>Custos</span>
           </div>
         </button>
+        <div className="payments-container">
+          <div className="container-title">
+            <h3>Lançamentos</h3>
+          </div>
+          <button className="financial-button payments-button" onClick={() => setShowLaborPopup(true)}>
+            <div className="icon-wrapper payments-icon">
+              <FontAwesomeIcon icon={faUsers} className="financial-icon" />
+            </div>
+            <div className="text-financial-wrapper payments-text">
+              <span>Despesas com Pessoal</span>
+            </div>
+          </button>
+          <button className="financial-button payments-button" onClick={() => setShowPurchasesPopup(true)}>
+            <div className="icon-wrapper payments-icon">
+              <FontAwesomeIcon icon={faShoppingCart} className="financial-icon" />
+            </div>
+            <div className="text-financial-wrapper payments-text">
+              <span>Compras de Insumos</span>
+            </div>
+          </button>
+          <button className="financial-button payments-button" onClick={() => handlePopup('energia')}>
+            <div className="icon-wrapper payments-icon">
+              <FontAwesomeIcon icon={faLightbulb} className="financial-icon" />
+            </div>
+            <div className="text-financial-wrapper payments-text">
+              <span>Energia Elétrica</span>
+            </div>
+          </button>
+          <button className="financial-button payments-button" onClick={() => handlePopup('servicos')}>
+            <div className="icon-wrapper payments-icon">
+              <FontAwesomeIcon icon={faTools} className="financial-icon" />
+            </div>
+            <div className="text-financial-wrapper payments-text">
+              <span>Serviços</span>
+            </div>
+          </button>
+          <button className="financial-button payments-button" onClick={() => handlePopup('outros')}>
+            <div className="icon-wrapper payments-icon">
+              <FontAwesomeIcon icon={faEllipsisH} className="financial-icon" />
+            </div>
+            <div className="text-financial-wrapper payments-text">
+              <span>Outras despesas</span>
+            </div>
+          </button>
+          <button className="financial-button revenue-button" onClick={() => setShowRevenuePopup(true)}>
+            <div className="icon-wrapper revenue-icon">
+              <FontAwesomeIcon icon={faDollarSign} className="financial-icon" />
+            </div>
+            <div className="text-financial-wrapper revenue-text">
+              <span>Receitas</span>
+            </div>
+          </button>
+        </div>
       </div>
       <IconContainer />
 

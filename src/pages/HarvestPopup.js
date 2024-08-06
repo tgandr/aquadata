@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { calculateDepreciation } from './utils';
 
 const HarvestPopup = ({
   cultivo, setCultivo, saveData, harvestData, setHarvestData, survivalRate, setSurvivalRate,
@@ -24,6 +25,7 @@ const HarvestPopup = ({
   const [checkHarvestTotalOrParcial, setCheckHarvestTotalOrParcial] = useState('');
   const [showPercentual, setShowPercentual] = useState(false)
   const handleHarvestChange = (e) => {
+    console.log(e.target)
     const { name, value } = e.target;
     setHarvestData({
       ...harvestData,
@@ -147,6 +149,12 @@ const HarvestPopup = ({
   };
 
   const handleSave = () => {
+    const viveiros = JSON.parse(localStorage.getItem('viveiros'));
+    const pondArea = parseFloat((viveiros.find(viv => viv.id === cultivo.viveiroId)).area);
+    const totalPondsArea = viveiros.reduce((total, i) => total + parseFloat(i.area), 0);
+    // const pondArea = parseFloat(pond.area);
+    const pondPercentage = parseFloat(pondArea / totalPondsArea);
+
     if (hasBiomass) {
       saveData(harvestTotals, 'harvest');
       setShowHarvest(false);
@@ -157,9 +165,12 @@ const HarvestPopup = ({
       let history = JSON.parse(localStorage.getItem('history'));
       let closeCultivo = JSON.parse(localStorage.getItem(`cultivo-${cultivo.id}`));
       history = history.filter((viv) => viv.id !== cultivo.id);
-      closeCultivo = { ...closeCultivo, hasShrimp: false };
+      closeCultivo = { ...closeCultivo, 
+        hasShrimp: false, 
+        depreciationTotal: calculateDepreciation(true) * pondPercentage };
       history.push(closeCultivo);
       setCultivo(closeCultivo);
+      console.log(closeCultivo)
       localStorage.setItem(`history`, JSON.stringify(history));
       localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(closeCultivo));
     }

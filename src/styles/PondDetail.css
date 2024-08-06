@@ -268,7 +268,6 @@ select {
     padding: 10px !important;
 }
 
-
 .first-class-button {
     background-color: var(--color-orange-medium) !important;
     color: var(--color-white);
@@ -300,7 +299,6 @@ select {
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
-
     display: flex;
     justify-content: space-around;
 }
