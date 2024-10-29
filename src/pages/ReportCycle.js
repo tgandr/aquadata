@@ -56,6 +56,11 @@ const ReportCycle = () => {
         muitas: "Muitas"
     };
 
+    const produtividade = () => {
+        const viv = JSON.parse(localStorage.getItem('viveiros')).find(v => v.id == cultivo.viveiroId)
+        return parseInt(CA.biomass / viv.area)
+    };
+
     return (
         <div>
             <div className="identify-data">
@@ -90,6 +95,7 @@ const ReportCycle = () => {
                             <tbody>
                                 <tr>
                                     <td style={{ textAlign: "right" }}>
+                                        {console.log(cultivo)}
                                         {tipoTesteMap[cultivo.testForm.tipoTeste]}
                                     </td>
                                     <td style={{ textAlign: "right" }}>
@@ -351,6 +357,10 @@ const ReportCycle = () => {
                                                 <td colSpan="3" style={{ textAlign: "center" }}><strong>Conversão Alimentar</strong></td>
                                                 <td colSpan="2" style={{ textAlign: "center" }}>{CA ? parseFloat(parseInt(CA.feed) / parseInt(CA.biomass)).toLocaleString('pt-BR',
                                                     { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : "-"}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colSpan="3" style={{ textAlign: "center" }}><strong>Produtividade</strong></td>
+                                                <td colSpan="2" style={{ textAlign: "center" }}>{produtividade().toLocaleString('pt-BR')} kg/ha</td>
                                             </tr>
                                         </>
                                     )}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatDate, IconContainer } from './utils';
 import { useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,13 +8,26 @@ import { calculateDepreciation } from './utils';
 const PondCosts = () => {
     const location = useLocation();
     const { dataPovoamento, feed, viveiro, viveiroId, hasShrimp,
-        harvest, depreciationTotal, id, quantidadeEstocada } = location.state.cycle;
-    console.log(location.state.cycle)
+        harvest, depreciationTotal, id, fertilizers } = location.state.cycle;
     const financial = JSON.parse(localStorage.getItem('financial'));
     const [showFixedCosts, setShowFixedCosts] = useState(false);
     const [showVariableCosts, setShowVariableCosts] = useState(false);
     const [showTotalCosts, setShowTotalCosts] = useState(false);
-
+    const [costs, setCosts] = useState({
+        fixeds: {
+            labor: { name: "Mão-de-obra", value: 0 },
+            depreciation: { name: "Depreciação", value: 0 },
+            others: { name: "Outros", value: 0 }
+        },
+        variables: {
+            feed: { name: "Ração", value: 0 },
+            fertilization: { name: "Fertilização", value: 0 },
+            probiotics: { name: "Probióticos", value: 0 },
+            postLarvae: { name: "Pós-larvas", value: 0 },
+            electricity: { name: "Energia Elétrica", value: 0 },
+            others: { name: 'Outros', value: 0 }
+        }
+    });
 
     const viveiros = JSON.parse(localStorage.getItem('viveiros'));
     const pond = viveiros.find(viv => viv.id === viveiroId);
@@ -37,6 +50,38 @@ const PondCosts = () => {
             }
         });
         return cost;
+    };
+
+    const calculateFertilizersCosts = () => {
+        let fert = 0;
+        fertilizers && fertilizers.forEach(fEntry => {
+            const purchase = financial.fertilizersPurchase.find(item => item.id === fEntry.id);
+            if (purchase) {
+                fert += parseFloat(purchase.value / purchase.quantity) * parseFloat(fEntry.quantidade);
+            }
+        });
+        return fert;
+    };
+
+    const calculateProbioticsCosts = () => {
+        let prob = 0;
+        fertilizers && fertilizers.forEach(fEntry => {
+            const purchase = financial.probioticsPurchase.find(item => item.id === fEntry.id);
+            if (purchase) {
+                // prob += parseFloat(purchase.value / purchase.quantity) * parseFloat(fEntry.quantidade);
+                const checkUnitFertilizerEntry = fEntry.unidade && fEntry.unidade.toLowerCase();
+                const checkUnitPurchase = purchase.unity && purchase.unity.toLowerCase();
+
+                if (fEntry.unidade === ("grama" || "Grama") && purchase.unity === ("quilo" || "Quilo")) {
+                    prob += parseFloat(purchase.value / purchase.quantity) * parseFloat(fEntry.quantidade / 1000);
+                };
+                //if (fEntry.unidade === purchase.unity) {
+                if (checkUnitFertilizerEntry === checkUnitPurchase) {
+                    prob += parseFloat(purchase.value / purchase.quantity) * parseFloat(fEntry.quantidade);
+                };
+            }
+        });
+        return prob;
     };
 
     const calculateEnergyCost = () => {
@@ -76,7 +121,7 @@ const PondCosts = () => {
         let totalLaborCost = 0;
         const getDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
 
-        financial.labor.forEach(entry => {
+        financial.labor && financial.labor.forEach(entry => {
             const entryDate = new Date(entry.month + "-01");
             if (entryDate >= startDate && entryDate <= endDate) {
                 entry.payroll.forEach(payrollEntry => {
@@ -89,22 +134,41 @@ const PondCosts = () => {
                 });
             }
         });
-
         return totalLaborCost * (pondPercentage / 100);
     };
 
     const calculatePostLarvaeCosts = () => {
         const { postLarvaePurchase } = financial;
-        let costs = {};
+        let plCosts = {};
         if (postLarvaePurchase) {
-            costs = postLarvaePurchase.find(l => l.dateIn === id);
+            plCosts = postLarvaePurchase.find(l => l.dateIn === id);
         }
         // let currentCost = 0;
-        if (costs) {
-            return costs.value * costs.quantity;
-        } else {
-            return 0;
-        };
+        if (plCosts) {
+            return plCosts.value * plCosts.quantity;
+        }
+    };
+
+    const calculateOtherFixedsCosts = () => {
+        const { payments } = financial;
+        const startDate = new Date(dataPovoamento);
+        const endDate = hasShrimp ? new Date() : new Date(harvest.find(harv => harv.id.totalOrParcial === "total")?.id.date);
+        let others = 0;
+        payments && payments.forEach((item) => {
+            const entryDate = new Date(item.month + "-01");
+            if (entryDate >= startDate && entryDate <= endDate) {
+                if (item.outros) {
+                    item.outros.forEach((i) => {
+                        if (i.distribution === "y") {
+                            others += parseFloat(i.value * (pondArea / totalPondsArea));
+                        } else {
+                            others += parseFloat(i.viveiroDistribution[viveiroId])
+                        }
+                    })
+                }
+            }
+        });
+        return others;
     };
 
     const formatCurrency = (value) => {
@@ -117,12 +181,12 @@ const PondCosts = () => {
     };
 
     const totalVariableCosts = () => {
-        return calculatePostLarvaeCosts() + calculateFeedCosts() + calculateEnergyCost();
+        return Object.values(costs.variables).reduce((acc, curr) => acc + curr.value, 0);
     };
 
     const totalFixedsCosts = () => {
-        return parseFloat(calculateLaborCost())
-            + parseFloat((calculateDepreciation(hasShrimp) * pondPercentage / 100) || depreciationTotal)
+        console.log(costs.fixeds)
+        return Object.values(costs.fixeds).reduce((acc, curr) => acc + curr.value, 0);
     };
 
     const calculateRevenues = () => {
@@ -130,8 +194,37 @@ const PondCosts = () => {
             const rev = harvest.reduce((total, index) => total + (parseFloat(index.id.price) *
                 parseFloat(index.data.biomass || index.data.biomassAtFinalHarvest)), 0);
             return rev;
-        } else {return 0};
+        } else { return 0 };
     };
+
+    useEffect(() => {
+        const feedCost = calculateFeedCosts();
+        const energyCost = calculateEnergyCost();
+        const laborCost = calculateLaborCost();
+        const postLarvaeCost = calculatePostLarvaeCosts();
+        const fertilizersCosts = calculateFertilizersCosts();
+        const probioticsCosts = calculateProbioticsCosts();
+        const others = calculateOtherFixedsCosts();
+        const depreciation = calculateDepreciation(hasShrimp) * pondPercentage / 100;
+        console.log(costs)
+        setCosts(prevCosts => ({
+            fixeds: {
+                labor: { ...costs.fixeds.labor, value: laborCost },
+                depreciation: {...costs.fixeds.depreciation, value: depreciation},
+                // depreciation: prevCosts.fixeds.depreciation,
+
+                others: {...costs.fixeds.others, value: others}
+            },
+            variables: {
+                ...prevCosts.variables,
+                feed: { name: "Ração", value: feedCost },
+                electricity: { name: "Energia Elétrica", value: energyCost },
+                postLarvae: { name: "Pós-larvas", value: postLarvaeCost },
+                fertilization: { name: "Fertilizantes", value: fertilizersCosts },
+                probiotics: { name: "Probióticos", value: probioticsCosts }
+            }
+        }));
+    }, []);
 
     return (
         <div>
@@ -257,6 +350,11 @@ const PondCosts = () => {
                                         <td style={{ textAlign: "right" }}>{formatCurrency(calculateLaborCost())}</td>
                                     </tr>
                                     <tr>
+                                        <td>Outros</td>
+                                        {/* Adicionar ao código a possibilidade de exibir os custos e mover um custo fixo específico para variável */}
+                                        <td style={{ textAlign: "right" }}>{formatCurrency(calculateOtherFixedsCosts())}</td>
+                                    </tr>
+                                    <tr>
                                         <td><strong>Custos Fixos</strong></td>
                                         <td style={{ textAlign: "right" }}><strong>{formatCurrency(totalFixedsCosts())}</strong></td>
                                     </tr>
@@ -281,25 +379,40 @@ const PondCosts = () => {
                                         <th>Valor</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                {/* fazer um map para diferentes custos variáveis*/}
+                                {/* <tbody>
                                     <tr>
-                                        <td>Ração</td>
-                                        <td>{feed && formatCurrency(calculateFeedCosts())}</td>
+                                        <td>{costs.variables.feed.name}</td>
+                                        <td style={{ textAlign: "right" }}>{formatCurrency(costs.variables.feed.value)}</td>
                                     </tr>
                                     <tr>
                                         <td>Pós-larvas</td>
-                                        <td style={{ textAlign: "right" }}>{financial.postLarvaePurchase && formatCurrency(calculatePostLarvaeCosts())}</td>
+                                        <td style={{ textAlign: "right" }}>{formatCurrency()}</td>
                                     </tr>
                                     <tr>
                                         <td>Energia Elétrica</td>
-                                        <td style={{ textAlign: "right" }}>{financial.payments && formatCurrency(calculateEnergyCost())}</td>
+                                        <td style={{ textAlign: "right" }}>{formatCurrency()}</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Custos Variáveis</strong></td>
                                         <td style={{ textAlign: "right" }}><strong>{formatCurrency(totalVariableCosts())}</strong></td>
+                                    </tr> */}
+                                {/* Adicionar outros custos variáveis aqui */}
+                                {/* </tbody> */}
+
+                                <tbody>
+                                    {Object.keys(costs.variables).map((key) => (
+                                        costs.variables[key].value !== 0 && <tr key={key}>
+                                            <td>{costs.variables[key].name}</td>
+                                            <td style={{ textAlign: "right" }}>{formatCurrency(costs.variables[key].value)}</td>
+                                        </tr>
+                                    ))}
+                                    <tr>
+                                        <td><strong>Custos Variáveis</strong></td>
+                                        <td style={{ textAlign: "right" }}><strong>{formatCurrency(totalVariableCosts())}</strong></td>
                                     </tr>
-                                    {/* Adicionar outros custos variáveis aqui */}
                                 </tbody>
+
                             </table>
                         )}
                         {/* Total Costs */}
@@ -339,7 +452,7 @@ const PondCosts = () => {
                                             <td style={{ textAlign: "right" }}>{formatCurrency(calculateRevenues())}</td>
                                         </tr>
                                         <tr>
-                                            <td>Saldo</td>
+                                            <td><strong>SALDO</strong></td>
                                             <td style={{ textAlign: "right" }}>{formatCurrency(calculateRevenues() - (parseFloat(totalFixedsCosts()) +
                                                 parseFloat(totalVariableCosts())))}</td>
                                         </tr>

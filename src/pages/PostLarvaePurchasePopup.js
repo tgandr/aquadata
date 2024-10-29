@@ -21,7 +21,6 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
     const [postLarvae, setPostLarvae] = useState([
         "Aquacrusta", "Aquatec", "CELM", "Larvifort"]);
     const viveiros = JSON.parse(localStorage.getItem('viveiros'));
-    console.log(formPostLarvae)
 
     const savePostLarvaeList = (l) => {
         const larvae = capitalizeProperly(l);
@@ -74,9 +73,17 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
         if (formPostLarvae.pond !== "") {
             const history = JSON.parse(localStorage.getItem('history'));
             const pondHistory = history.filter(pond => (pond.viveiroId === formPostLarvae.pond) && !pond.plPurchase);
+            setFormPostLarvae({ ...formPostLarvae, quantity: (parseInt(pondHistory[0].quantidadeEstocada) / 1000) })
             setDatesIn(pondHistory);
         }
-    }, [formPostLarvae.pond])
+    }, [formPostLarvae.pond]);
+
+    useEffect(() => {
+        if (formPostLarvae.dateIn !== "") {
+            const cultivo = JSON.parse(localStorage.getItem(`cultivo-${formPostLarvae.dateIn}`));
+            setFormPostLarvae({ ...formPostLarvae, label: cultivo.origemPL })
+        }
+    }, [formPostLarvae.dateIn])
 
     const handleDeletePurchase = (index) => {
         const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
@@ -91,8 +98,6 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
 
             let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
             if ('postLarvaePurchase' in stockData) {
-                console.log(deletedPurchase)
-                console.log(stockData.postLarvaePurchase)
                 stockData.postLarvaePurchase = stockData.postLarvaePurchase.filter(purchase => purchase.id !== deletedPurchase.id);
             }
             localStorage.setItem('stockData', JSON.stringify(stockData));
@@ -116,38 +121,6 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
                                 type="date"
                                 name="date"
                                 value={formPostLarvae.date}
-                                onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
-                                required />
-                        </label>
-                        <label>
-                            Fornecedor:
-                            <select
-                                name="label"
-                                value={formPostLarvae.label}
-                                onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
-                                required>
-                                <option value="">Selecione</option>
-                                {postLarvae.map((pl, index) => (
-                                    <option value={pl} key={index}>{pl}</option>
-                                ))}
-                                <option value="custom">Outro - Informar</option>
-                            </select>
-                        </label>
-                        <label>
-                            Preço por milheiro:
-                            <input
-                                type="number"
-                                name="value"
-                                value={formPostLarvae.value}
-                                onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
-                                required />
-                        </label>
-                        <label>
-                            Milheiros:
-                            <input
-                                type="number"
-                                name="quantity"
-                                value={formPostLarvae.quantity}
                                 onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
                                 required />
                         </label>
@@ -177,6 +150,42 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
                                 ))}
                             </select>
                         </label>
+                        <label>
+                            Fornecedor:
+                            <select
+                                name="label"
+                                value={formPostLarvae.label}
+                                onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
+                                required>
+                                <option value="">Selecione</option>
+                                {postLarvae.map((pl, index) => (
+                                    pl === formPostLarvae.label
+                                        ? (<option value={pl} key={index} selected>{pl}</option>)
+                                        : (<option value={pl} key={index}>{pl}</option>)
+                                ))}
+
+                                <option value="custom">Outro - Informar</option>
+                            </select>
+                        </label>
+                        <label>
+                            Preço por milheiro:
+                            <input
+                                type="number"
+                                name="value"
+                                value={formPostLarvae.value}
+                                onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
+                                required />
+                        </label>
+                        <label>
+                            Milheiros:
+                            <input
+                                type="number"
+                                name="quantity"
+                                value={formPostLarvae.quantity}
+                                onChange={(e) => handleChange(e, setFormPostLarvae, formPostLarvae)}
+                                required />
+                        </label>
+
                         <p>Total: R$ {(formPostLarvae.value * formPostLarvae.quantity).toLocaleString('pt-BR',
                             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                         <div className="buttons-box">

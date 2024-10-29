@@ -299,8 +299,9 @@ const ReportFinancial = () => {
                                                             : parseFloat(purchase.value).toLocaleString('pt-BR',
                                                                 { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                     </td>
-                                                    <td style={{ textAlign: "right" }}>
-                                                        R$ {parseFloat((purchase.bagQuantity || purchase.quantity) * purchase.value).toLocaleString('pt-BR',
+                                                    <td style={{ textAlign: "right" }}> 
+                                                        R$ {purchase.category === ("Probióticos" || "Fertilizantes") ? parseFloat(purchase.value).toLocaleString('pt-BR',
+                                                            { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : parseFloat((purchase.bagQuantity || purchase.quantity) * purchase.value).toLocaleString('pt-BR',
                                                             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                     </td>
                                                 </tr>

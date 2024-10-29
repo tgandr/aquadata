@@ -4,6 +4,7 @@ import PostLarvaePurchasePopup from './PostLarvaePurchasePopup';
 import FertilizersPurchasePopup from './FertilizersPurchasePopup';
 import OthersPurchasePopup from './OthersPurchasePopup';
 import ProbioticsPurchasePopup from './ProbioticsPurchasePopup';
+import { v4 as uuidv4 } from 'uuid';
 
 const Purchases = ({ setShowPurchasesPopup }) => {
     const [showRationPurchasesPopup, setShowRationPurchasesPopup] = useState(false);
@@ -35,17 +36,13 @@ const Purchases = ({ setShowPurchasesPopup }) => {
         formSetter({ ...form, [e.target.name]: e.target.value });
     };
 
-    const generateUniqueId = () => {
-        return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    };
-
     const handleSubmit = (e, form, formSetter, category) => {
         e.preventDefault();
 
         if (!purchases[category]) {
             purchases[category] = [];
         }
-        const newForm = { ...form, id: generateUniqueId() };
+        const newForm = { ...form, id: uuidv4() };
         const keys = Object.keys(form);
         let resetForm = {};
         keys.forEach((key) => (key !== 'dataCompra' && (resetForm = { ...resetForm, [key]: '' })))

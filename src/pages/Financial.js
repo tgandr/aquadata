@@ -9,6 +9,7 @@ import '../styles/Financial.css';
 import LaborPopup from './LaborPopup';
 import Purchases from './Purchases';
 import { IconContainer } from './utils';
+import { parse } from 'uuid';
 
 const Financial = () => {
   const navigate = useNavigate();
@@ -17,10 +18,14 @@ const Financial = () => {
   const [showLaborPopup, setShowLaborPopup] = useState(false);
   const [showPurchasesPopup, setShowPurchasesPopup] = useState(false);
   const [showRevenuePopup, setShowRevenuePopup] = useState(false);
+  const [viveiros, setViveiros] = useState([]);
+  const [errorMessage, setErrorMessage] = useState('');
   const [form, setForm] = useState({
     date: new Date().toISOString().split('T')[0],
-    value: '',
-    description: ''
+    value: "",
+    description: '',
+    distribution: 'y', // Estado para distribuir custo igualmente entre os viveiros
+    viveiroDistribution: {} // Estado para armazenar as distribuições individuais por viveiro
   });
   const [payments, setPayments] = useState([]);
   const [revenues, setRevenues] = useState([]);
@@ -34,9 +39,24 @@ const Financial = () => {
     setShowRevenuePopup(false);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+  const handleChange = (e, dist) => {
+    const { name, id, value } = e.target;
+    if (name === 'distribution') {
+      e.target.value === "y"
+        ? setForm({ ...form, distribution: 'y' })
+        : setForm({ ...form, distribution: 'n' })
+    } else if (dist) {
+
+      setForm({
+        ...form,
+        viveiroDistribution: {
+          ...form.viveiroDistribution,
+          [id]: value
+        }
+      });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   useEffect(() => {
@@ -53,40 +73,59 @@ const Financial = () => {
     }
   }, []);
 
+  useEffect(() => {
+    const vivs = JSON.parse(localStorage.getItem("viveiros")) || [];
+    setViveiros(vivs);
+  }, []);
+
   const handleSubmit = (e) => {
+    console.log(form.distribution)
     e.preventDefault();
+    const totalViveiroValue = Object.values(form.viveiroDistribution).reduce((acc, curr) => acc + parseFloat(curr || 0), 0);
+    const formValue = parseFloat(form.value.replace(',', '.'));
+
+    if (formValue !== totalViveiroValue && form.distribution === "n") {
+      console.log('teste')
+      setErrorMessage('O somatório dos valores dos viveiros deve ser igual ao valor total.');
+      return;
+    }
+
     let financial = JSON.parse(localStorage.getItem('financial')) || {};
+    const newEntry = {
+      value: formValue,
+      description: form.description,
+      distribution: form.distribution,
+      viveiroDistribution: form.viveiroDistribution
+    };
+
     if (payments.some(elem => elem.month === form.date)) {
       const updatedPayments = payments.map(element => {
         if (element.month === form.date) {
-          if ([showPopup] in element) {
-            const previousInfos = element[showPopup];
-            return {
-              ...element, [showPopup]: [...previousInfos,
-              { value: form.value, description: form.description }]
-            };
-          }
-          return { ...element, [showPopup]: [{ value: form.value, description: form.description }] };
+          return {
+            ...element,
+            [showPopup]: [...(element[showPopup] || []), newEntry]
+          };
         }
         return element;
       });
       setPayments(updatedPayments);
-      financial = { ...financial, payments: updatedPayments };
-      localStorage.setItem('financial', JSON.stringify(financial));
+      financial.payments = updatedPayments;
     } else {
       const updatedPayments = [...payments, {
-        month: form.date, [showPopup]: [{
-          value: form.value, description: form.description
-        }]
+        month: form.date,
+        [showPopup]: [newEntry]
       }];
       setPayments(updatedPayments);
-      financial = { ...financial, payments: updatedPayments };
-      localStorage.setItem('financial', JSON.stringify(financial));
+      financial.payments = updatedPayments;
     }
+
+    localStorage.setItem('financial', JSON.stringify(financial));
     setForm({
       date: new Date().toISOString().split('T')[0],
       value: '',
-      description: ''
+      description: '',
+      distribution: false,
+      viveiroDistribution: {}
     });
     handleClosePopup();
   };
@@ -215,22 +254,78 @@ const Financial = () => {
               </label>
               <label>Valor:
                 <input
-                  type="number"
+                  type="text"
                   name="value"
+                  placeholder="0,00"
                   step="0.01"
+                  // value={(parseFloat(form.value) / 100).toLocaleString("pt-BR",  { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   value={form.value}
                   onChange={handleChange}
                   required />
               </label>
+              {/* {showPopup && */}
               {showPopup !== 'energia' &&
-                <label>Descrição:
-                  <textarea
-                    name="description"
-                    rows="4"
-                    value={form.description}
-                    onChange={handleChange}
-                  ></textarea>
-                </label>
+                <>
+                  <label>Descrição:
+                    <textarea
+                      name="description"
+                      rows="4"
+                      value={form.description}
+                      onChange={handleChange}
+                    ></textarea>
+                  </label>
+
+                  Distribuir custo igualmente entre os viveiros?
+                  <div>
+                    <label>
+                      <input
+                        type="radio"
+                        id="y"
+                        name="distribution"
+                        value="y"
+                        checked={form.distribution === "y"}
+                        onChange={(e) => handleChange(e)}
+                      />
+                      <span>Sim</span>
+                    </label>
+                    <label>
+                      <input
+                        type="radio"
+                        id="n"
+                        name="distribution"
+                        value="n"
+                        checked={form.distribution === "n"}
+                        onChange={(e) => handleChange(e)}
+                      />
+                      <span>Não</span>
+                    </label>
+                  </div>
+                  <div>
+                    {form.distribution === "n" && viveiros.length > 0 && (
+                      <>
+                        <h4>Distribuição por viveiro:</h4>
+                        {viveiros.map((viveiro) => (
+                          <label key={viveiro.id}>{viveiro.nome}:
+                            <input
+                              type="number"
+                              name={viveiro.nome}
+                              id={viveiro.id}
+                              value={form.viveiroDistribution[viveiro.id] || ''}
+                              onChange={(e) => handleChange(e, true)}
+                            />
+                          </label>
+                        ))}
+                        <p>Total R$ {Object.values(form.viveiroDistribution)
+                          .reduce((acc, index) => acc + parseFloat(index), 0) > 0
+                          ? Object.values(form.viveiroDistribution)
+                            .reduce((acc, index) => acc + parseFloat(index), 0)
+                            .toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                          : `0,00`}</p>
+                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+                      </>
+                    )}
+                  </div>
+                </>
               }
               <br /><br /><br />
               <div className="bottom-buttons">

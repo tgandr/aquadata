@@ -7,7 +7,7 @@ import { formatDate } from './utils';
 import { IconContainer } from './utils';
 
 const Stock = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState({ ration: false, probiotics: false, fertilizers: false, others: false });
   const formData = JSON.parse(localStorage.getItem('formData'));
   const [showTotalValue, setShowTotalValue] = useState(false);
@@ -63,7 +63,7 @@ const Stock = () => {
               {headers.map((header) => (
                 <td key={header}>{header[1] === 'date'
                   ? formatDate(item[header[1]]).date
-                  : (item[header[1]])}</td>
+                  : (header[1] === 'quantity' ? (parseFloat(item[header[1]]).toLocaleString()) : (item[header[1]]))}</td>
               ))}
             </tr>
           ))}

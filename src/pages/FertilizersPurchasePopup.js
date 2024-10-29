@@ -12,7 +12,8 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
         date: new Date().toISOString().split('T')[0],
         label: '',
         quantity: '',
-        value: ''
+        value: '',
+        unity: ''
     });
 
     const [fertilizers, setFertilizers] = useState([
@@ -103,7 +104,19 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                                 required />
                         </label>
                         <label>
-                            Valor:
+                            Unidade:
+                            <select
+                                value={formFertilizer.unity}
+                                name="unity"
+                                onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)}
+                                required>
+                                <option value="">Selecione</option>
+                                <option value="quilo">Quilo</option>
+                                <option value="litro">Litro</option>
+                            </select>
+                        </label>
+                        <label>
+                            Valor da compra:
                             <input
                                 type="number"
                                 name="value"
@@ -111,8 +124,11 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                                 onChange={(e) => handleChange(e, setFormFertilizer, formFertilizer)}
                                 required />
                         </label>
-                        <p>Total: R$ {(formFertilizer.value * formFertilizer.quantity).toLocaleString('pt-BR',
-                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                        {/* <p>Total: R$ {(formFertilizer.value * formFertilizer.quantity).toLocaleString('pt-BR',
+                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p> */}
+                        <p>Total: R$ {formFertilizer.value !== "" ? (`${(formFertilizer.value / formFertilizer.quantity).toLocaleString('pt-BR',
+                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / ${formFertilizer.unity}`) : `0,00`}
+                            </p>
                         <div className="buttons-box">
                             <button
                                 type="button"
@@ -140,7 +156,7 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                                     purchases.fertilizersPurchase.slice(-5).reverse().map((purchase, index) => (
                                         <tr key={index}>
                                             <td>{formatDate(purchase.date).date}</td>
-                                            <td>{purchase.label} - <br /> {(purchase.quantity * purchase.value).toLocaleString('pt-BR', {
+                                            <td>{purchase.label} - <br /> {parseFloat(purchase.value).toLocaleString('pt-BR', {
                                                 style: 'currency',
                                                 currency: 'BRL'
                                             })}</td>
@@ -199,4 +215,3 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
 }
 
 export default FertilizersPurchasePopup;
-

@@ -62,20 +62,20 @@ const Dashboard = () => {
             <span>Viveiros</span>
           </div>
         </button>
-        <button className="dashboard-button" onClick={() => navigate('/estoque')}>
-          <div className="icon-wrapper">
-            <FontAwesomeIcon icon={faWarehouse} className="icon" />
-          </div>
-          <div className="text-wrapper">
-            <span>Estoque</span>
-          </div>
-        </button>
         <button className="dashboard-button" onClick={() => navigate('/financeiro')}>
           <div className="icon-wrapper">
             <FontAwesomeIcon icon={faDollarSign} className="icon" />
           </div>
           <div className="text-wrapper">
             <span>Financeiro</span>
+          </div>
+        </button>
+        <button className="dashboard-button" onClick={() => navigate('/estoque')}>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faWarehouse} className="icon" />
+          </div>
+          <div className="text-wrapper">
+            <span>Estoque</span>
           </div>
         </button>
         <button className="dashboard-button" onClick={() => navigate('/inventario')}>

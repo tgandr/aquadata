@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faSyringe, faHistory } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSyringe, faHistory, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import '../styles/AddPonds.css';
 import SanityAnalysis from './SanityAnalysis';
 import AnalysisReport from './AnalysisReport';
@@ -11,6 +11,9 @@ import { v4 as uuidv4 } from 'uuid';
 const AddPonds = () => {
   const [viveiros, setViveiros] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  const [showEditPopup, setShowEditPopup] = useState(false);
+  const [showViveirosPopup, setShowViveirosPopup] = useState(false);
+  const [selectedViveiro, setSelectedViveiro] = useState(null);
   const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
   const [showAnalysisPopupPrevious, setShowAnalysisPopupPrevious] = useState({ start: false, previous: false });
   const [form, setForm] = useState({
@@ -24,7 +27,7 @@ const AddPonds = () => {
     if (storedViveiros) {
       setViveiros(storedViveiros);
     }
-  }, []);
+  }, [selectedViveiro]);
 
   const saveViveirosToLocalStorage = (viveiros) => {
     localStorage.setItem('viveiros', JSON.stringify(viveiros));
@@ -38,16 +41,26 @@ const AddPonds = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const id = uuidv4();
-    const novoViveiro = {
-      id: id,
-      nome: `Viveiro ${form.numeroViveiro}`,
-      area: form.area,
-    };
-    const updatedViveiros = [...viveiros, novoViveiro];
-    setViveiros(updatedViveiros);
-    saveViveirosToLocalStorage(updatedViveiros);
+    if (selectedViveiro) {
+      const updatedViveiros = viveiros.map((viveiro) =>
+        viveiro.id === selectedViveiro.id ? { ...selectedViveiro, nome: `Viveiro ${form.numeroViveiro}`, area: form.area } : viveiro
+      );
+      setViveiros(updatedViveiros);
+      saveViveirosToLocalStorage(updatedViveiros);
+    } else {
+      const id = uuidv4();
+      const novoViveiro = {
+        id: id,
+        nome: `Viveiro ${form.numeroViveiro}`,
+        area: form.area,
+      };
+      const updatedViveiros = [...viveiros, novoViveiro];
+      setViveiros(updatedViveiros);
+      saveViveirosToLocalStorage(updatedViveiros);
+    }
     setShowPopup(false);
+    setShowEditPopup(false);
+    setSelectedViveiro(null);
     setForm({
       numeroViveiro: '',
       area: ''
@@ -78,6 +91,36 @@ const AddPonds = () => {
   };
 
   const navigate = useNavigate();
+
+  const deletePond = () => {
+    const confirmDelete = window.confirm('Tem certeza que deseja excluir este viveiro?');
+
+    if (confirmDelete) {
+      const viveiros = JSON.parse(localStorage.getItem('viveiros'));
+      const newList = viveiros.filter(viv => viv.id !== selectedViveiro.id);
+      localStorage.setItem('viveiros', JSON.stringify(newList));
+      setViveiros(newList);
+      setSelectedViveiro(null);
+      setShowEditPopup(false);
+      setForm({
+        numeroViveiro: '',
+        area: ''
+      });
+      alert('Viveiro excluído com sucesso!');
+    } else {
+      alert('Exclusão cancelada.');
+    }
+  };
+
+  const handleEditClick = (viveiro) => {
+    setSelectedViveiro(viveiro);
+    setForm({
+      numeroViveiro: viveiro.nome.split(' ')[1],
+      area: viveiro.area
+    });
+    setShowViveirosPopup(false);
+    setShowEditPopup(true);
+  };
 
   return (
     <div className="add-ponds">
@@ -120,7 +163,7 @@ const AddPonds = () => {
             <br />
           </>
         )}
-        
+
         <button className="viveiro-button" onClick={() => setShowPopup(true)}>
           <div className="infos-wrapper">
             <FontAwesomeIcon icon={faPlus} className="icon-plus" />
@@ -129,14 +172,22 @@ const AddPonds = () => {
             <span className="viveiro-titulo">Adicionar</span>
           </div>
         </button>
-        <button className="viveiro-button">
+        <button className="viveiro-button" onClick={() => setShowViveirosPopup(true)}>
           <div className="infos-wrapper">
-            <FontAwesomeIcon icon={faHistory} className="icon-plus" />
+            <FontAwesomeIcon icon={faEdit} className="icon-plus" />
           </div>
           <div className="text-add-pond-wrapper">
-            <span className="viveiro-titulo">Histórico</span>
+            <span className="viveiro-titulo">Editar</span>
           </div>
         </button>
+        {/* <button className="viveiro-button" onClick={() => setShowViveirosPopup(true)}>
+          <div className="infos-wrapper">
+            <FontAwesomeIcon icon={faTrash} className="icon-plus" />
+          </div>
+          <div className="text-add-pond-wrapper">
+            <span className="viveiro-titulo">Excluir</span>
+          </div>
+        </button> */}
         <button className="viveiro-button" onClick={() => setShowAnalysisPopupPrevious({ start: false, previous: true })}>
           <div className="infos-wrapper">
             <FontAwesomeIcon icon={faSyringe} className="icon-plus" />
@@ -183,6 +234,78 @@ const AddPonds = () => {
                 <button type="submit" className="first-class-button">Salvar</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showEditPopup && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Editar Viveiro</h3>
+            <form onSubmit={handleSubmit} className="harv-form">
+              <label>
+                Número do <br />Viveiro:
+                <input
+                  type="text"
+                  name="numeroViveiro"
+                  value={form.numeroViveiro}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Área do viveiro <br />(em hectares):
+                <input
+                  type="number"
+                  name="area"
+                  value={form.area}
+                  onChange={handleChange}
+                  required
+                  step="0.1"
+                  min="0"
+                />
+              </label>
+              <label>
+                <span>Excluir viveiro?</span>
+                <button
+                  type="button"
+                  className="delete-button" 
+                  onClick={() => deletePond()}>
+                  <FontAwesomeIcon icon={faTrash} className="icon-plus" style={{ marginRight: '50px' }} />
+                </button>
+
+              </label>
+              <br />
+              <br />
+              <div className="bottom-buttons">
+                <button type="button" onClick={() => setShowEditPopup(false)} className="cancel-button">Cancelar</button>
+                <button type="submit" className="first-class-button">Salvar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {showViveirosPopup && (
+        <div className="popup">
+          <div className="popup-inner">
+            <h3>Selecionar Viveiro para Editar</h3>
+            <div className="viveiros-list">
+              {viveiros.length > 0 ? (
+                viveiros.map(viveiro => (
+                  <button
+                    key={viveiro.id}
+                    onClick={() => handleEditClick(viveiro)}
+                  // className="viveiro-button"
+                  >
+                    {viveiro.nome}
+                  </button>
+                ))
+              ) : (
+                <p>Nenhum viveiro cadastrado</p>
+              )}
+            </div><br />
+            <button onClick={() => setShowViveirosPopup(false)} className="cancel-button">Cancelar</button>
           </div>
         </div>
       )}

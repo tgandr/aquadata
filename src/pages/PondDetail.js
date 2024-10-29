@@ -8,6 +8,8 @@ import BiometryPopup from './BiometryPopup';
 import HarvestPopup from './HarvestPopup';
 import FertilizationPopup from './FertilizationPopup';
 import { formatDate, IconContainer } from './utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faCheck } from '@fortawesome/free-solid-svg-icons';
 
 const PondDetail = () => {
   const location = useLocation();
@@ -18,8 +20,6 @@ const PondDetail = () => {
   const [cultivo, setCultivo] = useState(null);
   const [showNewCyclePopup, setShowNewCyclePopup] = useState(false);
   const [showStressTestPopup, setShowStressTestPopup] = useState(false);
-  const [showCountPlPopup, setShowCountPlPopup] = useState(false);
-  const [showCamCountPopup, setShowCamCountPopup] = useState(false);
   const [showFeedPopup, setShowFeedPopup] = useState(false);
   const [showParamPopup, setShowParamPopup] = useState(false);
   const [showBiometry, setShowBiometry] = useState(false);
@@ -27,22 +27,26 @@ const PondDetail = () => {
   const [showButtons, setShowButtons] = useState(true);
   const [history, setHistory] = useState([]);
   const [showHarvest, setShowHarvest] = useState(false);
-  const [showWeightInput, setShowWeightInput] = useState({ show: false, buttonText: 'Pesagem' });
-  const [showPLgrama, setShowPLgrama] = useState(false);
-  const [weight, setWeight] = useState(false);
   const [survivalRate, setSurvivalRate] = useState(null);
   const [biometryData, setBiometryData] = useState(null);
   const [newPesagem, setNewPesagem] = useState({ weight: '', count: '' });
   const [biometrics, setBiometrics] = useState(null);
-  const [darkPoints, setDarkPoints] = useState(0);
-  const [showCamera, setShowCamera] = useState(false);
-  const [threshold, setThreshold] = useState(50);
-  const [userCount, setUserCount] = useState('');
-  const [processedImage, setProcessedImage] = useState(null);
-  const [capturedImage, setCapturedImage] = useState(null);
   const [showFertilizationPopup, setShowFertilizationPopup] = useState(false);
   const [feedUsed, setFeedUsed] = useState('');
   const [parcialProduction, setParcialProdution] = useState({});
+  const [showMetas, setShowMetas] = useState(false);
+  const [showMetasTable, setShowMetasTable] = useState(false);
+  const [editMetas, setEditMetas] = useState({
+    sobrevivencia: false,
+    tamanho: false,
+    tempo: false
+  });
+  const [metas, setMetas] = useState({
+    sobrevivencia: '',
+    tamanho: '',
+    tempo: ''
+  }
+  )
 
   const [form, setForm] = useState({
     dataPovoamento: '',
@@ -82,6 +86,10 @@ const PondDetail = () => {
               setBiometrics(viveiroData.biometrics);
             }
           }
+          if (viveiroData.metas) {
+            setMetas(viveiroData.metas);
+            setShowMetasTable(true);
+          }
           break;
         }
       }
@@ -108,10 +116,8 @@ const PondDetail = () => {
   }, [cultivo]);
 
   const saveData = (data, key) => {
-    console.log(data)
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
     const i = storedCultivos && storedCultivos.findIndex((viv) =>
-      // viv.hasShrimp && viv.viveiroId === viveiroId);
       viv.viveiroId === viveiroId);
 
     if (key in storedCultivos[i]) {
@@ -159,10 +165,35 @@ const PondDetail = () => {
     };
   }
 
+  const handleEditMetaChange = (e) => {
+    const { name, value } = e.target;
+    setMetas({ ...metas, [name]: parseInt(value) })
+  };
+
+  const handleMetasSubtmit = (meta) => {
+    let histToUpdate = JSON.parse(localStorage.getItem('history'));
+    histToUpdate = histToUpdate.filter(h => h.id !== cultivo.id)
+    if (metas[meta]) {
+      const cultivoCheckOut = {
+        ...cultivo, metas: {
+          ...cultivo.metas, [meta]: metas[meta]
+        }
+      }
+      histToUpdate.push(cultivoCheckOut)
+      setCultivo(cultivoCheckOut);
+      localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(cultivoCheckOut));
+      localStorage.setItem('history', JSON.stringify(histToUpdate));
+    } else {
+      alert('Por favor, verifique e tente novamente.');
+    }
+    // pegar o erro: quando é lançada meta depois de começar o cultivo, a tela pega dados atrasados.
+    // também apagaou a despesca total feita ao lançar metas num cultivo iniciado
+  }
+
   const loadHistory = () => {
     setShowHistory(true);
     const history = JSON.parse(localStorage.getItem('history'));
-    const storedCultivos = history.filter((viv) => viv.viveiroId === viveiroId);
+    const storedCultivos = history ? history.filter((viv) => viv.viveiroId === viveiroId) : [];
     setHistory(storedCultivos);
   }
 
@@ -180,28 +211,51 @@ const PondDetail = () => {
             <p>Origem da PL: {cultivo.origemPL}</p>
             <p>Quantidade Estocada: {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
           </ div>
+
           <div className="buttons-container">
             {showButtons && (
               <>
-                <button className="pond-button" onClick={() => setShowFeedPopup(true)}>
-                  Ração
+                {/* Grupo 1 */}
+                <button className="pond-button1" onClick={() => setShowFeedPopup(true)}>
+                  <i className="fas fa-bowl-rice"></i> Ração
                   {feedUsed !== 0 ? (<p className="buttons-infos">{feedUsed} kg consumidos</p>) :
                     <p className="buttons-infos">Sem consumo</p>}
                 </button>
-                <button className="pond-button" onClick={() => setShowParamPopup(true)}>Parâmetros da Água</button>
-                <button className="pond-button" onClick={() => setShowBiometry(true)}>Biometria</button>
-                <button className="pond-button" onClick={() => setShowFertilizationPopup(true)}>Fertilização</button>
-                <button className="pond-button" onClick={() => setShowHarvest(true)}>Despescas</button>
+                <button className="pond-button1" onClick={() => setShowParamPopup(true)}>
+                  <i className="fas fa-water"></i> Parâmetros da Água
+                </button>
+                <button className="pond-button1" onClick={() => setShowBiometry(true)}>
+                  <i className="fas fa-ruler"></i> Biometria
+                </button>
+                <button className="pond-button1" onClick={() => setShowFertilizationPopup(true)}>
+                  <i className="fas fa-boxes-stacked"></i> Fertilização
+                </button>
+
+                <div className="group-divider"></div>
+
+                {/* Grupo 2 */}
+                <button className="pond-button2" onClick={() => setShowMetas(true)}>
+                  <i className="fas fa-trophy"></i> Metas
+                  {cultivo.metas ? (<p className="buttons-infos">Produção de {(cultivo.quantidadeEstocada *
+                    cultivo.metas.sobrevivencia / 100 * 
+                    cultivo.metas.tamanho / 1000)
+                      .toLocaleString('pt-BR')} kg</p>) :
+                    (<p className="buttons-infos">Sem metas registradas</p>)}
+                </button>
+                <button className="pond-button2" onClick={() => setShowHarvest(true)}>
+                  <i className="fas fa-shrimp"></i> Despescas
+                </button>
               </>
             )}
-            <button className="pond-button" onClick={() => (navigate('/relatorio', {
-              state: { ...location.state, id: `cultivo-${cultivo.id}` }
-            }))}>
-              Relatório
+            <button className="pond-button2" onClick={() => navigate('/relatorio', { state: { ...location.state, id: `cultivo-${cultivo.id}` } })}>
+              <i className="fas fa-chart-line"></i> Relatório
             </button>
-            <button className="pond-button" onClick={() => loadHistory()}>Histórico</button>
-
+            <button className="pond-button2" onClick={() => loadHistory()}>
+              <i className="fas fa-history"></i> Histórico
+            </button>
           </div>
+
+
         </>
       ) : (
         <>
@@ -240,17 +294,6 @@ const PondDetail = () => {
       {showNewCyclePopup && <NewCyclePopup
         showNewCyclePopup={showNewCyclePopup} setShowNewCyclePopup={setShowNewCyclePopup}
         showStressTestPopup={showStressTestPopup} setShowStressTestPopup={setShowStressTestPopup}
-        showCountPlPopup={showCountPlPopup} setShowCountPlPopup={setShowCountPlPopup}
-        showCamCountPopup={showCamCountPopup} setShowCamCountPopup={setShowCamCountPopup}
-        showWeightInput={showWeightInput} setShowWeightInput={setShowWeightInput}
-        showPLgrama={showPLgrama} setShowPLgrama={setShowPLgrama}
-        darkPoints={darkPoints} setDarkPoints={setDarkPoints}
-        threshold={threshold} setThreshold={setThreshold}
-        userCount={userCount} setUserCount={setUserCount}
-        processedImage={processedImage} setProcessedImage={setProcessedImage}
-        capturedImage={capturedImage} setCapturedImage={setCapturedImage}
-        weight={weight} setWeight={setWeight}
-        showCamera={showCamera} setShowCamera={setShowCamera}
         form={form} setForm={setForm}
         viveiroId={viveiroId}
         setCultivo={setCultivo} />}
@@ -302,6 +345,130 @@ const PondDetail = () => {
             })}% das PLs estocadas
           </h4>
         </>
+      }
+
+      {showMetas &&
+        <div className="popup">
+          <div className="popup-inner">
+            {/* {cultivo.metas ? ( */}
+            {showMetasTable ? (
+              <>
+                <h3>Metas</h3>
+                <p>A meta é produzir {(cultivo.quantidadeEstocada *
+                  (cultivo.metas.sobrevivencia / 100) * (cultivo.metas.tamanho / 1000))
+                  .toLocaleString('pt-BR')} kg</p>
+                <table className="biometry-table">
+                  <thead>
+                    <tr>
+                      <th style={{ textAlign: 'center' }}>Índices zootécnicos</th>
+                      <th>Meta</th>
+                      <th>Editar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>Sobrevivência - %</strong></td>
+                      <td style={{ textAlign: 'right' }}>{editMetas.sobrevivencia
+                        ? (<input
+                          type='number'
+                          name='sobrevivencia'
+                          value={metas.sobrevivencia}
+                          onChange={handleEditMetaChange} />)
+                        : `${cultivo.metas.sobrevivencia} %`}</td>
+                      <td style={{ textAlign: "center" }}>
+                        {editMetas.sobrevivencia
+                          ? <button className="delete-button" onClick={() => {
+                            setEditMetas({
+                              ...editMetas,
+                              sobrevivencia: false
+                            }); handleMetasSubtmit('sobrevivencia')
+                          }}>
+                            <FontAwesomeIcon icon={faCheck} />
+                          </button>
+                          : <button className="delete-button" onClick={() => setEditMetas({
+                            ...editMetas,
+                            sobrevivencia: true
+                          })}>
+                            <FontAwesomeIcon icon={faEdit} />
+                          </button>}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>Tamanho - gramas</strong></td>
+                      <td style={{ textAlign: 'right' }}>{editMetas.tamanho
+                        ? (<input
+                          type='number'
+                          name='tamanho'
+                          value={metas.tamanho}
+                          onChange={handleEditMetaChange} />)
+                        : `${cultivo.metas.tamanho} g`}</td>
+                      <td style={{ textAlign: "center" }}>
+                        {editMetas.tamanho
+                          ? <button className="delete-button" onClick={() => {
+                            setEditMetas({
+                              ...editMetas,
+                              tamanho: false
+                            }); handleMetasSubtmit('tamanho')
+                          }}>
+                            <FontAwesomeIcon icon={faCheck} />
+                          </button>
+                          : <button className="delete-button" onClick={() => setEditMetas({
+                            ...editMetas,
+                            tamanho: true
+                          })}>
+                            <FontAwesomeIcon icon={faEdit} />
+                          </button>}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><strong>Tempo de cultivo - dias</strong></td>
+                      <td style={{ textAlign: 'right' }}>{editMetas.tempo
+                        ? (<input
+                          type='number'
+                          name='tempo'
+                          value={metas.tempo}
+                          onChange={handleEditMetaChange} />)
+                        : `${cultivo.metas.tempo} dias`}</td>
+                      <td style={{ textAlign: "center" }}>
+                        {editMetas.tempo
+                          ? <button className="delete-button" onClick={() => {
+                            setEditMetas({
+                              ...editMetas,
+                              tempo: false
+                            }); handleMetasSubtmit('tempo')
+                          }}>
+                            <FontAwesomeIcon icon={faCheck} />
+                          </button>
+                          : <button className="delete-button" onClick={() => setEditMetas({
+                            ...editMetas,
+                            tempo: true
+                          })}>
+                            <FontAwesomeIcon icon={faEdit} />
+                          </button>}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </>
+            ) : (
+              <>
+                <p>
+                  Não há metas registradas
+                </p>
+                <button type='button' className='meta-button'
+                  onClick={() => {setCultivo({...cultivo, metas: {
+                  sobrevivencia: 0, tamanho: 0, tempo: 0
+                }}); setShowMetasTable(true)}}>
+                  Registrar metas
+                </button>
+              </>
+            )}
+            <br /><br /><br />
+            <div className="bottom-buttons">
+              <button type="button" onClick={() => setShowMetas(false)} className="cancel-button">Voltar</button>
+            </div>
+          </div>
+        </div>
       }
 
       {cultivo &&

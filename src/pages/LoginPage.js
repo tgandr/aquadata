@@ -13,29 +13,51 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('https://aqua-data-bf42d2da5cff.herokuapp.com/api/users/login', {
-        email,
-        senha: password
-      });
+      // const response = await axios.post('https://aqua-data-bf42d2da5cff.herokuapp.com/api/users/login', {
+      //   email,
+      //   senha: password
+      // });
 
-      const { token } = response.data;
+      // const { token } = response.data;
 
-      if (token) {
-        localStorage.setItem('token', token);
+      // if (token) {
+      //   localStorage.setItem('token', token);
 
-        // Fetch user details using the token
-        const userResponse = await axios.get('https://aqua-data-bf42d2da5cff.herokuapp.com/api/users/me', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+      //   // Fetch user details using the token
+      //   const userResponse = await axios.get('https://aqua-data-bf42d2da5cff.herokuapp.com/api/users/me', {
+      //     headers: {
+      //       'Authorization': `Bearer ${token}`
+      //     }
+      //   });
 
-        const user = userResponse.data;
-        let formData = { ...user, saveLogin: true };
-        localStorage.setItem('formData', JSON.stringify(formData));
+      //   const user = userResponse.data;
+      //   let formData = { ...user, saveLogin: true };
+      //   localStorage.setItem('formData', JSON.stringify(formData));
+      //   navigate('/dashboard');
+      // } else {
+      //   setError('Credenciais inválidas');
+      // }
+      const formData = JSON.parse(localStorage.getItem("formData"));
+      if (email === formData.email) {
         navigate('/dashboard');
       } else {
-        setError('Credenciais inválidas');
+        if (email === "fazenda@aquadata.com") {
+          formData = {
+            _id: "668d2fdf298ed64ee6c34a7a",
+            nomeCompleto: "Fazenda AquaData MN",
+            email: "fazenda@aquadata.com",
+            telefone: "85 99261 2616",
+            enderecoFazenda: "Morada Nova",
+            nomeFazenda: "Aqua Data",
+            perfil: "Consultor",
+            saveLogin: false,
+            __v: 0
+          }
+          localStorage.setItem("formData", JSON.stringify(formData));
+          navigate('/dashboard');
+        } else {
+          setError('Credenciais inválidas');
+        }
       }
     } catch (error) {
       console.error('Login error:', error);  // Adicione esta linha para logar o erro

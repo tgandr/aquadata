@@ -274,6 +274,59 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
                                         />
                                     </label>
                                     <h3>Conformação Externa</h3>
+                                    <label>
+                                        <div className="observacoes-container">
+                                            <p>Deformidades?</p>
+                                            <div>
+                                                <label>
+                                                    <input
+                                                        type="radio"
+                                                        id="observacaoSim"
+                                                        name="obsDeformidades"
+                                                        value="Sim"
+                                                        checked={formAnalysis.obsDeformidades === 'Sim'}
+                                                        onChange={(e) => handleAnalysisChange(e)}
+                                                    />
+                                                    <span>Sim</span></label>
+                                            </div>
+                                            <div>
+                                                <label>
+                                                    <input
+                                                        type="radio"
+                                                        id="observacaoNao"
+                                                        name="obsDeformidades"
+                                                        value="Não"
+                                                        checked={formAnalysis.obsDeformidades === 'Não'}
+                                                        onChange={(e) => handleAnalysisChange(e)}
+                                                    />
+                                                    <span>Não</span></label>
+                                            </div>
+                                            {formAnalysis.obsDeformidades === 'Sim' && (
+                                                <div className="input-container">
+                                                    <label htmlFor="observacaoDetalhe">Qual:
+                                                        <input
+                                                            type="text"
+                                                            id="observacaoDetalhe"
+                                                            name="obsDeformidadesDetalhe"
+                                                            value={formAnalysis.obsDeformidadesDetalhe || ''}
+                                                            onChange={(e) => handleAnalysisChange(e)}
+                                                        />
+                                                    </label>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </label>
+                                    {/* <span>Pigmentação</span> */}
+
+                                    <label>
+                                        Pigmentação
+                                        <br /><br />
+                                    </label>
+                                    
+                                    <label>
+                                        Pleópodos
+                                        <br /><br />
+                                    </label>
 
                                     <label>
                                         Antenas:
@@ -701,49 +754,8 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
                                             ))}
                                         </div>
                                     </label>
-                                    <h3>Observações</h3>
-                                    <label>
-                                        <div className="observacoes-container">
-                                            <p>Deformidades?</p>
-                                            <div>
-                                                <label>
-                                                    <input
-                                                        type="radio"
-                                                        id="observacaoSim"
-                                                        name="obsDeformidades"
-                                                        value="Sim"
-                                                        checked={formAnalysis.obsDeformidades === 'Sim'}
-                                                        onChange={(e) => handleAnalysisChange(e)}
-                                                    />
-                                                    <span>Sim</span></label>
-                                            </div>
-                                            <div>
-                                                <label>
-                                                    <input
-                                                        type="radio"
-                                                        id="observacaoNao"
-                                                        name="obsDeformidades"
-                                                        value="Não"
-                                                        checked={formAnalysis.obsDeformidades === 'Não'}
-                                                        onChange={(e) => handleAnalysisChange(e)}
-                                                    />
-                                                    <span>Não</span></label>
-                                            </div>
-                                            {formAnalysis.obsDeformidades === 'Sim' && (
-                                                <div className="input-container">
-                                                    <label htmlFor="observacaoDetalhe">Qual:
-                                                        <input
-                                                            type="text"
-                                                            id="observacaoDetalhe"
-                                                            name="obsDeformidadesDetalhe"
-                                                            value={formAnalysis.obsDeformidadesDetalhe || ''}
-                                                            onChange={(e) => handleAnalysisChange(e)}
-                                                        />
-                                                    </label>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </label>
+                                    {/* <h3>Observações</h3> */}
+
 
                                 </div>
                                 <span>

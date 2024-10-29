@@ -27,7 +27,7 @@ const OthersPurchasePopup = ({ setShowPopup, handleChange, handleSubmit, purchas
                 setShowOthersPurchaseTable(false);
             }
         }
-    }, [formOthers]);
+    }, [formOthers]);    
 
     const handleSubmitCheck = (e) => {
         e.preventDefault();

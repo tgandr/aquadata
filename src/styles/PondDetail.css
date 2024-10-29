@@ -41,7 +41,7 @@
     margin-bottom: 10px;
 }
 
-.buttons-container {
+/* .buttons-container {
     display: grid;
     gap: 0;
     max-width: 100%;
@@ -51,10 +51,38 @@
     overflow: hidden;
     justify-self: center !important;
 
+} */
+
+.buttons-container {
+    display: grid;
+    gap: 0;
+    max-width: 100%;
+    padding: 0px 5% 0;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    grid-template-rows: auto auto; /* Define duas linhas de grupos */
+    margin-top: 10px;
+    overflow: hidden;
+    justify-self: center !important;
 }
 
-.pond-button {
-    padding: 20px;
+.group-divider {
+    grid-column: span 2;
+    height: 10px;
+}
+
+.pond-button1 {
+    /* padding: 20px; */
+    text-align: center;
+    background-color: var(--color-orange-dark);
+    color: white;
+    border: 1px solid #f8faf8;
+    cursor: pointer;
+    margin: 0;
+    min-height: 60px;
+}
+
+.pond-button2 {
+    /* padding: 20px; */
     text-align: center;
     background-color: var(--color-orange-medium);
     color: white;
@@ -62,6 +90,10 @@
     cursor: pointer;
     margin: 0;
     min-height: 60px;
+}
+
+.meta-button {
+    width: 60%;
 }
 
 .pond-button:hover {

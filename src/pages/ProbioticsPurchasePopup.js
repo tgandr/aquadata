@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { formatDate } from './utils';
 
-const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, handleChange, handleSubmit, setShowSavedMessage, purchases, setPurchases, handleDeletePurchase }) => {
+const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, handleChange,
+    handleSubmit, setShowSavedMessage, purchases, setPurchases, handleDeletePurchase }) => {
     const [addNewProbiotic, setAddNewProbiotic] = useState('');
     const [customProbiotic, setCustomProbiotic] = useState('');
     const [showProbioticsPurchasesTable, setShowProbioticsPurchasesTable] = useState(false);
@@ -10,7 +11,8 @@ const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, 
         date: new Date().toISOString().split('T')[0],
         label: '',
         quantity: '',
-        value: ''
+        value: '',
+        unity: ''
     });
 
     const [probiotics, setProbiotics] = useState([
@@ -101,7 +103,19 @@ const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, 
                                 required />
                         </label>
                         <label>
-                            Valor:
+                            Unidade:
+                            <select
+                                value={formProbiotic.unity}
+                                name="unity"
+                                onChange={(e) => handleChange(e, setFormProbiotic, formProbiotic)}
+                                required>
+                                <option value="">Selecione</option>
+                                <option value="quilo">Quilo</option>
+                                <option value="litro">Litro</option>
+                            </select>
+                        </label>
+                        <label>
+                            Valor da compra:
                             <input
                                 type="number"
                                 name="value"
@@ -109,8 +123,9 @@ const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, 
                                 onChange={(e) => handleChange(e, setFormProbiotic, formProbiotic)}
                                 required />
                         </label>
-                        <p>Total: R$ {(formProbiotic.value * formProbiotic.quantity).toLocaleString('pt-BR',
-                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                        <p>Total: R$ {formProbiotic.value !== "" ? (`${(formProbiotic.value / formProbiotic.quantity).toLocaleString('pt-BR',
+                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / ${formProbiotic.unity}`) : `0,00`}
+                            </p>
                         <div className="buttons-box">
                             <button
                                 type="button"
@@ -138,7 +153,7 @@ const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, 
                                     purchases.probioticsPurchase.slice(-5).reverse().map((purchase, index) => (
                                         <tr key={index}>
                                             <td>{formatDate(purchase.date).date}</td>
-                                            <td>{purchase.label} - <br /> {(purchase.quantity * purchase.value).toLocaleString('pt-BR', {
+                                            <td>{purchase.label} - <br /> {parseFloat(purchase.value).toLocaleString('pt-BR', {
                                                 style: 'currency',
                                                 currency: 'BRL'
                                             })}</td>
