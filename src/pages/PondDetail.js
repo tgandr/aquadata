@@ -9,7 +9,7 @@ import HarvestPopup from './HarvestPopup';
 import FertilizationPopup from './FertilizationPopup';
 import { formatDate, IconContainer } from './utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faCheck, faSave } from '@fortawesome/free-solid-svg-icons';
 
 const PondDetail = () => {
   const location = useLocation();
@@ -190,6 +190,26 @@ const PondDetail = () => {
     // também apagaou a despesca total feita ao lançar metas num cultivo iniciado
   }
 
+  const exitMetas = () => {
+    const metasNaoSalvas = [];
+    if (editMetas.tempo) metasNaoSalvas.push("tempo");
+    if (editMetas.tamanho) metasNaoSalvas.push("tamanho");
+    if (editMetas.sobrevivencia) metasNaoSalvas.push("sobrevivência");
+    if (metasNaoSalvas.length > 0) {
+      if (metasNaoSalvas.length === 1) {
+        alert(`Salvar meta de ${metasNaoSalvas[0]}!`)
+      } 
+      if (metasNaoSalvas.length === 2){
+        alert(`Salvar metas ${metasNaoSalvas.join(" e ")}!`)
+      } 
+      if (metasNaoSalvas.length === 3) {
+        alert(`Salvar metas ${metasNaoSalvas.join(", ")}!`)
+      }
+    } else {
+      setShowMetas(false);
+    }
+  }
+
   const loadHistory = () => {
     setShowHistory(true);
     const history = JSON.parse(localStorage.getItem('history'));
@@ -350,7 +370,6 @@ const PondDetail = () => {
       {showMetas &&
         <div className="popup">
           <div className="popup-inner">
-            {/* {cultivo.metas ? ( */}
             {showMetasTable ? (
               <>
                 <h3>Metas</h3>
@@ -383,7 +402,7 @@ const PondDetail = () => {
                               sobrevivencia: false
                             }); handleMetasSubtmit('sobrevivencia')
                           }}>
-                            <FontAwesomeIcon icon={faCheck} />
+                            <FontAwesomeIcon icon={faSave} />
                           </button>
                           : <button className="delete-button" onClick={() => setEditMetas({
                             ...editMetas,
@@ -410,7 +429,7 @@ const PondDetail = () => {
                               tamanho: false
                             }); handleMetasSubtmit('tamanho')
                           }}>
-                            <FontAwesomeIcon icon={faCheck} />
+                            <FontAwesomeIcon icon={faSave} />
                           </button>
                           : <button className="delete-button" onClick={() => setEditMetas({
                             ...editMetas,
@@ -437,7 +456,7 @@ const PondDetail = () => {
                               tempo: false
                             }); handleMetasSubtmit('tempo')
                           }}>
-                            <FontAwesomeIcon icon={faCheck} />
+                            <FontAwesomeIcon icon={faSave} />
                           </button>
                           : <button className="delete-button" onClick={() => setEditMetas({
                             ...editMetas,
@@ -465,7 +484,7 @@ const PondDetail = () => {
             )}
             <br /><br /><br />
             <div className="bottom-buttons">
-              <button type="button" onClick={() => setShowMetas(false)} className="cancel-button">Voltar</button>
+              <button type="button" onClick={() => exitMetas()} className="cancel-button">Voltar</button>
             </div>
           </div>
         </div>
