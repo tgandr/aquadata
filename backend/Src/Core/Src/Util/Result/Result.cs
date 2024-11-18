@@ -62,7 +62,8 @@ public class Result<T, E>
   }
 
   /// <summary>
-  /// Return Ok Result if IsFail is false, otherwise return Fail Result.
+  /// Returns a Ok Result passing <paramref name="res"/> if IsFail is false, 
+  /// otherwise return <typeparamref name="E"/> result.
   /// </summary>
   /// <typeparam name="TReturn">Type of returned value</typeparam>
   /// <param name="res">Value to be returned as Ok</param>
@@ -73,6 +74,7 @@ public class Result<T, E>
     return new Result<TReturn,E>(Error!);
   }
 
+  public static implicit operator bool(Result<T,E> result) => result.IsFail;
   public static implicit operator Result<T,E>(T data) => new Result<T,E>(data);
   public static implicit operator Result<T,E>(E error) => new Result<T,E>(error);
 }

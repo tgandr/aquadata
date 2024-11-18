@@ -1,3 +1,5 @@
+using Aquadata.Core.Entity.Pond;
+using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entity.User;
@@ -10,6 +12,9 @@ public class UserEntity : SeedWork.Entity
   public string FarmName {get;}
   public string FarmAddress {get;}
   public string Phone {get;}
+  
+  public virtual ICollection<PondEntity> Ponds {get;} 
+    = new List<PondEntity>();
 
   private UserEntity(string name, string email, string password, string farmName, string farmAddress, string phone)
   {
@@ -21,17 +26,40 @@ public class UserEntity : SeedWork.Entity
     Phone = phone;
   }
 
-  public static Result<UserEntity, Exception> Of(
-    string name, string email, string password, 
-    string farmName, string farmAddress, string phone)
-  {
-    return Result<UserEntity,Exception>.Ok(new UserEntity(
-      name, email, password, farmName, farmAddress, phone
-    ));
-  }
+  public static Result<UserEntity, EntityValidationException> Of(
+    string name, string email, string password,
+    string farmName, string farmAddress, string phone) 
+  => Create (new UserEntity(name, email, password, 
+    farmName, farmAddress, phone));
+  
 
-  protected override Result<Exception> Validate()
+  protected override Result<EntityValidationException> Validate()
   {
-    return Result<Exception>.Ok(); 
+    if (string.IsNullOrWhiteSpace(Name))
+      return Result<EntityValidationException>.Fail(
+        new EntityValidationException("User name cannot be null or Empty")
+      );
+    if (string.IsNullOrWhiteSpace(Email))
+      return Result<EntityValidationException>.Fail(
+        new EntityValidationException("User email cannot be null or Empty")
+      );
+    if (string.IsNullOrWhiteSpace(Password))
+      return Result<EntityValidationException>.Fail(
+        new EntityValidationException("User password cannot be null or Empty")
+      );
+    if (string.IsNullOrWhiteSpace(FarmName))
+      return Result<EntityValidationException>.Fail(
+        new EntityValidationException("User farmName cannot be null or Empty")
+      );
+    if (string.IsNullOrWhiteSpace(FarmAddress))
+      return Result<EntityValidationException>.Fail(
+        new EntityValidationException("User farmAddress cannot be null or Empty")
+      );
+    if (string.IsNullOrWhiteSpace(Phone))
+      return Result<EntityValidationException>.Fail(
+        new EntityValidationException("User phone cannot be null or Empty")
+      );
+
+    return Result<EntityValidationException>.Ok(); 
   }
 }
