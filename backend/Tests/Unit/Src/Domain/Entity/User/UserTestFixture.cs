@@ -13,7 +13,8 @@ public class GetUser
       name: "",
       email: "email@example.com",
       password: "password",
-      phone: "88988888888"
+      phone: "88988888888",
+      profile: "valid"
     );
   public static Result<UserEntity, EntityValidationException> WithInvalidEmail()
    => UserEntity.Of(
@@ -22,7 +23,8 @@ public class GetUser
       name: "valid",
       email: "",
       password: "password",
-      phone: "88988888888"
+      phone: "88988888888",
+      profile: "valid"
     );
   public static Result<UserEntity, EntityValidationException> WithInvaliPassword()
    => UserEntity.Of(
@@ -31,7 +33,8 @@ public class GetUser
       name: "valid",
       email: "email@example.com",
       password: "",
-      phone: "88988888888"
+      phone: "88988888888",
+      profile: "valid"
     );
   public static Result<UserEntity, EntityValidationException> WithInvalidPhone()
    => UserEntity.Of(
@@ -40,7 +43,8 @@ public class GetUser
       name: "valid",
       email: "email@example.com",
       password: "password",
-      phone: ""
+      phone: "",
+      profile: "valid"
     );
   public static Result<UserEntity, EntityValidationException> WithInvalidFarmAddress()
    => UserEntity.Of(
@@ -49,7 +53,8 @@ public class GetUser
       name: "valid",
       email: "email@example.com",
       password: "password",
-      phone: "88988888888"
+      phone: "88988888888",
+      profile: "valid"
     );
   public static Result<UserEntity, EntityValidationException> WithInvalidFarmName()
    => UserEntity.Of(
@@ -58,6 +63,17 @@ public class GetUser
       name: "valid",
       email: "email@example.com",
       password: "password",
-      phone: "88988888888"
+      phone: "88988888888",
+      profile: "valid"
+    );
+  public static Result<UserEntity, EntityValidationException> WithInvalidProfile()
+   => UserEntity.Of(
+      farmAddress: "valid",
+      farmName: "",
+      name: "valid",
+      email: "email@example.com",
+      password: "password",
+      phone: "88988888888",
+      profile: ""
     );
 }

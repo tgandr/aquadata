@@ -8,15 +8,15 @@ public class UserEntity : SeedWork.Entity
 {
   public string Name {get;}
   public string Email {get;}
+  public string Profile {get;}
   public string Password {get;}
   public string FarmName {get;}
   public string FarmAddress {get;}
   public string Phone {get;}
-  
-  public virtual ICollection<PondEntity> Ponds {get;} 
-    = new List<PondEntity>();
+  public virtual ICollection<PondEntity>? Ponds {get;} 
 
-  private UserEntity(string name, string email, string password, string farmName, string farmAddress, string phone)
+  private UserEntity(string name, string email, string profile, string password, 
+  string farmName, string farmAddress, string phone)
   {
     Name = name;
     Email = email;
@@ -24,12 +24,13 @@ public class UserEntity : SeedWork.Entity
     FarmName = farmName;
     FarmAddress = farmAddress;
     Phone = phone;
+    Profile = profile;
   }
 
   public static Result<UserEntity, EntityValidationException> Of(
-    string name, string email, string password,
+    string name, string email, string  profile, string password,
     string farmName, string farmAddress, string phone) 
-  => Create (new UserEntity(name, email, password, 
+  => Create (new UserEntity(name, email, profile, password, 
     farmName, farmAddress, phone));
   
 
@@ -59,7 +60,10 @@ public class UserEntity : SeedWork.Entity
       return Result<EntityValidationException>.Fail(
         new EntityValidationException("User phone cannot be null or Empty")
       );
-
+    if (string.IsNullOrWhiteSpace(Profile))
+      return Result<EntityValidationException>.Fail(
+        new EntityValidationException("User profile cannot be null or Empty")
+      );
     return Result<EntityValidationException>.Ok(); 
   }
 }

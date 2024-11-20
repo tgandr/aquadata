@@ -2,7 +2,6 @@ using Aquadata.Core.Entity.User;
 using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
 using Unit.Src.Domain.Entity.User;
-using CoreEntity = Aquadata.Core.Entity.User;
 namespace Aquadata.UnitTests.Domain.Entity.User;
 
 
@@ -17,16 +16,18 @@ public class UserTest
       Name = "valid name",
       Email = "mail@example.com",
       Password = "password",
-      Phone = "88912345678"
+      Phone = "88912345678",
+      Profile = "profile"
     };
 
-    var user = CoreEntity.UserEntity.Of(
+    var user = UserEntity.Of(
       farmAddress: expected.FarmAddres,
       farmName: expected.FarmName,
       name: expected.Name,
       email: expected.Email,
       password: expected.Password,
-      phone: expected.Phone
+      phone: expected.Phone,
+      profile: expected.Profile
     ).Unwrap();
 
     Assert.NotNull(user);
@@ -37,6 +38,7 @@ public class UserTest
     Assert.Equal(expected.Password, user.Password);
     Assert.Equal(expected.Name, user.Name);
     Assert.Equal(expected.Phone, user.Phone);
+    Assert.Equal(expected.Profile, user.Profile);
   }
 
   [Fact]
@@ -48,7 +50,8 @@ public class UserTest
       GetUser.WithInvalidFarmAddress(),
       GetUser.WithInvalidFarmName(),
       GetUser.WithInvaliPassword(),
-      GetUser.WithInvalidPhone()
+      GetUser.WithInvalidPhone(),
+      GetUser.WithInvalidProfile()
     };
 
     foreach (var item in resultList)

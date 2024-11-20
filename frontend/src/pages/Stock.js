@@ -21,6 +21,9 @@ const Stock = () => {
   });
 
   const calculateTotalValue = (purchaseData) => {
+    if (!stockData.feedPurchase)
+      return 0;
+    
     const totalFeedPurchases = stockData.feedPurchase.reduce((total, i) =>
       total + (parseFloat(i.quantity) * (parseFloat(i.value) / parseInt(i.bagSize))), 0);
     return purchaseData.reduce((total, item) => {

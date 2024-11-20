@@ -1,3 +1,5 @@
+using Aquadata.Core.Entity.Biometric;
+using Aquadata.Core.Enums;
 using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
 
@@ -5,28 +7,41 @@ namespace Aquadata.Core.Entity.Cultivation;
 
 public class CultivationEntity : SeedWork.Entity
 {
-  public int Number {get;}
+  public int PondNumber {get;}
   public int Stock {get;}
   public string PLOrigin {get;}
-  public string Uniformity {get;}
+  public CultivationUniformity Uniformity {get;}
   public DateTime SettlementDate {get;}
-  public virtual Guid? PondId {get;set;}
+  public bool WaterAndAcclimationChecked {get;}
+  public CultivationOptional? Optional {get;}
+  public virtual Guid? PondId {get;}
+  public virtual ICollection<BiometricEntity>? Biometrics {get;}
 
-  private CultivationEntity(int number, int stock, string pLOrigin, 
-  string uniformity, DateTime settlementDate) 
+  private CultivationEntity(int pondNumber, int stock, string pLOrigin, 
+  bool waterAndAcclimationChecked, CultivationUniformity uniformity, 
+  DateTime settlementDate, CultivationOptional? optional = null)
   : base()
   {
-    Number = int.Abs(number);
+    PondNumber = int.Abs(pondNumber);
     Stock = int.Abs(stock);
     PLOrigin = pLOrigin;
     Uniformity = uniformity;
     SettlementDate = settlementDate;
+    WaterAndAcclimationChecked = waterAndAcclimationChecked;
+    Optional = optional;
+
+    if (Optional?.WaterAndAcclimation is not null)
+      WaterAndAcclimationChecked = true;  
   }
 
-  public static Result<CultivationEntity, EntityValidationException> Of(int number, int stock, string pLOrigin, 
-  string uniformity, DateTime settlementDate)
-    => Create(new CultivationEntity(
-      number, stock, pLOrigin, uniformity, settlementDate
+  public static Result<CultivationEntity, EntityValidationException> Of(
+    int pondNumber, int stock, string pLOrigin, 
+    bool waterAndAcclimationChecked, CultivationUniformity uniformity, 
+    DateTime settlementDate, CultivationOptional? optional = null)
+  => Create(new CultivationEntity(
+      pondNumber, stock, pLOrigin, 
+      waterAndAcclimationChecked, 
+      uniformity, settlementDate, optional
     ));
 
   public bool HasShrimp()
@@ -35,6 +50,11 @@ public class CultivationEntity : SeedWork.Entity
 
   protected override Result<EntityValidationException> Validate()
   {
+    if (string.IsNullOrWhiteSpace(PLOrigin))
+      return Result<EntityValidationException>.Fail(
+        new EntityValidationException("Cultivation PlOrigin cannot be null or empty")
+      );
+
     return Result<EntityValidationException>.Ok();
   }
 }

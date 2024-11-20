@@ -1,4 +1,7 @@
+using Aquadata.Core.Builders;
 using Aquadata.Core.Entity.Cultivation;
+using Aquadata.Core.Enums;
+using Aquadata.Core.Errors;
 
 namespace Aquadata.UnitTests.Domain.Entity.Cultivation;
 
@@ -7,29 +10,66 @@ public class CultivationTest
   [Fact]
   public void CreateValidCultivation()
   {
+    var cultivationOptional = 
+      new CultivationOptionalBuilder()
+      .StressTest(
+        "type", 
+        DeadLarvae.Many, 
+        SwimmingResponse.None
+      )
+      .WaterAndAcclimation(
+        oxygen: new WaterAndAcclimationParam(10,1),
+        temperature: new WaterAndAcclimationParam(30,2),
+        pH: new WaterAndAcclimationParam(20, 1),
+        salinity: new WaterAndAcclimationParam(56, 2),
+        ammonium: new WaterAndAcclimationParam(20, 1),
+        nitrite: new WaterAndAcclimationParam(10, 2)
+      )
+      .Objective(2, 56.6f, 35.7f).Build();
+  
     var expected = new {
-      Number = 1,
+      PondNumber = 1,
       Stock = 12000,
       PLOrigin = "example",
-      Uniformity = "good",
-      SettlementDate = DateTime.Now
+      Uniformity = CultivationUniformity.Good,
+      WaterAndAcclimationChecked = false,
+      SettlementDate = DateTime.Now,
+      Optional = cultivationOptional
     };
 
     var current = CultivationEntity.Of(
-      number: expected.Number,
+      pondNumber: expected.PondNumber,
       stock: expected.Stock,
       pLOrigin: expected.PLOrigin,
       uniformity: expected.Uniformity,
-      settlementDate: expected.SettlementDate
+      waterAndAcclimationChecked: expected.WaterAndAcclimationChecked,
+      settlementDate: expected.SettlementDate,
+      optional: expected.Optional
     ).Unwrap();
 
     Assert.NotNull(current);
     Assert.NotEqual(current.Id, default);
-    Assert.Equal(expected.Number, current.Number);
+    Assert.Equal(expected.PondNumber, current.PondNumber);
     Assert.Equal(expected.PLOrigin, current.PLOrigin);
     Assert.Equal(expected.Stock, current.Stock);
     Assert.Equal(expected.Uniformity, current.Uniformity);
     Assert.Equal(expected.SettlementDate, current.SettlementDate);
+    Assert.NotEqual(expected.WaterAndAcclimationChecked, current.WaterAndAcclimationChecked);
+    Assert.Equivalent(expected.Optional.StressTest, current.Optional?.StressTest);
+    Assert.Equivalent(expected.Optional.WaterAndAcclimation, current.Optional?.WaterAndAcclimation);
+    Assert.Equivalent(expected.Optional.Objective, current.Optional?.Objective);
+  }
+
+  [Fact]
+  public void GivenInvalidParamsWhenCreateThrowError()
+  {
+    var cultivation = new {
+      WithoutUniformity = GetCultivation.WithoutPLOrigin()
+    };
+
+    Assert.Throws<EntityValidationException>(() => {
+      cultivation.WithoutUniformity.Unwrap();
+    });
   }
 
   [Fact]
@@ -37,10 +77,10 @@ public class CultivationTest
   {
     var cultivation = new {
       withStock = GetCultivation.Valid(),
-      withNoStock = GetCultivation.WithNoStock()
+      WithoutStock = GetCultivation.WithoutStock()
     };
 
     Assert.True(cultivation.withStock.HasShrimp());
-    Assert.False(cultivation.withNoStock.HasShrimp());
+    Assert.False(cultivation.WithoutStock.HasShrimp());
   }
 }

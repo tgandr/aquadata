@@ -1,4 +1,5 @@
 using Aquadata.Core.Entity.Cultivation;
+using Aquadata.Core.Enums;
 using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
 
@@ -8,11 +9,16 @@ public class GetCultivation
 {
   public static CultivationEntity Valid()
    => CultivationEntity.Of(
-      1, 1200, "example", "good", DateTime.Now
+        1, 1200, "example", false, CultivationUniformity.Excellent, DateTime.Now
+      ).Unwrap();
+
+  public static CultivationEntity WithoutStock()
+    => CultivationEntity.Of(
+      1, 0, "example", false, CultivationUniformity.Excellent, DateTime.Now
     ).Unwrap();
 
-    public static CultivationEntity WithNoStock()
-   => CultivationEntity.Of(
-      1, 0, "example", "good", DateTime.Now
-    ).Unwrap();
+  public static Result<CultivationEntity, EntityValidationException> WithoutPLOrigin()
+    => CultivationEntity.Of(
+      1, 20, "", false, CultivationUniformity.Excellent, DateTime.Now
+    );
 }
