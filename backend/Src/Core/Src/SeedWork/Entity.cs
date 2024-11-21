@@ -22,9 +22,9 @@ public abstract class Entity
     UpdatedAt = DateTime.Now;
   }
 
-  protected static Result<T, EntityValidationException> Create<T>(T entity)
+  protected static Result<T, ModelValidationException> Create<T>(T entity)
     where T : Entity
     => entity.Validate().IfOkReturn(entity);
 
-  protected abstract Result<EntityValidationException> Validate();
+  protected abstract Result<ModelValidationException> Validate();
 }

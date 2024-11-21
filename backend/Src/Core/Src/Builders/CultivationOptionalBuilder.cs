@@ -1,5 +1,6 @@
-using Aquadata.Core.Entity.Cultivation;
+using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Enums;
+using Aquadata.Core.ValueObjects;
 
 namespace Aquadata.Core.Builders;
 
@@ -15,13 +16,12 @@ public class CultivationOptionalBuilder
   }
 
   public CultivationOptionalBuilder WaterAndAcclimation(
-    WaterAndAcclimationParam oxygen, 
-    WaterAndAcclimationParam temperature, WaterAndAcclimationParam pH, 
-    WaterAndAcclimationParam salinity, WaterAndAcclimationParam ammonium,
-    WaterAndAcclimationParam nitrite)
+    float oxygen, int temperature, byte pH, 
+    int salinity, float ammonium,
+    float nitrite)
   {
     _value.WaterAndAcclimation = new WaterAndAcclimation(oxygen, temperature, 
-      pH, salinity, ammonium, nitrite);
+      PH.Of(pH).Unwrap(), salinity, ammonium, nitrite);
 
     return this;
   }
