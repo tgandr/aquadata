@@ -22,10 +22,10 @@ public class PHTest
   public void GivenInvalidParamsWhenCreatePHThrowError()
   {
  
-    var current = PH.Of(20);
+    var invalid = PH.Of(20);
 
     Assert.Throws<ModelValidationException>(() => {
-      current.Unwrap();
+      invalid.Unwrap();
     });
   }
 }

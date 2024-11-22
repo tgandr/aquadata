@@ -11,6 +11,8 @@ public class WaterEntity : SeedWork.Entity
   public float DissolvedOxygen {get;}
   public PH PH {get;}
 
+  public virtual Guid? CultivationId {get;}
+
   private WaterEntity(DateTime date, int temperature, float dissolvedOxygen, PH pH)
   {
     Date = date;

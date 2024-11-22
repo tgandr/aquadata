@@ -1,4 +1,5 @@
 using Aquadata.Core.Entities.Biometric;
+using Aquadata.Core.Entities.Harvest;
 using Aquadata.Core.Entities.Water;
 using Aquadata.Core.Enums;
 using Aquadata.Core.Errors;
@@ -16,10 +17,11 @@ public class CultivationEntity : SeedWork.Entity
   public bool WaterAndAcclimationChecked {get;}
   public CultivationOptional? Optional {get;}
 
-  // Navegation props
+  // Navigation props
   public virtual Guid? PondId {get;}
   public virtual ICollection<BiometricEntity>? Biometrics {get;}
   public virtual ICollection<WaterEntity>? WaterParams {get;}
+  public virtual ICollection<HarvestEntity>? Harvests {get;}
 
   private CultivationEntity(int pondNumber, int stock, string pLOrigin, 
   bool waterAndAcclimationChecked, CultivationUniformity uniformity, 

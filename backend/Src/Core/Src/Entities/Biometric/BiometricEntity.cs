@@ -9,6 +9,9 @@ public class BiometricEntity : SeedWork.Entity
   public float AverageWeight {get;}
   public DateTime Date {get;}
 
+  public virtual Guid? CultivationId {get;}
+  public virtual Guid? HarverstId {get;}
+
   private BiometricEntity(float count, float averageWeight, DateTime date)
   {
     Count = float.Abs(count);
