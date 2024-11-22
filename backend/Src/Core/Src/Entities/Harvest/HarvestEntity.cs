@@ -1,3 +1,4 @@
+using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
 
@@ -10,6 +11,9 @@ public class HarvestEntity : SeedWork.Entity
   public DateTime Date {get;}
   public bool IsTotal {get;}
   public float BioMass {get;}
+  
+  public virtual ICollection<BiometricEntity>? Biometrics {get;}
+  public virtual Guid CultivationId {get;}
 
   private HarvestEntity(string buyer, decimal price, 
   DateTime date, bool isTotal, float bioMass)
