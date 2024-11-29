@@ -1,10 +1,9 @@
-using Aquadata.Core.Builders;
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Enums;
 using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
 
-namespace Aquadata.UnitTests.Core.Entity.Cultivation;
+namespace Aquadata.UnitTests.Core.Entities.Cultivation;
 
 public class GetCultivation
 {

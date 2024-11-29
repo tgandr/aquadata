@@ -1,7 +1,7 @@
 using Aquadata.Core.Entities.Harvest;
 using Aquadata.Core.Errors;
 
-namespace Aquadata.UnitTests.Core.Entity.Harvest;
+namespace Aquadata.UnitTests.Core.Entities.Harvest;
 
 public class HarvestTest
 {

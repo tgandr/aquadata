@@ -7,7 +7,7 @@ const ReportCosts = () => {
     const [showPondHistory, setShowPondHistory] = useState(false);
     const [pondHistory, setPondHistory] = useState([]);
     const history = JSON.parse(localStorage.getItem('history'));
-    const viveiros = JSON.parse(localStorage.getItem('viveiros'));
+    const viveiros = JSON.parse(localStorage.getItem('viveiros')) ?? [];
 
     const handleClick = (id) => {
         const historyFiltered = history.filter(p => p.viveiroId === id)

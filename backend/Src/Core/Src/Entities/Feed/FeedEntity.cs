@@ -11,7 +11,7 @@ public class FeedEntity : SeedWork.Entity
   public string RationName {get;}
   public bool HadLeftovers {get;}
   public bool ReducedOrSuspended {get;}
-  public virtual Guid? CultivationId {get;}
+  public virtual Guid? CultivationId {get;set;}
 
   public FeedEntity(DateTime date, int frequency, float totalOfDay, 
   string rationName, bool hadLeftovers, bool reducedOrSuspended)

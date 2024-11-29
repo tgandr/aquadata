@@ -11,7 +11,7 @@ public class FertilizerEntity : SeedWork.Entity
   public FertilizerType Type {get;}
   public int Quantity {get;}
   public MeasureUnit MeasureUnit {get;}
-  public virtual Guid? CultivationId {get;}
+  public virtual Guid? CultivationId {get;set;}
 
   private FertilizerEntity(string name, DateTime date, FertilizerType type, 
   int quantity, MeasureUnit measureUnit)

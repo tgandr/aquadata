@@ -12,8 +12,8 @@ public class HarvestEntity : SeedWork.Entity
   public bool IsTotal {get;}
   public float BioMass {get;}
   
-  public virtual ICollection<BiometricEntity>? Biometrics {get;}
-  public virtual Guid CultivationId {get;}
+  public virtual ICollection<BiometricEntity>? Biometrics {get; set;}
+  public virtual Guid? CultivationId {get;set;}
 
   private HarvestEntity(string buyer, decimal price, 
   DateTime date, bool isTotal, float bioMass)

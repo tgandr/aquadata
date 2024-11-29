@@ -9,8 +9,8 @@ public class BiometricEntity : SeedWork.Entity
   public float AverageWeight {get;}
   public DateTime Date {get;}
 
-  public virtual Guid? CultivationId {get;}
-  public virtual Guid? HarverstId {get;}
+  public virtual Guid? CultivationId {get;set;}
+  public virtual Guid? HarverstId {get;set;}
 
   private BiometricEntity(float count, float averageWeight, DateTime date)
   {

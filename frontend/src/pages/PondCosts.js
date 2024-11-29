@@ -54,6 +54,9 @@ const PondCosts = () => {
 
     const calculateFertilizersCosts = () => {
         let fert = 0;
+        if (!financial.fertilizersPurchase) 
+            return
+        
         fertilizers && fertilizers.forEach(fEntry => {
             const purchase = financial.fertilizersPurchase.find(item => item.id === fEntry.id);
             if (purchase) {

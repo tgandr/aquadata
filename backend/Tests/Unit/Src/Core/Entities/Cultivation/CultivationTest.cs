@@ -1,31 +1,14 @@
-using Aquadata.Core.Builders;
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Enums;
 using Aquadata.Core.Errors;
 
-namespace Aquadata.UnitTests.Core.Entity.Cultivation;
+namespace Aquadata.UnitTests.Core.Entities.Cultivation;
 
 public class CultivationTest
 {
   [Fact]
   public void CreateValidCultivation()
   {
-    var cultivationOptional = 
-      new CultivationOptionalBuilder()
-      .StressTest(
-        "type", 
-        DeadLarvae.Many, 
-        SwimmingResponse.None
-      )
-      .WaterAndAcclimation(
-        oxygen: 10.4f,
-        temperature: 30,
-        pH: 10,
-        salinity: 56,
-        ammonium: 20,
-        nitrite: 10
-      )
-      .Objective(2, 56.6f, 35.7f).Build();
   
     var expected = new {
       PondNumber = 1,
@@ -34,7 +17,6 @@ public class CultivationTest
       Uniformity = CultivationUniformity.Good,
       WaterAndAcclimationChecked = false,
       SettlementDate = DateTime.Now,
-      Optional = cultivationOptional
     };
 
     var current = CultivationEntity.Of(
@@ -43,8 +25,7 @@ public class CultivationTest
       pLOrigin: expected.PLOrigin,
       uniformity: expected.Uniformity,
       waterAndAcclimationChecked: expected.WaterAndAcclimationChecked,
-      settlementDate: expected.SettlementDate,
-      optional: expected.Optional
+      settlementDate: expected.SettlementDate
     ).Unwrap();
 
     Assert.NotNull(current);
@@ -54,10 +35,7 @@ public class CultivationTest
     Assert.Equal(expected.Stock, current.Stock);
     Assert.Equal(expected.Uniformity, current.Uniformity);
     Assert.Equal(expected.SettlementDate, current.SettlementDate);
-    Assert.NotEqual(expected.WaterAndAcclimationChecked, current.WaterAndAcclimationChecked);
-    Assert.Equivalent(expected.Optional.StressTest, current.Optional?.StressTest);
-    Assert.Equivalent(expected.Optional.WaterAndAcclimation, current.Optional?.WaterAndAcclimation);
-    Assert.Equivalent(expected.Optional.Objective, current.Optional?.Objective);
+    Assert.Equal(expected.WaterAndAcclimationChecked, current.WaterAndAcclimationChecked);
   }
 
   [Fact]

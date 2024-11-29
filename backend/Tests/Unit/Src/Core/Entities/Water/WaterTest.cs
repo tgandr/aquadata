@@ -1,7 +1,7 @@
 using Aquadata.Core.Entities.Water;
 using Aquadata.Core.ValueObjects;
 
-namespace Aquadata.UnitTests.Core.Entity.Water;
+namespace Aquadata.UnitTests.Core.Entities.Water;
 
 public class WaterTest
 {

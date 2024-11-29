@@ -1,6 +1,6 @@
 using Aquadata.Core.Entities.Biometric;
 
-namespace Aquadata.UnitTests.Core.Entity.Biometric;
+namespace Aquadata.UnitTests.Core.Entities.Biometric;
 
 public class BiometricTest
 {

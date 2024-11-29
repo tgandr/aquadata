@@ -2,7 +2,7 @@ namespace Core.Src.Enums;
 
 public enum MeasureUnit
 {
-  G,
+  g,
   Kg,
   L
 }

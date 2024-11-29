@@ -2,7 +2,7 @@ using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
 
-namespace Aquadata.UnitTests.Core.Entity.Pond;
+namespace Aquadata.UnitTests.Core.Entities.Pond;
 
 public class GetPond
 {

@@ -13,7 +13,7 @@ public class UserEntity : SeedWork.Entity
   public string FarmName {get;}
   public string FarmAddress {get;}
   public string Phone {get;}
-  public virtual ICollection<PondEntity>? Ponds {get;} 
+  public virtual ICollection<PondEntity>? Ponds {get;set;} 
 
   private UserEntity(string name, string email, string profile, string password, 
   string farmName, string farmAddress, string phone)

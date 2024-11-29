@@ -2,7 +2,7 @@ using Aquadata.Core.Entities.User;
 using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
 using Unit.Src.Domain.Entity.User;
-namespace Aquadata.UnitTests.Core.Entity.User;
+namespace Aquadata.UnitTests.Core.Entities.User;
 
 
 public class UserTest
