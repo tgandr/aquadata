@@ -25,7 +25,6 @@ const HarvestPopup = ({
   const [checkHarvestTotalOrParcial, setCheckHarvestTotalOrParcial] = useState('');
   const [showPercentual, setShowPercentual] = useState(false)
   const handleHarvestChange = (e) => {
-    console.log(e.target)
     const { name, value } = e.target;
     setHarvestData({
       ...harvestData,
@@ -170,7 +169,6 @@ const HarvestPopup = ({
         depreciationTotal: calculateDepreciation(true) * pondPercentage };
       history.push(closeCultivo);
       setCultivo(closeCultivo);
-      console.log(closeCultivo)
       localStorage.setItem(`history`, JSON.stringify(history));
       localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(closeCultivo));
     }

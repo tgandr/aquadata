@@ -13,7 +13,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (formData.eraseLocalStorageAfterLogout) {
-      console.log(formData.eraseLocalStorageAfterLogout)
       const handleUnload = () => {
         localStorage.clear();
       };

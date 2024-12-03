@@ -18,7 +18,6 @@ const ParamPopup = ({ setShowParamPopup, saveData }) => {
     const handleParamSubmit = (e) => {
         e.preventDefault();
         saveData(formParam, 'params')
-        console.log(formParam);
         setShowParamPopup(false);
     };
 

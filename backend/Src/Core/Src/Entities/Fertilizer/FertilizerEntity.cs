@@ -1,6 +1,6 @@
 using Aquadata.Core.Errors;
+using Aquadata.Core.Enums;
 using Aquadata.Core.Util;
-using Core.Src.Enums;
 
 namespace Aquadata.Core.Entities.Fertilizer;
 

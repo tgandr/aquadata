@@ -95,7 +95,6 @@ const ReportCycle = () => {
                             <tbody>
                                 <tr>
                                     <td style={{ textAlign: "right" }}>
-                                        {console.log(cultivo)}
                                         {tipoTesteMap[cultivo.testForm.tipoTeste]}
                                     </td>
                                     <td style={{ textAlign: "right" }}>

@@ -1,8 +1,11 @@
-namespace Core.Src.Enums;
+namespace Aquadata.Core.Enums;
 
 public enum MeasureUnit
 {
-  g,
-  Kg,
-  L
+    g,
+    Kg,
+    L,
+    m,
+    Unit,
+    Package
 }

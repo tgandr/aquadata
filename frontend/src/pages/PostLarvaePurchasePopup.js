@@ -81,7 +81,7 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
     useEffect(() => {
         if (formPostLarvae.dateIn !== "") {
             const cultivo = JSON.parse(localStorage.getItem(`cultivo-${formPostLarvae.dateIn}`));
-            setFormPostLarvae({ ...formPostLarvae, label: cultivo.origemPL })
+            setFormPostLarvae({ ...formPostLarvae, label: ''})
         }
     }, [formPostLarvae.dateIn])
 

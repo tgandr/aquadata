@@ -54,8 +54,8 @@ const PondCosts = () => {
 
     const calculateFertilizersCosts = () => {
         let fert = 0;
-        if (!financial.fertilizersPurchase) 
-            return
+        if (!financial) 
+            return 0;
         
         fertilizers && fertilizers.forEach(fEntry => {
             const purchase = financial.fertilizersPurchase.find(item => item.id === fEntry.id);
@@ -94,8 +94,10 @@ const PondCosts = () => {
 
         let totalEnergyCost = 0;
         const getDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
+        
+        if (!financial) return 0;
 
-        financial.payments && financial.payments.forEach(entry => {
+        financial.payments.forEach(entry => {
             const entryDate = new Date(entry.month + "-01"); // Convert month string to date
             if (entryDate >= startDate && entryDate <= endDate) {
                 if (entry.energia) {
@@ -124,7 +126,9 @@ const PondCosts = () => {
         let totalLaborCost = 0;
         const getDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
 
-        financial.labor && financial.labor.forEach(entry => {
+        if (!financial.labor) return 0;
+
+        financial.labor.forEach(entry => {
             const entryDate = new Date(entry.month + "-01");
             if (entryDate >= startDate && entryDate <= endDate) {
                 entry.payroll.forEach(payrollEntry => {
@@ -141,6 +145,8 @@ const PondCosts = () => {
     };
 
     const calculatePostLarvaeCosts = () => {
+        if (!financial) return 0;
+
         const { postLarvaePurchase } = financial;
         let plCosts = {};
         if (postLarvaePurchase) {
@@ -153,6 +159,7 @@ const PondCosts = () => {
     };
 
     const calculateOtherFixedsCosts = () => {
+        if (!financial) return 0;
         const { payments } = financial;
         const startDate = new Date(dataPovoamento);
         const endDate = hasShrimp ? new Date() : new Date(harvest.find(harv => harv.id.totalOrParcial === "total")?.id.date);
@@ -188,7 +195,6 @@ const PondCosts = () => {
     };
 
     const totalFixedsCosts = () => {
-        console.log(costs.fixeds)
         return Object.values(costs.fixeds).reduce((acc, curr) => acc + curr.value, 0);
     };
 
@@ -209,7 +215,6 @@ const PondCosts = () => {
         const probioticsCosts = calculateProbioticsCosts();
         const others = calculateOtherFixedsCosts();
         const depreciation = calculateDepreciation(hasShrimp) * pondPercentage / 100;
-        console.log(costs)
         setCosts(prevCosts => ({
             fixeds: {
                 labor: { ...costs.fixeds.labor, value: laborCost },

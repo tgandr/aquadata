@@ -182,7 +182,6 @@ const CountingPls = ({ setShowNewCyclePopup, handleSavePLcount,
                 }
             }
 
-            console.log(`Minimum value between dark and bright groups: ${minValueBetweenGroups}`);
 
             // Continuação do cálculo de pontos escuros
             const visited = new Array(width * height).fill(false);
@@ -248,9 +247,6 @@ const CountingPls = ({ setShowNewCyclePopup, handleSavePLcount,
     };
 
     const handleWeightChange = (e) => {
-        console.log(e.target.value, 'valor do form')
-        console.log(countPLbyPhoto.amount, 'contagem da câmera')
-        console.log(countPLbyPhoto.weight, 'peso informado no form')
         setCountPLbyPhoto({ ...countPLbyPhoto, weight: e.target.value })
         setWeight(e.target.value)
     }

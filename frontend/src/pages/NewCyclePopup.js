@@ -153,7 +153,6 @@ const NewCyclePopup = ({
     };
 
     const handleSavePLcount = () => {
-        console.log('terminar')
     };
 
     const handleParametersChange = (e, param, type) => {
@@ -174,14 +173,12 @@ const NewCyclePopup = ({
     }
 
     const handleParametersChangeSubmit = (e) => {
-        console.log(e.target)
         e.preventDefault();
         setShowParameters(false);
     }
 
     useEffect(() => {
         const pondArea = JSON.parse(localStorage.getItem("viveiros")).find(p => p.id === viveiroId);
-        console.log(pondArea)
         setArea(pondArea.area);
         if (form.origemPL === 'custom') {
             setAddNewPostLarvae(true);

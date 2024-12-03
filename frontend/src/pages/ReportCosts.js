@@ -6,7 +6,7 @@ import { formatDate, IconContainer } from './utils';
 const ReportCosts = () => {
     const [showPondHistory, setShowPondHistory] = useState(false);
     const [pondHistory, setPondHistory] = useState([]);
-    const history = JSON.parse(localStorage.getItem('history'));
+    const history = JSON.parse(localStorage.getItem('history')) ?? [];
     const viveiros = JSON.parse(localStorage.getItem('viveiros')) ?? [];
 
     const handleClick = (id) => {

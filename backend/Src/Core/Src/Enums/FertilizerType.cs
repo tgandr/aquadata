@@ -1,8 +1,8 @@
-namespace Core.Src.Enums;
+namespace Aquadata.Core.Enums;
 
 public enum FertilizerType
 {
-  Probiotic,
-  Bokashi,
-  Chemical
+    Probiotic,
+    Bokashi,
+    Chemical
 }
