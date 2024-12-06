@@ -15,6 +15,7 @@ public class FeedEntity : SeedWork.Entity
 
   public FeedEntity(DateTime date, int frequency, float totalOfDay, 
   string rationName, bool hadLeftovers, bool reducedOrSuspended)
+  :base()
   {
     Date = date;
     Frequency = frequency;

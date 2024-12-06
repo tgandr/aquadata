@@ -80,7 +80,9 @@ const Financial = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const totalViveiroValue = Object.values(form.viveiroDistribution).reduce((acc, curr) => acc + parseFloat(curr || 0), 0);
+
+    const totalViveiroValue = Object.values(form.viveiroDistribution)
+      .reduce((acc, curr) => acc + parseFloat(curr || 0), 0);
     const formValue = parseFloat(form.value.replace(',', '.'));
 
     if (formValue !== totalViveiroValue && form.distribution === "n") {
