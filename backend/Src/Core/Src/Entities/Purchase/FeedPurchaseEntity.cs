@@ -5,24 +5,26 @@ namespace Aquadata.Core.Entities.Purchase;
 
 public class FeedPurchaseEntity : PurchaseBase
 {
+  public string Brand {get;}
   public DateOnly Validity {get;}
   public int BagSize {get;}
   public string RationType {get;}
-  private FeedPurchaseEntity(DateOnly date, string label, 
+  private FeedPurchaseEntity(DateOnly date, string label, string brand,
   int quantity, decimal value, DateOnly validity, 
   int bagSize, string rationType) 
   : base(date, label, quantity, value)
   {
+    Brand = brand;
     Validity = validity;
     BagSize = bagSize;
     RationType = rationType;
   }
 
   public static Result<FeedPurchaseEntity,ModelValidationException> Of(
-    DateOnly date, string label, 
+    DateOnly date, string label, string brand,
     int quantity, decimal value, DateOnly validity, 
     int bagSize, string rationType
-  ) => Create(new FeedPurchaseEntity(date,label,quantity,value,
+  ) => Create(new FeedPurchaseEntity(date,label,brand,quantity,value,
     validity,bagSize,rationType)); 
   
 

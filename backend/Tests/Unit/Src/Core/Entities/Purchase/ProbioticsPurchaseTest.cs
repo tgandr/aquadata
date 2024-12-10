@@ -1,6 +1,5 @@
 using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Enums;
-using Aquadata.Core.Errors;
 
 namespace Aquadata.UnitTests.Core.Entities.Purchase;
 

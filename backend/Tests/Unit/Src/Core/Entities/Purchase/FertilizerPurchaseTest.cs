@@ -13,7 +13,7 @@ public class FertilizerPurchaseTest
       Label =  "CELM",
       Quantity = 22,
       Value = 35.6m,
-      Name = "Fertilizer",
+      Brand = "Fertilizer",
       Unit = MeasureUnit.L
     };
 
@@ -22,7 +22,7 @@ public class FertilizerPurchaseTest
       expected.Label,
       expected.Quantity,
       expected.Value,
-      expected.Name,
+      expected.Brand,
       expected.Unit
     ).Unwrap();
 
@@ -34,7 +34,7 @@ public class FertilizerPurchaseTest
     Assert.Equal(expected.Label, current.Label);
     Assert.Equal(expected.Quantity, current.Quantity);
     Assert.Equal(expected.Value, current.Value);
-    Assert.Equal(expected.Name, current.Name);
+    Assert.Equal(expected.Brand, current.Brand);
     Assert.Equal(expected.Unit, current.Unit);
   }
 }

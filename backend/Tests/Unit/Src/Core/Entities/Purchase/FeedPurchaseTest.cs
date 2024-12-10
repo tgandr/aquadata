@@ -10,6 +10,7 @@ public class FeedPurchaseTest
     var expected = new {
       Date = DateOnly.Parse("2024-12-12"),
       Label =  "CELM",
+      Brand = "Poli Nutri",
       Quantity = 22,
       Value = 35.6m,
       Validity = DateOnly.Parse("2024-12-24"),
@@ -20,6 +21,7 @@ public class FeedPurchaseTest
     var current = FeedPurchaseEntity.Of(
       expected.Date,
       expected.Label,
+      expected.Brand,
       expected.Quantity,
       expected.Value,
       expected.Validity,
@@ -33,6 +35,7 @@ public class FeedPurchaseTest
     Assert.NotEqual(current.UpdatedAt, default);
     Assert.Equal(expected.Date, current.Date);
     Assert.Equal(expected.Label, current.Label);
+    Assert.Equal(expected.Brand, current.Brand);
     Assert.Equal(expected.Quantity, current.Quantity);
     Assert.Equal(expected.Value, current.Value);
     Assert.Equal(expected.Validity, current.Validity);
