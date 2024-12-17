@@ -1,13 +1,14 @@
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Errors;
+using Aquadata.Core.Interfaces;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.Pond;
 
-public class PondEntity : SeedWork.Entity
+public class PondEntity : SeedWork.Entity, IAggregateRoot
 {
-  public string Name {get;}
-  public float Area {get;}
+  public string Name {get;private set;}
+  public float Area {get;private set;}
   public bool IsActive {get;private set;}
   public virtual ICollection<CultivationEntity>? Cultivations {get;set;}
 
@@ -22,6 +23,11 @@ public class PondEntity : SeedWork.Entity
   public static Result<PondEntity, ModelValidationException> Of(string name, float area, bool isActive = true)
    => Create(new PondEntity(name,area, isActive));
   
+  public void Update(string name, float area)
+  {
+    Name = name;
+    Area = area;
+  }
 
   public void Activate()
    => IsActive = true;

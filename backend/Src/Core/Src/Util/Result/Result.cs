@@ -62,7 +62,7 @@ public class Result<T, E>
   }
 
   /// <summary>
-  /// Returns a Ok Result passing <paramref name="res"/> if IsFail is false, 
+  /// Returns a Ok Result passing <paramref name="res"/> if IsOk, 
   /// otherwise return <typeparamref name="E"/> result.
   /// </summary>
   /// <typeparam name="TReturn">Type of returned value</typeparam>
