@@ -1,20 +1,39 @@
+using Aquadata.Core.Entities.Employee;
+using Aquadata.Core.Entities.EmployeePayment;
+using Aquadata.Core.Entities.Expense;
+using Aquadata.Core.Entities.Inventory;
 using Aquadata.Core.Entities.Pond;
+using Aquadata.Core.Entities.Purchase;
+using Aquadata.Core.Entities.Stock;
 using Aquadata.Core.Errors;
+using Aquadata.Core.Interfaces;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.User;
 
-public class UserEntity : SeedWork.Entity
+public class UserEntity : SeedWork.Entity, IAggregateRoot
 {
-  public string Name {get;}
-  public string Email {get;}
-  public string Profile {get;}
-  public string Password {get;}
-  public string FarmName {get;}
-  public string FarmAddress {get;}
-  public string Phone {get;}
-  public virtual ICollection<PondEntity>? Ponds {get;set;} 
+  public string Name {get; private set;}
+  public string Email {get; private set;}
+  public string Profile {get; private set;}
+  public string Password {get; private set;}
+  public string FarmName {get; private set;}
+  public string FarmAddress {get; private set;}
+  public string Phone {get; private set;}
 
+  public virtual StockEntity? Stock {get;set;}
+  public virtual InventoryEntity? Inventory {get;set;}
+  public virtual ICollection<PondEntity>? Ponds {get;set;} 
+  public virtual ICollection<ExpenseEntity>? Expenses {get;set;}
+  public virtual ICollection<EmployeeEntity>? Employees {get;set;}
+  public virtual ICollection<EmployeePaymentEntity>? Payroll {get;set;}
+  public virtual ICollection<FeedPurchaseEntity>? FeedPurchases {get;set;}
+  public virtual ICollection<FertilizerPurchaseEntity>? FertilizerPurchases {get;set;}
+  public virtual ICollection<PostLarvaePurchaseEntity>? PLPurchases {get;set;}
+  public virtual ICollection<ProbioticsPurchaseEntity>? ProbioticPurchases {get;set;}
+  public virtual ICollection<GenericPurchaseEntity>? GenericPurchases {get;set;}
+
+  private UserEntity() {}
   private UserEntity(string name, string email, string profile, string password, 
   string farmName, string farmAddress, string phone)
   {

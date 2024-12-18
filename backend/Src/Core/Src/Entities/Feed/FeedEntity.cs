@@ -5,15 +5,16 @@ namespace Aquadata.Core.Entities.Feed;
 
 public class FeedEntity : SeedWork.Entity
 {
-  public DateTime Date {get;}
-  public int Frequency {get;}
-  public float TotalOfDay {get;}
-  public string RationName {get;}
-  public bool HadLeftovers {get;}
-  public bool ReducedOrSuspended {get;}
+  public DateTime Date {get; private set;}
+  public int Frequency {get; private set;}
+  public float TotalOfDay {get; private set;}
+  public string RationName {get; private set;}
+  public bool HadLeftovers {get; private set;}
+  public bool ReducedOrSuspended {get; private set;}
   public virtual Guid? CultivationId {get;set;}
 
-  public FeedEntity(DateTime date, int frequency, float totalOfDay, 
+  private FeedEntity() {}
+  private FeedEntity(DateTime date, int frequency, float totalOfDay, 
   string rationName, bool hadLeftovers, bool reducedOrSuspended)
   :base()
   {

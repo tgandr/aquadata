@@ -5,10 +5,12 @@ namespace Aquadata.Core.Entities.Objective;
 
 public class ObjectiveEntity: SeedWork.Entity
 {
-  public int Days {get;}
-  public float AverageSize {get;}
-  public float SurvivalRate {get;}
+  public int Days {get; private set;}
+  public float AverageSize {get; private set;}
+  public float SurvivalRate {get; private set;}
 
+  public virtual Guid CultivationId {get; set;}	
+  private ObjectiveEntity() {}
   private ObjectiveEntity(int days, float averageSize, float survivalRate)
   {
     Days = days;

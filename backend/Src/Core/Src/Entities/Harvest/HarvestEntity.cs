@@ -6,14 +6,14 @@ namespace Aquadata.Core.Entities.Harvest;
 
 public class HarvestEntity : SeedWork.Entity
 {
-  public string Buyer {get;}
-  public decimal Price {get;}
-  public DateTime Date {get;}
-  public bool IsTotal {get;}
-  public float BioMass {get;}
+  public string Buyer {get; private set;}
+  public decimal Price {get; private set;}
+  public DateTime Date {get; private set;}
+  public bool IsTotal {get; private set;}
+  public float BioMass {get; private set;}
   
-  public virtual ICollection<BiometricEntity>? Biometrics {get; set;}
   public virtual Guid? CultivationId {get;set;}
+  public virtual ICollection<BiometricEntity>? Biometrics {get; set;}
 
   private HarvestEntity(string buyer, decimal price, 
   DateTime date, bool isTotal, float bioMass)
@@ -24,7 +24,7 @@ public class HarvestEntity : SeedWork.Entity
     IsTotal = isTotal;
     BioMass = bioMass;
   }
-
+  private HarvestEntity() {}
   public static Result<HarvestEntity,ModelValidationException> Of(
     string buyer, decimal price, 
     DateTime date, bool isTotal, float bioMass

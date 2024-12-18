@@ -6,11 +6,11 @@ namespace Aquadata.Core.Entities.Fertilizer;
 
 public class FertilizerEntity : SeedWork.Entity
 {
-  public string Name {get;}
-  public DateTime Date {get;}
-  public FertilizerType Type {get;}
-  public int Quantity {get;}
-  public MeasureUnit MeasureUnit {get;}
+  public string Name {get; private set;}
+  public DateTime Date {get; private set;}
+  public FertilizerType Type {get; private set;}
+  public int Quantity {get; private set;}
+  public MeasureUnit MeasureUnit {get; private set;}
   public virtual Guid? CultivationId {get;set;}
 
   private FertilizerEntity(string name, DateTime date, FertilizerType type, 
@@ -23,6 +23,7 @@ public class FertilizerEntity : SeedWork.Entity
     MeasureUnit = measureUnit;
   }
 
+  private FertilizerEntity(){}
   public static Result<FertilizerEntity, ModelValidationException> Of(string name, DateTime date, FertilizerType type, 
   int quantity, MeasureUnit measureUnit)
     => Create(new FertilizerEntity(name, date, type, quantity, measureUnit));

@@ -10,7 +10,8 @@ public class StressTestEntity: SeedWork.Entity
   public DeadLarvae DeadLarvae { get; }
   public SwimmingResponse SwimmingResponse { get; }
   public virtual Guid CultivationId {get;set;}
-
+  
+  private StressTestEntity(){}
   private StressTestEntity(string stressType, 
     DeadLarvae deadLarvae, SwimmingResponse swimmingResponse)
   {

@@ -5,13 +5,14 @@ namespace Aquadata.Core.Entities.Biometric;
 
 public class BiometricEntity : SeedWork.Entity
 {
-  public float Count {get;}
-  public float AverageWeight {get;}
-  public DateTime Date {get;}
+  public float Count {get; private set;}
+  public float AverageWeight {get; private set;}
+  public DateTime Date {get; private set;}
 
   public virtual Guid? CultivationId {get;set;}
   public virtual Guid? HarverstId {get;set;}
-
+  
+  private BiometricEntity() {}
   private BiometricEntity(float count, float averageWeight, DateTime date)
   {
     Count = float.Abs(count);

@@ -6,12 +6,13 @@ namespace Aquadata.Core.Entities.Stock;
 
 public class StockEntity: SeedWork.Entity
 {
-  public string Label {get;}
-  public SupplyType SupplyType {get;}
-  public int Quantity {get;}
+  public string Label {get; private set;}
+  public SupplyType SupplyType {get; private set;}
+  public int Quantity {get; private set;}
 
   public virtual Guid UserId {get;set;}
 
+  private StockEntity(){}
   private StockEntity(string label, SupplyType supplyType, int quantity)
   :base()
   {

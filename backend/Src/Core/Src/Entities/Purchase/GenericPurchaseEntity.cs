@@ -14,6 +14,9 @@ public class GenericPurchaseEntity : PurchaseBase
     Description = description;
   }
 
+  private GenericPurchaseEntity()
+  :base(DateOnly.MinValue,"",0,0) {}
+  
   public static Result<GenericPurchaseEntity, ModelValidationException> Of(
     DateOnly date, string label, int quantity, decimal value, 
     string description

@@ -6,13 +6,14 @@ namespace Aquadata.Core.Entities.Water;
 
 public class WaterEntity : SeedWork.Entity
 {
-  public DateTime Date {get;}
-  public int Temperature {get;}
-  public float DissolvedOxygen {get;}
-  public PH PH {get;}
+  public DateTime Date {get; private set;}
+  public int Temperature {get; private set;}
+  public float DissolvedOxygen {get; private set;}
+  public PH PH {get; private set;}
 
   public virtual Guid? CultivationId {get;set;}
 
+  private WaterEntity(){}
   private WaterEntity(DateTime date, int temperature, float dissolvedOxygen, PH pH)
   {
     Date = date;

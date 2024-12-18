@@ -5,10 +5,14 @@ namespace Aquadata.Core.Entities.Purchase;
 
 public class FeedPurchaseEntity : PurchaseBase
 {
-  public string Brand {get;}
-  public DateOnly Validity {get;}
-  public int BagSize {get;}
-  public string RationType {get;}
+  public string Brand {get; private set;}
+  public DateOnly Validity {get; private set;}
+  public int BagSize {get; private set;}
+  public string RationType {get; private set;}
+
+  private FeedPurchaseEntity()
+  :base(DateOnly.MinValue,"",0,0) {}
+  
   private FeedPurchaseEntity(DateOnly date, string label, string brand,
   int quantity, decimal value, DateOnly validity, 
   int bagSize, string rationType) 

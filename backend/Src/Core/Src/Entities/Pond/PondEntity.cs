@@ -10,8 +10,11 @@ public class PondEntity : SeedWork.Entity, IAggregateRoot
   public string Name {get;private set;}
   public float Area {get;private set;}
   public bool IsActive {get;private set;}
+
+  public virtual Guid UserId {get;set;}
   public virtual ICollection<CultivationEntity>? Cultivations {get;set;}
 
+  private PondEntity() {}
   private PondEntity(string name, float area, bool isActive = true)
   :base()
   {

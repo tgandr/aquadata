@@ -5,13 +5,16 @@ namespace Aquadata.Core.Entities.Employee;
 
 public class EmployeeEntity : SeedWork.Entity
 {
-  public string Name {get;}
+  public string Name {get; private set;}
+
+  public virtual Guid UserId {get;set;}
 
   private EmployeeEntity(string name) :base()
   {
     Name = name;
   }
 
+  private EmployeeEntity() {}
   public static Result<EmployeeEntity, ModelValidationException> Of(string name)
     => Create(new EmployeeEntity(name));
   protected override Result<ModelValidationException> Validate()

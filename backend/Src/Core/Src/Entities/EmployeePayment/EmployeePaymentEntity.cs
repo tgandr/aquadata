@@ -5,9 +5,11 @@ namespace Aquadata.Core.Entities.EmployeePayment;
 
 public class EmployeePaymentEntity : SeedWork.Entity
 {
-  public DateOnly Date {get;}
-  public decimal Value {get;}
+  public DateOnly Date {get; private set;}
+  public decimal Value {get; private set;}
   public virtual Guid EmployeeId {get;set;}
+  
+  private EmployeePaymentEntity(){}
 
   private EmployeePaymentEntity(DateOnly date, decimal value)
   {

@@ -7,16 +7,17 @@ namespace Aquadata.Core.Entities.WaterAndAcclimation;
 
 public class WaterAndAcclimationEntity: SeedWork.Entity
 {
-  public float Oxygen {get;}
-  public int Temperature {get;}
-  public PH PH {get;}
-  public int Salinity {get;}
-  public float Ammonium {get;}
-  public float Nitrite {get;}
-  public WaterAndAcclimationOrigin Origin {get;}
+  public float Oxygen {get; private set;}
+  public int Temperature {get; private set;}
+  public PH PH {get; private set;}
+  public int Salinity {get; private set;}
+  public float Ammonium {get; private set;}
+  public float Nitrite {get; private set;}
+  public WaterAndAcclimationOrigin Origin {get; private set;}
   
   public virtual Guid? CultivationId {get;set;}
 
+  private WaterAndAcclimationEntity() {}
   private WaterAndAcclimationEntity(float oxygen, 
    int temperature, PH pH, int salinity, 
    float ammonium,float nitrite, WaterAndAcclimationOrigin origin)

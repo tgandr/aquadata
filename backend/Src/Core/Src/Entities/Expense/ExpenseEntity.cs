@@ -5,12 +5,15 @@ namespace Aquadata.Core.Entities.Expense;
 
 public class ExpenseEntity : SeedWork.Entity
 {
-  public DateOnly Date {get;}
-  public string Description {get;}
-  public ICollection<CostPerPond> CostsPerPond {get;}
+  public DateOnly Date {get; private set;}
+  public string Description {get; private set;}
+  public ICollection<CostPerPondEntity> CostsPerPond {get; set;}
 
+  public virtual Guid UserId {get;set;}
+
+  private ExpenseEntity() {}
   private ExpenseEntity(DateOnly date, string description, 
-  ICollection<CostPerPond> costsPerPond): base()
+  ICollection<CostPerPondEntity> costsPerPond): base()
   {
     Date = date;
     Description = description;
@@ -18,7 +21,7 @@ public class ExpenseEntity : SeedWork.Entity
   }
 
   public static Result<ExpenseEntity, ModelValidationException> Of(
-    DateOnly date, string description, ICollection<CostPerPond> costsPerPond
+    DateOnly date, string description, ICollection<CostPerPondEntity> costsPerPond
   ) => Create(new ExpenseEntity(date,description,costsPerPond));
 
   protected override Result<ModelValidationException> Validate()

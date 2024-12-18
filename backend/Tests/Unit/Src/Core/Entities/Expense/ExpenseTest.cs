@@ -10,9 +10,9 @@ public class ExpenseTest
     var expected = new {
       Date = DateOnly.Parse("2024-12-06"),
       Description = "some description",
-      CostsPerPond = new List<CostPerPond>{
-        new CostPerPond(Guid.NewGuid(), 10m),
-        new CostPerPond(Guid.NewGuid(), 10m)
+      CostsPerPond = new List<CostPerPondEntity>{
+        CostPerPondEntity.Of(10m).Unwrap(),
+        CostPerPondEntity.Of(10m).Unwrap()
       }
     };
 
@@ -35,9 +35,9 @@ public class ExpenseTest
     var expected = new {
       Date = DateOnly.Parse("2024-12-06"),
       Description = "some description",
-      CostsPerPond = new List<CostPerPond>{
-        new CostPerPond(Guid.NewGuid(), 10.5m),
-        new CostPerPond(Guid.NewGuid(), 10.5m)
+      CostsPerPond = new List<CostPerPondEntity>{
+        CostPerPondEntity.Of(10.5m).Unwrap(),
+        CostPerPondEntity.Of(10.5m).Unwrap()
       }
     };
 

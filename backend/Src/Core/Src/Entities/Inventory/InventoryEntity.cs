@@ -6,15 +6,16 @@ namespace Aquadata.Core.Entities.Inventory;
 
 public class InventoryEntity : SeedWork.Entity
 {
-  public string ItemName {get;}
-  public decimal AmountInvested {get;}
-  public decimal FinalValue {get;}
-  public int UsefulLifeInYears {get;}
-  public ItemStatus Status {get;}
-  public DateOnly InOperationSince {get;}
+  public string ItemName {get; private set;}
+  public decimal AmountInvested {get; private set;}
+  public decimal FinalValue {get; private set;}
+  public int UsefulLifeInYears {get; private set;}
+  public ItemStatus Status {get; private set;}
+  public DateOnly InOperationSince {get; private set;}
 
-  public virtual Guid UserId {get;}
+  public virtual Guid UserId {get; set;}
 
+  private InventoryEntity() {}
   private InventoryEntity(string itemName, decimal amountInvested, 
   decimal finalValue, int usefulLifeInYears, ItemStatus status, DateOnly inOperationSince)
   :base()

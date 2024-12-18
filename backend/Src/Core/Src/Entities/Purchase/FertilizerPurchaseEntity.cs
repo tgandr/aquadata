@@ -7,20 +7,21 @@ namespace Aquadata.Core.Entities.Purchase;
 
 public class FertilizerPurchaseEntity : PurchaseBase
 {
-  public string Brand {get;}
-  public MeasureUnit Unit {get;}
+  public MeasureUnit Unit {get; private set;}
 
-  private FertilizerPurchaseEntity(DateOnly date, string label, int quantity, decimal value, 
-  string brand, MeasureUnit unit) 
+  private FertilizerPurchaseEntity()
+  :base(DateOnly.MinValue,"",0,0) {}
+  
+
+  private FertilizerPurchaseEntity(DateOnly date, string label, int quantity, decimal value,
+  MeasureUnit unit) 
   : base(date, label, quantity, value)
   {
-    Brand = brand;
     Unit = unit;
   }
 
   public static Result<FertilizerPurchaseEntity, ModelValidationException> Of(
-    DateOnly date, string label, int quantity, decimal value, 
-    string brand, MeasureUnit unit
-  ) => Create(new FertilizerPurchaseEntity(date,label,quantity,value,brand,unit)); 
+    DateOnly date, string label, int quantity, decimal value,MeasureUnit unit
+  ) => Create(new FertilizerPurchaseEntity(date,label,quantity,value,unit)); 
 
 }

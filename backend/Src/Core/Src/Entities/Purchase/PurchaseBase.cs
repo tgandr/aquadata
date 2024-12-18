@@ -5,10 +5,12 @@ namespace Aquadata.Core.Entities.Purchase;
 
 public abstract class PurchaseBase : SeedWork.Entity
 {
-  public DateOnly Date {get;}
-  public string Label {get;}
-  public int Quantity {get;}
-  public decimal Value {get;}
+  public DateOnly Date {get; private set;}
+  public string Label {get; private set;}
+  public int Quantity {get; private set;}
+  public decimal Value {get; private set;}
+
+  public Guid UserId {get; set;}
 
   protected PurchaseBase(DateOnly date, string label, int quantity, decimal value)
   :base()
