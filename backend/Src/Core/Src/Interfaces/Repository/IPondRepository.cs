@@ -5,5 +5,5 @@ namespace Aquadata.Core.Interfaces.Repository;
 
 public interface IPondRepository: IGenericRepository<PondEntity>
 {
-  Task Deactivate(Guid id, CancellationToken cancellationToken);
+  Task Deactivate(PondEntity pond, CancellationToken cancellationToken);
 }

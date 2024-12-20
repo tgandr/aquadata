@@ -8,7 +8,7 @@ public class ExpenseConfig : IEntityTypeConfiguration<ExpenseEntity>
 {
   public void Configure(EntityTypeBuilder<ExpenseEntity> builder)
   {
-    builder.HasKey(e => e.Id);
+    
     builder.HasMany(e => e.CostsPerPond)
       .WithOne()
       .HasForeignKey(e => e.ExpenseId)

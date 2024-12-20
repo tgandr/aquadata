@@ -18,7 +18,7 @@ public class GetPond: IRequestHandler<GetPondByIdInput, Result<PondOutput, Excep
   {
     var pondResult =  await _repository.Get(request.Id, cancellationToken);
 
-    if (pondResult == null)
+    if (pondResult == null || !pondResult.IsActive)
     {
       return Result<PondOutput, Exception>.Fail(
         new EntityNotFoundException()

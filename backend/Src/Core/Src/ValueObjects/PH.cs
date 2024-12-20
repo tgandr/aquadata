@@ -5,8 +5,9 @@ namespace Aquadata.Core.ValueObjects;
 
 public class PH : SeedWork.ValueObject
 {
-  public byte Value {get;}
-
+  public byte Value {get;set;}
+  
+  private PH(){}
   private PH(byte value)
   {
     Value = value;

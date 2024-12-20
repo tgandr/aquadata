@@ -22,12 +22,13 @@ public class DeactivatePond: IRequestHandler<GetPondByIdInput, Result<PondOutput
   {
     var pond = await _repository.Get(request.Id, cancellationToken);
     
-    if (pond == null) {
+    if (pond == null || !pond.IsActive) {
       return Result<PondOutput, Exception>.Fail(
         new EntityNotFoundException()
       );
     }
-    await _repository.Deactivate(pond.Id, cancellationToken);
+    
+    await _repository.Deactivate(pond, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);
 
     return Result<PondOutput, Exception>.Ok(

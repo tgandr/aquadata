@@ -9,7 +9,7 @@ public class EmployeePaymentConfig : IEntityTypeConfiguration<EmployeePaymentEnt
 {
   public void Configure(EntityTypeBuilder<EmployeePaymentEntity> builder)
   {
-    builder.HasKey(e => e.Id);
+    
     builder.HasOne<EmployeeEntity>()
       .WithOne()
       .HasForeignKey<EmployeePaymentEntity>(e => e.EmployeeId)

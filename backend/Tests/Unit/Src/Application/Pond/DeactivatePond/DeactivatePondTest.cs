@@ -3,6 +3,7 @@ using UseCase = Aquadata.Application.UseCases.Pond.DeactivatePond;
 using Moq;
 using Aquadata.Application.UseCases.Pond.Common;
 using Aquadata.UnitTests.Application.Common;
+using Aquadata.Core.Entities.Pond;
 
 namespace Aquadata.UnitTests.Application.Pond.DeactivatePond;
 
@@ -14,7 +15,6 @@ public class DeactivatePondTest
     var repositoryMock = PondTestFactory.GetRepositoryMock();
     var uowMock = ApplicationTestFactory.GetUnitOfWorkMock();
     var examplePond = PondTestFactory.GetValidPond();
-    examplePond.Deactivate();
 
     repositoryMock.Setup(repo => repo.Get(
       examplePond.Id,
@@ -39,7 +39,7 @@ public class DeactivatePondTest
 
     repositoryMock.Verify(
       repo => repo.Deactivate(
-        It.IsAny<Guid>(),
+        examplePond,
         It.IsAny<CancellationToken>()
       ),
       Times.Once

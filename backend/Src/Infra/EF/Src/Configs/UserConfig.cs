@@ -10,7 +10,7 @@ public class UserConfig : IEntityTypeConfiguration<UserEntity>
 {
   public void Configure(EntityTypeBuilder<UserEntity> builder)
   {
-    builder.HasKey(e => e.Id);
+    
     builder.HasOne(e => e.Stock).WithOne()
       .HasForeignKey<StockEntity>(e => e.UserId).IsRequired();
     builder.HasOne(e => e.Inventory).WithOne()

@@ -1,3 +1,4 @@
+using Aquadata.Application.Errors;
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.Pond.Common;
 using Aquadata.Core.Interfaces.Repository;
@@ -19,11 +20,19 @@ public class UpdatePond : IRequestHandler<UpdatePondInput, Result<PondOutput, Ex
   public async Task<Result<PondOutput, Exception>> Handle(UpdatePondInput request, CancellationToken cancellationToken)
   {
     var pond = await _repository.Get(request.Id, cancellationToken);
+
+    if (pond == null || !pond.IsActive) {
+      return Result<PondOutput, Exception>.Fail(
+        new EntityNotFoundException()
+      ); 
+    }
     pond.Update(request.Name, request.Area);
 
     await _repository.Update(pond, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);
 
-    return PondOutput.FromEntity(pond);
+    return Result<PondOutput, Exception>.Ok(
+      PondOutput.FromEntity(pond)
+    );
   }
 }

@@ -9,7 +9,7 @@ public class CostPerPondConfig : IEntityTypeConfiguration<CostPerPondEntity>
 {
   public void Configure(EntityTypeBuilder<CostPerPondEntity> builder)
   {
-    builder.HasKey(e => e.Id);
+    
     builder.HasOne<PondEntity>()
     .WithOne()
     .HasForeignKey<CostPerPondEntity>(e => e.PondId)
