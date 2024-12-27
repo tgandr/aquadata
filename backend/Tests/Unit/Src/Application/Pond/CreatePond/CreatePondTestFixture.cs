@@ -7,5 +7,5 @@ public class CreatePondTestFixture: ICollectionFixture<CreatePondTestFixture>
 {
 
   public CreatePondInput GetInput()
-    => new("name",10f);
+    => new("name",10f, Guid.NewGuid());
 }

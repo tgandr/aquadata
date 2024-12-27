@@ -8,7 +8,8 @@ public class PostLarvaePurchaseConfig : IEntityTypeConfiguration<PostLarvaePurch
 {
   public void Configure(EntityTypeBuilder<PostLarvaePurchaseEntity> builder)
   {
-    
+    builder.ToTable("PostLarvaePurchases");
+    builder.HasKey(e => e.Id);
     builder.HasOne(e => e.Cultivation)
       .WithOne()
       .HasForeignKey<PostLarvaePurchaseEntity>(e => e.CultivationId)

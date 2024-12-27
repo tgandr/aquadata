@@ -34,7 +34,7 @@ public class UserEntity : SeedWork.Entity, IAggregateRoot
   public virtual ICollection<GenericPurchaseEntity>? GenericPurchases {get;set;}
 
   private UserEntity() {}
-  private UserEntity(string name, string email, string profile, string password, 
+  private UserEntity(string name, string email, string password, string profile, 
   string farmName, string farmAddress, string phone)
   {
     Name = name;
@@ -47,9 +47,9 @@ public class UserEntity : SeedWork.Entity, IAggregateRoot
   }
 
   public static Result<UserEntity, ModelValidationException> Of(
-    string name, string email, string  profile, string password,
+    string name, string email, string  password, string profile,
     string farmName, string farmAddress, string phone) 
-  => Create (new UserEntity(name, email, profile, password, 
+  => Create (new UserEntity(name, email, password, profile, 
     farmName, farmAddress, phone));
   
 

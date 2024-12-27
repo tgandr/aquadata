@@ -31,11 +31,14 @@ public class CreatePond: IRequestHandler<CreatePondInput, Result<PondOutput, Exc
       return Result<PondOutput, Exception>.Fail(pondResult.Error!);
     }
 
-    await _repository.Insert(pondResult.Unwrap(), cancellationToken);
+    var pond = pondResult.Unwrap();
+    pond.UserId = request.UserId;
+    
+    await _repository.Insert(pond, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);
 
     return Result<PondOutput,Exception>.Ok(
-      PondOutput.FromEntity(pondResult.Unwrap())
+      PondOutput.FromEntity(pond)
     );
   }
 }

@@ -8,6 +8,8 @@ public class HarvestConfig : IEntityTypeConfiguration<HarvestEntity>
 {
   public void Configure(EntityTypeBuilder<HarvestEntity> builder)
   {
+    builder.ToTable("Harvests");
+    builder.HasKey(e => e.Id);
     builder.HasMany(e => e.Biometrics).WithOne()
       .HasForeignKey(e => e.HarverstId);
   }

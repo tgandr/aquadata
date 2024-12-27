@@ -8,6 +8,8 @@ public class WaterConfig : IEntityTypeConfiguration<WaterEntity>
 {
   public void Configure(EntityTypeBuilder<WaterEntity> builder)
   {
+    builder.ToTable("Waters");
+    builder.HasKey(e => e.Id);
     builder.ComplexProperty(e => e.PH);   
   }
 }

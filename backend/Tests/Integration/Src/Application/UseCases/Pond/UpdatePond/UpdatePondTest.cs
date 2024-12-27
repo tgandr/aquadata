@@ -3,7 +3,6 @@ using Aquadata.Core.Entities.Pond;
 using Aquadata.Infra.EF;
 using Aquadata.Infra.EF.Repositories;
 using Aquadata.IntegrationTests.Application.Common;
-using Aquadata.IntegrationTests.Application.UseCases.Pond.Common;
 using UseCase = Aquadata.Application.UseCases.Pond.UpdatePond;
 
 namespace Aquadata.IntegrationTests.Application.UseCases.Pond.UpdatePond;

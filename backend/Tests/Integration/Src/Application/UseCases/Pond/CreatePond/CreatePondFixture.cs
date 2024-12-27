@@ -5,5 +5,5 @@ namespace Aquadata.IntegrationTests.Application.UseCases.Pond.CreatePond;
 public class CreatePondFixture
 {
   public static CreatePondInput GetInput()
-    => new("name",10f);
+    => new("name",10f, Guid.Empty);
 }

@@ -11,7 +11,8 @@ public class CultivationConfig : IEntityTypeConfiguration<CultivationEntity>
 {
   public void Configure(EntityTypeBuilder<CultivationEntity> builder)
   {
-    
+    builder.ToTable("Cultivations");
+    builder.HasKey(e => e.Id);
     builder.HasOne(e => e.Water).WithOne()
       .HasForeignKey<WaterEntity>(e => e.CultivationId);
     builder.HasOne(e => e.Objective).WithOne()
