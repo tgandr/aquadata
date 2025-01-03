@@ -23,6 +23,8 @@ const NewCyclePopup = ({
     const [showSavedMessage, setShowSavedMessage] = useState(false);
     const [showMetas, setShowMetas] = useState(false);
     const [showParameters, setShowParameters] = useState(false);
+    const [checkEdit, setCheckEdit] = useState(false);
+    const [cult, setCult] = useState({});
     const [metas, setMetas] = useState({
         sobrevivencia: "",
         tempo: "",
@@ -42,6 +44,7 @@ const NewCyclePopup = ({
 
     const savePostLarvaeList = (l) => {
         if (l !== '') {
+            setForm({ ...form, origemPL: l });
             setPostLarvae([...postLarvae, l]);
             setCustomPostLarvae('');
             let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
@@ -113,10 +116,26 @@ const NewCyclePopup = ({
         const stressTestCheckOut = { ...form, testForm };
         setShowStressTestPopup(false);
         setForm(stressTestCheckOut);
-    }
+    };
+
+    const handleEditChanges = () => {
+        const cultivoCheckOut = {...cult, ...form, quantidadeEstocada: form.quantidadeEstocada * 1000}
+        const cultivo = 'cultivo-' + cult.id;
+        const history = JSON.parse(localStorage.getItem('history'));
+        const updateHistory = history.filter((c) => c.id !== cult.id);
+        updateHistory.push(cultivoCheckOut);
+        localStorage.setItem('history', JSON.stringify(updateHistory));
+        localStorage.setItem(cultivo, JSON.stringify(cultivoCheckOut));
+        setCultivo(cultivoCheckOut);
+        setShowNewCyclePopup(false);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (checkEdit) {
+            handleEditChanges();
+            return
+        }
         const viveiros = JSON.parse(localStorage.getItem('viveiros'));
         const vivNumber = viveiros.find(viv => viv.id === viveiroId);
         let history = JSON.parse(localStorage.getItem('history'));
@@ -181,7 +200,6 @@ const NewCyclePopup = ({
 
     useEffect(() => {
         const pondArea = JSON.parse(localStorage.getItem("viveiros")).find(p => p.id === viveiroId);
-        console.log(pondArea)
         setArea(pondArea.area);
         if (form.origemPL === 'custom') {
             setAddNewPostLarvae(true);
@@ -198,6 +216,28 @@ const NewCyclePopup = ({
             setPostLarvae(checkLists.postLarvaeList);
         }
     }, []);
+
+    useEffect(() => {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith("cultivo-")) {
+                const cultivo = JSON.parse(localStorage.getItem(key));
+                if (cultivo.viveiroId === viveiroId) {
+                    if (cultivo.hasShrimp) {
+                        setForm({
+                            ...form,
+                            dataPovoamento: cultivo.dataPovoamento,
+                            origemPL: cultivo.origemPL,
+                            uniformidade: cultivo.uniformidade,
+                            quantidadeEstocada: cultivo.quantidadeEstocada / 1000
+                        });
+                        setCheckEdit(true);
+                        setCult(cultivo);
+                    }
+                }
+            }
+        }
+    }, [])
 
     return (
         <>
@@ -232,9 +272,8 @@ const NewCyclePopup = ({
                             <label>
                                 Uniformidade:
                                 <select
-                                    // terminar programação
                                     name="uniformidade"
-                                    // value={}
+                                    value={form.uniformidade}
                                     onChange={handleChange}
                                     required>
                                     <option value="">Selecione</option>
@@ -257,7 +296,10 @@ const NewCyclePopup = ({
                             </label>
                             <span className="pls">{(form.quantidadeEstocada * 1000).toLocaleString('pt-BR')}&nbsp;
                                 pós-larvas</span>
-                            <span className="pls">{(form.quantidadeEstocada * 1000 / area / 10000).toLocaleString('pt-BR')}&nbsp;
+                            <span className="pls">{(form.quantidadeEstocada * 1000 / area / 10000).toLocaleString('pt-BR', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                            })}&nbsp;
                                 PLs/m²</span>
                             <label>
                                 Teste de Estresse:
@@ -271,7 +313,7 @@ const NewCyclePopup = ({
                                     </button>
                                 </div>
                             </label>
-                            <label>
+                            {/* <label>
                                 Calcular PL/grama por foto?
                                 <div className="stress-test-buttons">
                                     <button
@@ -280,16 +322,16 @@ const NewCyclePopup = ({
                                         // className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Sim' ? 'active' : ''}`}
                                         onClick={() => (handleCountPLbyPhoto('Sim'), setShowCountPlPopup(true))}>
                                         Contar
-                                    </button>
-                                    {/* <button
+                                    </button> */}
+                            {/* <button
                                         type="button"
                                         // className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Não' ? 'active' : ''}`}
                                         onClick={() => handleCountPLbyPhoto('Não')}
                                     >
                                         Não
                                     </button> */}
-                                </div>
-                            </label>
+                            {/* </div>
+                            </label> */}
                             <label>
                                 Qualidade da água de transporte e recebimento:
                                 <div className="stress-test-buttons">
@@ -447,7 +489,7 @@ const NewCyclePopup = ({
                                 <select name="details"
                                     value={formParam.details}
                                     onChange={handleParametersChange} required>
-                                    
+
                                     {(formParam.check === "true" || formParam.check === "") && (
                                         <option value="">Selecione</option>
                                     )}
@@ -462,9 +504,9 @@ const NewCyclePopup = ({
                                     {formParam.check === "false" && (
                                         <option value="false">Não</option>
                                     )}
-
                                 </select>
                             </label>
+
                             {formParam.details === "true" && (
                                 <>
                                     <table>
@@ -477,34 +519,34 @@ const NewCyclePopup = ({
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>Oxigênio</td>
+                                                <td>Oxigênio - mg/L</td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.oxygen.transp}
                                                         onChange={(e) => handleParametersChange(e, 'oxygen', 'transp')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.oxygen.pond}
                                                         onChange={(e) => handleParametersChange(e, 'oxygen', 'pond')}
                                                     />
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>Temperatura</td>
+                                                <td>Temperatura - ºC</td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.temperature.transp}
                                                         onChange={(e) => handleParametersChange(e, 'temperature', 'transp')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.temperature.pond}
                                                         onChange={(e) => handleParametersChange(e, 'temperature', 'pond')}
                                                     />
@@ -514,65 +556,65 @@ const NewCyclePopup = ({
                                                 <td>pH</td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.ph.transp}
                                                         onChange={(e) => handleParametersChange(e, 'ph', 'transp')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.ph.pond}
                                                         onChange={(e) => handleParametersChange(e, 'ph', 'pond')}
                                                     />
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>Salinidade</td>
+                                                <td>Salinidade - g/L</td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.salinity.transp}
                                                         onChange={(e) => handleParametersChange(e, 'salinity', 'transp')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.salinity.pond}
                                                         onChange={(e) => handleParametersChange(e, 'salinity', 'pond')}
                                                     />
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>Amônia</td>
+                                                <td>Amônia - mg/L</td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.ammonium.transp}
                                                         onChange={(e) => handleParametersChange(e, 'ammonium', 'transp')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.ammonium.pond}
                                                         onChange={(e) => handleParametersChange(e, 'ammonium', 'pond')}
                                                     />
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>Nitrito</td>
+                                                <td>Nitrito - mg/L</td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.nitrite.transp}
                                                         onChange={(e) => handleParametersChange(e, 'nitrite', 'transp')}
                                                     />
                                                 </td>
                                                 <td>
                                                     <input
-                                                        type="text"
+                                                        type="number"
                                                         value={formParam.nitrite.pond}
                                                         onChange={(e) => handleParametersChange(e, 'nitrite', 'pond')}
                                                     />
@@ -621,7 +663,7 @@ const NewCyclePopup = ({
                                 Nome:
                                 <input
                                     type="text"
-                                    name="fertilizer"
+                                    name="customPostLarvae"
                                     value={customPostLarvae}
                                     onChange={(e) => setCustomPostLarvae(e.target.value)}
                                     required />

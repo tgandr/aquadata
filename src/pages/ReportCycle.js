@@ -17,8 +17,9 @@ const ReportCycle = () => {
     }
     const cultivo = JSON.parse(localStorage.getItem(cultivoId)) ||
         findInHistory();
-    
+
     const stockData = JSON.parse(localStorage.getItem('stockData'));
+    const [showReceiptPostLarvaes, setShowReceiptPostLarvaes] = useState(false);
     const [showStressTest, setShowStressTest] = useState(false);
     const [showBiometrics, setShowBiometrics] = useState(false);
     const [showRacao, setShowRacao] = useState(false);
@@ -37,23 +38,27 @@ const ReportCycle = () => {
                 (parseInt(biom.data.biomass) || parseInt(biom.data.biomassAtFinalHarvest)), 0) : 0;
             return { feed: feed, biomass: biomass }
         }
+        // pegar erro para o caso de não haver lançamento de ração
     }
 
     const tipoTesteMap = {
         alteracaoSalinidade: "Alteração de Salinidade",
-        alteracaoTemperatura: "Alteração de Temperatura"
+        alteracaoTemperatura: "Alteração de Temperatura",
+        aguaViveiro: "Com água do viveiro"
     };
 
     const alteracaoNatatoriaMap = {
         pequena: "Pequena",
         media: "Média",
-        grande: "Grande"
+        grande: "Grande",
+        nenhuma: "Nenhuma"
     };
 
     const larvasMortasMap = {
         poucas: "Poucas",
         algumas: "Algumas",
-        muitas: "Muitas"
+        muitas: "Muitas",
+        nenhuma: "Nenhuma"
     };
 
     const produtividade = () => {
@@ -75,7 +80,132 @@ const ReportCycle = () => {
                 </div>
 
                 <div className="report-tables">
-                    <h3 className="toggle-title" onClick={() => setShowStressTest(!showStressTest)}>
+                    <h3 className="toggle-title" onClick={() => setShowReceiptPostLarvaes(!showReceiptPostLarvaes)}>
+                        Recebimento das pós-larvas
+                        {showReceiptPostLarvaes ? (
+                            <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
+                        ) : (
+                            <FontAwesomeIcon icon={faChevronDown} className="toggle-icon rotate-icon" />
+                        )}
+                    </h3>
+                    {showReceiptPostLarvaes &&
+                        <>
+                            {cultivo.uniformidade === 'desuniforme' ?
+                                <p style={{ textAlign: 'left' }}>As pós-larvas eram desuniformes no recebimento</p>
+                                : <p style={{ textAlign: 'left' }}>Uniformidade <strong>{cultivo.uniformidade}</strong> no recebimento</p>}
+                            {cultivo.testForm ?
+                                (<table className="biometry-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Teste de estresse</th>
+                                            <th>Alteração Natatória</th>
+                                            <th>Larvas Mortas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style={{ textAlign: "center" }}>
+                                                {tipoTesteMap[cultivo.testForm.tipoTeste]}
+                                            </td>
+                                            <td style={{ textAlign: "center" }}>
+                                                {alteracaoNatatoriaMap[cultivo.testForm.alteracaoNatatoria]}
+                                            </td>
+                                            <td style={{ textAlign: "center" }}>
+                                                {larvasMortasMap[cultivo.testForm.larvasMortas]}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                ) : (<p style={{ textAlign: 'left' }}>Teste de estresse não realizado</p>)}
+                            {cultivo.formParam && (cultivo.formParam.details === "true" ?
+                                <>
+                                    <table className="biometry-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Parâmetro</th>
+                                                <th>Transporte</th>
+                                                <th>Viveiro</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td style={{ textAlign: "left" }}>
+                                                    Oxigênio
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.oxygen.transp} mg/L
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.oxygen.pond} mg/L
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style={{ textAlign: "left" }}>
+                                                    Temperatura
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.temperature.transp} °C
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.temperature.pond} °C
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style={{ textAlign: "left" }}>
+                                                    pH
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.ph.transp}
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.ph.pond}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style={{ textAlign: "left" }}>
+                                                    Salinidade
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.salinity.transp} g/L
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.salinity.pond} g/L
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style={{ textAlign: "left" }}>
+                                                    Amônia
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.ammonium.transp} mg/L
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.ammonium.pond} mg/L
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style={{ textAlign: "left" }}>
+                                                    Nitrito
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.nitrite.transp} mg/L
+                                                </td>
+                                                <td style={{ textAlign: "right" }}>
+                                                    {cultivo.formParam.nitrite.pond} mg/L
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </> : 
+                                (cultivo.formParam.check === 'true'
+                                    ? <p style={{ textAlign: 'left' }}>A checagem de parâmetros foi realizada mas não foi detalhada</p>
+                                    : <p style={{ textAlign: 'left' }}>Não foi feita a checagem de parâmetros de água no recebimento</p>)
+                            )}
+                            <br />
+                        </>
+                    }
+
+                    {/* <h3 className="toggle-title" onClick={() => setShowStressTest(!showStressTest)}>
                         Teste de Estresse
                         {showStressTest ? (
                             <FontAwesomeIcon icon={faChevronDown} className="toggle-icon" />
@@ -107,7 +237,7 @@ const ReportCycle = () => {
                                 </tr>
                             </tbody>
                         </table>
-                    ) : (<p>Não realizado</p>))}
+                    ) : (<p>Não realizado</p>))} */}
 
                     <h3 className="toggle-title" onClick={() => setShowRacao(!showRacao)}>
                         Ração

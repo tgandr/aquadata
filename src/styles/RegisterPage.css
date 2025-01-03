@@ -3,37 +3,46 @@ body {
 }
 
 .register-page {
-display: flex;
-flex-direction: column;
-align-items: center; /* centraliza os itens horizontalmente */
-padding: 50px;
-background-color: #f3f5f0;
-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* centraliza os itens horizontalmente */
+  padding: 50px;
+  background-color: #f3f5f0;
+  height: 100%;
 }
 
 .register-page form {
-width: 100%; /* garante que o formulário ocupe 100% da largura do contêiner pai */
-max-width: 400px; /* define um limite máximo para a largura */
+  width: 100%;
+  /* garante que o formulário ocupe 100% da largura do contêiner pai */
+  max-width: 400px;
+  /* define um limite máximo para a largura */
 }
 
 .register-page input,
 .register-page select,
 .register-page button {
-width: 100%; /* garante que os elementos do formulário ocupem 100% da largura do contêiner pai */
-margin-bottom: 15px; /* adiciona espaçamento inferior entre os elementos do formulário */
+  width: 100%;
+  /* garante que os elementos do formulário ocupem 100% da largura do contêiner pai */
+  margin-bottom: 15px;
+  /* adiciona espaçamento inferior entre os elementos do formulário */
 }
 
 
 .register-page form {
-  width: 100%; /* garante que o formulário ocupe 100% da largura do contêiner pai */
-  max-width: 400px; /* define um limite máximo para a largura */
+  width: 100%;
+  /* garante que o formulário ocupe 100% da largura do contêiner pai */
+  max-width: 400px;
+  /* define um limite máximo para a largura */
 }
 
 .register-page input,
 .register-page select,
 .register-page button {
-  width: 100%; /* garante que os elementos do formulário ocupem 100% da largura do contêiner pai */
-  margin-bottom: 15px; /* adiciona espaçamento inferior entre os elementos do formulário */
+  width: 100%;
+  /* garante que os elementos do formulário ocupem 100% da largura do contêiner pai */
+  margin-bottom: 15px;
+  /* adiciona espaçamento inferior entre os elementos do formulário */
 }
 
 
@@ -97,25 +106,68 @@ label {
 
 select {
   cursor: pointer;
-  appearance: none; /* remove a aparência padrão do dropdown */
+  appearance: none;
+  /* remove a aparência padrão do dropdown */
   -webkit-appearance: none;
   -moz-appearance: none;
-  width: 100%; /* use 100% para garantir que o select ocupe toda a largura do contêiner pai */
-  padding: 10px; /* ajuste o padding conforme necessário */
-  background-color: transparent; /* torna o dropdown transparente */
-  border: 1px solid #ccc; /* adicione uma borda para visibilidade */
-  border-radius: 4px; /* arredonde os cantos */
-  box-sizing: border-box; /* inclua padding e borda no cálculo da largura */
+  width: 100%;
+  /* use 100% para garantir que o select ocupe toda a largura do contêiner pai */
+  padding: 10px;
+  /* ajuste o padding conforme necessário */
+  background-color: transparent;
+  /* torna o dropdown transparente */
+  border: 1px solid #ccc;
+  /* adicione uma borda para visibilidade */
+  border-radius: 4px;
+  /* arredonde os cantos */
+  box-sizing: border-box;
+  /* inclua padding e borda no cálculo da largura */
 }
 
 
 .placeholder-option {
-  display: none; /* oculta a primeira opção padrão */
+  display: none;
+  /* oculta a primeira opção padrão */
 }
 
 .placeholder-option:before {
-  content: 'Perfil'; /* texto do placeholder */
+  content: 'Perfil';
+  /* texto do placeholder */
   color: #888;
+}
+
+.password-input {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.password-input button {
+  width: 20%;
+  margin: 10px 14px 10px 0px;
+  height: 100%;
+  padding: 6px 7px 7px 7px !important;
+  border-radius: 0px 5px 5px 0px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  /* inclua padding e borda no cálculo da largura */
+
+}
+
+.password-input input {
+  box-sizing: border-box;
+  /* inclua padding e borda no cálculo da largura */
+  margin: 10px 0px 10px 14px;
+  border-radius: 5px 0px 0px 5px;
+  border-top: 1px solid #ccc !important;
+  /* Borda superior */
+  border-right: 0px solid transparent !important;
+  /* Sem borda direita */
+  border-bottom: 1px solid #ccc !important;
+  /* Borda inferior */
+  border-left: 1px solid #ccc !important;
+  /* Borda esquerda */
+
 }
 
 /* Media query para smartphones */

@@ -21,11 +21,13 @@ const Stock = () => {
   });
 
   const calculateTotalValue = (purchaseData) => {
-    const totalFeedPurchases = stockData.feedPurchase.reduce((total, i) =>
-      total + (parseFloat(i.quantity) * (parseFloat(i.value) / parseInt(i.bagSize))), 0);
-    return purchaseData.reduce((total, item) => {
-      return total + (parseFloat(item.quantity) * parseFloat(item.value));
-    }, totalFeedPurchases);
+    if (stockData.feedPurchase) {
+      const totalFeedPurchases = stockData.feedPurchase.reduce((total, i) =>
+        total + (parseFloat(i.quantity) * (parseFloat(i.value) / parseInt(i.bagSize))), 0);
+      return purchaseData.reduce((total, item) => {
+        return total + (parseFloat(item.quantity) * parseFloat(item.value));
+      }, totalFeedPurchases);
+    }
   };
 
   const totalValue = calculateTotalValue(
@@ -126,7 +128,7 @@ const Stock = () => {
             <span>Outros</span>
           </div>
         </button>
-        {showTotalValue && (
+        {showTotalValue && totalValue && (
           <h4>Valor Total em Estoque: R$ {(totalValue).toLocaleString('pt-BR',
             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
         )}

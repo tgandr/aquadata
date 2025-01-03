@@ -36,6 +36,8 @@ const PondDetail = () => {
   const [parcialProduction, setParcialProdution] = useState({});
   const [showMetas, setShowMetas] = useState(false);
   const [showMetasTable, setShowMetasTable] = useState(false);
+  const [area, setArea] = useState(0);
+  // const [showEditData, setShowEditData] = useState(false);
   const [editMetas, setEditMetas] = useState({
     sobrevivencia: false,
     tamanho: false,
@@ -53,6 +55,7 @@ const PondDetail = () => {
     origemPL: '',
     quantidadeEstocada: '',
     testeEstresse: '',
+    uniformidade: ''
   });
 
   const [formBiometry, setFormBiometry] = useState({
@@ -114,6 +117,11 @@ const PondDetail = () => {
       setFeedUsed(0);
     }
   }, [cultivo]);
+
+  useEffect(() => {
+    const checkArea = JSON.parse(localStorage.getItem('viveiros')).find(p => p.id === viveiroId).area;
+    setArea(checkArea * 10000);
+  }, []);
 
   const saveData = (data, key) => {
     const storedCultivos = JSON.parse(localStorage.getItem(`history`));
@@ -186,8 +194,6 @@ const PondDetail = () => {
     } else {
       alert('Por favor, verifique e tente novamente.');
     }
-    // pegar o erro: quando é lançada meta depois de começar o cultivo, a tela pega dados atrasados.
-    // também apagaou a despesca total feita ao lançar metas num cultivo iniciado
   }
 
   const exitMetas = () => {
@@ -198,10 +204,10 @@ const PondDetail = () => {
     if (metasNaoSalvas.length > 0) {
       if (metasNaoSalvas.length === 1) {
         alert(`Salvar meta de ${metasNaoSalvas[0]}!`)
-      } 
-      if (metasNaoSalvas.length === 2){
+      }
+      if (metasNaoSalvas.length === 2) {
         alert(`Salvar metas ${metasNaoSalvas.join(" e ")}!`)
-      } 
+      }
       if (metasNaoSalvas.length === 3) {
         alert(`Salvar metas ${metasNaoSalvas.join(", ")}!`)
       }
@@ -225,17 +231,64 @@ const PondDetail = () => {
       </div>
       {cultivo ? (
         <>
-          <div className="infos">
-            <p>Povoamento em {formatDate(cultivo.dataPovoamento).date}</p>
-            <p>{formatDate(cultivo.dataPovoamento).days} dias de cultivo</p>
-            <p>Origem da PL: {cultivo.origemPL}</p>
-            <p>Quantidade Estocada: {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
+          <div className="infos" style={{ width: '90%' }}>
+            <div style={
+              {
+                borderRadius: '5px',
+                overflow: 'hidden',
+                border: '1px solid #1E3A8A',
+                marginLeft: '1px',
+                marginRight: '1px'
+              }}>
+              <table
+                style={{ width: '100%', borderCollapse: 'collapse' }}
+                // onClick={() => setShowEditData(true)}
+                onClick={() => setShowNewCyclePopup(true)}>
+                <tbody>
+                  <tr>
+
+                    <td style={{ textAlign: 'left', paddingLeft: '5px' }}>
+                      <strong>Origem da PL:</strong> {cultivo.origemPL}
+                    </td>
+                    <td rowSpan="3" style={
+                      {
+                        textAlign: 'center',
+                        verticalAlign: 'middle',
+                        width: '30%',
+                        borderLeft: '1px solid #1E3A8A'
+                      }}>
+                      <p style={{ fontSize: '1.5rem' }}>
+                        <strong>{formatDate(cultivo.dataPovoamento).days}</strong></p>dias<br />
+                      {formatDate(cultivo.dataPovoamento).date}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ textAlign: 'left', paddingLeft: '5px' }}>
+                      <strong>Quantidade Estocada:</strong> {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}
+                    </td>
+                  </tr>
+                  <tr>
+
+                    <td style={{ textAlign: 'left', paddingLeft: '5px' }}>
+                      <strong>Densidade:</strong> {parcialProduction.totalBiomass && cultivo.hasShrimp ? (
+                        ((1 - parcialProduction.removedRate) * cultivo.quantidadeEstocada / area).toLocaleString("pt-BR", {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        }) + " camarões/m²"
+                      ) : (
+                        parseInt(cultivo.quantidadeEstocada / area) + " camarões/m²"
+                      )}
+                    </td>
+
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </ div>
 
           <div className="buttons-container">
             {showButtons && (
               <>
-                {/* Grupo 1 */}
                 <button className="pond-button1" onClick={() => setShowFeedPopup(true)}>
                   <i className="fas fa-bowl-rice"></i> Ração
                   {feedUsed !== 0 ? (<p className="buttons-infos">{feedUsed} kg consumidos</p>) :
@@ -250,16 +303,14 @@ const PondDetail = () => {
                 <button className="pond-button1" onClick={() => setShowFertilizationPopup(true)}>
                   <i className="fas fa-boxes-stacked"></i> Fertilização
                 </button>
-
                 <div className="group-divider"></div>
 
-                {/* Grupo 2 */}
                 <button className="pond-button2" onClick={() => setShowMetas(true)}>
                   <i className="fas fa-trophy"></i> Metas
                   {cultivo.metas ? (<p className="buttons-infos">Produção de {(cultivo.quantidadeEstocada *
-                    cultivo.metas.sobrevivencia / 100 * 
+                    cultivo.metas.sobrevivencia / 100 *
                     cultivo.metas.tamanho / 1000)
-                      .toLocaleString('pt-BR')} kg</p>) :
+                    .toLocaleString('pt-BR')} kg</p>) :
                     (<p className="buttons-infos">Sem metas registradas</p>)}
                 </button>
                 <button className="pond-button2" onClick={() => setShowHarvest(true)}>
@@ -475,9 +526,13 @@ const PondDetail = () => {
                   Não há metas registradas
                 </p>
                 <button type='button' className='meta-button'
-                  onClick={() => {setCultivo({...cultivo, metas: {
-                  sobrevivencia: 0, tamanho: 0, tempo: 0
-                }}); setShowMetasTable(true)}}>
+                  onClick={() => {
+                    setCultivo({
+                      ...cultivo, metas: {
+                        sobrevivencia: 0, tamanho: 0, tempo: 0
+                      }
+                    }); setShowMetasTable(true)
+                  }}>
                   Registrar metas
                 </button>
               </>
@@ -520,16 +575,22 @@ const PondDetail = () => {
               <tr>
                 <th style={{ textAlign: 'center' }}>Data</th>
                 <th>Peso Médio (g)</th>
+                <th>Biomassa</th>
               </tr>
             </thead>
             <tbody>
-              {biometrics.map((biometry, index) => (
+              {biometrics.slice().reverse().map((biometry, index) => (
                 <tr key={index}>
                   <td><strong>{formatDate(biometry.data).date}</strong></td>
                   <td style={{ textAlign: 'right' }}>{parseFloat(biometry.pesoMedio).toLocaleString("pt-BR", {
                     minimumFractionDigits: 1,
                     maximumFractionDigits: 1,
                   })} g</td>
+                  <td style={{ textAlign: 'right' }}>{parseFloat(biometry.pesoMedio * cultivo.quantidadeEstocada / 1000)
+                    .toLocaleString("pt-BR", {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    })} Kg</td>
                 </tr>
               ))}
             </tbody>

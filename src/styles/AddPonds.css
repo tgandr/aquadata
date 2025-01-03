@@ -80,9 +80,13 @@
 }
 
 .viveiro-data {
-  color: var(--color-orange-medium);
+  color: var(--color-orange-dark);
   font-size: 14px;
   padding: 1px;
+}
+
+.viveiro-data strong {
+  font-size: 16px;
 }
 
 .infos-wrapper {

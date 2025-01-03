@@ -308,7 +308,7 @@ const HarvestPopup = ({
             <h3>Despesca {harvestTotals.id.totalOrParcial}</h3><br />
 
             <form onSubmit={handleHarvestConfirm} >
-              <label htmlFor="biomass">Biomassa colhida (kg):</label>
+              <label htmlFor="biomass">Biomassa despescada (kg):</label>
               <div className="harv-biomass-form">
                 <input
                   type="number"
@@ -341,7 +341,7 @@ const HarvestPopup = ({
 
               {(showPercentual && checkHarvestTotalOrParcial === 'parcial') && (
                 <>
-                  <p>Biomassa colhida: {parseInt(harvestTotals.data.biomass).toLocaleString('pt-BR')} kg</p>
+                  <p>Biomassa despescada: {parseInt(harvestTotals.data.biomass).toLocaleString('pt-BR')} kg</p>
                   <p>Receita apurada: {(harvestTotals.data.biomass * harvestTotals.id.price).toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL',
