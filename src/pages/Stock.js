@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import '../styles/Stock.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBoxesPacking, faBacteria, faBoxesStacked, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
@@ -7,7 +6,6 @@ import { formatDate } from './utils';
 import { IconContainer } from './utils';
 
 const Stock = () => {
-  // const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState({ ration: false, probiotics: false, fertilizers: false, others: false });
   const formData = JSON.parse(localStorage.getItem('formData'));
   const [showTotalValue, setShowTotalValue] = useState(false);
