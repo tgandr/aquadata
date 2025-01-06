@@ -5,9 +5,10 @@ using Aquadata.Core.Entities.Inventory;
 using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Entities.Stock;
-using Aquadata.Core.Errors;
 using Aquadata.Core.Interfaces;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.User;
 
@@ -46,20 +47,20 @@ public class UserEntity : SeedWork.Entity, IAggregateRoot
     Profile = profile;
   }
 
-  public static Result<UserEntity, ModelValidationException> Of(
+  public static Result<UserEntity> Of(
     string name, string email, string  password, string profile,
     string farmName, string farmAddress, string phone) 
   => Create (new UserEntity(name, email, password, profile, 
     farmName, farmAddress, phone));
   
 
-  public Result<ModelValidationException> Update(string name, string email, string password, string profile,
+  public Result<UserEntity> Update(string name, string email, string password, string profile,
     string farmName, string farmAddress, string phone)
   {
     var validateResult = Validate();
 
     if (validateResult.IsFail)
-      return Result<ModelValidationException>.Fail(validateResult.Error!); 
+      return Result<UserEntity>.Fail(validateResult.Error!); 
 
     Name = name;
     Email = email;
@@ -69,39 +70,60 @@ public class UserEntity : SeedWork.Entity, IAggregateRoot
     Phone = phone;
     Profile = profile;
     
-    return Result<ModelValidationException>.Ok();
+    return Result<UserEntity>.Ok(this);
   }
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(Name))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("User name cannot be null or Empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.User",
+          "Name cannot be null or Empty"
+        )
       );
     if (string.IsNullOrWhiteSpace(Email))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("User email cannot be null or Empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.User",
+          "Email cannot be null or Empty"
+        )
       );
     if (string.IsNullOrWhiteSpace(Password))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("User password cannot be null or Empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.User",
+          "Password cannot be null or Empty"
+        )
       );
     if (string.IsNullOrWhiteSpace(FarmName))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("User farmName cannot be null or Empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.User",
+          "FarmName cannot be null or Empty"
+        )
       );
     if (string.IsNullOrWhiteSpace(FarmAddress))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("User farmAddress cannot be null or Empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.User",
+          "FarmAddress cannot be null or Empty"
+        )
       );
     if (string.IsNullOrWhiteSpace(Phone))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("User phone cannot be null or Empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.User",
+          "Phone cannot be null or Empty"
+        )
       );
     if (string.IsNullOrWhiteSpace(Profile))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("User profile cannot be null or Empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.User",
+          "User profile cannot be null or Empty"
+        )
       );
-    return Result<ModelValidationException>.Ok(); 
+    return Result<Entity>.Ok(this); 
   }
 }

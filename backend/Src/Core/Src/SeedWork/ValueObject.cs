@@ -1,5 +1,5 @@
-using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.SeedWork;
 
@@ -23,9 +23,16 @@ public abstract class ValueObject : IEquatable<ValueObject>
   public static bool operator != (ValueObject? left, ValueObject right)
     => !(left == right);
 
-  protected static Result<T, ModelValidationException> Create<T>(T vo)
+  protected static Result<T> Create<T>(T vo)
     where T: ValueObject
-    => vo.Validate().IfOkReturn(vo);
+  {
+    var result = vo.Validate();
 
-  public abstract Result<ModelValidationException> Validate();
+    if (result.IsFail)
+      return Result<T>.Fail(Error.None);
+
+    return Result<T>.Ok(vo);
+  }
+
+  public abstract Result<ValueObject> Validate();
 }

@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.User.CreateUser;
 
-public class CreateUser : IRequestHandler<CreateUserInput, Result<UserOutput, Exception>>
+public class CreateUser : IApplicationHandler<CreateUserInput,UserOutput>
 {
   private readonly IUserRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
@@ -19,7 +19,7 @@ public class CreateUser : IRequestHandler<CreateUserInput, Result<UserOutput, Ex
     _unitOfWork = unitOfWork;
   }
 
-  public async Task<Result<UserOutput, Exception>> Handle(CreateUserInput request, 
+  public async Task<Result<UserOutput>> Handle(CreateUserInput request, 
   CancellationToken cancellationToken)
   {
     var userResult = UserEntity.Of(
@@ -33,13 +33,13 @@ public class CreateUser : IRequestHandler<CreateUserInput, Result<UserOutput, Ex
     );
 
     if (userResult.IsFail) {
-      return Result<UserOutput, Exception>.Fail(userResult.Error!);
+      return Result<UserOutput>.Fail(userResult.Error!);
     }
 
     await _repository.Insert(userResult.Unwrap(), cancellationToken);
     await _unitOfWork.Commit(cancellationToken);
 
-    return Result<UserOutput, Exception>.Ok(
+    return Result<UserOutput>.Ok(
       UserOutput.FromEntity(userResult.Unwrap())
     );
   }

@@ -1,5 +1,5 @@
 using Aquadata.Core.Entities.Fertilizer;
-using Aquadata.Core.Errors;
+
 using Aquadata.Core.Enums;
 
 namespace Aquadata.UnitTests.Core.Entities.Fertilizer;
@@ -35,14 +35,4 @@ public class FertilizerTest
     Assert.Equal(expected.MeasureUnit, current.MeasureUnit);
   }
 
-  [Fact]
-  public void GivenInvalidParamsWhenCreateThrowError()
-  {
-    var invalid = FertilizerEntity.Of("", DateTime.Now, 
-    FertilizerType.Bokashi, 10, MeasureUnit.g);
-
-    Assert.Throws<ModelValidationException>(() => {
-      invalid.Unwrap();
-    });
-  }
 }

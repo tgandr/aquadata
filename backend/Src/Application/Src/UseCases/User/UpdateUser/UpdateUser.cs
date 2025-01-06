@@ -3,12 +3,12 @@ using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.User.Common;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 using MediatR;
 
 namespace Aquadata.Application.UseCases.User.UpdateUser;
 
-public class UpdateUser: IRequestHandler<UpdateUserInput, 
-Result<UserOutput, Exception>>
+public class UpdateUser: IApplicationHandler<UpdateUserInput,UserOutput>
 {
   private readonly IUserRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
@@ -19,15 +19,18 @@ Result<UserOutput, Exception>>
       _unitOfWork = unitOfWork;
   }
 
-  public async Task<Result<UserOutput, Exception>> Handle(UpdateUserInput request, 
+  public async Task<Result<UserOutput>> Handle(UpdateUserInput request, 
   CancellationToken cancellationToken)
   {
     var user = await _repository.Get(request.Id, cancellationToken);
 
     if (user == null)
     {
-      Result<UserOutput, Exception>.Fail(
-        new EntityNotFoundException()
+      Result<UserOutput>.Fail(
+        Error.NotFound(
+          "User.UseCases.UpdateUser",
+          "User not found'"
+        )
       );
     }
 
@@ -38,13 +41,13 @@ Result<UserOutput, Exception>>
 
     if (updateResult.IsFail)
     {
-      return Result<UserOutput, Exception>.Fail(updateResult.Error!);
+      return Result<UserOutput>.Fail(updateResult.Error!);
     }
 
     await _repository.Update(user, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);
 
-    return Result<UserOutput, Exception>.Ok(
+    return Result<UserOutput>.Ok(
       UserOutput.FromEntity(user)
     );
   }

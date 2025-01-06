@@ -1,5 +1,7 @@
-using Aquadata.Core.Errors;
+
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.ValueObjects;
 
@@ -13,18 +15,21 @@ public class PH : SeedWork.ValueObject
     Value = value;
   }
   
-  public static Result<PH, ModelValidationException> Of(byte value)
+  public static Result<PH> Of(byte value)
     => Create(new PH(value));
   
 
-  public override Result<ModelValidationException> Validate()
+  public override Result<ValueObject> Validate()
   {
     if (Value < 0 || Value > 14)
-      return Result<ModelValidationException>.Fail(new ModelValidationException(
+      return Result<ValueObject>.Fail(
+       Error.Validation(
+        "Core.PH",
         "Ph value must be between 0 and 14"
-      ));  
+      )
+    );  
 
-    return Result<ModelValidationException>.Ok();
+    return Result<ValueObject>.Ok(this);
   }
 
   public override bool Equals(SeedWork.ValueObject? other)

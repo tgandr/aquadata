@@ -1,6 +1,7 @@
 using Aquadata.Core.Entities.Biometric;
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Harvest;
 
@@ -25,18 +26,21 @@ public class HarvestEntity : SeedWork.Entity
     BioMass = bioMass;
   }
   private HarvestEntity() {}
-  public static Result<HarvestEntity,ModelValidationException> Of(
+  public static Result<HarvestEntity> Of(
     string buyer, decimal price, 
     DateTime date, bool isTotal, float bioMass
   ) => Create(new HarvestEntity(buyer, price, date, isTotal, bioMass));
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(Buyer))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("Harvest buyer cannot be null or empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.Harvest",
+          "Buyer cannot be null or empty"
+        )
       );
 
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }

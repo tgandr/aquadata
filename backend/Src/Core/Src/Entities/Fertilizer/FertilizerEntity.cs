@@ -1,6 +1,7 @@
-using Aquadata.Core.Errors;
 using Aquadata.Core.Enums;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Fertilizer;
 
@@ -24,16 +25,19 @@ public class FertilizerEntity : SeedWork.Entity
   }
 
   private FertilizerEntity(){}
-  public static Result<FertilizerEntity, ModelValidationException> Of(string name, DateTime date, FertilizerType type, 
+  public static Result<FertilizerEntity> Of(string name, DateTime date, FertilizerType type, 
   int quantity, MeasureUnit measureUnit)
     => Create(new FertilizerEntity(name, date, type, quantity, measureUnit));
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(Name))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("Fertilizer name cannot be null or empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.Fertilizer",
+          "Name cannot be null or empty"
+        )
       );
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }

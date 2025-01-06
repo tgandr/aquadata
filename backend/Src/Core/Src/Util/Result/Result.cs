@@ -1,102 +1,46 @@
+using Aquadata.Core.Util.Result;
+
 namespace Aquadata.Core.Util;
 
 
 /// <summary>
-/// Result is a type that represents either success T or failure E.
-/// Based on Rust type Result.
+/// Result is a type that represents either success T or failure Error.
 /// </summary>
 /// <typeparam name="T">Contains the success value</typeparam>
-/// <typeparam name="E">Contains the exception value</typeparam>
-public class Result<T, E>
-  where E : Exception
+public class Result<T>
 {
   private T? _data;
-  public E? Error { get;}
+  public Error Error { get;}
   public bool IsFail { get; }
 
   protected Result(T data)
   {
     _data = data;
     IsFail = false;
+    Error = Error.None;
   }
 
-  protected Result(E error)
+  protected Result(Error error)
   {
     _data = default;
     Error = error;
     IsFail = true;
   }
 
-  protected Result()
-  {
-    _data = default;
-    Error = default;
-    IsFail = false;
-  }
+  public static Result<T> Ok(T data)
+    => new Result<T>(data);
 
-  public static Result<T,E> Ok(T data)
-  {
-    return new Result<T,E>(data);
-  }
+  public static Result<T> Fail(Error error)
+    => new Result<T>(error);
 
-  public static Result<E> Ok()
-  {
-    return Result<E>.Ok();
-  }
-
-  public static Result<T,E> Fail(E error)
-  {
-    return new Result<T,E>(error);
-  }
-
-  /// <summary>
-  /// Returns T data if is Ok, otherwise throw exception
-  /// </summary>
   public T Unwrap()
   {
-    if (!IsFail && _data != null)
-      return _data!;
-    if (!IsFail && _data == null)
-      throw new Exception("Cannot Unwrap empty result");
-    else throw Error!;
+    if (IsFail)
+      throw new Exception("Cannot unwrap a fail result");
+    
+    return _data!;
   }
 
-  /// <summary>
-  /// Returns a Ok Result passing <paramref name="res"/> if IsOk, 
-  /// otherwise return <typeparamref name="E"/> result.
-  /// </summary>
-  /// <typeparam name="TReturn">Type of returned value</typeparam>
-  /// <param name="res">Value to be returned as Ok</param>
-  public Result<TReturn, E> IfOkReturn<TReturn>(TReturn res)
-  {
-    if (!IsFail)
-      return new Result<TReturn,E>(res);
-    return new Result<TReturn,E>(Error!);
-  }
-
-  public static implicit operator bool(Result<T,E> result) => result.IsFail;
-  public static implicit operator Result<T,E>(T data) => new Result<T,E>(data);
-  public static implicit operator Result<T,E>(E error) => new Result<T,E>(error);
-}
-
-public class Result<E>: Result<object, E>
-  where E: Exception
-{
-  private Result(E error)
-    :base(error) {}
-  
-  private Result()
-    :base(){}
-
-  public new static Result<E> Ok()
-  {
-    return new Result<E>();
-  }
-
-  public new static Result<E> Fail(E error)
-  {
-    return new Result<E>(error);
-  }
-
-  public static implicit operator Result<E>(E error) => new Result<E>(error);
+  public static implicit operator Result<T>(T data) => new Result<T>(data);
+  public static implicit operator Result<T>(Error error) => new Result<T>(error);
 }

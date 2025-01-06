@@ -1,5 +1,6 @@
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Feed;
 
@@ -26,18 +27,20 @@ public class FeedEntity : SeedWork.Entity
     ReducedOrSuspended = reducedOrSuspended;
   }
 
-  public static Result<FeedEntity,ModelValidationException> Of(DateTime date, int frequency, float totalOfDay, 
+  public static Result<FeedEntity> Of(DateTime date, int frequency, float totalOfDay, 
   string rationName, bool hadLeftovers, bool reducedOrSuspended
   ) => Create(new FeedEntity(date,frequency, totalOfDay, rationName, 
     hadLeftovers, reducedOrSuspended));
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(RationName))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("Feed Ration name cannot be null or empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.Feed",
+          "Ration name cannot be null or empty")
       );
 
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }

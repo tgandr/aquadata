@@ -1,4 +1,3 @@
-using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.Purchase;
@@ -24,7 +23,7 @@ public class FeedPurchaseEntity : PurchaseBase
     RationType = rationType;
   }
 
-  public static Result<FeedPurchaseEntity,ModelValidationException> Of(
+  public static Result<FeedPurchaseEntity> Of(
     DateOnly date, string label, string brand,
     int quantity, decimal value, DateOnly validity, 
     int bagSize, string rationType

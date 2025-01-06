@@ -1,5 +1,6 @@
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Employee;
 
@@ -15,15 +16,18 @@ public class EmployeeEntity : SeedWork.Entity
   }
 
   private EmployeeEntity() {}
-  public static Result<EmployeeEntity, ModelValidationException> Of(string name)
+  public static Result<EmployeeEntity> Of(string name)
     => Create(new EmployeeEntity(name));
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(Name))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("Employee name cannot be null or empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.Employee", 
+          "Name cannot be null or empty"
+        )
       );
 
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }

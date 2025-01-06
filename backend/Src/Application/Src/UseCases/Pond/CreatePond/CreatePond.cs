@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Pond.CreatePond;
 
-public class CreatePond: IRequestHandler<CreatePondInput, Result<PondOutput, Exception>>
+public class CreatePond: IApplicationHandler<CreatePondInput, PondOutput>
 {
   private readonly IPondRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
@@ -18,7 +18,7 @@ public class CreatePond: IRequestHandler<CreatePondInput, Result<PondOutput, Exc
     _unitOfWork = unitOfWork;
   }
 
-  public async Task<Result<PondOutput, Exception>> Handle(CreatePondInput request, 
+  public async Task<Result<PondOutput>> Handle(CreatePondInput request, 
   CancellationToken cancellationToken)
   {
     var pondResult = PondEntity.Of(
@@ -28,7 +28,7 @@ public class CreatePond: IRequestHandler<CreatePondInput, Result<PondOutput, Exc
     );
 
     if (pondResult.IsFail) {
-      return Result<PondOutput, Exception>.Fail(pondResult.Error!);
+      return Result<PondOutput>.Fail(pondResult.Error!);
     }
 
     var pond = pondResult.Unwrap();
@@ -37,7 +37,7 @@ public class CreatePond: IRequestHandler<CreatePondInput, Result<PondOutput, Exc
     await _repository.Insert(pond, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);
 
-    return Result<PondOutput,Exception>.Ok(
+    return Result<PondOutput>.Ok(
       PondOutput.FromEntity(pond)
     );
   }

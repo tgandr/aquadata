@@ -1,6 +1,6 @@
-
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Purchase;
 
@@ -17,18 +17,21 @@ public class GenericPurchaseEntity : PurchaseBase
   private GenericPurchaseEntity()
   :base(DateOnly.MinValue,"",0,0) {}
   
-  public static Result<GenericPurchaseEntity, ModelValidationException> Of(
+  public static Result<GenericPurchaseEntity> Of(
     DateOnly date, string label, int quantity, decimal value, 
     string description
   ) => Create(new GenericPurchaseEntity(date,label,quantity,value,description));
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   { 
     if (string.IsNullOrWhiteSpace(Description))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("Purchase description cannot be null or empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.Purchase",
+          "Description cannot be null or empty"
+        )
       );
 
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }

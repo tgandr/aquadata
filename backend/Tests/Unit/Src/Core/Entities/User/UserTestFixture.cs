@@ -1,12 +1,12 @@
 using Aquadata.Core.Entities.User;
-using Aquadata.Core.Errors;
+
 using Aquadata.Core.Util;
 
 namespace Unit.Src.Domain.Entity.User;
 
 public class GetUser
 {
-  public static Result<UserEntity, ModelValidationException> WithInvalidName()
+  public static Result<UserEntity> WithInvalidName()
    => UserEntity.Of(
       farmAddress: "valid",
       farmName: "valid",
@@ -16,7 +16,7 @@ public class GetUser
       phone: "88988888888",
       profile: "valid"
     );
-  public static Result<UserEntity, ModelValidationException> WithInvalidEmail()
+  public static Result<UserEntity> WithInvalidEmail()
    => UserEntity.Of(
       farmAddress: "valid",
       farmName: "valid",
@@ -26,7 +26,7 @@ public class GetUser
       phone: "88988888888",
       profile: "valid"
     );
-  public static Result<UserEntity, ModelValidationException> WithInvaliPassword()
+  public static Result<UserEntity> WithInvaliPassword()
    => UserEntity.Of(
       farmAddress: "valid",
       farmName: "valid",
@@ -36,7 +36,7 @@ public class GetUser
       phone: "88988888888",
       profile: "valid"
     );
-  public static Result<UserEntity, ModelValidationException> WithInvalidPhone()
+  public static Result<UserEntity> WithInvalidPhone()
    => UserEntity.Of(
       farmAddress: "valid",
       farmName: "valid",
@@ -46,7 +46,7 @@ public class GetUser
       phone: "",
       profile: "valid"
     );
-  public static Result<UserEntity, ModelValidationException> WithInvalidFarmAddress()
+  public static Result<UserEntity> WithInvalidFarmAddress()
    => UserEntity.Of(
       farmAddress: "",
       farmName: "valid",
@@ -56,7 +56,7 @@ public class GetUser
       phone: "88988888888",
       profile: "valid"
     );
-  public static Result<UserEntity, ModelValidationException> WithInvalidFarmName()
+  public static Result<UserEntity> WithInvalidFarmName()
    => UserEntity.Of(
       farmAddress: "valid",
       farmName: "",
@@ -66,7 +66,7 @@ public class GetUser
       phone: "88988888888",
       profile: "valid"
     );
-  public static Result<UserEntity, ModelValidationException> WithInvalidProfile()
+  public static Result<UserEntity> WithInvalidProfile()
    => UserEntity.Of(
       farmAddress: "valid",
       farmName: "",

@@ -1,4 +1,4 @@
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.Biometric;
@@ -20,9 +20,9 @@ public class BiometricEntity : SeedWork.Entity
     Date = date;
   }
 
-  public static Result<BiometricEntity, ModelValidationException> Of(float count, float averageWeight, DateTime date)
+  public static Result<BiometricEntity> Of(float count, float averageWeight, DateTime date)
     => Create(new BiometricEntity(count, averageWeight, date));
 
-  protected override Result<ModelValidationException> Validate()
-    => Result<ModelValidationException>.Ok();
+  protected override Result<Entity> Validate()
+    => Result<Entity>.Ok(this);
 }

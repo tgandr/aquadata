@@ -1,4 +1,3 @@
-using Aquadata.Core.Errors;
 using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
 
@@ -17,9 +16,9 @@ public class CostPerPondEntity: Entity
   }
   
   private CostPerPondEntity() {}
-  public static Result<CostPerPondEntity, ModelValidationException> Of(decimal value)
+  public static Result<CostPerPondEntity> Of(decimal value)
     => Create(new CostPerPondEntity(value));
 
-  protected override Result<ModelValidationException> Validate()
-    => Result<ModelValidationException>.Ok();
+  protected override Result<Entity> Validate()
+    => Result<Entity>.Ok(this);
 }

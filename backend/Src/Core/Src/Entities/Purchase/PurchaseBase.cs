@@ -1,4 +1,4 @@
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.Purchase;
@@ -21,7 +21,7 @@ public abstract class PurchaseBase : SeedWork.Entity
     Value = decimal.Abs(value);
   }
 
-  protected override Result<ModelValidationException> Validate()
-    => Result<ModelValidationException>.Ok();    
+  protected override Result<Entity> Validate()
+    => Result<Entity>.Ok(this);    
   
 }

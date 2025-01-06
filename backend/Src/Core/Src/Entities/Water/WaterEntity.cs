@@ -1,4 +1,4 @@
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
 using Aquadata.Core.ValueObjects;
 
@@ -22,10 +22,10 @@ public class WaterEntity : SeedWork.Entity
     PH = pH;
   }
 
-  public static Result<WaterEntity, ModelValidationException> Of(DateTime date, int temperature, float dissolvedOxygen, PH pH)
+  public static Result<WaterEntity> Of(DateTime date, int temperature, float dissolvedOxygen, PH pH)
     => Create(new WaterEntity(date, temperature, dissolvedOxygen, pH));
 
-  protected override Result<ModelValidationException> Validate()
-    => Result<ModelValidationException>.Ok();    
+  protected override Result<Entity> Validate()
+    => Result<Entity>.Ok(this);    
   
 }

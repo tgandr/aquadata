@@ -1,4 +1,4 @@
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.Expense;
@@ -20,16 +20,16 @@ public class ExpenseEntity : SeedWork.Entity
     CostsPerPond = costsPerPond;
   }
 
-  public static Result<ExpenseEntity, ModelValidationException> Of(
+  public decimal Total()
+    => CostsPerPond.Sum(c => c.Value);
+
+  public static Result<ExpenseEntity> Of(
     DateOnly date, string description, ICollection<CostPerPondEntity> costsPerPond
   ) => Create(new ExpenseEntity(date,description,costsPerPond));
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
-
-  public decimal Total()
-    => CostsPerPond.Sum(c => c.Value);
   
 }

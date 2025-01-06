@@ -1,6 +1,4 @@
-
 using Aquadata.Core.Enums;
-using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.Purchase;
@@ -20,7 +18,7 @@ public class FertilizerPurchaseEntity : PurchaseBase
     Unit = unit;
   }
 
-  public static Result<FertilizerPurchaseEntity, ModelValidationException> Of(
+  public static Result<FertilizerPurchaseEntity> Of(
     DateOnly date, string label, int quantity, decimal value,MeasureUnit unit
   ) => Create(new FertilizerPurchaseEntity(date,label,quantity,value,unit)); 
 

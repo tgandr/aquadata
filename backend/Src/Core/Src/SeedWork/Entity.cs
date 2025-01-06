@@ -1,5 +1,5 @@
-using Aquadata.Core.Errors;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.SeedWork;
 
@@ -22,9 +22,18 @@ public abstract class Entity
     UpdatedAt = DateTime.Now;
   }
 
-  protected static Result<T, ModelValidationException> Create<T>(T entity)
+  protected static Result<T> Create<T>(T entity)
     where T : Entity
-    => entity.Validate().IfOkReturn(entity);
+  {
+    var result = entity.Validate();
 
-  protected abstract Result<ModelValidationException> Validate();
+    if (result.IsFail)
+      return Result<T>.Fail(
+        Error.None
+      );
+
+    return Result<T>.Ok(entity);
+  }
+
+  protected abstract Result<Entity> Validate();
 }

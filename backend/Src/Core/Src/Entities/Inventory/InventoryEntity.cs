@@ -1,5 +1,5 @@
 using Aquadata.Core.Enums;
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.Inventory;
@@ -28,11 +28,11 @@ public class InventoryEntity : SeedWork.Entity
     InOperationSince = inOperationSince;
   }
 
-  public static Result<InventoryEntity, ModelValidationException> Of(string itemName, decimal amountInvested, 
+  public static Result<InventoryEntity> Of(string itemName, decimal amountInvested, 
   decimal finalValue, int usefulLifeInYears, ItemStatus status, DateOnly inOperationSince)
     => Create(new InventoryEntity(itemName, amountInvested, 
     finalValue, usefulLifeInYears, status, inOperationSince));
 
-  protected override Result<ModelValidationException> Validate()
-    => Result<ModelValidationException>.Ok();
+  protected override Result<Entity> Validate()
+    => Result<Entity>.Ok(this);
 }

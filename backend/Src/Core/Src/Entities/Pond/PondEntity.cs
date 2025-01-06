@@ -1,7 +1,8 @@
 using Aquadata.Core.Entities.Cultivation;
-using Aquadata.Core.Errors;
 using Aquadata.Core.Interfaces;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Pond;
 
@@ -23,7 +24,7 @@ public class PondEntity : SeedWork.Entity, IAggregateRoot
     IsActive = isActive;
   }
 
-  public static Result<PondEntity, ModelValidationException> Of(string name, float area, bool isActive = true)
+  public static Result<PondEntity> Of(string name, float area, bool isActive = true)
    => Create(new PondEntity(name,area, isActive));
   
   public void Update(string name, float area)
@@ -38,16 +39,20 @@ public class PondEntity : SeedWork.Entity, IAggregateRoot
   public void Deactivate()
    => IsActive = false;
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(Name))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("Pond name cannot be null or empty"));
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.Pond",
+          "Name cannot be null or empty"));
     if (Area == float.NegativeZero)
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("Area must be greater than zero")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.Pond",
+          "Area must be greater than zero")
       );
 
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }

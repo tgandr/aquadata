@@ -1,4 +1,4 @@
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.EmployeePayment;
@@ -17,9 +17,10 @@ public class EmployeePaymentEntity : SeedWork.Entity
     Value = value;
   }
 
-  public static Result<EmployeePaymentEntity, ModelValidationException> Of(
+  public static Result<EmployeePaymentEntity> Of(
     DateOnly date, decimal value
   ) => Create(new EmployeePaymentEntity(date, value));
-  protected override Result<ModelValidationException> Validate()
-    => Result<ModelValidationException>.Ok();
+
+  protected override Result<Entity> Validate()
+    => Result<Entity>.Ok(this);
 }

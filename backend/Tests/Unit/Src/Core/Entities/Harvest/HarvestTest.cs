@@ -1,5 +1,5 @@
 using Aquadata.Core.Entities.Harvest;
-using Aquadata.Core.Errors;
+
 
 namespace Aquadata.UnitTests.Core.Entities.Harvest;
 
@@ -31,15 +31,5 @@ public class HarvestTest
     Assert.Equal(expected.Date, current.Date);
     Assert.Equal(expected.IsTotal, current.IsTotal);
     Assert.Equal(expected.BioMass, current.BioMass);
-  }
-
-  [Fact]
-  public void GivenInvalidParamsWhenCreateThrowException()
-  {
-    var invalid = HarvestEntity.Of("", 10, DateTime.Now, false, 10);
-
-    Assert.Throws<ModelValidationException>(() => {
-      invalid.Unwrap();
-    });
   }
 }

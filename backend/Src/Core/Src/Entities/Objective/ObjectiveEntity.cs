@@ -1,4 +1,4 @@
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.Objective;
@@ -18,12 +18,12 @@ public class ObjectiveEntity: SeedWork.Entity
     SurvivalRate = survivalRate;
   }
 
-  public static Result<ObjectiveEntity, ModelValidationException> Of(int days, 
+  public static Result<ObjectiveEntity> Of(int days, 
   float averageSize, float survivalRate)
    => Create(new ObjectiveEntity(days, averageSize, survivalRate));
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }

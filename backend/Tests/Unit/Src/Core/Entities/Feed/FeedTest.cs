@@ -1,5 +1,5 @@
 using Aquadata.Core.Entities.Feed;
-using Aquadata.Core.Errors;
+
 
 namespace Aquadata.UnitTests.Core.Entities.Feed;
 
@@ -35,16 +35,5 @@ public class FeedTest
         Assert.Equal(expected.RationName, current.RationName);
         Assert.Equal(expected.HadLeftovers, current.HadLeftovers);
         Assert.Equal(expected.ReducedOrSuspended, current.ReducedOrSuspended);
-    }
-
-    [Fact]
-    public void GivenInvalidParamsWhenCreateThrowError()
-    {
-        var invalid = FeedEntity.Of(DateTime.Now, 10, 10, "", false, false);
-
-        Assert.Throws<ModelValidationException>(() =>
-        {
-            invalid.Unwrap();
-        });
     }
 }

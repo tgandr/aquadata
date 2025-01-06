@@ -1,6 +1,7 @@
 using Aquadata.Core.Enums;
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Stock;
 
@@ -21,17 +22,20 @@ public class StockEntity: SeedWork.Entity
     Quantity = quantity;
   }
 
-  public static Result<StockEntity, ModelValidationException> Of(string label, 
+  public static Result<StockEntity> Of(string label, 
   SupplyType type, int quantity)
     => Create(new StockEntity(label, type, quantity));
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(Label))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("Stock Label should not be null or empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.Stock",
+          "Label should not be null or empty"
+        )
       );
 
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }

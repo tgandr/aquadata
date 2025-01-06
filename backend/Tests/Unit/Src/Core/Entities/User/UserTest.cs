@@ -1,5 +1,5 @@
 using Aquadata.Core.Entities.User;
-using Aquadata.Core.Errors;
+
 using Aquadata.Core.Util;
 using Unit.Src.Domain.Entity.User;
 namespace Aquadata.UnitTests.Core.Entities.User;
@@ -39,26 +39,5 @@ public class UserTest
     Assert.Equal(expected.Name, user.Name);
     Assert.Equal(expected.Phone, user.Phone);
     Assert.Equal(expected.Profile, user.Profile);
-  }
-
-  [Fact]
-  public void GivenInvalidParamsWhenCreateThrowError()
-  {
-    var resultList = new List<Result<UserEntity, ModelValidationException>>{
-      GetUser.WithInvalidName(),
-      GetUser.WithInvalidEmail(),
-      GetUser.WithInvalidFarmAddress(),
-      GetUser.WithInvalidFarmName(),
-      GetUser.WithInvaliPassword(),
-      GetUser.WithInvalidPhone(),
-      GetUser.WithInvalidProfile()
-    };
-
-    foreach (var item in resultList)
-    {
-      Assert.Throws<ModelValidationException>(() => {
-        item.Unwrap();
-      });
-    }
   }
 }

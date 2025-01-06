@@ -7,9 +7,10 @@ using Aquadata.Core.Entities.StressTest;
 using Aquadata.Core.Entities.Water;
 using Aquadata.Core.Entities.WaterAndAcclimation;
 using Aquadata.Core.Enums;
-using Aquadata.Core.Errors;
 using Aquadata.Core.Interfaces;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Cultivation;
 
@@ -51,7 +52,7 @@ public class CultivationEntity : SeedWork.Entity, IAggregateRoot
       WaterAndAcclimationChecked = true;
   }
 
-  public static Result<CultivationEntity, ModelValidationException> Of(
+  public static Result<CultivationEntity> Of(
     int pondNumber, int stock, string pLOrigin, 
     bool waterAndAcclimationChecked, CultivationUniformity uniformity, 
     DateTime settlementDate)
@@ -64,12 +65,14 @@ public class CultivationEntity : SeedWork.Entity, IAggregateRoot
   public bool HasShrimp()
     => Stock > 0; 
   
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(PLOrigin))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("Cultivation PlOrigin cannot be null or empty")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.Cultivation", 
+          "PlOrigin cannot be null or empty")
       );
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }

@@ -1,5 +1,5 @@
 using Aquadata.Core.Enums;
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
 using Aquadata.Core.ValueObjects;
 
@@ -31,7 +31,7 @@ public class WaterAndAcclimationEntity: SeedWork.Entity
     Origin = origin;
   }
 
-  public static Result<WaterAndAcclimationEntity, ModelValidationException> Of(
+  public static Result<WaterAndAcclimationEntity> Of(
     float oxygen, 
     int temperature, PH pH, int salinity, 
     float ammonium,float nitrite, WaterAndAcclimationOrigin origin
@@ -39,8 +39,8 @@ public class WaterAndAcclimationEntity: SeedWork.Entity
   => Create(new WaterAndAcclimationEntity(oxygen, temperature, pH, 
     salinity, ammonium, nitrite, origin));
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }

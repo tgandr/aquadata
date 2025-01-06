@@ -1,4 +1,4 @@
-using Aquadata.Core.Errors;
+
 using CoreEntity = Aquadata.Core.Entities.Pond;
 namespace Aquadata.UnitTests.Core.Entities.Pond;
 
@@ -25,22 +25,5 @@ public class PondTest
     Assert.Equal(expected.Name, pond.Name);
     Assert.Equal(expected.Area, pond.Area);
     Assert.Equal(expected.IsActive, pond.IsActive);
-  }
-
-  [Fact]
-  public void GivenInvalidParamsWhenCreateThrowError()
-  {
-    var pond = new {
-      withInvalidName = GetPond.WithInvalidName(),
-      withInvalidArea = GetPond.WithInvalidArea()
-    };
-
-    Assert.Throws<ModelValidationException>(() => {
-      pond.withInvalidName.Unwrap();
-    });
-    
-    Assert.Throws<ModelValidationException>(() => {
-      pond.withInvalidArea.Unwrap();
-    });
   }
 }

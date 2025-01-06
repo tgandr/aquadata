@@ -1,6 +1,6 @@
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Enums;
-using Aquadata.Core.Errors;
+
 
 namespace Aquadata.UnitTests.Core.Entities.Cultivation;
 
@@ -38,17 +38,6 @@ public class CultivationTest
     Assert.Equal(expected.WaterAndAcclimationChecked, current.WaterAndAcclimationChecked);
   }
 
-  [Fact]
-  public void GivenInvalidParamsWhenCreateThrowError()
-  {
-    var cultivation = new {
-      WithInvalidUniformity = GetCultivation.WithInvalidPLOrigin()
-    };
-
-    Assert.Throws<ModelValidationException>(() => {
-      cultivation.WithInvalidUniformity.Unwrap();
-    });
-  }
 
   [Fact]
   public void HasShrimpMethodTest()

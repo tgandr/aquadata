@@ -1,6 +1,7 @@
 using Aquadata.Core.Enums;
-using Aquadata.Core.Errors;
+using Aquadata.Core.SeedWork;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.StressTest;
 
@@ -20,17 +21,20 @@ public class StressTestEntity: SeedWork.Entity
     SwimmingResponse = swimmingResponse;
   }
 
-  public static Result<StressTestEntity, ModelValidationException> Of(string stressType, 
+  public static Result<StressTestEntity> Of(string stressType, 
     DeadLarvae deadLarvae, SwimmingResponse swimmingResponse)
   => Create(new StressTestEntity(stressType, deadLarvae, swimmingResponse));
 
-  protected override Result<ModelValidationException> Validate()
+  protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(StressType))
-      return Result<ModelValidationException>.Fail(
-        new ModelValidationException("Stress Test type cannot be empty or null")
+      return Result<Entity>.Fail(
+        Error.Validation(
+          "Core.StressTest",
+          "Test type cannot be empty or null"
+        )
       );
 
-    return Result<ModelValidationException>.Ok();
+    return Result<Entity>.Ok(this);
   }
 }
