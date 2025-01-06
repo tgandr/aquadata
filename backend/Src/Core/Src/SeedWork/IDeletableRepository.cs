@@ -5,5 +5,5 @@ namespace Aquadata.Core.SeedWork;
 public interface IDeletableRepository<IAggregate> : IGenericRepository<IAggregate>
 where IAggregate : IAggregateRoot
 {
-  Task Delete(Guid id, CancellationToken cancellationToken);
+  Task Delete(IAggregate id, CancellationToken cancellationToken);
 }

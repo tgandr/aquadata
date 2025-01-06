@@ -15,4 +15,10 @@ public class UserPersistence
     => await _context.Users
       .AsNoTracking()
       .FirstOrDefaultAsync(e => e.Id == id);
+
+  public async Task Insert(UserEntity entity)
+  {
+    await _context.Users.AddAsync(entity);
+    await _context.SaveChangesAsync();
+  }
 }

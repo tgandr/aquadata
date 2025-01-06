@@ -53,6 +53,25 @@ public class UserEntity : SeedWork.Entity, IAggregateRoot
     farmName, farmAddress, phone));
   
 
+  public Result<ModelValidationException> Update(string name, string email, string password, string profile,
+    string farmName, string farmAddress, string phone)
+  {
+    var validateResult = Validate();
+
+    if (validateResult.IsFail)
+      return Result<ModelValidationException>.Fail(validateResult.Error!); 
+
+    Name = name;
+    Email = email;
+    Password = password;
+    FarmName = farmName;
+    FarmAddress = farmAddress;
+    Phone = phone;
+    Profile = profile;
+    
+    return Result<ModelValidationException>.Ok();
+  }
+
   protected override Result<ModelValidationException> Validate()
   {
     if (string.IsNullOrWhiteSpace(Name))

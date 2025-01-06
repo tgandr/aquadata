@@ -1,4 +1,5 @@
 using Aquadata.Application.UseCases.Pond.Common;
+using Aquadata.Application.UseCases.Pond.DeactivatePond;
 using Aquadata.Infra.EF;
 using Aquadata.Infra.EF.Repositories;
 using Aquadata.IntegrationTests.Application.Common;
@@ -19,7 +20,7 @@ public class DeactivatePondTest
     var tracking = dbContext.Ponds.Add(examplePond);
     dbContext.SaveChanges();
     tracking.State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-    var input = new GetPondByIdInput(examplePond.Id);
+    var input = new DeactivatePondInput(examplePond.Id);
 
     var outputResult = await useCase.Handle(input, CancellationToken.None);
     var output = outputResult.Unwrap();

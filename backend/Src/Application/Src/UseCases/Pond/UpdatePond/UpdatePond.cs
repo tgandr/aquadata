@@ -26,6 +26,7 @@ public class UpdatePond : IRequestHandler<UpdatePondInput, Result<PondOutput, Ex
         new EntityNotFoundException()
       ); 
     }
+    
     pond.Update(request.Name, request.Area);
 
     await _repository.Update(pond, cancellationToken);

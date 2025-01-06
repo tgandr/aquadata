@@ -1,6 +1,9 @@
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.Pond.Common;
 using Aquadata.Application.UseCases.Pond.CreatePond;
+using Aquadata.Application.UseCases.Pond.DeactivatePond;
+using Aquadata.Application.UseCases.Pond.GetPond;
+using Aquadata.Application.UseCases.Pond.UpdatePond;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,4 +33,40 @@ public class PondController: ControllerBase
     );
   }
 
+  [HttpGet("{id}")]
+  public async Task<IActionResult> Get(
+    [FromRoute] Guid id,
+    CancellationToken cancellationToken)
+  {
+    var pond = await _mediator.Send(new GetPondInput(id), cancellationToken);
+
+    if (pond.IsFail)
+      return NotFound();
+    
+    return Ok(new ApiResponse<PondOutput>(pond.Unwrap()));
+  }
+
+  [HttpPut]
+  public async Task<IActionResult> Update([FromBody] UpdatePondInput command,
+  CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return NotFound(result.Error);
+
+    return Ok(new ApiResponse<PondOutput>(result.Unwrap()));
+  }
+
+  [HttpDelete("deactivate/{id}")]
+  public async Task<IActionResult> Deactivate([FromRoute] Guid id,
+  CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(new DeactivatePondInput(id), cancellationToken);
+
+    if (result.IsFail)
+      return NotFound(result.Error);
+
+    return Ok(new ApiResponse<PondOutput>(result.Unwrap()));
+  }
 }

@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Pond.DeactivatePond;
 
-public class DeactivatePond: IRequestHandler<GetPondByIdInput, Result<PondOutput, Exception>>
+public class DeactivatePond: IRequestHandler<DeactivatePondInput, Result<PondOutput, Exception>>
 {
   private readonly IPondRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
@@ -18,7 +18,8 @@ public class DeactivatePond: IRequestHandler<GetPondByIdInput, Result<PondOutput
     _unitOfWork = unitOfWork;
   }
 
-  public async Task<Result<PondOutput, Exception>> Handle(GetPondByIdInput request, CancellationToken cancellationToken)
+  public async Task<Result<PondOutput, Exception>> Handle(DeactivatePondInput request, 
+  CancellationToken cancellationToken)
   {
     var pond = await _repository.Get(request.Id, cancellationToken);
     

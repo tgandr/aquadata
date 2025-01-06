@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Pond.GetPond;
 
-public class GetPond: IRequestHandler<GetPondByIdInput, Result<PondOutput, Exception>>
+public class GetPond: IRequestHandler<GetPondInput, Result<PondOutput, Exception>>
 {
   private readonly IPondRepository _repository;
   public GetPond(IPondRepository repository)
@@ -14,7 +14,8 @@ public class GetPond: IRequestHandler<GetPondByIdInput, Result<PondOutput, Excep
     _repository = repository;
   }
 
-  public async Task<Result<PondOutput, Exception>> Handle(GetPondByIdInput request, CancellationToken cancellationToken)
+  public async Task<Result<PondOutput, Exception>> Handle(GetPondInput request, 
+  CancellationToken cancellationToken)
   {
     var pondResult =  await _repository.Get(request.Id, cancellationToken);
 

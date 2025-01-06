@@ -18,5 +18,13 @@ public class PondTestFixture: BaseFixture
     => UserEntity.Of("valid_name", "valid_email", "valid_password", 
     "profile", "farmName", 
     "farmAddress", "phone").Unwrap();
+
+  public PondEntity GetPondExample(Guid id)
+  {
+    var pond = PondEntity.Of("pond", 10f, true).Unwrap(); 
+    pond.UserId = id;
+
+    return pond;
+  }
   
 }

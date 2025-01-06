@@ -3,6 +3,7 @@ using Aquadata.IntegrationTests.Application.Common;
 using UseCase = Aquadata.Application.UseCases.Pond.GetPond;
 using Aquadata.IntegrationTests.Application.UseCases.Pond.Common;
 using Aquadata.Application.UseCases.Pond.Common;
+using Aquadata.Application.UseCases.Pond.GetPond;
 
 namespace Integration.Src.Application.UseCases.Pond.GetPond;
 
@@ -17,7 +18,7 @@ public class GetPondTest
     dbContext.SaveChanges();
 
     var pondRepository = new PondRepository(dbContext);
-    var input = new GetPondByIdInput(examplePond.Id);
+    var input = new GetPondInput(examplePond.Id);
     var useCase = new UseCase.GetPond(pondRepository);
 
     var outputResult = await useCase.Handle(input, CancellationToken.None);

@@ -1,6 +1,7 @@
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Infra.EF.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace Aquadata.Infra.EF.Repositories;
 
@@ -12,15 +13,12 @@ public class UserRepository : IUserRepository
   {
     _dbContext = dbContext;
   }
-    public Task Delete(Guid id, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    public Task Delete(UserEntity aggregate, CancellationToken cancellationToken)
+      => Task.FromResult(_dbContext.Users.Remove(aggregate));
 
-    public Task<UserEntity?> Get(Guid id, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+    public async Task<UserEntity?> Get(Guid id, CancellationToken cancellationToken)
+      => await _dbContext.Users.AsNoTracking()
+      .FirstOrDefaultAsync(e => e.Id == id);
 
     public async Task Insert(UserEntity aggregate, CancellationToken cancellationToken)
     {
@@ -28,7 +26,5 @@ public class UserRepository : IUserRepository
     }
 
     public Task Update(UserEntity aggregate, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
+      => Task.FromResult(_dbContext.Users.Update(aggregate));
 }

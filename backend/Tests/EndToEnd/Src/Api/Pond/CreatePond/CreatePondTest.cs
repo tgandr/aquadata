@@ -30,9 +30,10 @@ public class CreatePondTest
     Assert.NotNull(response);
     Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
 
-    Assert.NotNull(output);
-    Assert.NotNull(output.Data);
+    var dbPond = await _fixture.Persistence.GetById(output.Data.Id);
 
+    Assert.NotNull(output.Data);
+    Assert.Equivalent(input, dbPond);
   }
 
   public void Dispose()

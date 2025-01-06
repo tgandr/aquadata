@@ -34,6 +34,24 @@ public class ApiClient
     return output!;
   }
 
+  public async Task<(HttpResponseMessage, T?)> Put<T>(string route, 
+    object payload) where T : class
+  {
+    var payloadJson = JsonSerializer.Serialize(payload,
+    _jsonSerializerOptions);
+    var response = await _httpClient.PutAsync(
+      route,
+      new StringContent(
+        payloadJson,
+        Encoding.UTF8,
+        "application/json"
+      )
+    );
+
+    var output = await GetOutput<T>(response);
+    return (response, output);
+  }
+
   public async Task<(HttpResponseMessage, T)> Post<T>(string route, 
     object payload) where T : class
   {
@@ -47,6 +65,22 @@ public class ApiClient
       )
     );
 
+    var output = await GetOutput<T>(response);
+    return (response, output);
+  }
+
+  public async Task<(HttpResponseMessage, T)> Get<T>(string route) 
+    where T : class
+  {
+    var response = await _httpClient.GetAsync(route);
+    var output = await GetOutput<T>(response);
+    return (response, output);
+  }
+
+  public async Task<(HttpResponseMessage, T)> Delete<T>(string route) 
+    where T : class
+  {
+    var response = await _httpClient.DeleteAsync(route);
     var output = await GetOutput<T>(response);
     return (response, output);
   }

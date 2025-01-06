@@ -1,6 +1,5 @@
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.User.Common;
-using MediatR;
 
 namespace Application.UseCases.User.CreateUser;
 

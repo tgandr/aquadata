@@ -2,6 +2,7 @@ using UseCase = Aquadata.Application.UseCases.Pond.GetPond;
 using Aquadata.UnitTests.Application.Pond.Common;
 using Aquadata.Application.UseCases.Pond.Common;
 using Moq;
+using Aquadata.Application.UseCases.Pond.GetPond;
 
 namespace Aquadata.UnitTests.Application.Pond.GetPond;
 
@@ -22,7 +23,7 @@ public class GetPondTest
     var useCase = new UseCase.GetPond(
       repositoryMock.Object
     );
-    var input = new GetPondByIdInput(examplePond.Id);
+    var input = new GetPondInput(examplePond.Id);
     var outputResult = await useCase.Handle(input, CancellationToken.None);
     var output = outputResult.Unwrap();
 
