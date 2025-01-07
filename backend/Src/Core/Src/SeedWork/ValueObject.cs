@@ -29,7 +29,7 @@ public abstract class ValueObject : IEquatable<ValueObject>
     var result = vo.Validate();
 
     if (result.IsFail)
-      return Result<T>.Fail(Error.None);
+      return Result<T>.Fail(result.Error);
 
     return Result<T>.Ok(vo);
   }

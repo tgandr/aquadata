@@ -12,7 +12,7 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.User;
 
-public class UserEntity : SeedWork.Entity, IAggregateRoot
+public class UserEntity :Entity, IAggregateRoot
 {
   public string Name {get; private set;}
   public string Email {get; private set;}
@@ -57,10 +57,6 @@ public class UserEntity : SeedWork.Entity, IAggregateRoot
   public Result<UserEntity> Update(string name, string email, string password, string profile,
     string farmName, string farmAddress, string phone)
   {
-    var validateResult = Validate();
-
-    if (validateResult.IsFail)
-      return Result<UserEntity>.Fail(validateResult.Error!); 
 
     Name = name;
     Email = email;
@@ -70,6 +66,10 @@ public class UserEntity : SeedWork.Entity, IAggregateRoot
     Phone = phone;
     Profile = profile;
     
+    var validateResult = Validate();
+    if (validateResult.IsFail)
+      return Result<UserEntity>.Fail(validateResult.Error!); 
+      
     return Result<UserEntity>.Ok(this);
   }
 
@@ -121,7 +121,7 @@ public class UserEntity : SeedWork.Entity, IAggregateRoot
       return Result<Entity>.Fail(
         Error.Validation(
           "Core.User",
-          "User profile cannot be null or Empty"
+          "Profile cannot be null or Empty"
         )
       );
     return Result<Entity>.Ok(this); 

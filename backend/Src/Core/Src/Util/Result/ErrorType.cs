@@ -2,8 +2,8 @@ namespace Aquadata.Core.Util.Result;
 
 public enum ErrorType
 {
-  Internal,
-  Validation,
-  NotFound,
-  Conflict
+  Validation = 400,
+  NotFound = 404,
+  Conflict = 409,
+  Internal = 500,
 }

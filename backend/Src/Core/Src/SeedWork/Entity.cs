@@ -29,7 +29,7 @@ public abstract class Entity
 
     if (result.IsFail)
       return Result<T>.Fail(
-        Error.None
+        result.Error!
       );
 
     return Result<T>.Ok(entity);

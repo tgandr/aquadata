@@ -1,3 +1,4 @@
+using Aquadata.Api.Extensions;
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.Pond.Common;
 using Aquadata.Application.UseCases.Pond.CreatePond;
@@ -19,54 +20,59 @@ public class PondController: ControllerBase
     => _mediator = mediator;
 
   [HttpPost]
-  public async Task<IActionResult> Create([FromBody] CreatePondInput command)
+  public async Task<IResult> Create([FromBody] CreatePondInput command)
   {
     var result = await _mediator.Send(command);
 
     if (result.IsFail)
-      return BadRequest(result.Error);
+      return Results.Extensions.MapResult(result);
 
-    return CreatedAtAction(
+    return Results.Created(
       nameof(Create),
-      new { id = result.Unwrap().Id },
       new ApiResponse<PondOutput>(result.Unwrap())
     );
   }
 
   [HttpGet("{id}")]
-  public async Task<IActionResult> Get(
+  public async Task<IResult> Get(
     [FromRoute] Guid id,
     CancellationToken cancellationToken)
   {
-    var pond = await _mediator.Send(new GetPondInput(id), cancellationToken);
+    var result = await _mediator.Send(new GetPondInput(id), cancellationToken);
 
-    if (pond.IsFail)
-      return NotFound();
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
     
-    return Ok(new ApiResponse<PondOutput>(pond.Unwrap()));
+    return Results.Ok(new ApiResponse<PondOutput>(
+      result.Unwrap()
+    ));
   }
 
   [HttpPut]
-  public async Task<IActionResult> Update([FromBody] UpdatePondInput command,
+  public async Task<IResult> Update([FromBody] UpdatePondInput command,
   CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(command, cancellationToken);
 
     if (result.IsFail)
-      return NotFound(result.Error);
+      return Results.Extensions.MapResult(result);
 
-    return Ok(new ApiResponse<PondOutput>(result.Unwrap()));
+    return Results.Ok(new ApiResponse<PondOutput>(
+      result.Unwrap()
+    ));
   }
 
   [HttpDelete("deactivate/{id}")]
-  public async Task<IActionResult> Deactivate([FromRoute] Guid id,
+  public async Task<IResult> Deactivate([FromRoute] Guid id,
   CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(new DeactivatePondInput(id), cancellationToken);
 
     if (result.IsFail)
-      return NotFound(result.Error);
+      return Results.Extensions.MapResult(result);
 
-    return Ok(new ApiResponse<PondOutput>(result.Unwrap()));
+    return Results.Ok(new ApiResponse<PondOutput>(
+      result.Unwrap()
+    ));
   }
 }

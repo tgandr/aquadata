@@ -1,5 +1,6 @@
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.User.Common;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Aquadata.EndToEndTests.Api.User.UpdateUser;
 
@@ -36,6 +37,7 @@ public class UpdateUserTest: IDisposable
     Assert.NotNull(dbUser);
     Assert.Equivalent(input, dbUser);
   }
+
 
   public void Dispose()
    => _fixture.CleanPersistence();

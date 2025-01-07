@@ -1,4 +1,5 @@
 using Application.UseCases.User.CreateUser;
+using Aquadata.Api.Extensions;
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.User.Common;
 using Aquadata.Application.UseCases.User.DeleteUser;
@@ -19,56 +20,56 @@ public class UserController: ControllerBase
     => _mediator = mediator;
   
   [HttpPost]
-  public async Task<IActionResult> Create([FromBody] CreateUserInput command, 
+  public async Task<IResult> Create([FromBody] CreateUserInput command, 
   CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(command, cancellationToken);
 
     if (result.IsFail)
-      return BadRequest(result.Error);
+      return Results.Extensions.MapResult(result);
 
-    return CreatedAtAction(
+    return Results.Created(
       nameof(Create),
-      new { id = result.Unwrap().Id },
       new ApiResponse<UserOutput>(result.Unwrap())
     );
   }
 
   [HttpGet("{id}")]
-  public async Task<IActionResult> Get([FromRoute] Guid id, 
+  public async Task<IResult> Get([FromRoute] Guid id, 
   CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(new GetUserInput(id), cancellationToken);
 
     if (result.IsFail)
-      return NotFound(result.Error);
+      return Results.Extensions.MapResult(result);
 
-    return Ok(new ApiResponse<UserOutput>(result.Unwrap()));
+    return Results.Ok(new ApiResponse<UserOutput>(result.Unwrap()));
   }
 
   [HttpPut]
-  public async Task<IActionResult> Update(
+  public async Task<IResult> Update(
     [FromBody] UpdateUserInput command,
     CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(command,cancellationToken);
 
     if (result.IsFail)
-      return BadRequest(result.Error);
+      return Results.Extensions.MapResult(result);
+
     
-    return Ok(new ApiResponse<UserOutput>(result.Unwrap()));
+    return Results.Ok(new ApiResponse<UserOutput>(result.Unwrap()));
   }
 
   [HttpDelete("{id}")]
-  public async Task<IActionResult> Delete(
+  public async Task<IResult> Delete(
     [FromRoute] Guid id,
     CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(new DeleteUserInput(id), cancellationToken);
 
     if (result.IsFail)
-      return NotFound(result.Error);
+      return Results.Extensions.MapResult(result);
 
-    return NoContent();
+    return Results.NoContent();
   }
 }

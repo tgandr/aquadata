@@ -1,10 +1,8 @@
-using Aquadata.Application.Errors;
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.User.Common;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
-using MediatR;
 
 namespace Aquadata.Application.UseCases.User.UpdateUser;
 
@@ -26,7 +24,7 @@ public class UpdateUser: IApplicationHandler<UpdateUserInput,UserOutput>
 
     if (user == null)
     {
-      Result<UserOutput>.Fail(
+      return Result<UserOutput>.Fail(
         Error.NotFound(
           "User.UseCases.UpdateUser",
           "User not found'"
@@ -40,9 +38,7 @@ public class UpdateUser: IApplicationHandler<UpdateUserInput,UserOutput>
     );
 
     if (updateResult.IsFail)
-    {
       return Result<UserOutput>.Fail(updateResult.Error!);
-    }
 
     await _repository.Update(user, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);
