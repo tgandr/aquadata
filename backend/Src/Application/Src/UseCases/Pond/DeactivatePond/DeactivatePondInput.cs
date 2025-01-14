@@ -7,9 +7,11 @@ namespace Aquadata.Application.UseCases.Pond.DeactivatePond;
 public class DeactivatePondInput: IApplicationRequest<PondOutput>
 {
   public Guid Id {get;}
+  public Guid UserId {get;}
 
-  public DeactivatePondInput(Guid id)
+  public DeactivatePondInput(Guid id, Guid userId)
   {
     Id = id;
+    UserId = userId;
   }
 }

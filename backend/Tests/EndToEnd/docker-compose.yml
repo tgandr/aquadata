@@ -1,12 +1,12 @@
 services:
   database:
-    container_name: aquadata
-    hostname: aquadata
+    container_name: aquadata_e2e
+    hostname: aquadata_e2e
     image: mysql
-    volumes: 
+    volumes:
       - .docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - 3306:3306
+      - 33060:3306
     environment: 
       MYSQL_ROOT_PASSWORD: aquadata@
     

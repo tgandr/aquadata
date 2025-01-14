@@ -5,7 +5,7 @@ using Aquadata.Application.UseCases.User.Common;
 namespace Aquadata.EndToEndTests.Api.User.GetUser;
 
 [Collection(nameof(GetUserTestFixture))]
-public class GetUserTest
+public class GetUserTest: IDisposable
 {
   private readonly GetUserTestFixture _fixture;
 
@@ -18,11 +18,11 @@ public class GetUserTest
   public async void GetUser()
   {
     var userExample = _fixture.GetUserExample();
-    await _fixture.Persistence.Insert(userExample);
+    var credentials = await _fixture.ApiClient.SignUp(userExample);
 
     var (response, output) = await _fixture.ApiClient
     .Get<ApiResponse<UserOutput>>(
-      $"/users/{userExample.Id}"
+      $"/users/{credentials.User.Id}"
     );
 
     Assert.NotNull(response);
@@ -30,8 +30,11 @@ public class GetUserTest
 
     Assert.NotNull(output);
 
-    var dbUser = await _fixture.Persistence.GetById(userExample.Id);
+    var dbUser = await _fixture.Persistence.GetById(credentials.User.Id);
 
     Assert.Equivalent(output.Data, dbUser);
   }
+
+  public void Dispose()
+   => _fixture.CleanPersistence();
 }

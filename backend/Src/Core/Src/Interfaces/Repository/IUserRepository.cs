@@ -5,4 +5,6 @@ namespace Aquadata.Core.Interfaces.Repository;
 
 public interface IUserRepository: IGenericRepository<UserEntity>
 ,IDeletableRepository<UserEntity>
-{}
+{
+  Task<UserEntity?> GetByEmail(string email);
+}

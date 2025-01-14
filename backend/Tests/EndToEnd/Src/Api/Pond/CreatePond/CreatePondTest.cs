@@ -17,9 +17,9 @@ public class CreatePondTest
   public async Task CreatePond()
   {
     var userExample = _fixture.GetUserExample();
-    await _fixture.Persistence.AddUser(userExample);
-
-    var input = _fixture.GetExampleInput(userExample.Id);
+    var credentials = await _fixture.ApiClient.SignUp(userExample);
+    
+    var input = _fixture.GetExampleInput(credentials.User.Id);
 
     var (response, output) = await _fixture
       .ApiClient.Post<ApiResponse<PondOutput>>(
@@ -28,11 +28,11 @@ public class CreatePondTest
       );
 
     Assert.NotNull(response);
+    Assert.NotNull(output);
     Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
 
     var dbPond = await _fixture.Persistence.GetById(output.Data.Id);
 
-    Assert.NotNull(output.Data);
     Assert.Equivalent(input, dbPond);
   }
 

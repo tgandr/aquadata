@@ -1,10 +1,9 @@
 using System.Net;
-using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.User.DeleteUser;
 
 [Collection(nameof(DeleteUserFixture))]
-public class DeleteUserTest
+public class DeleteUserTest: IDisposable
 {
   private readonly DeleteUserFixture _fixture;
 
@@ -17,19 +16,22 @@ public class DeleteUserTest
   public async void DeleteUser()
   {
     var example = _fixture.GetUserExample();
-    await _fixture.Persistence.Insert(example);
+    var credentials = await _fixture.ApiClient.SignUp(example);
 
     var (response, output) = await _fixture.ApiClient
       .Delete<object>(
-        $"/users/{example.Id}"
+        $"/users/{credentials.User.Id}"
       );
     
     Assert.NotNull(response);
     Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     Assert.Null(output);
 
-    var dbUser = await _fixture.Persistence.GetById(example.Id);
+    var dbUser = await _fixture.Persistence.GetById(credentials.User.Id);
 
     Assert.Null(dbUser);
   }
+
+  public void Dispose()
+   => _fixture.CleanPersistence();
 }

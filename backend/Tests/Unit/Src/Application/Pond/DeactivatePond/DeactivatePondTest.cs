@@ -17,6 +17,7 @@ public class DeactivatePondTest
     var repositoryMock = PondTestFactory.GetRepositoryMock();
     var uowMock = ApplicationTestFactory.GetUnitOfWorkMock();
     var examplePond = PondTestFactory.GetValidPond();
+    examplePond.UserId = Guid.Empty;
 
     repositoryMock.Setup(repo => repo.Get(
       examplePond.Id,
@@ -28,7 +29,7 @@ public class DeactivatePondTest
       uowMock.Object
     );
 
-    var input = new DeactivatePondInput(examplePond.Id);
+    var input = new DeactivatePondInput(examplePond.Id, Guid.Empty);
     var outputResult = await useCase.Handle(input, CancellationToken.None);
     var output = outputResult.Unwrap();
     repositoryMock.Verify(

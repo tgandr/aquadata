@@ -1,4 +1,5 @@
 using System.Net;
+using Aquadata.Api.Models;
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.User.Common;
 
@@ -18,20 +19,20 @@ public class CreateUserTest: IDisposable
     var input = _fixture.GetExampleInput();
     
     var (response, output) = await _fixture
-      .ApiClient.Post<ApiResponse<UserOutput>>(
-        "/users",
+      .ApiClient.Post<ApiResponse<UserApiOutput>>(
+        "/users/signup",
         input
       );
 
     Assert.NotNull(response);
     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     Assert.NotNull(output);
-    Assert.Equivalent(input, output.Data);
+    Assert.NotNull(output.Data.Token);
 
-    var dbUser = await _fixture.Persistence.GetById(output.Data.Id);
+    var dbUser = await _fixture.Persistence.GetById(output.Data.User.Id);
 
     Assert.NotNull(dbUser);
-    Assert.Equivalent(input, dbUser);
+    Assert.Equivalent(output.Data.User, dbUser);
   }
 
   public void Dispose()

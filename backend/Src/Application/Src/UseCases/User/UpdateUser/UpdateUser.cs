@@ -33,7 +33,7 @@ public class UpdateUser: IApplicationHandler<UpdateUserInput,UserOutput>
     }
 
     var updateResult = user!.Update(
-      request.Name, request.Email, request.Password, request.Profile,
+      request.Name, request.Profile,
       request.FarmName, request.FarmAddress, request.Phone
     );
 

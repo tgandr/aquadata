@@ -13,7 +13,7 @@ public class WebAppFactory<TStartup>
   {
     builder.ConfigureServices(services =>
     {
-      var environment = "Development";
+      var environment = "EndToEnd";
       Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
       builder.UseEnvironment(environment);
       builder.ConfigureServices(services => {

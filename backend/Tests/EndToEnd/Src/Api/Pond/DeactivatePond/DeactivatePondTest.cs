@@ -18,9 +18,9 @@ public class DeactivatePondTest
   public async Task DeactivatePond()
   {
     var userExample = _fixture.GetUserExample();
-    var pondExample = _fixture.GetPondExample(userExample.Id);
+    var credentials = await _fixture.ApiClient.SignUp(userExample);
+    var pondExample = _fixture.GetPondExample(credentials.User.Id);
 
-    await _fixture.Persistence.AddUser(userExample);
     await _fixture.Persistence.Insert(pondExample);
 
     var (response, output) = await _fixture.ApiClient

@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Aquadata.Core.Entities.Employee;
 using Aquadata.Core.Entities.EmployeePayment;
 using Aquadata.Core.Entities.Expense;
@@ -17,7 +19,8 @@ public class UserEntity :Entity, IAggregateRoot
   public string Name {get; private set;}
   public string Email {get; private set;}
   public string Profile {get; private set;}
-  public string Password {get; private set;}
+  public byte[] PasswordHash {get; private set;}
+  public byte[] PasswordSalt {get; private set;}
   public string FarmName {get; private set;}
   public string FarmAddress {get; private set;}
   public string Phone {get; private set;}
@@ -38,13 +41,17 @@ public class UserEntity :Entity, IAggregateRoot
   private UserEntity(string name, string email, string password, string profile, 
   string farmName, string farmAddress, string phone)
   {
+    using var hmac = new HMACSHA256();
+
     Name = name;
     Email = email;
-    Password = password;
     FarmName = farmName;
     FarmAddress = farmAddress;
     Phone = phone;
     Profile = profile;
+
+    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+    PasswordSalt = hmac.Key;
   }
 
   public static Result<UserEntity> Of(
@@ -54,13 +61,10 @@ public class UserEntity :Entity, IAggregateRoot
     farmName, farmAddress, phone));
   
 
-  public Result<UserEntity> Update(string name, string email, string password, string profile,
+  public Result<UserEntity> Update(string name, string profile,
     string farmName, string farmAddress, string phone)
   {
-
     Name = name;
-    Email = email;
-    Password = password;
     FarmName = farmName;
     FarmAddress = farmAddress;
     Phone = phone;
@@ -87,13 +91,6 @@ public class UserEntity :Entity, IAggregateRoot
         Error.Validation(
           "Core.User",
           "Email cannot be null or Empty"
-        )
-      );
-    if (string.IsNullOrWhiteSpace(Password))
-      return Result<Entity>.Fail(
-        Error.Validation(
-          "Core.User",
-          "Password cannot be null or Empty"
         )
       );
     if (string.IsNullOrWhiteSpace(FarmName))

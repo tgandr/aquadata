@@ -17,6 +17,9 @@ public record Error
 
   public static Error Internal(string code, string description)
    => new(code, description, ErrorType.Internal);
+
+  public static Error Unauthorized(string code, string description)
+    => new(code, description, ErrorType.Unauthorized);
    
   public static Error Validation(string code, string description)
    => new(code, description, ErrorType.Validation);

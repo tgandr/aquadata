@@ -1,3 +1,4 @@
+using Application.UseCases.User.CreateUser;
 using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Entities.User;
 using Aquadata.EndToEndTests.Api.Base;
@@ -14,10 +15,9 @@ public class PondTestFixture: BaseFixture
     Persistence = new PondPersistence(CreateDbContext());
   }
   
-  public UserEntity GetUserExample()
-    => UserEntity.Of("valid_name", "valid_email", "valid_password", 
-    "profile", "farmName", 
-    "farmAddress", "phone").Unwrap();
+  public CreateUserInput GetUserExample()
+    => new("valid_name", $"{Guid.NewGuid()}@email.com", "valid_password", 
+    "farmName", "farmAddress","profile","phone");
 
   public PondEntity GetPondExample(Guid id)
   {

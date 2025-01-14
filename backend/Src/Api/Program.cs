@@ -9,6 +9,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAppConnection(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddUseCases();
+builder.Services.AddSecurity(builder.Configuration);
 
 
 var app = builder.Build();
@@ -21,8 +22,14 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(x => {
+    x.AllowAnyHeader();
+    x.AllowAnyMethod();
+    x.AllowAnyOrigin();
+});
 app.MapControllers();
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.Run();
 
 public partial class Program { }

@@ -10,9 +10,10 @@ public class PondOutput
   public bool IsActive {get;}
   public DateTime CreatedAt {get;}
   public DateTime UpdatedAt {get;}
+  public Guid UserId {get;}
 
   public PondOutput(Guid id, string name, float area, 
-  bool isActive, DateTime createdAt, DateTime updatedAt)
+  bool isActive,DateTime createdAt, DateTime updatedAt, Guid userId)
   {
     Id = id;
     Name = name;
@@ -20,9 +21,10 @@ public class PondOutput
     IsActive = isActive;
     CreatedAt = createdAt;
     UpdatedAt = updatedAt;
+    UserId = userId;
   }
 
   public static PondOutput FromEntity(PondEntity pond)
     => new(pond.Id, pond.Name, pond.Area, pond.IsActive, 
-    pond.CreatedAt, pond.UpdatedAt);
+    pond.CreatedAt, pond.UpdatedAt, pond.UserId);
 }

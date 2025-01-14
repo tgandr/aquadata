@@ -15,7 +15,7 @@ public class UpdatePondTest
     parameters: 5,
     MemberType = typeof(UpdatePondFixture)
   )]
-  public async void UdatePond(PondEntity entity, UpdatePondInput input)
+  public async void UpdatePond(PondEntity entity, UpdatePondInput input)
   {
     var dbContext = ApplicationFixture.CreateDbContext();
     var uow = new UnitOfWork(dbContext);

@@ -1,3 +1,4 @@
+using Application.UseCases.User.CreateUser;
 using Aquadata.Core.Entities.User;
 using Aquadata.EndToEndTests.Api.Base;
 
@@ -13,16 +14,16 @@ public class UserTestFixture
     Persistence = new UserPersistence(CreateDbContext());
   }
 
-  public UserEntity GetUserExample()
+  public CreateUserInput GetUserExample()
   {
-    return UserEntity.Of(
+    return new (
       "name",
-      "email",
+      $"{Guid.NewGuid()}@email.com",
       "password",
       "farmName",
       "farmAddres",
       "profile",
       "phone"
-    ).Unwrap();
+    );
   }
 }

@@ -17,10 +17,11 @@ public class DeactivatePondTest
     var uow = new UnitOfWork(dbContext);
     var useCase = new UseCase.DeactivatePond(repository, uow);
     var examplePond = PondTestFactory.GetValidPond();
+    examplePond.UserId = Guid.Empty;
     var tracking = dbContext.Ponds.Add(examplePond);
     dbContext.SaveChanges();
     tracking.State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-    var input = new DeactivatePondInput(examplePond.Id);
+    var input = new DeactivatePondInput(examplePond.Id, Guid.Empty);
 
     var outputResult = await useCase.Handle(input, CancellationToken.None);
     var output = outputResult.Unwrap();

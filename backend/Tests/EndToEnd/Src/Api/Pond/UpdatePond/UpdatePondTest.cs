@@ -17,10 +17,11 @@ public class UpdatePondTest
   public async Task UpdatePond()
   {
     var userExample = _fixture.GetUserExample();
-    var pondExample = _fixture.GetPondExample(userExample.Id);
-    var input = _fixture.GetInput(pondExample.Id);
+    var credentials = await _fixture.ApiClient.SignUp(userExample);
 
-    await _fixture.Persistence.AddUser(userExample);
+    var pondExample = _fixture.GetPondExample(credentials.User.Id);
+    var input = _fixture.GetInput(pondExample.Id, credentials.User.Id);
+
     await _fixture.Persistence.Insert(pondExample);
 
     var (response, output) = await _fixture.ApiClient

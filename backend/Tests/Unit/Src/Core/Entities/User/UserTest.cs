@@ -35,7 +35,6 @@ public class UserTest
     Assert.Equal(expected.FarmAddres, user.FarmAddress);
     Assert.Equal(expected.FarmName, user.FarmName);
     Assert.Equal(expected.Email, user.Email);
-    Assert.Equal(expected.Password, user.Password);
     Assert.Equal(expected.Name, user.Name);
     Assert.Equal(expected.Phone, user.Phone);
     Assert.Equal(expected.Profile, user.Profile);

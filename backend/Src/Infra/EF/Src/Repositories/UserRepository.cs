@@ -20,6 +20,10 @@ public class UserRepository : IUserRepository
       => await _dbContext.Users.AsNoTracking()
       .FirstOrDefaultAsync(e => e.Id == id);
 
+    public async Task<UserEntity?> GetByEmail(string email)
+      => await _dbContext.Users.AsNoTracking()
+        .FirstOrDefaultAsync(e => e.Email.ToLower() == email.ToLower());
+
     public async Task Insert(UserEntity aggregate, CancellationToken cancellationToken)
     {
       await _dbContext.Users.AddAsync(aggregate, cancellationToken);

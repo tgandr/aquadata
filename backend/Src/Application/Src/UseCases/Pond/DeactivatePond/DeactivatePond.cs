@@ -23,7 +23,7 @@ public class DeactivatePond: IApplicationHandler<DeactivatePondInput, PondOutput
   CancellationToken cancellationToken)
   {
     var pond = await _repository.Get(request.Id, cancellationToken);
-    
+
     if (pond == null || !pond.IsActive) {
       return Result<PondOutput>.Fail(
         Error.NotFound(
@@ -32,6 +32,14 @@ public class DeactivatePond: IApplicationHandler<DeactivatePondInput, PondOutput
         )
       );
     }
+    
+    if (pond.UserId != request.UserId)
+      return Result<PondOutput>.Fail(
+        Error.Unauthorized(
+          "Pond.UseCases.DeactivatePond",
+          "Unauthorized"
+        )
+      );
     
     await _repository.Deactivate(pond, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);

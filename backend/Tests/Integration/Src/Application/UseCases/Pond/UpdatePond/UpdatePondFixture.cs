@@ -11,7 +11,7 @@ public class UpdatePondFixture
     {
       var examplePond = PondEntity.Of($"name-{i}", 10f+i).Unwrap();
       var exampleInput = new UpdatePondInput(examplePond.Id, 
-      $"pond-{i+2}", 10f+i+2);
+      $"pond-{i+2}", 10f+i+2, Guid.NewGuid());
 
       yield return new object[] { 
         examplePond,

@@ -13,6 +13,7 @@ public static class ResultExtensions
     return result.Error.Type switch
     {
       ErrorType.Validation => Results.BadRequest(error),
+      ErrorType.Unauthorized => Results.Unauthorized(),
       ErrorType.Conflict => Results.Conflict(error),
       ErrorType.NotFound => Results.NotFound(error),
       _ => Results.Problem(

@@ -8,5 +8,5 @@ public class DeactivatePondFixture: PondTestFixture
 , ICollectionFixture<DeactivatePondFixture>
 {
   public DeactivatePondInput GetInput(Guid id)
-    => new(id);
+    => new(id, Guid.NewGuid());
 }

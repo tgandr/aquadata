@@ -14,8 +14,6 @@ public class UpdateUserTestFixture: UserTestFixture
     => new UpdateUserInput(
       id,
       "newName",
-      "newEmail", 
-      "newPassword",
       "newFarmName",
       "newFarmAddres",
       "newProfile",

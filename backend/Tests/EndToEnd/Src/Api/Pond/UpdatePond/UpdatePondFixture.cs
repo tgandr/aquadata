@@ -7,6 +7,6 @@ namespace Aquadata.EndToEndTests.Api.Pond.UpdatePond;
 public class UpdatePondFixture: PondTestFixture
 , ICollectionFixture<UpdatePondFixture>
 {
-  public UpdatePondInput GetInput(Guid id)
-    => new(id, "newName", 88f);
+  public UpdatePondInput GetInput(Guid id, Guid userId)
+    => new(id, "newName", 88f, userId);
 }

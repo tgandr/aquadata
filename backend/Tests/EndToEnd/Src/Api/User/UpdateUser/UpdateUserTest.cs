@@ -18,9 +18,8 @@ public class UpdateUserTest: IDisposable
   public async void UpdateUser()
   {
     var userExample = _fixture.GetUserExample();
-    var input = _fixture.GetExampleInput(userExample.Id);
-
-    await _fixture.Persistence.Insert(userExample);
+    var credentials = await _fixture.ApiClient.SignUp(userExample);
+    var input = _fixture.GetExampleInput(credentials.User.Id);
 
     var (response, output) = await _fixture.ApiClient
       .Put<ApiResponse<UserOutput>>(
@@ -32,7 +31,7 @@ public class UpdateUserTest: IDisposable
     Assert.Equal(System.Net.HttpStatusCode.OK, response.StatusCode);
     Assert.NotNull(output);
 
-    var dbUser = await _fixture.Persistence.GetById(userExample.Id);
+    var dbUser = await _fixture.Persistence.GetById(credentials.User.Id);
 
     Assert.NotNull(dbUser);
     Assert.Equivalent(input, dbUser);
