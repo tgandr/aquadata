@@ -8,8 +8,8 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 5000;
-const privateKey = fs.readFileSync(path.join(__dirname, '/home/ec2-user/aquadata/private.key'), 'utf8');
-const certificate = fs.readFileSync(path.join(__dirname, '/home/ec2-user/aquadata/certificate.crt'), 'utf8');
+const privateKey = fs.readFileSync(path.join(__dirname, 'private.key'), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname, 'certificate.crt'), 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 const cors = require('cors');
