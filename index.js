@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const connectDB = require('./src/config/db');
-const fs = require('fs');
-const https = require('https');  // Módulo para HTTPS
+// const fs = require('fs');
+// const https = require('https');  // Módulo para HTTPS
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -11,8 +11,8 @@ const cors = require('cors');
 
 // Middleware para CORS
 app.use(cors({
-    // origin: ['http://localhost:3000', 'https://tgandr.github.io'], // Permitir a origem do GitHub Pages
-    origin: ['http://localhost:3000', 'http://ec2-3-208-8-220.compute-1.amazonaws.com'], // Permitir a origem do GitHub Pages
+    origin: ['http://localhost:3000', 'https://tgandr.github.io'], // Permitir a origem do GitHub Pages
+    // origin: ['http://localhost:3000', 'http://ec2-3-208-8-220.compute-1.amazonaws.com'], // Permitir a origem do GitHub Pages
 
     credentials: true,
 }));
@@ -41,19 +41,19 @@ app.listen(port, () => {
 });
 
 // Configuração do certificado SSL
-const options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/seu_dominio.com/privkey.pem'),  // Caminho para a chave privada
-    cert: fs.readFileSync('/etc/letsencrypt/live/seu_dominio.com/fullchain.pem')  // Caminho para o certificado
-};
+// const options = {
+//     key: fs.readFileSync('/etc/letsencrypt/live/seu_dominio.com/privkey.pem'),  // Caminho para a chave privada
+//     cert: fs.readFileSync('/etc/letsencrypt/live/seu_dominio.com/fullchain.pem')  // Caminho para o certificado
+// };
 
 // Iniciar o servidor HTTPS
-https.createServer(options, app).listen(443, () => {
-    console.log('Server is running on https://<seu_dominio>.com');
-});
+// https.createServer(options, app).listen(443, () => {
+//     console.log('Server is running on https://<seu_dominio>.com');
+// });
 
 // Redirecionar todo o tráfego HTTP para HTTPS
-const http = require('http');
-http.createServer((req, res) => {
-    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-    res.end();
-}).listen(80);  // Escutando na porta HTTP
+// const http = require('http');
+// http.createServer((req, res) => {
+//     res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+//     res.end();
+// }).listen(80);  // Escutando na porta HTTP
