@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const connectDB = require('./src/config/db');
-const fs = require('fs');
-const https = require('https');  // Módulo para HTTPS
+// const fs = require('fs');
+// const https = require('https');  // Módulo para HTTPS
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -36,15 +36,19 @@ app.post('/data', (req, res) => {
 });
 
 // Iniciar o servidor
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+// app.listen(port, () => {
+//     console.log(`Server is running on port ${port}`);
+// });
+
+app.listen(5000, () => {
+    console.log('Servidor HTTP rodando na porta 5000');
 });
 
 // Caminhos para os certificados SSL gerados
-const options = {
-    key: fs.readFileSync('/etc/ssl/private/selfsigned.key'),
-    cert: fs.readFileSync('/etc/ssl/certs/selfsigned.crt'),
-};
+// const options = {
+//     key: fs.readFileSync('/etc/ssl/private/selfsigned.key'),
+//     cert: fs.readFileSync('/etc/ssl/certs/selfsigned.crt'),
+// };
 
 // Iniciar o servidor HTTPS
 // https.createServer(options, app).listen(443, () => {
