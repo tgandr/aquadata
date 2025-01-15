@@ -10,7 +10,7 @@ const cors = require('cors');
 
 // Middleware para CORS
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://tgandr.github.io/login'], 
+    origin: ['http://localhost', 'https://tgandr.github.io'], 
     credentials: true,
 }));
 
