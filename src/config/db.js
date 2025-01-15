@@ -1,7 +1,12 @@
 const mongoose = require('mongoose');
 
 // Removido o código de inicialização do servidor e a criação do aplicativo Express
-const dbURI = process.env.MONGO_URI || 'mongodb+srv://silvathiago:ENmfaLuVgOmnM6Mq@cluster0.zvbnjqy.mongodb.net/?retryWrites=true&w=majority';
+const dbURI = process.env.MONGO_URI;
+
+if (!dbURI) {
+    console.error("Erro: MONGO_URI não está definida no .env");
+    process.exit(1); // Encerra o processo se MONGO_URI não estiver definida
+}
 
 const connectDB = async () => {
     try {

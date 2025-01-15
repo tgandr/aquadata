@@ -55,25 +55,25 @@ router.post('/register', async (req, res) => {
         );
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).json({ msg: 'Erro no servidor' });
     }
 });
 
 // @route   POST api/users/login
 // @desc    Authenticate user & get token
 // @access  Public
+
 router.post('/login', async (req, res) => {
-    const { email, senha } = req.body;
+    const { email, password } = req.body;
 
     try {
         let user = await User.findOne({ email });
-        console.log(user);
 
         if (!user) {
             return res.status(400).json({ msg: 'Credenciais inválidas' });
         }
 
-        const isMatch = await bcrypt.compare(senha, user.senha);
+        const isMatch = await bcrypt.compare(password, user.senha);
 
         if (!isMatch) {
             return res.status(400).json({ msg: 'Credenciais inválidas' });
@@ -102,13 +102,15 @@ router.post('/login', async (req, res) => {
                         perfil: user.perfil
                     }
                 };
-                console.log('Login user response:', userResponse);  // Log da resposta do usuário
+                console.log('Login user response:', userResponse);
                 res.json(userResponse);
             }
         );
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Erro no servidor');
+        // console.log(process.env.JWT_SECRET); // Verifique se o valor da chave secreta está sendo impresso
+
+        res.status(500).json({ msg: 'Erro no servidor' });
     }
 });
 
@@ -117,12 +119,14 @@ router.post('/login', async (req, res) => {
 // @access  Private
 router.get('/me', auth, async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-senha');
+        const user = await User.findById(req.user.id).select('-password');
         res.json(user);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Erro no servidor');
+        res.status(500).json({ msg: 'Erro no servidor' });
     }
 });
+
+
 
 module.exports = router;
