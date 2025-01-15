@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const connectDB = require('./src/config/db');
-// const fs = require('fs');
-// const https = require('https');  // Módulo para HTTPS
+const fs = require('fs');
+const https = require('https');  // Módulo para HTTPS
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -40,16 +40,16 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-// Configuração do certificado SSL
-// const options = {
-//     key: fs.readFileSync('/etc/letsencrypt/live/seu_dominio.com/privkey.pem'),  // Caminho para a chave privada
-//     cert: fs.readFileSync('/etc/letsencrypt/live/seu_dominio.com/fullchain.pem')  // Caminho para o certificado
-// };
+// Caminhos para os certificados SSL gerados
+const options = {
+    key: fs.readFileSync('/etc/ssl/private/selfsigned.key'),
+    cert: fs.readFileSync('/etc/ssl/certs/selfsigned.crt'),
+};
 
 // Iniciar o servidor HTTPS
-// https.createServer(options, app).listen(443, () => {
-//     console.log('Server is running on https://<seu_dominio>.com');
-// });
+https.createServer(options, app).listen(443, () => {
+    console.log(`Server is running on https://localhost:${port}`);
+});
 
 // Redirecionar todo o tráfego HTTP para HTTPS
 // const http = require('http');
