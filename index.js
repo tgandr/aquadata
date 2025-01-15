@@ -55,9 +55,9 @@ app.listen(5000, () => {
 //     console.log(`Server is running on https://localhost:${port}`);
 // });
 
-https.createServer(options, app).listen(5000, () => {
-    console.log('Server is running on https://localhost:5000');
-});
+// https.createServer(options, app).listen(5000, () => {
+//     console.log('Server is running on https://localhost:5000');
+// });
 
 // Redirecionar todo o tráfego HTTP para HTTPS
 // const http = require('http');
