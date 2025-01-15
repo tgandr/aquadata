@@ -11,7 +11,9 @@ const cors = require('cors');
 
 // Middleware para CORS
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://tgandr.github.io'], // Permitir a origem do GitHub Pages
+    // origin: ['http://localhost:3000', 'https://tgandr.github.io'], // Permitir a origem do GitHub Pages
+    origin: ['http://localhost:3000', 'http://ec2-3-208-8-220.compute-1.amazonaws.com'], // Permitir a origem do GitHub Pages
+
     credentials: true,
 }));
 
@@ -34,9 +36,9 @@ app.post('/data', (req, res) => {
 });
 
 // Iniciar o servidor
-// app.listen(port, () => {
-//     console.log(`Server is running on port ${port}`);
-// });
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+});
 
 // Configuração do certificado SSL
 const options = {
