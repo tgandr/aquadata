@@ -37,17 +37,17 @@ app.post('/data', (req, res) => {
     res.send(`You sent: ${JSON.stringify(data)}`);
 });
 
-app.listen(5000, () => {
-    console.log('Servidor HTTP rodando na porta 5000');
-});
+// app.listen(5000, () => {
+//     console.log('Servidor HTTP rodando na porta 5000');
+// });
 
-const options = {
-    key: fs.readFileSync('/home/ec2-user/aquadata/private.key'),
-    cert: fs.readFileSync('/home/ec2-user/aquadata/certificate.crt')
-};
+// const options = {
+//     key: fs.readFileSync('/home/ec2-user/aquadata/private.key'),
+//     cert: fs.readFileSync('/home/ec2-user/aquadata/certificate.crt')
+// };
 
 // Configurar o servidor HTTPS
 https.createServer(credentials, app)
-    .listen(5000, () => {
-        console.log('Servidor HTTPS rodando na porta 5000');
+    .listen(port, () => {
+        console.log(`Servidor HTTPS rodando na porta ${port}`);
     });
