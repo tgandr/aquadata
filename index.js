@@ -38,6 +38,11 @@ app.listen(5000, () => {
     console.log('Servidor HTTP rodando na porta 5000');
 });
 
+const options = {
+    key: fs.readFileSync('/home/ec2-user/aquadata/private.key'),
+    cert: fs.readFileSync('/home/ec2-user/aquadata/certificate.crt')
+};
+
 // Configurar o servidor HTTPS
 https.createServer(credentials, app)
     .listen(5000, () => {
