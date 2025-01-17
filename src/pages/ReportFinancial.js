@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { formatDate, IconContainer } from './utils';
@@ -11,7 +11,10 @@ const ReportFinancial = () => {
     const financial = JSON.parse(localStorage.getItem('financial'));
     const [revenues, setRevenues] = useState([]);
     const [organizedData, setOrganizedData] = useState({});
-    const [revenueData, setRevenueData] = useState([]);
+    // const [revenueData, setRevenueData] = useState([]);
+    const [showYear, setShowYear] = useState('');
+    const [yearsList, setYearsList] = useState([]);
+    const [months, setMonths] = useState([]);
     const [show, setShow] = useState({
         jan: false,
         feb: false,
@@ -27,20 +30,37 @@ const ReportFinancial = () => {
         dec: false,
     });
 
-    const months = [
-        ["Janeiro", "jan", "2024-01"],
-        ["Fevereiro", "feb", "2024-02"],
-        ["Março", "mar", "2024-03"],
-        ["Abril", "apr", "2024-04"],
-        ["Maio", "may", "2024-05"],
-        ["Junho", "jun", "2024-06"],
-        ["Julho", "jul", "2024-07"],
-        ["Agosto", "aug", "2024-08"],
-        ["Setembro", "sep", "2024-09"],
-        ["Outubro", "oct", "2024-10"],
-        ["Novembro", "nov", "2024-11"],
-        ["Dezembro", "dec", "2024-12"]
+    const monthsPrevious = [
+        ["Janeiro", "jan"],
+        ["Fevereiro", "feb"],
+        ["Março", "mar"],
+        ["Abril", "apr"],
+        ["Maio", "may"],
+        ["Junho", "jun"],
+        ["Julho", "jul"],
+        ["Agosto", "aug"],
+        ["Setembro", "sep"],
+        ["Outubro", "oct"],
+        ["Novembro", "nov"],
+        ["Dezembro", "dec"]
     ];
+
+    const monthsList = () => {
+        const completeList = [];
+        monthsPrevious.map((month, index) => {
+            const monthNumber = String(index + 1).padStart(2, "0"); // Garante formato "01", "02", etc.
+            completeList.push([...month, `${showYear}-${monthNumber}`])
+        });
+        setMonths(completeList);
+    };
+
+    const handleChange = (e) => {
+        setShowYear(e.target.value)
+    };
+
+    useEffect(() => {
+        monthsList();
+    }, [showYear]);
 
     useEffect(() => {
         if (financial) {
@@ -73,6 +93,32 @@ const ReportFinancial = () => {
             }
         }
         setRevenues(revenue);
+    }, []);
+
+    useEffect(() => {
+        const financial = JSON.parse(localStorage.getItem('financial'));
+        const getAllYears = (financial) => {
+            const years = new Set();
+            for (const key in financial) {
+                if (Array.isArray(financial[key])) {
+                    financial[key].forEach(item => {
+                        if (item.date) {
+                            const year = parseInt(item.date.split("-")[0]);
+                            years.add(year);
+                        }
+                        if (item.month) {
+                            const year = parseInt(item.month.split("-")[0]);
+                            years.add(year);
+                        }
+                    });
+                }
+            }
+            return Array.from(years);
+        };
+
+        const years = getAllYears(financial);
+        setShowYear(Math.max(...years));
+        setYearsList(years);
     }, []);
 
     function organizeByMonth(data) {
@@ -181,7 +227,7 @@ const ReportFinancial = () => {
         <div>
             <div className="identify-data">
                 <h2>Movimento Mensal</h2>
-                <h3>2024</h3>
+                {/* <h3>{showYear}</h3> */}
             </div>
             <div className="pond-detail">
                 <div className="infos"></div>
@@ -299,10 +345,10 @@ const ReportFinancial = () => {
                                                             : parseFloat(purchase.value).toLocaleString('pt-BR',
                                                                 { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                     </td>
-                                                    <td style={{ textAlign: "right" }}> 
+                                                    <td style={{ textAlign: "right" }}>
                                                         R$ {purchase.category === ("Probióticos" || "Fertilizantes") ? parseFloat(purchase.value).toLocaleString('pt-BR',
                                                             { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : parseFloat((purchase.bagQuantity || purchase.quantity) * purchase.value).toLocaleString('pt-BR',
-                                                            { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                                { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                     </td>
                                                 </tr>
                                             ))}
@@ -430,6 +476,18 @@ const ReportFinancial = () => {
                             )}
                         </div>
                     ))}
+                    
+                    <select
+                        name="selectYear"
+                        value={showYear}
+                        onChange={handleChange}
+                        className="select-year"
+                    >
+                        {/* <option>Selecione o ano</option> */}
+                        {yearsList.length > 0 && yearsList.map((y, index) =>
+                            <option value={y} key={index}>{y}</option>
+                        )}
+                    </select>
                     <br /><br /><br /><br /><br /><br /><br />
                 </div>
             </div>

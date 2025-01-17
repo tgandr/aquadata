@@ -76,15 +76,15 @@ const NewCyclePopup = ({
     //     buttonText: 'Ajustar contagem'
     // });
 
-    const [countPLbyPhoto, setCountPLbyPhoto] = useState({
-        showPopupCountPL: false,
-        weight: '',
-        amount: ''
-    });
+    // const [countPLbyPhoto, setCountPLbyPhoto] = useState({
+    //     showPopupCountPL: false,
+    //     weight: '',
+    //     amount: ''
+    // });
 
-    const handleCountPLbyPhoto = (value) => {
-        setCountPLbyPhoto({ ...countPLbyPhoto, showCountPlPopup: value });
-    };
+    // const handleCountPLbyPhoto = (value) => {
+    //     setCountPLbyPhoto({ ...countPLbyPhoto, showCountPlPopup: value });
+    // };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -120,6 +120,7 @@ const NewCyclePopup = ({
     };
 
     const handleEditChanges = () => {
+        console.log(formParam)
         const cultivoCheckOut = { ...cult, ...form, quantidadeEstocada: form.quantidadeEstocada * 1000 }
         const cultivo = 'cultivo-' + cult.id;
         const history = JSON.parse(localStorage.getItem('history'));

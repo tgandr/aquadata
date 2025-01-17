@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt, faClipboardList } from '@fortawesome/free-solid-svg-icons';
+import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt, faClipboardList, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons'
 import '../styles/Dashboard.css';
 import api from '../services/api'; // exemplo
@@ -84,6 +84,14 @@ const Dashboard = () => {
           </div>
           <div className="text-wrapper">
             <span>Inventário</span>
+          </div>
+        </button>
+        <button className="dashboard-button" onClick={() => navigate('/inventario')}>
+          <div className="icon-wrapper">
+            <FontAwesomeIcon icon={faUsers} className="icon" />
+          </div>
+          <div className="text-wrapper">
+            <span>Usuários</span>
           </div>
         </button>
       </div>
