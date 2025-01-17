@@ -11,8 +11,9 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
     racaoTotalDia: '',
     quantidadeTratos: '',
     racaoUsada: '',
-    observacao1: false,
-    observacao2: false,
+    tratoSuspenso: false,
+    mortalidade: false,
+    sobras: false
   });
 
   const [showTablePopup, setShowTablePopup] = useState(false);
@@ -340,8 +341,20 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
                   <label>
                     <input
                       type="checkbox"
-                      name="observacao1"
-                      checked={formFeed.observacao1}
+                      name="mortalidade"
+                      checked={formFeed.mortalidade}
+                      onChange={handleCheckboxChange}
+                      className="checkbox-reset"
+                    />
+                    <span>Camarões mortos nas bandejas</span>
+                  </label>
+                </div>
+                <div className="obs-in">
+                  <label>
+                    <input
+                      type="checkbox"
+                      name="sobras"
+                      checked={formFeed.sobras}
                       onChange={handleCheckboxChange}
                       className="checkbox-reset"
                     />
@@ -352,8 +365,8 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
                   <label>
                     <input
                       type="checkbox"
-                      name="observacao2"
-                      checked={formFeed.observacao2}
+                      name="tratoSuspenso"
+                      checked={formFeed.tratoSuspenso}
                       onChange={handleCheckboxChange}
                       className="checkbox-reset"
                     />

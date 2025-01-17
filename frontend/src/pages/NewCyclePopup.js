@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import CountingPls from './CountingPls';
+import TransportParameters from './TransportParameters';
 
 const NewCyclePopup = ({
     showNewCyclePopup, setShowNewCyclePopup,
@@ -23,6 +24,8 @@ const NewCyclePopup = ({
     const [showSavedMessage, setShowSavedMessage] = useState(false);
     const [showMetas, setShowMetas] = useState(false);
     const [showParameters, setShowParameters] = useState(false);
+    const [checkEdit, setCheckEdit] = useState(false);
+    const [cult, setCult] = useState({});
     const [metas, setMetas] = useState({
         sobrevivencia: "",
         tempo: "",
@@ -42,6 +45,7 @@ const NewCyclePopup = ({
 
     const savePostLarvaeList = (l) => {
         if (l !== '') {
+            setForm({ ...form, origemPL: l });
             setPostLarvae([...postLarvae, l]);
             setCustomPostLarvae('');
             let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
@@ -113,10 +117,26 @@ const NewCyclePopup = ({
         const stressTestCheckOut = { ...form, testForm };
         setShowStressTestPopup(false);
         setForm(stressTestCheckOut);
-    }
+    };
+
+    const handleEditChanges = () => {
+        const cultivoCheckOut = { ...cult, ...form, quantidadeEstocada: form.quantidadeEstocada * 1000 }
+        const cultivo = 'cultivo-' + cult.id;
+        const history = JSON.parse(localStorage.getItem('history'));
+        const updateHistory = history.filter((c) => c.id !== cult.id);
+        updateHistory.push(cultivoCheckOut);
+        localStorage.setItem('history', JSON.stringify(updateHistory));
+        localStorage.setItem(cultivo, JSON.stringify(cultivoCheckOut));
+        setCultivo(cultivoCheckOut);
+        setShowNewCyclePopup(false);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (checkEdit) {
+            handleEditChanges();
+            return
+        }
         const viveiros = JSON.parse(localStorage.getItem('viveiros'));
         const vivNumber = viveiros.find(viv => viv.id === viveiroId);
         let history = JSON.parse(localStorage.getItem('history'));
@@ -155,28 +175,6 @@ const NewCyclePopup = ({
     const handleSavePLcount = () => {
     };
 
-    const handleParametersChange = (e, param, type) => {
-        const check = e.target.name;
-        const { value } = e.target;
-
-        if (type === "transp" || type === "pond") {
-            setFormParam(prevState => ({
-                ...prevState,
-                [param]: {
-                    ...prevState[param],
-                    [type]: value
-                }
-            }));
-        } else {
-            setFormParam({ ...formParam, [check]: e.target.value })
-        }
-    }
-
-    const handleParametersChangeSubmit = (e) => {
-        e.preventDefault();
-        setShowParameters(false);
-    }
-
     useEffect(() => {
         const pondArea = JSON.parse(localStorage.getItem("viveiros")).find(p => p.id === viveiroId);
         setArea(pondArea.area);
@@ -195,6 +193,28 @@ const NewCyclePopup = ({
             setPostLarvae(checkLists.postLarvaeList);
         }
     }, []);
+
+    useEffect(() => {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith("cultivo-")) {
+                const cultivo = JSON.parse(localStorage.getItem(key));
+                if (cultivo.viveiroId === viveiroId) {
+                    if (cultivo.hasShrimp) {
+                        setForm({
+                            ...form,
+                            dataPovoamento: cultivo.dataPovoamento,
+                            origemPL: cultivo.origemPL,
+                            uniformidade: cultivo.uniformidade,
+                            quantidadeEstocada: cultivo.quantidadeEstocada / 1000
+                        });
+                        setCheckEdit(true);
+                        setCult(cultivo);
+                    }
+                }
+            }
+        }
+    }, [])
 
     return (
         <>
@@ -229,9 +249,8 @@ const NewCyclePopup = ({
                             <label>
                                 Uniformidade:
                                 <select
-                                    // terminar programação
                                     name="uniformidade"
-                                    // value={}
+                                    value={form.uniformidade}
                                     onChange={handleChange}
                                     required>
                                     <option value="">Selecione</option>
@@ -254,7 +273,10 @@ const NewCyclePopup = ({
                             </label>
                             <span className="pls">{(form.quantidadeEstocada * 1000).toLocaleString('pt-BR')}&nbsp;
                                 pós-larvas</span>
-                            <span className="pls">{(form.quantidadeEstocada * 1000 / area / 10000).toLocaleString('pt-BR')}&nbsp;
+                            <span className="pls">{(form.quantidadeEstocada * 1000 / area / 10000).toLocaleString('pt-BR', {
+                                minimumFractionDigits: 0,
+                                maximumFractionDigits: 0,
+                            })}&nbsp;
                                 PLs/m²</span>
                             <label>
                                 Teste de Estresse:
@@ -268,7 +290,7 @@ const NewCyclePopup = ({
                                     </button>
                                 </div>
                             </label>
-                            <label>
+                            {/* <label>
                                 Calcular PL/grama por foto?
                                 <div className="stress-test-buttons">
                                     <button
@@ -277,16 +299,16 @@ const NewCyclePopup = ({
                                         // className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Sim' ? 'active' : ''}`}
                                         onClick={() => (handleCountPLbyPhoto('Sim'), setShowCountPlPopup(true))}>
                                         Contar
-                                    </button>
-                                    {/* <button
+                                    </button> */}
+                            {/* <button
                                         type="button"
                                         // className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Não' ? 'active' : ''}`}
                                         onClick={() => handleCountPLbyPhoto('Não')}
                                     >
                                         Não
                                     </button> */}
-                                </div>
-                            </label>
+                            {/* </div>
+                            </label> */}
                             <label>
                                 Qualidade da água de transporte e recebimento:
                                 <div className="stress-test-buttons">
@@ -422,181 +444,10 @@ const NewCyclePopup = ({
                 </div>
             )}
 
-            {showParameters && (
-                <div className="popup">
-                    <div className="popup-inner">
-                        <h3>Checagem de parâmetros de qualidade da água e aclimatação</h3>
-                        <form className="harv-form"
-                            onSubmit={handleParametersChangeSubmit}
-                        >
-                            <label>
-                                Foi realizada checagem?
-                                <select name="check"
-                                    value={formParam.check}
-                                    onChange={handleParametersChange} required>
-                                    <option value="">Selecione</option>
-                                    <option value="true">Sim</option>
-                                    <option value="false">Não</option>
-                                </select>
-                            </label>
-                            <label>
-                                Deseja detalhar a checagem?
-                                <select name="details"
-                                    value={formParam.details}
-                                    onChange={handleParametersChange} required>
-                                    
-                                    {(formParam.check === "true" || formParam.check === "") && (
-                                        <option value="">Selecione</option>
-                                    )}
-
-                                    {formParam.check === "true" && (
-                                        <>
-                                            <option value="true">Sim</option>
-                                            <option value="false">Não</option>
-                                        </>
-                                    )}
-
-                                    {formParam.check === "false" && (
-                                        <option value="false">Não</option>
-                                    )}
-
-                                </select>
-                            </label>
-                            {formParam.details === "true" && (
-                                <>
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Parâmetro</th>
-                                                <th>Transporte</th>
-                                                <th>Viveiro</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Oxigênio</td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.oxygen.transp}
-                                                        onChange={(e) => handleParametersChange(e, 'oxygen', 'transp')}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.oxygen.pond}
-                                                        onChange={(e) => handleParametersChange(e, 'oxygen', 'pond')}
-                                                    />
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Temperatura</td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.temperature.transp}
-                                                        onChange={(e) => handleParametersChange(e, 'temperature', 'transp')}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.temperature.pond}
-                                                        onChange={(e) => handleParametersChange(e, 'temperature', 'pond')}
-                                                    />
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>pH</td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.ph.transp}
-                                                        onChange={(e) => handleParametersChange(e, 'ph', 'transp')}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.ph.pond}
-                                                        onChange={(e) => handleParametersChange(e, 'ph', 'pond')}
-                                                    />
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Salinidade</td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.salinity.transp}
-                                                        onChange={(e) => handleParametersChange(e, 'salinity', 'transp')}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.salinity.pond}
-                                                        onChange={(e) => handleParametersChange(e, 'salinity', 'pond')}
-                                                    />
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Amônia</td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.ammonium.transp}
-                                                        onChange={(e) => handleParametersChange(e, 'ammonium', 'transp')}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.ammonium.pond}
-                                                        onChange={(e) => handleParametersChange(e, 'ammonium', 'pond')}
-                                                    />
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Nitrito</td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.nitrite.transp}
-                                                        onChange={(e) => handleParametersChange(e, 'nitrite', 'transp')}
-                                                    />
-                                                </td>
-                                                <td>
-                                                    <input
-                                                        type="text"
-                                                        value={formParam.nitrite.pond}
-                                                        onChange={(e) => handleParametersChange(e, 'nitrite', 'pond')}
-                                                    />
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </>
-                            )
-
-                            }
-                            <br />
-                            <br />
-                            <div className="bottom-buttons">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowParameters(false)}
-                                    className="cancel-button">Cancelar</button>
-                                <button
-                                    type="submit"
-                                    onClick={() => handleStressTestClick('Sim')}
-                                    className="first-class-button">Salvar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+            {showParameters && <TransportParameters
+                formParam={formParam}
+                setFormParam={setFormParam}
+                setShowParameters={setShowParameters} />}
 
             {showCountPlPopup && (<CountingPls
                 setShowNewCyclePopup={setShowNewCyclePopup}
@@ -618,7 +469,7 @@ const NewCyclePopup = ({
                                 Nome:
                                 <input
                                     type="text"
-                                    name="fertilizer"
+                                    name="customPostLarvae"
                                     value={customPostLarvae}
                                     onChange={(e) => setCustomPostLarvae(e.target.value)}
                                     required />

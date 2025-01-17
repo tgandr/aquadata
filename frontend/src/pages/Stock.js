@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import '../styles/Stock.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBoxesPacking, faBacteria, faBoxesStacked, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
@@ -7,7 +6,6 @@ import { formatDate } from './utils';
 import { IconContainer } from './utils';
 
 const Stock = () => {
-  // const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState({ ration: false, probiotics: false, fertilizers: false, others: false });
   const formData = JSON.parse(localStorage.getItem('formData'));
   const [showTotalValue, setShowTotalValue] = useState(false);
@@ -21,14 +19,13 @@ const Stock = () => {
   });
 
   const calculateTotalValue = (purchaseData) => {
-    if (!stockData.feedPurchase)
-      return 0;
-    
-    const totalFeedPurchases = stockData.feedPurchase.reduce((total, i) =>
-      total + (parseFloat(i.quantity) * (parseFloat(i.value) / parseInt(i.bagSize))), 0);
-    return purchaseData.reduce((total, item) => {
-      return total + (parseFloat(item.quantity) * parseFloat(item.value));
-    }, totalFeedPurchases);
+    if (stockData.feedPurchase) {
+      const totalFeedPurchases = stockData.feedPurchase.reduce((total, i) =>
+        total + (parseFloat(i.quantity) * (parseFloat(i.value) / parseInt(i.bagSize))), 0);
+      return purchaseData.reduce((total, item) => {
+        return total + (parseFloat(item.quantity) * parseFloat(item.value));
+      }, totalFeedPurchases);
+    }
   };
 
   const totalValue = calculateTotalValue(
@@ -129,7 +126,7 @@ const Stock = () => {
             <span>Outros</span>
           </div>
         </button>
-        {showTotalValue && (
+        {showTotalValue && totalValue && (
           <h4>Valor Total em Estoque: R$ {(totalValue).toLocaleString('pt-BR',
             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
         )}

@@ -37,7 +37,7 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
         epipoditoEpicomensais: '',
         necroseIMNV: '',
         necroseBlackspot: '',
-        obsDeformidades: '',
+        obsDeformidades: 'Não',
         obsDeformidadesDetalhe: ''
     });
 

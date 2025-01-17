@@ -140,11 +140,11 @@ const AddPonds = () => {
                 <div className="infos-wrapper">
 
                   {days(viveiro.id) ? (
-                    <span className="viveiro-data">
+                    <span className="viveiro-data"><strong>
                       {days(viveiro.id) === 1 ? '1 dia' : `${days(viveiro.id)} dias`}
-                    </span>
+                    </strong></span>
                   ) : (
-                    <span className="viveiro-data">Desocupado</span>
+                    <span className="viveiro-data" style={{ color: '#FFFFFF', backgroundColor: '#EA580C' }}>&nbsp;Desocupado&nbsp;</span>
                   )}
                   <span className="viveiro-data">{parseFloat(viveiro.area).toLocaleString('pt-BR', {
                     minimumFractionDigits: 1,
@@ -269,7 +269,7 @@ const AddPonds = () => {
                 <span>Excluir viveiro?</span>
                 <button
                   type="button"
-                  className="delete-button" 
+                  className="delete-button"
                   onClick={() => deletePond()}>
                   <FontAwesomeIcon icon={faTrash} className="icon-plus" style={{ marginRight: '50px' }} />
                 </button>
