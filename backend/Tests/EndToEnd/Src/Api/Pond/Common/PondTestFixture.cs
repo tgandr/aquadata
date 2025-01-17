@@ -1,6 +1,5 @@
 using Application.UseCases.User.CreateUser;
 using Aquadata.Core.Entities.Pond;
-using Aquadata.Core.Entities.User;
 using Aquadata.EndToEndTests.Api.Base;
 
 namespace Aquadata.EndToEndTests.Api.Pond.Common;

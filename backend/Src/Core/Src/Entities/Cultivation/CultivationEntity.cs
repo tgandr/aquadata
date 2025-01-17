@@ -14,7 +14,7 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Cultivation;
 
-public class CultivationEntity : SeedWork.Entity, IAggregateRoot
+public class CultivationEntity : Entity, IAggregateRoot
 {
   public int PondNumber {get; private set;}
   public int Stock {get; private set;}

@@ -65,8 +65,10 @@ public class PondController: ControllerBase
   CancellationToken cancellationToken)
   {
     var userId = User.FindFirst("id")!.Value;
+    var pondFromDb = await _mediator.Send(new GetPondInput(command.Id));
 
-    if (userId != command.UserId.ToString())
+    if (!pondFromDb.IsFail && 
+    pondFromDb.Unwrap().UserId.ToString() != userId)
       return Results.Unauthorized();
 
     var result = await _mediator.Send(command, cancellationToken);

@@ -1,7 +1,6 @@
 using System.Net;
 using Aquadata.Api.Models;
 using Aquadata.Api.Response;
-using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.User.CreateUser;
 
