@@ -1,4 +1,3 @@
-using Aquadata.Application.Errors;
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.Pond.Common;
 using Aquadata.Core.Interfaces.Repository;

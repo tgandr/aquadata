@@ -4,7 +4,7 @@ using Aquadata.Core.ValueObjects;
 
 namespace Aquadata.Core.Entities.Water;
 
-public class WaterEntity : SeedWork.Entity
+public class WaterEntity : Entity
 {
   public DateTime Date {get; private set;}
   public int Temperature {get; private set;}

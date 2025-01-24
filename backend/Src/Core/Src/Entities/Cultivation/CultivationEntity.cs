@@ -25,7 +25,6 @@ public class CultivationEntity : Entity, IAggregateRoot
 
   // Navigation props
   public virtual Guid PondId {get;set;}
-  public virtual WaterEntity? Water {get;set;}
   public virtual ObjectiveEntity? Objective {get;set;}
   public virtual StressTestEntity? StressTest {get; set;}
   public virtual ICollection<BiometricEntity>? Biometrics {get; set;}

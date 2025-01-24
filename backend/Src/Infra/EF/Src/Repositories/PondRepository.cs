@@ -1,3 +1,4 @@
+using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Infra.EF.Context;
@@ -29,4 +30,8 @@ public class PondRepository : IPondRepository
 
   public Task Update(PondEntity aggregate, CancellationToken cancellationToken)
     => Task.FromResult(_dbContext.Ponds.Update(aggregate));
+
+  public async Task AddCultivation(CultivationEntity cultivation, CancellationToken cancellationToken)
+    => await _dbContext.Cultivations.AddAsync(cultivation, cancellationToken);
+  
 }

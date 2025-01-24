@@ -25,8 +25,8 @@ namespace Aquadata.Infra.EF.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Profile = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Password = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PasswordHash = table.Column<byte[]>(type: "longblob", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "longblob", nullable: false),
                     FarmName = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     FarmAddress = table.Column<string>(type: "longtext", nullable: false)
@@ -338,25 +338,6 @@ namespace Aquadata.Infra.EF.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Biometrics",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Count = table.Column<float>(type: "float", nullable: false),
-                    AverageWeight = table.Column<float>(type: "float", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    HarverstId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Biometrics", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Cultivations",
                 columns: table => new
                 {
@@ -369,7 +350,6 @@ namespace Aquadata.Infra.EF.Migrations
                     SettlementDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     WaterAndAcclimationChecked = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     PondId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    WaterId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -397,7 +377,7 @@ namespace Aquadata.Infra.EF.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     HadLeftovers = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     ReducedOrSuspended = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -408,7 +388,8 @@ namespace Aquadata.Infra.EF.Migrations
                         name: "FK_Feeds_Cultivations_CultivationId",
                         column: x => x.CultivationId,
                         principalTable: "Cultivations",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -423,7 +404,7 @@ namespace Aquadata.Infra.EF.Migrations
                     Type = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     MeasureUnit = table.Column<int>(type: "int", nullable: false),
-                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -434,7 +415,8 @@ namespace Aquadata.Infra.EF.Migrations
                         name: "FK_Fertilizers_Cultivations_CultivationId",
                         column: x => x.CultivationId,
                         principalTable: "Cultivations",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -449,7 +431,7 @@ namespace Aquadata.Infra.EF.Migrations
                     Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     IsTotal = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     BioMass = table.Column<float>(type: "float", nullable: false),
-                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -460,7 +442,8 @@ namespace Aquadata.Infra.EF.Migrations
                         name: "FK_Harvests_Cultivations_CultivationId",
                         column: x => x.CultivationId,
                         principalTable: "Cultivations",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -553,7 +536,7 @@ namespace Aquadata.Infra.EF.Migrations
                     Ammonium = table.Column<float>(type: "float", nullable: false),
                     Nitrite = table.Column<float>(type: "float", nullable: false),
                     Origin = table.Column<int>(type: "int", nullable: false),
-                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     PH_Value = table.Column<byte>(type: "tinyint unsigned", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -565,7 +548,8 @@ namespace Aquadata.Infra.EF.Migrations
                         name: "FK_WaterAndAcclimations_Cultivations_CultivationId",
                         column: x => x.CultivationId,
                         principalTable: "Cultivations",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -577,7 +561,7 @@ namespace Aquadata.Infra.EF.Migrations
                     Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Temperature = table.Column<int>(type: "int", nullable: false),
                     DissolvedOxygen = table.Column<float>(type: "float", nullable: false),
-                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     PH_Value = table.Column<byte>(type: "tinyint unsigned", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -589,6 +573,37 @@ namespace Aquadata.Infra.EF.Migrations
                         name: "FK_Waters_Cultivations_CultivationId",
                         column: x => x.CultivationId,
                         principalTable: "Cultivations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Biometrics",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Count = table.Column<float>(type: "float", nullable: false),
+                    AverageWeight = table.Column<float>(type: "float", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CultivationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    HarverstId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Biometrics", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Biometrics_Cultivations_CultivationId",
+                        column: x => x.CultivationId,
+                        principalTable: "Cultivations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Biometrics_Harvests_HarverstId",
+                        column: x => x.HarverstId,
+                        principalTable: "Harvests",
                         principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -618,11 +633,6 @@ namespace Aquadata.Infra.EF.Migrations
                 name: "IX_Cultivations_PondId",
                 table: "Cultivations",
                 column: "PondId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Cultivations_WaterId",
-                table: "Cultivations",
-                column: "WaterId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeePayments_EmployeeId",
@@ -729,36 +739,11 @@ namespace Aquadata.Infra.EF.Migrations
                 name: "IX_Waters_CultivationId",
                 table: "Waters",
                 column: "CultivationId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Biometrics_Cultivations_CultivationId",
-                table: "Biometrics",
-                column: "CultivationId",
-                principalTable: "Cultivations",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Biometrics_Harvests_HarverstId",
-                table: "Biometrics",
-                column: "HarverstId",
-                principalTable: "Harvests",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Cultivations_Waters_WaterId",
-                table: "Cultivations",
-                column: "WaterId",
-                principalTable: "Waters",
-                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Waters_Cultivations_CultivationId",
-                table: "Waters");
-
             migrationBuilder.DropTable(
                 name: "Biometrics");
 
@@ -805,6 +790,9 @@ namespace Aquadata.Infra.EF.Migrations
                 name: "WaterAndAcclimations");
 
             migrationBuilder.DropTable(
+                name: "Waters");
+
+            migrationBuilder.DropTable(
                 name: "Harvests");
 
             migrationBuilder.DropTable(
@@ -818,9 +806,6 @@ namespace Aquadata.Infra.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "Ponds");
-
-            migrationBuilder.DropTable(
-                name: "Waters");
 
             migrationBuilder.DropTable(
                 name: "Users");

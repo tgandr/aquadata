@@ -13,8 +13,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aquadata.Infra.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250107182401_AddPasswordHash")]
-    partial class AddPasswordHash
+    [Migration("20250124182752_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,7 +41,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("CultivationId")
+                    b.Property<Guid>("CultivationId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("Date")
@@ -96,14 +96,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<bool>("WaterAndAcclimationChecked")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<Guid?>("WaterId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PondId");
-
-                    b.HasIndex("WaterId");
 
                     b.ToTable("Cultivations", (string)null);
                 });
@@ -237,7 +232,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("CultivationId")
+                    b.Property<Guid>("CultivationId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("Date")
@@ -278,7 +273,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("CultivationId")
+                    b.Property<Guid>("CultivationId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("Date")
@@ -323,7 +318,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("CultivationId")
+                    b.Property<Guid>("CultivationId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("Date")
@@ -766,7 +761,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("CultivationId")
+                    b.Property<Guid>("CultivationId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("Date")
@@ -808,7 +803,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("CultivationId")
+                    b.Property<Guid>("CultivationId")
                         .HasColumnType("char(36)");
 
                     b.Property<float>("Nitrite")
@@ -848,7 +843,9 @@ namespace Aquadata.Infra.EF.Migrations
                 {
                     b.HasOne("Aquadata.Core.Entities.Cultivation.CultivationEntity", null)
                         .WithMany("Biometrics")
-                        .HasForeignKey("CultivationId");
+                        .HasForeignKey("CultivationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Aquadata.Core.Entities.Harvest.HarvestEntity", null)
                         .WithMany("Biometrics")
@@ -862,12 +859,6 @@ namespace Aquadata.Infra.EF.Migrations
                         .HasForeignKey("PondId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Aquadata.Core.Entities.Water.WaterEntity", "Water")
-                        .WithMany()
-                        .HasForeignKey("WaterId");
-
-                    b.Navigation("Water");
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Employee.EmployeeEntity", b =>
@@ -920,21 +911,27 @@ namespace Aquadata.Infra.EF.Migrations
                 {
                     b.HasOne("Aquadata.Core.Entities.Cultivation.CultivationEntity", null)
                         .WithMany("Feed")
-                        .HasForeignKey("CultivationId");
+                        .HasForeignKey("CultivationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Fertilizer.FertilizerEntity", b =>
                 {
                     b.HasOne("Aquadata.Core.Entities.Cultivation.CultivationEntity", null)
                         .WithMany("Fertilizers")
-                        .HasForeignKey("CultivationId");
+                        .HasForeignKey("CultivationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Harvest.HarvestEntity", b =>
                 {
                     b.HasOne("Aquadata.Core.Entities.Cultivation.CultivationEntity", null)
                         .WithMany("Harvests")
-                        .HasForeignKey("CultivationId");
+                        .HasForeignKey("CultivationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Inventory.InventoryEntity", b =>
@@ -1039,14 +1036,18 @@ namespace Aquadata.Infra.EF.Migrations
                 {
                     b.HasOne("Aquadata.Core.Entities.Cultivation.CultivationEntity", null)
                         .WithMany("WaterParams")
-                        .HasForeignKey("CultivationId");
+                        .HasForeignKey("CultivationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.WaterAndAcclimation.WaterAndAcclimationEntity", b =>
                 {
                     b.HasOne("Aquadata.Core.Entities.Cultivation.CultivationEntity", null)
                         .WithMany("WaterAndAcclimation")
-                        .HasForeignKey("CultivationId");
+                        .HasForeignKey("CultivationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Cultivation.CultivationEntity", b =>
