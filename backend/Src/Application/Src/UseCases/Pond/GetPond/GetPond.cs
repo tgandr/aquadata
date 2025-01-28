@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Pond.GetPond;
 
-public class GetPond: IApplicationHandler<GetPondInput, PondOutput>
+public class GetPond: IUseCaseHandler<GetPondInput, PondOutput>
 {
   private readonly IPondRepository _repository;
   public GetPond(IPondRepository repository)
@@ -24,7 +24,7 @@ public class GetPond: IApplicationHandler<GetPondInput, PondOutput>
     {
       return Result<PondOutput>.Fail(
         Error.NotFound(
-          "Pond.UseCases.GetPond",
+          "UseCases.Pond.GetPond",
           "Pond not found'"
         )
       );

@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.User.DeleteUser;
 
-public class DeleteUser : IApplicationHandler<DeleteUserInput,Unit>
+public class DeleteUser : IUseCaseHandler<DeleteUserInput,Unit>
 {
   private readonly IUserRepository _userRepository;
   private readonly IUnitOfWork _unitOfWork;
@@ -26,7 +26,7 @@ public class DeleteUser : IApplicationHandler<DeleteUserInput,Unit>
     if (user == null)
       return Result<Unit>.Fail(
         Error.NotFound(
-          "User.UseCases.DeleteUser",
+          "UseCases.User.DeleteUser",
           "User not found'"
         )
       );

@@ -3,5 +3,5 @@ using MediatR;
 
 namespace Aquadata.Application.Interfaces;
 
-public interface IApplicationRequest<TOutput>: IRequest<Result<TOutput>>
+public interface IUseCaseRequest<TOutput>: IRequest<Result<TOutput>>
 {}

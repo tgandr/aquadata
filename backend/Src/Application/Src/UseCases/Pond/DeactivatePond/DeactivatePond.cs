@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Pond.DeactivatePond;
 
-public class DeactivatePond: IApplicationHandler<DeactivatePondInput, PondOutput>
+public class DeactivatePond: IUseCaseHandler<DeactivatePondInput, PondOutput>
 {
   private readonly IPondRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
@@ -26,7 +26,7 @@ public class DeactivatePond: IApplicationHandler<DeactivatePondInput, PondOutput
     if (pond == null || !pond.IsActive) {
       return Result<PondOutput>.Fail(
         Error.NotFound(
-          "Pond.UseCases.DeactivatePond",
+          "UseCases.Pond.DeactivatePond",
           "Pond not found'"
         )
       );
@@ -35,7 +35,7 @@ public class DeactivatePond: IApplicationHandler<DeactivatePondInput, PondOutput
     if (pond.UserId != request.UserId)
       return Result<PondOutput>.Fail(
         Error.Unauthorized(
-          "Pond.UseCases.DeactivatePond",
+          "UseCases.Pond.DeactivatePond",
           "Unauthorized"
         )
       );

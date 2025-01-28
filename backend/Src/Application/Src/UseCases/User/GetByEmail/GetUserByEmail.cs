@@ -6,7 +6,7 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Application.UseCases.User.GetByEmail;
 
-public class GetUserByEmail : IApplicationHandler<GetUserByEmailInput, UserOutput>
+public class GetUserByEmail : IUseCaseHandler<GetUserByEmailInput, UserOutput>
 {
   private readonly IUserRepository _repository;
 
@@ -19,7 +19,7 @@ public class GetUserByEmail : IApplicationHandler<GetUserByEmailInput, UserOutpu
     if (user == null)
       return Result<UserOutput>.Fail(
         Error.NotFound(
-          "User.UseCases.DeleteUser",
+          "UseCases.User.DeleteUser",
           "User not found'"
         )
       );

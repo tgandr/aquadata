@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aquadata.Infra.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250124182752_Initial")]
+    [Migration("20250128155531_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -87,8 +87,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
-                    b.Property<int>("Uniformity")
-                        .HasColumnType("int");
+                    b.Property<string>("Uniformity")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -279,8 +280,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("MeasureUnit")
-                        .HasColumnType("int");
+                    b.Property<string>("MeasureUnit")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -289,8 +291,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -362,8 +365,9 @@ namespace Aquadata.Infra.EF.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -514,8 +518,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("Unit")
-                        .HasColumnType("int");
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -544,6 +549,10 @@ namespace Aquadata.Infra.EF.Migrations
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Label")
                         .IsRequired()
@@ -628,8 +637,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("Unit")
-                        .HasColumnType("int");
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -663,8 +673,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("SupplyType")
-                        .HasColumnType("int");
+                    b.Property<string>("SupplyType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -691,6 +702,18 @@ namespace Aquadata.Infra.EF.Migrations
 
                     b.Property<Guid>("CultivationId")
                         .HasColumnType("char(36)");
+
+                    b.Property<string>("DeadLarvae")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("StressType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("SwimmingResponse")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -809,8 +832,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<float>("Nitrite")
                         .HasColumnType("float");
 
-                    b.Property<int>("Origin")
-                        .HasColumnType("int");
+                    b.Property<string>("Origin")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<float>("Oxygen")
                         .HasColumnType("float");

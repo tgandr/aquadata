@@ -19,6 +19,8 @@ public class FertilizerPurchaseConfig: IEntityTypeConfiguration<FertilizerPurcha
   {
     builder.ToTable("FertilizerPurchases");
     builder.HasKey(e => e.Id);
+    builder.Property(e => e.Unit)
+      .HasConversion<string>();
   }
 }
 
@@ -37,5 +39,7 @@ public class ProbioticsPurchaseConfig: IEntityTypeConfiguration<ProbioticsPurcha
   {
     builder.ToTable("ProbioticsPurchases");
     builder.HasKey(e => e.Id);
+    builder.Property(e => e.Unit)
+      .HasConversion<string>();
   }
 }

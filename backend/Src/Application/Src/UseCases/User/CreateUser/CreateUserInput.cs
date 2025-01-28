@@ -4,7 +4,7 @@ using Aquadata.Core.Entities.User;
 
 namespace Application.UseCases.User.CreateUser;
 
-public class CreateUserInput: IApplicationRequest<UserOutput>
+public class CreateUserInput: IUseCaseRequest<UserOutput>
 {
   public string Name {get;}
   public string Email {get;}

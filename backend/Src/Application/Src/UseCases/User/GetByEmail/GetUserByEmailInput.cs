@@ -3,7 +3,7 @@ using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.Application.UseCases.User.GetByEmail;
 
-public class GetUserByEmailInput: IApplicationRequest<UserOutput>
+public class GetUserByEmailInput: IUseCaseRequest<UserOutput>
 {
   public string Email {get;}
 

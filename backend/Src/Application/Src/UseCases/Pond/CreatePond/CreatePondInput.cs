@@ -3,7 +3,7 @@ using Aquadata.Application.UseCases.Pond.Common;
 
 namespace Aquadata.Application.UseCases.Pond.CreatePond;
 
-public class CreatePondInput: IApplicationRequest<PondOutput>
+public class CreatePondInput: IUseCaseRequest<PondOutput>
 {
   public string Name {get;}
   public float Area {get;}

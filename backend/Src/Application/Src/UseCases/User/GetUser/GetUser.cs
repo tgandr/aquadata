@@ -6,7 +6,7 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Application.UseCases.User.GetUser;
 
-public class GetUser : IApplicationHandler<GetUserInput,UserOutput>
+public class GetUser : IUseCaseHandler<GetUserInput,UserOutput>
 {
   private readonly IUserRepository _repository;
 
@@ -22,7 +22,7 @@ public class GetUser : IApplicationHandler<GetUserInput,UserOutput>
     {
       return Result<UserOutput>.Fail(
         Error.NotFound(
-          "User.UseCases.DeleteUser",
+          "UseCases.User.DeleteUser",
           "User not found'"
         )
       );

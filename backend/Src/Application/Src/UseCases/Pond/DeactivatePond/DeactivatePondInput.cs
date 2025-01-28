@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Pond.DeactivatePond;
 
-public class DeactivatePondInput: IApplicationRequest<PondOutput>
+public class DeactivatePondInput: IUseCaseRequest<PondOutput>
 {
   public Guid Id {get;}
   public Guid UserId {get;}

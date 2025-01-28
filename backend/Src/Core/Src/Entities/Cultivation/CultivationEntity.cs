@@ -32,7 +32,7 @@ public class CultivationEntity : Entity, IAggregateRoot
   public virtual ICollection<HarvestEntity>? Harvests {get; set;}
   public virtual ICollection<FeedEntity>? Feed {get; set;}
   public virtual ICollection<FertilizerEntity>? Fertilizers {get; set;}
-  public virtual ICollection<WaterAndAcclimationEntity>? WaterAndAcclimation {get; set;}
+  public virtual ICollection<WaterAndAcclimationEntity>? WaterAndAcclimation {get; private set;}
 
   private CultivationEntity() {}
   private CultivationEntity(int pondNumber, int stock, string pLOrigin, 
@@ -46,9 +46,6 @@ public class CultivationEntity : Entity, IAggregateRoot
     Uniformity = uniformity;
     SettlementDate = settlementDate;
     WaterAndAcclimationChecked = waterAndAcclimationChecked;
-
-    if (WaterAndAcclimation is not null)
-      WaterAndAcclimationChecked = true;
   }
 
   public static Result<CultivationEntity> Of(
@@ -64,6 +61,20 @@ public class CultivationEntity : Entity, IAggregateRoot
   public bool HasShrimp()
     => Stock > 0; 
   
+  public Result<CultivationEntity> AddWaterAndAcclimation(ICollection<WaterAndAcclimationEntity> waterAndAcclimation)
+  {
+    if (waterAndAcclimation.Count > 2)
+      return Result<CultivationEntity>.Fail(
+        Error.Validation(
+          "Core.Cultivation", 
+          "Water and acclimation cannot be more than 2")
+      );
+
+    WaterAndAcclimation = waterAndAcclimation;
+    WaterAndAcclimationChecked = true;
+    return Result<CultivationEntity>.Ok(this);
+  }
+
   protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(PLOrigin))

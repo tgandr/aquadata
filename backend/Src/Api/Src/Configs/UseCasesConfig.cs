@@ -3,6 +3,7 @@ using Aquadata.Application.UseCases.Pond.CreatePond;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Infra.EF;
 using Aquadata.Infra.EF.Repositories;
+using Microsoft.OpenApi.Models;
 
 namespace Aquadata.Api.Configs;
 

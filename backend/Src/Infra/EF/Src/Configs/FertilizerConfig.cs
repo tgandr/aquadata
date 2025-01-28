@@ -10,5 +10,10 @@ public class FertilizerConfig : IEntityTypeConfiguration<FertilizerEntity>
   {
     builder.ToTable("Fertilizers");
     builder.HasKey(e => e.Id);
+    builder.Property(e => e.Type)
+      .HasConversion<string>();
+    builder.Property(e => e.MeasureUnit)
+      .HasConversion<string>();
+    
   }
 }

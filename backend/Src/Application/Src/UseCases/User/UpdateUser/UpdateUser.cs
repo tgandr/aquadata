@@ -6,7 +6,7 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Application.UseCases.User.UpdateUser;
 
-public class UpdateUser: IApplicationHandler<UpdateUserInput,UserOutput>
+public class UpdateUser: IUseCaseHandler<UpdateUserInput,UserOutput>
 {
   private readonly IUserRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
@@ -26,7 +26,7 @@ public class UpdateUser: IApplicationHandler<UpdateUserInput,UserOutput>
     {
       return Result<UserOutput>.Fail(
         Error.NotFound(
-          "User.UseCases.UpdateUser",
+          "UseCases.User.UpdateUser",
           "User not found'"
         )
       );

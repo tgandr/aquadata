@@ -126,7 +126,8 @@ namespace Aquadata.Infra.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Unit = table.Column<int>(type: "int", nullable: false),
+                    Unit = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
@@ -153,6 +154,8 @@ namespace Aquadata.Infra.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Description = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
@@ -184,7 +187,8 @@ namespace Aquadata.Infra.EF.Migrations
                     AmountInvested = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     FinalValue = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     UsefulLifeInYears = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     InOperationSince = table.Column<DateOnly>(type: "date", nullable: false),
                     UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -232,7 +236,8 @@ namespace Aquadata.Infra.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Unit = table.Column<int>(type: "int", nullable: false),
+                    Unit = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
@@ -261,7 +266,8 @@ namespace Aquadata.Infra.EF.Migrations
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     Label = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    SupplyType = table.Column<int>(type: "int", nullable: false),
+                    SupplyType = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -346,7 +352,8 @@ namespace Aquadata.Infra.EF.Migrations
                     Stock = table.Column<int>(type: "int", nullable: false),
                     PLOrigin = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Uniformity = table.Column<int>(type: "int", nullable: false),
+                    Uniformity = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     SettlementDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     WaterAndAcclimationChecked = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     PondId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
@@ -401,9 +408,11 @@ namespace Aquadata.Infra.EF.Migrations
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    MeasureUnit = table.Column<int>(type: "int", nullable: false),
+                    MeasureUnit = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CultivationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -509,6 +518,12 @@ namespace Aquadata.Infra.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    StressType = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    DeadLarvae = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SwimmingResponse = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CultivationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -535,7 +550,8 @@ namespace Aquadata.Infra.EF.Migrations
                     Salinity = table.Column<int>(type: "int", nullable: false),
                     Ammonium = table.Column<float>(type: "float", nullable: false),
                     Nitrite = table.Column<float>(type: "float", nullable: false),
-                    Origin = table.Column<int>(type: "int", nullable: false),
+                    Origin = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CultivationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     PH_Value = table.Column<byte>(type: "tinyint unsigned", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),

@@ -3,7 +3,7 @@ using Aquadata.Application.UseCases.Pond.Common;
 
 namespace Aquadata.Application.UseCases.Pond.UpdatePond;
 
-public class UpdatePondInput: IApplicationRequest<PondOutput>
+public class UpdatePondInput: IUseCaseRequest<PondOutput>
 {
   public Guid Id {get;}
   public string Name {get;}

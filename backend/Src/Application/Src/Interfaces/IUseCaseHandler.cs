@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Aquadata.Application.Interfaces;
 
-public interface IApplicationHandler<TRequest, TResponse>
+public interface IUseCaseHandler<TRequest, TResponse>
 :IRequestHandler<TRequest, Result<TResponse>> 
-where TRequest: IApplicationRequest<TResponse>
+where TRequest: IUseCaseRequest<TResponse>
 {}

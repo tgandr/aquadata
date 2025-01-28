@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Pond.UpdatePond;
 
-public class UpdatePond : IApplicationHandler<UpdatePondInput,PondOutput>
+public class UpdatePond : IUseCaseHandler<UpdatePondInput,PondOutput>
 {
   private readonly IPondRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
@@ -24,7 +24,7 @@ public class UpdatePond : IApplicationHandler<UpdatePondInput,PondOutput>
     if (pond == null || !pond.IsActive) {
       return Result<PondOutput>.Fail(
         Error.NotFound(
-          "Pond.UseCases.UpdatePond",
+          "UseCases.Pond.UpdatePond",
           "Pond not found'"
         )
       ); 

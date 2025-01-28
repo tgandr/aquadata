@@ -5,11 +5,11 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.StressTest;
 
-public class StressTestEntity: SeedWork.Entity
+public class StressTestEntity: Entity
 {
-  public string StressType { get; }
-  public DeadLarvae DeadLarvae { get; }
-  public SwimmingResponse SwimmingResponse { get; }
+  public string StressType { get; private set;}
+  public DeadLarvae DeadLarvae { get; private set; }
+  public SwimmingResponse SwimmingResponse { get; private set; }
   public virtual Guid? CultivationId {get;set;}
   
   private StressTestEntity(){}

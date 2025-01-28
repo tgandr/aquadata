@@ -6,7 +6,7 @@ namespace Aquadata.Core.Entities.Purchase;
 
 public class GenericPurchaseEntity : PurchaseBase
 {
-  public string Description { get;}
+  public string Description { get; private set;}
   private GenericPurchaseEntity(DateOnly date, string label, int quantity, decimal value, 
   string description) 
   : base(date, label, quantity, value)

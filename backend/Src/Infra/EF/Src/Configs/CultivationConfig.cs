@@ -28,5 +28,8 @@ public class CultivationConfig : IEntityTypeConfiguration<CultivationEntity>
       .HasForeignKey(e => e.CultivationId).IsRequired();
     builder.HasMany(e => e.WaterAndAcclimation).WithOne()
       .HasForeignKey(e => e.CultivationId).IsRequired();
+
+    builder.Property(e => e.Uniformity)
+      .HasConversion<string>();
   }
 }

@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Pond.CreatePond;
 
-public class CreatePond: IApplicationHandler<CreatePondInput, PondOutput>
+public class CreatePond: IUseCaseHandler<CreatePondInput, PondOutput>
 {
   private readonly IPondRepository _repository;
   private readonly IUnitOfWork _unitOfWork;

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.User.GetUser;
 
-public class GetUserInput: IApplicationRequest<UserOutput>
+public class GetUserInput: IUseCaseRequest<UserOutput>
 {
   public Guid Id { get; }
   public GetUserInput(Guid id)

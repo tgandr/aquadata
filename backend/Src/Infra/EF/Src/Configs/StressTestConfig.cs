@@ -10,5 +10,9 @@ public class StressTestConfig : IEntityTypeConfiguration<StressTestEntity>
   {
     builder.ToTable("StressTests");
     builder.HasKey(e => e.Id);
+    builder.Property(e => e.DeadLarvae)
+      .HasConversion<string>();
+    builder.Property(e => e.SwimmingResponse)
+      .HasConversion<string>();
   }
 }

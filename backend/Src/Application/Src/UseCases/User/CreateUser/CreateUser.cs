@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.User.CreateUser;
 
-public class CreateUser : IApplicationHandler<CreateUserInput,UserOutput>
+public class CreateUser : IUseCaseHandler<CreateUserInput,UserOutput>
 {
   private readonly IUserRepository _repository;
   private readonly IUnitOfWork _unitOfWork;

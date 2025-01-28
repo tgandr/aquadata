@@ -1,18 +1,29 @@
+using System.Text.Json.Serialization;
+using Aquadata.Application.Dtos;
 using Aquadata.Application.Interfaces;
+using Aquadata.Core.Entities.StressTest;
 using Aquadata.Core.Enums;
 using MediatR;
 
 namespace Aquadata.Application.UseCases.Cultivation;
 
-public class AddCultivationInput: IApplicationRequest<Unit>
+public class AddCultivationInput: IUseCaseRequest<Unit>
 {
-  public int PondNumber {get; set;}
-  public int Stock {get; set;}
-  public string PLOrigin {get; set;}
-  public CultivationUniformity Uniformity {get; set;}
-  public DateTime SettlementDate {get; set;}
-  public bool WaterAndAcclimationChecked {get; set;}
-  public Guid PondId {get;set;}
+  public int PondNumber {get;}
+  public int Stock {get;}
+  public string PLOrigin {get;}
+  
+  [JsonConverter(typeof(JsonStringEnumConverter))]
+  public CultivationUniformity Uniformity {get;}
+  public DateTime SettlementDate {get;}
+  public bool WaterAndAcclimationChecked {get;}
+  public Guid PondId {get;}
+
+  [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+  public StressTestDto? StressTest {get;set;}
+
+  [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+  public WaterAndAcclimationCollectionDto? WaterAndAcclimation {get;set;}
 
   public AddCultivationInput(
     int pondNumber,

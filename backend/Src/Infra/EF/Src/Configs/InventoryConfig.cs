@@ -10,5 +10,7 @@ public class InventoryConfig : IEntityTypeConfiguration<InventoryEntity>
   {
     builder.ToTable("Inventories");
     builder.HasKey(e => e.Id);
+    builder.Property(e => e.Status)
+      .HasConversion<string>();
   }
 }
