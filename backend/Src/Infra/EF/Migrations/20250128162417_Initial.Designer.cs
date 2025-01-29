@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aquadata.Infra.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250128155531_Initial")]
+    [Migration("20250128162417_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

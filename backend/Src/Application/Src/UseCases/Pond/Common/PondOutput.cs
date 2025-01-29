@@ -1,3 +1,5 @@
+using Aquadata.Application.Dtos;
+using Aquadata.Application.UseCases.Cultivation.Common;
 using Aquadata.Core.Entities.Pond;
 
 namespace Aquadata.Application.UseCases.Pond.Common;
@@ -12,6 +14,8 @@ public class PondOutput
   public DateTime UpdatedAt {get;}
   public Guid UserId {get;}
 
+  public ICollection<CultivationOutput>? Cultivations {get;set;}
+  
   public PondOutput(Guid id, string name, float area, 
   bool isActive,DateTime createdAt, DateTime updatedAt, Guid userId)
   {
@@ -25,6 +29,19 @@ public class PondOutput
   }
 
   public static PondOutput FromEntity(PondEntity pond)
-    => new(pond.Id, pond.Name, pond.Area, pond.IsActive, 
+  {
+    var output = new PondOutput(pond.Id, pond.Name, pond.Area, pond.IsActive, 
     pond.CreatedAt, pond.UpdatedAt, pond.UserId);
+
+    if (pond.Cultivations != null)
+    {
+      output.Cultivations = new List<CultivationOutput>();
+      foreach (var cultivation in pond.Cultivations)
+      {
+        output.Cultivations.Add(CultivationOutput.FromEntity(cultivation));
+      }
+    }
+
+    return output;
+  }
 }

@@ -41,4 +41,13 @@ public class WaterAndAcclimationDto
 
     return WaterAndAcclimationEntity.Of(Oxygen, Temperature, phResult.Unwrap(), Salinity, Ammonium, Nitrite, Origin);
   }
+
+  public static WaterAndAcclimationDto FromEntity(WaterAndAcclimationEntity waterAndAcclimation)
+  {
+    return new WaterAndAcclimationDto(
+      waterAndAcclimation.Oxygen, waterAndAcclimation.Temperature, 
+      waterAndAcclimation.PH.Value, waterAndAcclimation.Salinity, 
+      waterAndAcclimation.Ammonium, waterAndAcclimation.Nitrite
+    );
+  }
 }

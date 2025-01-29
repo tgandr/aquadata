@@ -22,4 +22,7 @@ public class StressTestDto
 
   public Result<StressTestEntity> ToEntityOrError()
     => StressTestEntity.Of(StressType, DeadLarvae, SwimmingResponse);
+
+  public static StressTestDto FromEntity(StressTestEntity stressTest)
+    => new StressTestDto(stressTest.StressType, stressTest.DeadLarvae, stressTest.SwimmingResponse);
 }

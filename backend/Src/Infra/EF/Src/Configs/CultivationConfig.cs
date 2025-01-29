@@ -31,5 +31,15 @@ public class CultivationConfig : IEntityTypeConfiguration<CultivationEntity>
 
     builder.Property(e => e.Uniformity)
       .HasConversion<string>();
+
+    builder.Navigation(e => e.Objective).AutoInclude();
+    builder.Navigation(e => e.StressTest).AutoInclude();
+    builder.Navigation(e => e.Biometrics).AutoInclude();
+    builder.Navigation(e => e.WaterParams).AutoInclude();
+    builder.Navigation(e => e.Harvests).AutoInclude();
+    builder.Navigation(e => e.WaterParams).AutoInclude();
+    builder.Navigation(e => e.Feed).AutoInclude();
+    builder.Navigation(e => e.Fertilizers).AutoInclude();
+    builder.Navigation(e => e.WaterAndAcclimation).AutoInclude();
   }
 }

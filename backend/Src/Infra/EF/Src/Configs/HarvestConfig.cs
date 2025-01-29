@@ -12,5 +12,7 @@ public class HarvestConfig : IEntityTypeConfiguration<HarvestEntity>
     builder.HasKey(e => e.Id);
     builder.HasMany(e => e.Biometrics).WithOne()
       .HasForeignKey(e => e.HarverstId);
+
+    builder.Navigation(e => e.Biometrics).AutoInclude();
   }
 }

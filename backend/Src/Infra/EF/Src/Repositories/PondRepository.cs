@@ -21,8 +21,10 @@ public class PondRepository : IPondRepository
   }
 
   public async Task<PondEntity?> Get(Guid id, CancellationToken cancellationToken)
-    => await _dbContext.Ponds.AsNoTracking().FirstOrDefaultAsync(
-      x => x.Id == id, cancellationToken
+    => await _dbContext.Ponds.AsNoTracking()
+    .Include(p => p.Cultivations)
+    .FirstOrDefaultAsync(
+      x => x.Id == id && x.IsActive, cancellationToken
     );
 
   public async Task Insert(PondEntity aggregate, CancellationToken cancellationToken)

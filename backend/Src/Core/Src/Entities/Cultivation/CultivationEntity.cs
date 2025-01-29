@@ -61,18 +61,13 @@ public class CultivationEntity : Entity, IAggregateRoot
   public bool HasShrimp()
     => Stock > 0; 
   
-  public Result<CultivationEntity> AddWaterAndAcclimation(ICollection<WaterAndAcclimationEntity> waterAndAcclimation)
+  public void AddWaterAndAcclimation(ICollection<WaterAndAcclimationEntity> list)
   {
-    if (waterAndAcclimation.Count > 2)
-      return Result<CultivationEntity>.Fail(
-        Error.Validation(
-          "Core.Cultivation", 
-          "Water and acclimation cannot be more than 2")
-      );
-
-    WaterAndAcclimation = waterAndAcclimation;
+    if (list.Count < 2)
+      return;
+    
+    WaterAndAcclimation = list;
     WaterAndAcclimationChecked = true;
-    return Result<CultivationEntity>.Ok(this);
   }
 
   protected override Result<Entity> Validate()
