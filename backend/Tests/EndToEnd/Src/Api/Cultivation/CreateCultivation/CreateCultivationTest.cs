@@ -23,7 +23,7 @@ public class CreateCultivationTest: IDisposable
 
     await _fixture.Persistence.Insert(pond);
 
-    var (response,output) = await _fixture.ApiClient
+    var (response,_) = await _fixture.ApiClient
       .Post<ApiResponse<PondOutput>>(
       "/cultivations",
       input
@@ -31,6 +31,22 @@ public class CreateCultivationTest: IDisposable
 
     Assert.NotNull(response);
     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+  }
+  [Fact]
+  public async Task NotFound()
+  {
+    var credentials = await _fixture.ApiClient.SignUp();
+    var pond = _fixture.GetPondExample(credentials.User.Id);
+    var input = _fixture.GetExampleInput(pond.Id);
+
+    var (response,_) = await _fixture.ApiClient
+      .Post<ApiResponse<PondOutput>>(
+      "/cultivations",
+      input
+    );
+
+    Assert.NotNull(response);
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
   }
 
   public void Dispose()

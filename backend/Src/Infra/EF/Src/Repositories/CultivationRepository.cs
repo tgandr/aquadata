@@ -1,3 +1,4 @@
+using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Objective;
 using Aquadata.Core.Interfaces.Repository;
@@ -13,16 +14,18 @@ public class CultivationRepository: ICultivationRepository
   public CultivationRepository(ApplicationDbContext context)
     => _context = context;
 
+  public async Task AddBiometric(BiometricEntity biometric)
+  => await _context.Biometrics.AddAsync(biometric);
+
   public async Task AddObjective(ObjectiveEntity objective)
-    => await _context.Objectives.AddAsync(objective);
+  => await _context.Objectives.AddAsync(objective);
 
   public async Task<bool> Exists(string userId, string cultivationId)
-    => await _context.Ponds
-      .Where(p => p.UserId.ToString() == userId)
-      .SelectMany(p => p.Cultivations)
-      .AnyAsync(c => c.Id.ToString() == cultivationId);
-  
+  => await _context.Ponds
+    .Where(p => p.UserId.ToString() == userId)
+    .SelectMany(p => p.Cultivations)
+    .AnyAsync(c => c.Id.ToString() == cultivationId);
 
-    public async Task<CultivationEntity?> Get(Guid id)
-    => await _context.Cultivations.FirstOrDefaultAsync(e => e.Id == id);
+  public async Task<CultivationEntity?> Get(Guid id)
+  => await _context.Cultivations.FirstOrDefaultAsync(e => e.Id == id);
 }

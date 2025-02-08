@@ -35,8 +35,16 @@ public class CreatePond: IUseCaseHandler<CreatePondInput, PondOutput>
       return Result<PondOutput>.Fail(pondResult.Error!);
     }
     
+    var userId = _authenticatedUserService.GetUserId();
     var pond = pondResult.Unwrap();
-    
+
+    if (userId != request.UserId.ToString())
+      return Result<PondOutput>.Fail(
+        Error.Unauthorized(
+          "UseCases.Pond.Create",
+          "Unauthorized"
+    ));
+
     pond.UserId = request.UserId;
     
     await _repository.Insert(pond, cancellationToken);

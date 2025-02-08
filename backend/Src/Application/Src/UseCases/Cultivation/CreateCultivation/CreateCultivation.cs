@@ -11,10 +11,13 @@ namespace Aquadata.Application.UseCases.Cultivation.CreateCultivation;
 public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Unit>
 {
   private readonly IPondRepository _pondRepository;
+  private readonly IAuthenticatedUserService _authenticatedUserService;
   private readonly IUnitOfWork _unitOfWork;
 
-  public CreateCultivation(IPondRepository pondRepository, IUnitOfWork unitOfWork)
+  public CreateCultivation(IPondRepository pondRepository, 
+  IUnitOfWork unitOfWork, IAuthenticatedUserService authenticatedUserService)
   {
+    _authenticatedUserService = authenticatedUserService;
     _pondRepository = pondRepository;
     _unitOfWork = unitOfWork;
   }
@@ -33,6 +36,16 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Unit>
       return Result<Unit>.Fail(cultivationResult.Error);
 
     var cultivation = cultivationResult.Unwrap();
+    var userId = _authenticatedUserService.GetUserId() ?? "";
+    var pondExists = await _pondRepository.Exists(userId, request.PondId.ToString());
+
+    if (!pondExists)
+      return Result<Unit>.Fail(
+        Error.NotFound(
+          "UseCases.Cultivation.Create",
+          "Pond not found"
+    ));
+    
     cultivation.PondId = request.PondId;
     
     if (request.StressTest != null) 
@@ -41,7 +54,7 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Unit>
       if (result.IsFail)
         return Result<Unit>.Fail(
           Error.Validation(
-            "UseCases.Cultivation.CreateCultivation", 
+            "UseCases.Cultivation.Create", 
             result.Error.Description
           ));
       cultivation.StressTest = result.Unwrap();
@@ -55,14 +68,14 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Unit>
       if (inPondResult.IsFail)
         return Result<Unit>.Fail(
           Error.Validation(
-            "UseCases.Cultivation.CreateCultivation", 
+            "UseCases.Cultivation.Create", 
             inPondResult.Error.Description
         ));
 
       if (inTransportResult.IsFail)
         return Result<Unit>.Fail(
           Error.Validation(
-            "UseCases.Cultivation.CreateCultivation", 
+            "UseCases.Cultivation.Create", 
             inTransportResult.Error.Description
         ));
       

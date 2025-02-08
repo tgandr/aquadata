@@ -21,8 +21,8 @@ public class GetPond: IUseCaseHandler<GetPondInput, PondOutput>
   public async Task<Result<PondOutput>> Handle(GetPondInput request, 
   CancellationToken cancellationToken)
   {
-    var pondResult =  await _repository.Get(request.Id, cancellationToken);
-    if (pondResult == null || !pondResult.IsActive)
+    var pond =  await _repository.Get(request.Id, cancellationToken);
+    if (pond == null || !pond.IsActive)
     {
       return Result<PondOutput>.Fail(
         Error.NotFound(
@@ -33,7 +33,7 @@ public class GetPond: IUseCaseHandler<GetPondInput, PondOutput>
     }
 
     var userId = _authenticatedUserService.GetUserId();
-    if (pondResult.UserId.ToString() != userId) 
+    if (pond.UserId.ToString() != userId) 
       return Result<PondOutput>.Fail(
         Error.Unauthorized(
           "UseCases.Pond.GetPond",
@@ -42,7 +42,7 @@ public class GetPond: IUseCaseHandler<GetPondInput, PondOutput>
     );
 
     return Result<PondOutput>.Ok(
-      PondOutput.FromEntity(pondResult)
+      PondOutput.FromEntity(pond)
     );
   }
 }

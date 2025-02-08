@@ -17,8 +17,7 @@ public class GetUserTest: IDisposable
   [Fact]
   public async void GetUser()
   {
-    var userExample = _fixture.GetUserExample();
-    var credentials = await _fixture.ApiClient.SignUp(userExample);
+    var credentials = await _fixture.ApiClient.SignUp();
 
     var (response, output) = await _fixture.ApiClient
     .Get<ApiResponse<UserOutput>>(
@@ -34,6 +33,22 @@ public class GetUserTest: IDisposable
 
     Assert.Equivalent(output.Data, dbUser);
   }
+
+  [Fact]
+  public async void NotFoundTest()
+  {
+    await _fixture.ApiClient.SignUp();
+
+    var (response, _) = await _fixture.ApiClient
+    .Get<ApiResponse<UserOutput>>(
+      $"/users/{Guid.NewGuid()}"
+    );
+
+    Assert.NotNull(response);
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
+
+
 
   public void Dispose()
    => _fixture.CleanPersistence();

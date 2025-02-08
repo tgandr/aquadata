@@ -1,24 +1,17 @@
 using Aquadata.Core.Entities.User;
+using Aquadata.EndToEndTests.Api.Base;
 using Aquadata.Infra.EF.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aquadata.EndToEndTests.Api.User.Common;
 
-public class UserPersistence
+public class UserPersistence: BasePersistence
 {
-  private readonly ApplicationDbContext _context;
-
   public UserPersistence(ApplicationDbContext context)
-    => _context = context;
+  :base(context){}
 
   public async Task<UserEntity?> GetById(Guid id)
     => await _context.Users
       .AsNoTracking()
       .FirstOrDefaultAsync(e => e.Id == id);
-
-  public async Task Insert(UserEntity entity)
-  {
-    await _context.Users.AddAsync(entity);
-    await _context.SaveChangesAsync();
-  }
 }

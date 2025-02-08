@@ -1,3 +1,4 @@
+using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Objective;
 
@@ -8,4 +9,5 @@ public interface ICultivationRepository
   Task<CultivationEntity?> Get(Guid id);
   Task<bool> Exists(string userId, string cultivationId);
   Task AddObjective(ObjectiveEntity objective);
+  Task AddBiometric(BiometricEntity biometric);
 }

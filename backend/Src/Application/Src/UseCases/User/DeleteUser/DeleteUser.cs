@@ -37,7 +37,7 @@ public class DeleteUser : IUseCaseHandler<DeleteUserInput,Unit>
     if (userId != user.Id.ToString())
       return Result<Unit>.Fail(
         Error.Unauthorized(
-          "UseCases.Pond.Deactivate",
+          "UseCases.User.DeleteUser",
           "Unauthorized"
         )
     );

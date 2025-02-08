@@ -5,7 +5,7 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Harvest;
 
-public class HarvestEntity : SeedWork.Entity
+public class HarvestEntity : Entity
 {
   public string Buyer {get; private set;}
   public decimal Price {get; private set;}

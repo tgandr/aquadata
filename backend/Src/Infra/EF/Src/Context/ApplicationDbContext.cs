@@ -1,3 +1,4 @@
+using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Objective;
 using Aquadata.Core.Entities.Pond;
@@ -12,6 +13,7 @@ public class ApplicationDbContext: DbContext
   public DbSet<PondEntity> Ponds {get;set;}
   public DbSet<CultivationEntity> Cultivations {get;set;}
   public DbSet<ObjectiveEntity> Objectives {get;set;}
+  public DbSet<BiometricEntity> Biometrics {get;set;}
 
   public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     :base(options){}

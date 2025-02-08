@@ -1,16 +1,15 @@
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Pond;
+using Aquadata.EndToEndTests.Api.Base;
 using Aquadata.Infra.EF.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aquadata.EndToEndTests.Api.Cultivation.Common;
 
-public class CultivationPersistence
+public class CultivationPersistence: BasePersistence
 {
-  private readonly ApplicationDbContext _context;
-
   public CultivationPersistence(ApplicationDbContext context)
-    => _context = context;
+  :base(context){}
 
   public async Task Insert(PondEntity pond)
   {

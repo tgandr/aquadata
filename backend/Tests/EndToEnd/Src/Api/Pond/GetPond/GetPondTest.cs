@@ -18,8 +18,7 @@ public class GetPondTest: IDisposable
   [Fact]
   public async Task GetPond()
   {
-    var userExample = _fixture.GetUserExample();
-    var credentials = await _fixture.ApiClient.SignUp(userExample);
+    var credentials = await _fixture.ApiClient.SignUp();
 
     var pondExample = _fixture.GetPondExample(credentials.User.Id);
 
@@ -43,8 +42,7 @@ public class GetPondTest: IDisposable
   [Fact]
   public async Task GetPondWithCultivation()
   {
-    var userExample = _fixture.GetUserExample();
-    var credentials = await _fixture.ApiClient.SignUp(userExample);
+    var credentials = await _fixture.ApiClient.SignUp();
   
     var pondExample = _fixture.GetPondExample(credentials.User.Id);
     var cultivation = CultivationEntity.Of(1,1,"Pl", false, 
@@ -64,6 +62,39 @@ public class GetPondTest: IDisposable
     Assert.NotNull(output);
     Assert.Single(output.Data.Cultivations!);
   }
+
+  [Fact]
+  public async Task UnauthorizedTest()
+  {
+    var userExample = _fixture.Persistence.GetUserExample();
+    var pondExample = _fixture.GetPondExample(userExample.Id);
+
+    await _fixture.ApiClient.SignUp();
+    await _fixture.Persistence.Insert(userExample);
+    await _fixture.Persistence.Insert(pondExample);
+
+    var (response, _) = await _fixture
+      .ApiClient.Get<ApiResponse<PondOutput>>(
+        $"/ponds/{pondExample.Id}");
+
+    Assert.NotNull(response);
+    Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+  }
+
+  [Fact]
+  public async Task NotFoundTest()
+  {
+    var userExample = _fixture.Persistence.GetUserExample();
+    await _fixture.ApiClient.SignUp();
+
+    var (response, _) = await _fixture
+      .ApiClient.Get<ApiResponse<PondOutput>>(
+        $"/ponds/{userExample.Id}");
+
+    Assert.NotNull(response);
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
+
 
   public void Dispose()
   {

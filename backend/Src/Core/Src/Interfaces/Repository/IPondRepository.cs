@@ -7,5 +7,6 @@ namespace Aquadata.Core.Interfaces.Repository;
 public interface IPondRepository: IGenericRepository<PondEntity>
 {
   Task CreateCultivation(CultivationEntity cultivation, CancellationToken cancellationToken);
+  Task<bool> Exists(string userId, string pondId);
   Task Deactivate(PondEntity pond, CancellationToken cancellationToken);
 }

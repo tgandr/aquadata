@@ -1,5 +1,6 @@
 using Aquadata.Api.Extensions;
 using Aquadata.Application.UseCases.Cultivation;
+using Aquadata.Application.UseCases.Cultivation.AddBiometric;
 using Aquadata.Application.UseCases.Cultivation.AddObjective;
 using Aquadata.Application.UseCases.Pond.GetPond;
 using MediatR;
@@ -32,6 +33,18 @@ public class CultivationController: ControllerBase
 
   [HttpPost("add-objective")]
   public async Task<IResult> AddObjective([FromBody] AddObjectiveInput command,
+  CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
+  }
+
+  [HttpPost("add-biometric")]
+  public async Task<IResult> AddBiometric([FromBody] AddBiometricInput command,
   CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(command, cancellationToken);

@@ -36,6 +36,23 @@ public class AddObjectiveTest: IDisposable
     Assert.NotNull(cultivationFromDb.Objective);
     Assert.Equivalent(input, cultivationFromDb.Objective);
   }
+  [Fact]
+  public async Task NotFound()
+  {
+    var credentials = await _fixture.ApiClient.SignUp();
+    var pond = _fixture.GetPondExample(credentials.User.Id);
+    var cultivation = _fixture.GetCultivationExample(pond.Id);
+    var input = _fixture.GetInput(cultivation.Id);
+
+    var (response,_) = await _fixture.ApiClient
+    .Post<object>(
+      "/cultivations/add-objective",
+      input
+    );
+
+    Assert.NotNull(response);
+    Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+  }
 
   public void Dispose()
   {

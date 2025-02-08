@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
+using Aquadata.Api.Models;
 
 namespace Aquadata.EndToEndTests.Api.Authorization;
 
@@ -7,10 +8,11 @@ namespace Aquadata.EndToEndTests.Api.Authorization;
 public class AuthenticationTest
 {
   private readonly AuthenticationTestFixture _fixture;
-
   public AuthenticationTest(AuthenticationTestFixture fixture)
-    => _fixture = fixture;
-    
+  {
+    _fixture = fixture;
+  }
+  
   private HttpMethod ToHttpMethod(string method)
   => method switch 
   {

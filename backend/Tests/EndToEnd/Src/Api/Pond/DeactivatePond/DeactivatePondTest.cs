@@ -17,8 +17,7 @@ public class DeactivatePondTest: IDisposable
   [Fact]
   public async Task DeactivatePond()
   {
-    var userExample = _fixture.GetUserExample();
-    var credentials = await _fixture.ApiClient.SignUp(userExample);
+    var credentials = await _fixture.ApiClient.SignUp();
     var pondExample = _fixture.GetPondExample(credentials.User.Id);
 
     await _fixture.Persistence.Insert(pondExample);

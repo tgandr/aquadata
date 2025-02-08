@@ -1,3 +1,4 @@
+using System.Net;
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.Pond.Common;
 
@@ -16,8 +17,7 @@ public class CreatePondTest
   [Fact]
   public async Task CreatePond()
   {
-    var userExample = _fixture.GetUserExample();
-    var credentials = await _fixture.ApiClient.SignUp(userExample);
+    var credentials = await _fixture.ApiClient.SignUp();
     
     var input = _fixture.GetExampleInput(credentials.User.Id);
 
@@ -29,11 +29,29 @@ public class CreatePondTest
 
     Assert.NotNull(response);
     Assert.NotNull(output);
-    Assert.Equal(System.Net.HttpStatusCode.Created, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
     var dbPond = await _fixture.Persistence.GetById(output.Data.Id);
 
     Assert.Equivalent(input, dbPond);
+  }
+
+  [Fact]
+  public async Task UnauthorizedTest()
+  {
+    var userExample = _fixture.Persistence.GetUserExample();
+    await _fixture.ApiClient.SignUp();
+    await _fixture.Persistence.Insert(userExample);
+    var input = _fixture.GetExampleInput(userExample.Id);
+
+    var (response, _) = await _fixture
+      .ApiClient.Post<ApiResponse<PondOutput>>(
+        "/ponds",
+        input
+      );
+
+    Assert.NotNull(response);
+    Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
   }
 
   public void Dispose()
