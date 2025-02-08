@@ -5,7 +5,7 @@ using Aquadata.Application.UseCases.Pond.Common;
 namespace Aquadata.EndToEndTests.Api.Pond.DeactivatePond;
 
 [Collection(nameof(DeactivatePondFixture))]
-public class DeactivatePondTest
+public class DeactivatePondTest: IDisposable
 {
   private readonly DeactivatePondFixture _fixture;
 
@@ -35,6 +35,10 @@ public class DeactivatePondTest
 
     Assert.NotNull(pondDb);
     Assert.False(pondDb.IsActive);
+  }
 
+  public void Dispose()
+  {
+    _fixture.CleanPersistence();
   }
 }

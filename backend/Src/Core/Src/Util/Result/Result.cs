@@ -36,7 +36,7 @@ public class Result<T>
   public T Unwrap()
   {
     if (IsFail)
-      throw new Exception("Cannot unwrap a fail result");
+      throw new Exception("Fail Result");
     
     return _data!;
   }

@@ -8,6 +8,8 @@ namespace Aquadata.Application.Dtos;
 public class StressTestDto
 {
   public string StressType { get; set; }
+  
+  [JsonConverter(typeof(JsonStringEnumConverter))]
   public DeadLarvae DeadLarvae { get; set; }
   
   [JsonConverter(typeof(JsonStringEnumConverter))]

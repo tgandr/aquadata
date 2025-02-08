@@ -9,12 +9,15 @@ namespace Aquadata.Application.UseCases.User.UpdateUser;
 public class UpdateUser: IUseCaseHandler<UpdateUserInput,UserOutput>
 {
   private readonly IUserRepository _repository;
+  private readonly IAuthenticatedUserService _authenticatedUserService;
   private readonly IUnitOfWork _unitOfWork;
 
-  public UpdateUser(IUserRepository repository, IUnitOfWork unitOfWork)
+  public UpdateUser(IUserRepository repository, IUnitOfWork unitOfWork,
+  IAuthenticatedUserService authenticatedUserService)
   {
-      _repository = repository;
-      _unitOfWork = unitOfWork;
+    _repository = repository;
+    _unitOfWork = unitOfWork;
+    _authenticatedUserService = authenticatedUserService;
   }
 
   public async Task<Result<UserOutput>> Handle(UpdateUserInput request, 
@@ -32,6 +35,15 @@ public class UpdateUser: IUseCaseHandler<UpdateUserInput,UserOutput>
       );
     }
 
+    var userId = _authenticatedUserService.GetUserId();
+    if (userId != user.Id.ToString()) 
+      return Result<UserOutput>.Fail(
+        Error.Unauthorized(
+          "UseCases.User.UpdateUser",
+          "Unauthorized"
+        )
+    );
+    
     var updateResult = user!.Update(
       request.Name, request.Profile,
       request.FarmName, request.FarmAddress, request.Phone

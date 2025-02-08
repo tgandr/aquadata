@@ -14,7 +14,6 @@ builder.Services.AddControllers().AddJsonOptions(o => {
 builder.Services.AddUseCases();
 builder.Services.AddSecurity(builder.Configuration);
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

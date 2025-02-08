@@ -10,12 +10,15 @@ namespace Aquadata.Application.UseCases.Pond.DeactivatePond;
 public class DeactivatePond: IUseCaseHandler<DeactivatePondInput, PondOutput>
 {
   private readonly IPondRepository _repository;
+  private readonly IAuthenticatedUserService _authenticateUserService;
   private readonly IUnitOfWork _unitOfWork;
 
-  public DeactivatePond(IPondRepository repository, IUnitOfWork unitOfWork)
+  public DeactivatePond(IPondRepository repository, 
+  IUnitOfWork unitOfWork, IAuthenticatedUserService authenticatedUserService)
   {
     _repository = repository;
     _unitOfWork = unitOfWork;
+    _authenticateUserService = authenticatedUserService;
   }
 
   public async Task<Result<PondOutput>> Handle(DeactivatePondInput request, 
@@ -31,14 +34,16 @@ public class DeactivatePond: IUseCaseHandler<DeactivatePondInput, PondOutput>
         )
       );
     }
-    
-    if (pond.UserId != request.UserId)
+
+    var userId = _authenticateUserService.GetUserId();
+
+    if (pond.UserId.ToString() != userId)
       return Result<PondOutput>.Fail(
         Error.Unauthorized(
-          "UseCases.Pond.DeactivatePond",
+          "UseCases.Pond.Deactivate",
           "Unauthorized"
         )
-      );
+    );
     
     await _repository.Deactivate(pond, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);

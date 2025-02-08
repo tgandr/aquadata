@@ -10,13 +10,17 @@ namespace Aquadata.Application.UseCases.Pond.UpdatePond;
 public class UpdatePond : IUseCaseHandler<UpdatePondInput,PondOutput>
 {
   private readonly IPondRepository _repository;
+  private readonly IAuthenticatedUserService _authenticateUserService;
   private readonly IUnitOfWork _unitOfWork;
 
-  public UpdatePond(IPondRepository repository, IUnitOfWork unitOfWork)
+  public UpdatePond(IPondRepository repository, 
+  IUnitOfWork unitOfWork, IAuthenticatedUserService authenticatedUserService)
   {
     _repository = repository;
     _unitOfWork = unitOfWork;
+    _authenticateUserService = authenticatedUserService;
   }
+
   public async Task<Result<PondOutput>> Handle(UpdatePondInput request, CancellationToken cancellationToken)
   {
     var pond = await _repository.Get(request.Id, cancellationToken);
@@ -30,6 +34,16 @@ public class UpdatePond : IUseCaseHandler<UpdatePondInput,PondOutput>
       ); 
     }
     
+    var userId = _authenticateUserService.GetUserId();
+
+    if (pond.UserId.ToString() != userId)
+      return Result<PondOutput>.Fail(
+        Error.Unauthorized(
+          "UseCases.Pond.UpdatePond",
+          "Unauthorized"
+        )
+    );
+
     pond.Update(request.Name, request.Area);
 
     await _repository.Update(pond, cancellationToken);

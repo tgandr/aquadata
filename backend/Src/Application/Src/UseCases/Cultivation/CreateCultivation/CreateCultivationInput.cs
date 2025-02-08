@@ -7,7 +7,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Cultivation;
 
-public class AddCultivationInput: IUseCaseRequest<Unit>
+public class CreateCultivationInput: IUseCaseRequest<Unit>
 {
   public int PondNumber {get;}
   public int Stock {get;}
@@ -25,7 +25,7 @@ public class AddCultivationInput: IUseCaseRequest<Unit>
   [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
   public WaterAndAcclimationCollectionDto? WaterAndAcclimation {get;set;}
 
-  public AddCultivationInput(
+  public CreateCultivationInput(
     int pondNumber,
     int stock,
     string plOrigin,

@@ -9,9 +9,14 @@ namespace Aquadata.Application.UseCases.User.GetUser;
 public class GetUser : IUseCaseHandler<GetUserInput,UserOutput>
 {
   private readonly IUserRepository _repository;
+  private readonly IAuthenticatedUserService _authenticatedUserService;
 
-  public GetUser(IUserRepository repository)
-    => _repository = repository;
+  public GetUser(IUserRepository repository, 
+  IAuthenticatedUserService authenticatedUserService)
+  {
+    _repository = repository;
+    _authenticatedUserService = authenticatedUserService;
+  }
     
   public async Task<Result<UserOutput>> Handle(GetUserInput request, 
   CancellationToken cancellationToken)
@@ -27,6 +32,16 @@ public class GetUser : IUseCaseHandler<GetUserInput,UserOutput>
         )
       );
     }
+
+    var userId = _authenticatedUserService.GetUserId();
+    
+    if (userId != user.Id.ToString())
+      return Result<UserOutput>.Fail(
+        Error.Unauthorized(
+          "UseCases.Pond.Deactivate",
+          "Unauthorized"
+        )
+    );
 
     return Result<UserOutput>.Ok(
       UserOutput.FromEntity(user)

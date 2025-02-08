@@ -5,7 +5,7 @@ using Aquadata.Application.UseCases.Pond.Common;
 namespace Aquadata.EndToEndTests.Api.Pond.UpdatePond;
 
 [Collection(nameof(UpdatePondFixture))]
-public class UpdatePondTest
+public class UpdatePondTest: IDisposable
 {
   private readonly UpdatePondFixture _fixture;
 
@@ -34,8 +34,13 @@ public class UpdatePondTest
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
     var pondDb = await _fixture.Persistence.GetById(pondExample.Id);
-
     Assert.NotNull(output);
+    Assert.NotNull(pondDb);
     Assert.Equivalent(output.Data, pondDb);
+  }
+
+  public void Dispose()
+  {
+    _fixture.CleanPersistence();
   }
 }

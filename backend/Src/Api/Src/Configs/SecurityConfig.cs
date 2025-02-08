@@ -1,3 +1,4 @@
+using Aquadata.Application.Interfaces;
 using Aquadata.Core.Security;
 using Aquadata.Infra.Security.Services;
 using Aquadata.Infra.Security.Validation;
@@ -22,6 +23,9 @@ public static class SecurityConfig
       x.TokenValidationParameters = TokenValidation.GetParameters(config);
     });
     AddSwaggerSecurity(services);
+    
+    services.AddHttpContextAccessor();
+    services.AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
     services.AddTransient<IAuthenticateService, AuthenticateService>();
     return services;
   }

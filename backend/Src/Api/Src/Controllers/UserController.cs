@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Application.UseCases.User.CreateUser;
 using Aquadata.Api.Extensions;
 using Aquadata.Api.Models;
@@ -89,11 +90,6 @@ public class UserController: ControllerBase
   public async Task<IResult> Get([FromRoute] Guid id, 
   CancellationToken cancellationToken)
   {
-    var userId = User.FindFirst("id")!.Value;
-
-    if (userId != id.ToString())
-      return Results.Unauthorized();
-
     var result = await _mediator.Send(new GetUserInput(id), cancellationToken);
 
     if (result.IsFail)
@@ -107,18 +103,12 @@ public class UserController: ControllerBase
   public async Task<IResult> Update(
     [FromBody] UpdateUserInput command,
     CancellationToken cancellationToken)
-  {
-    var userId = User.FindFirst("id")!.Value;
-
-    if (userId != command.Id.ToString())
-      return Results.Unauthorized();
-    
+  { 
     var result = await _mediator.Send(command,cancellationToken);
 
     if (result.IsFail)
       return Results.Extensions.MapResult(result);
 
-    
     return Results.Ok(new ApiResponse<UserOutput>(result.Unwrap()));
   }
 
@@ -128,11 +118,6 @@ public class UserController: ControllerBase
     [FromRoute] Guid id,
     CancellationToken cancellationToken)
   {
-    var userId = User.FindFirst("id")!.Value;
-
-    if (userId != id.ToString())
-      return Results.Unauthorized();
-
     var result = await _mediator.Send(new DeleteUserInput(id), cancellationToken);
 
     if (result.IsFail)
