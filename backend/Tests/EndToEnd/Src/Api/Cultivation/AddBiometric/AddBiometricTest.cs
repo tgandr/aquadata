@@ -1,4 +1,6 @@
 using System.Net;
+using Aquadata.Api.Response;
+using Aquadata.Application.Dtos;
 
 namespace Aquadata.EndToEndTests.Api.Cultivation.AddBiometric;
 
@@ -16,19 +18,29 @@ public class AddBiometricTest: IDisposable
     var credentials = await _fixture.ApiClient.SignUp();
     var pondExample = _fixture.GetPondExample(credentials.User.Id);
     var cultivatonExample = _fixture.GetCultivationExample(pondExample.Id);
-    var input = _fixture.GetInput(cultivatonExample.Id);
+    var inputList = _fixture.GetInputList(cultivatonExample.Id);
 
     await _fixture.Persistence.Insert(pondExample);
     await _fixture.Persistence.Insert(cultivatonExample);
 
-    var (response,_) = await _fixture.ApiClient
-    .Post<object>(
-      "/cultivations/add-biometric",
-      input
-    );
+    for (int i = 0; i < inputList.Count; i++)
+    {
+      var (response,_) = await _fixture.ApiClient
+      .Post<ApiResponse<BiometricDto>>(
+        "/cultivations/add-biometric",
+        inputList[i]
+      );
 
-    Assert.NotNull(response);
-    Assert.Equal(HttpStatusCode.Created, response.StatusCode);    
+      Assert.NotNull(response);
+      Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    var cultivationFromDb = await _fixture.Persistence.GetById(cultivatonExample.Id);
+
+    Assert.NotNull(cultivationFromDb);
+    Assert.NotNull(cultivationFromDb.Biometrics);
+    Assert.Equal(inputList.Count, cultivationFromDb.Biometrics.Count);
+
   }
 
   [Fact]
@@ -37,14 +49,14 @@ public class AddBiometricTest: IDisposable
     var credentials = await _fixture.ApiClient.SignUp();
     var pondExample = _fixture.GetPondExample(credentials.User.Id);
     var cultivatonExample = _fixture.GetCultivationExample(pondExample.Id);
-    var input = _fixture.GetInput(cultivatonExample.Id);
+    var input = _fixture.GetInputList(cultivatonExample.Id);
     
     await _fixture.Persistence.Insert(pondExample);
 
     var (response,_) = await _fixture.ApiClient
     .Post<object>(
       "/cultivations/add-biometric",
-      input
+      input[0]
     );
 
     Assert.NotNull(response);

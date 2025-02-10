@@ -1,3 +1,4 @@
+using Aquadata.Application.Dtos;
 using Aquadata.Application.Interfaces;
 using Aquadata.Core.Entities.Objective;
 using Aquadata.Core.Interfaces.Repository;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Cultivation.AddObjective;
 
-public class AddObjective : IUseCaseHandler<AddObjectiveInput, Unit>
+public class AddObjective : IUseCaseHandler<AddObjectiveInput, ObjectiveDto>
 {
   private readonly IUnitOfWork _unitOfWork;
   private readonly IAuthenticatedUserService _authenticatedUserService;
@@ -21,7 +22,7 @@ public class AddObjective : IUseCaseHandler<AddObjectiveInput, Unit>
     _authenticatedUserService = authenticatedUserService;
   }
 
-  public async Task<Result<Unit>> Handle(AddObjectiveInput request, CancellationToken cancellationToken)
+  public async Task<Result<ObjectiveDto>> Handle(AddObjectiveInput request, CancellationToken cancellationToken)
   {
     var objectiveResult = ObjectiveEntity.Of(
       request.Days, 
@@ -29,9 +30,9 @@ public class AddObjective : IUseCaseHandler<AddObjectiveInput, Unit>
       request.SurvivalRate);
     
     if (objectiveResult.IsFail)
-      return Result<Unit>.Fail(
+      return Result<ObjectiveDto>.Fail(
         Error.Validation(
-          "UseCases.Cultivations.AddObjective",
+          objectiveResult.Error.Code,
           objectiveResult.Error.Description
         )
       );
@@ -41,7 +42,7 @@ public class AddObjective : IUseCaseHandler<AddObjectiveInput, Unit>
     request.CultivationId.ToString());
 
     if (!cultivationExists)
-     return Result<Unit>.Fail(
+     return Result<ObjectiveDto>.Fail(
         Error.NotFound(
           "UseCases.Cultivations.AddObjective",
           "Cultivation not found"
@@ -54,6 +55,8 @@ public class AddObjective : IUseCaseHandler<AddObjectiveInput, Unit>
     await _repository.AddObjective(objective);
     await _unitOfWork.Commit(cancellationToken);
 
-    return Result<Unit>.Ok(Unit.Value);  
+    return Result<ObjectiveDto>.Ok(
+      ObjectiveDto.FromEntity(objective)
+    );  
   }
 }

@@ -7,6 +7,14 @@ namespace Aquadata.EndToEndTests.Api.Cultivation.AddBiometric;
 public class AddBiometricTestFixture: 
 CultivationFixture, ICollectionFixture<AddBiometricTestFixture>
 {
-  public AddBiometricInput GetInput(Guid cultivationId)
-    => new(2f, 10f, DateTime.Now, cultivationId);
+  public List<AddBiometricInput> GetInputList(Guid cultivationId)
+  {
+    var list = new List<AddBiometricInput>();
+    for (int i = 0; i < 2; i++)
+    {
+      list.Add(new(2f+i, 10f+i, DateTime.Now, cultivationId));
+    }
+
+    return list;
+  }
 }

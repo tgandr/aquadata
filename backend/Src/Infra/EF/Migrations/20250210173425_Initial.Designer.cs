@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aquadata.Infra.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250128162417_Initial")]
+    [Migration("20250210173425_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -796,6 +796,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<int>("Temperature")
                         .HasColumnType("int");
 
+                    b.Property<float>("TotalAmmonia")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -820,7 +823,7 @@ namespace Aquadata.Infra.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<float>("Ammonium")
+                    b.Property<float>("Ammonia")
                         .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedAt")

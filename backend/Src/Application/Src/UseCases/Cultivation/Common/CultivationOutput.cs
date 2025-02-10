@@ -19,6 +19,8 @@ public class CultivationOutput
   public ObjectiveDto Objective {get;set;}
   public WaterAndAcclimationCollectionDto? WaterAndAcclimation {get;set;}
   public StressTestDto? StressTest {get;set;}
+  public List<BiometricDto>? Biometrics {get;set;}
+  public List<WaterDto>? WaterParams {get;set;}
 
   public CultivationOutput(Guid id, int pondNumber, int stock, string pLOrigin, 
   CultivationUniformity uniformity, DateTime settlementDate, bool waterAndAcclimationChecked)
@@ -52,6 +54,20 @@ public class CultivationOutput
     if (cultivation.Objective != null)
       output.Objective = ObjectiveDto
       .FromEntity(cultivation.Objective);
+
+    if (cultivation.Biometrics != null 
+      && cultivation.Biometrics.Any())
+    {
+      output.Biometrics = cultivation.Biometrics
+        .Select(BiometricDto.FromEntity).ToList();
+    }
+
+    if (cultivation.WaterParams != null
+      && cultivation.WaterParams.Any())
+    {
+      output.WaterParams = cultivation.WaterParams
+        .Select(WaterDto.FromEntity).ToList();
+    }
       
     return output;
   }

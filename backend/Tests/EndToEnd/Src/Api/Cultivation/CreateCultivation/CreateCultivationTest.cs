@@ -1,5 +1,6 @@
 using System.Net;
 using Aquadata.Api.Response;
+using Aquadata.Application.UseCases.Cultivation.Common;
 using Aquadata.Application.UseCases.Pond.Common;
 
 namespace Aquadata.EndToEndTests.Api.Cultivation.CreateCultivation;
@@ -23,14 +24,16 @@ public class CreateCultivationTest: IDisposable
 
     await _fixture.Persistence.Insert(pond);
 
-    var (response,_) = await _fixture.ApiClient
-      .Post<ApiResponse<PondOutput>>(
+    var (response,output) = await _fixture.ApiClient
+      .Post<ApiResponse<CultivationOutput>>(
       "/cultivations",
       input
     );
 
     Assert.NotNull(response);
-    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    Assert.NotNull(output);
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+  
   }
   [Fact]
   public async Task NotFound()

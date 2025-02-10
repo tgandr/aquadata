@@ -1,4 +1,6 @@
 using System.Net;
+using Aquadata.Api.Response;
+using Aquadata.Application.Dtos;
 
 namespace Aquadata.EndToEndTests.Api.Cultivation.AddObjecitve;
 
@@ -21,14 +23,15 @@ public class AddObjectiveTest: IDisposable
     await _fixture.Persistence.Insert(pond);
     await _fixture.Persistence.Insert(cultivation);
 
-    var (response,_) = await _fixture.ApiClient
-    .Post<object>(
+    var (response,output) = await _fixture.ApiClient
+    .Post<ApiResponse<ObjectiveDto>>(
       "/cultivations/add-objective",
       input
     );
 
     Assert.NotNull(response);
-    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+    Assert.NotNull(output);
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
     var cultivationFromDb = await _fixture.Persistence.GetById(cultivation.Id);
 
@@ -36,6 +39,7 @@ public class AddObjectiveTest: IDisposable
     Assert.NotNull(cultivationFromDb.Objective);
     Assert.Equivalent(input, cultivationFromDb.Objective);
   }
+  
   [Fact]
   public async Task NotFound()
   {

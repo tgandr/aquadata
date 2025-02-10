@@ -1,9 +1,10 @@
+using Aquadata.Application.Dtos;
 using Aquadata.Application.Interfaces;
 using MediatR;
 
 namespace Aquadata.Application.UseCases.Cultivation.AddBiometric;
 
-public class AddBiometricInput: IUseCaseRequest<Unit>
+public class AddBiometricInput: IUseCaseRequest<BiometricDto>
 {
   public float Count {get; private set;}
   public float AverageWeight {get; private set;}

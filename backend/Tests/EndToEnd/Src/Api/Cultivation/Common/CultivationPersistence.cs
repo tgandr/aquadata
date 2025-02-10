@@ -25,5 +25,7 @@ public class CultivationPersistence: BasePersistence
   public async Task<CultivationEntity?> GetById(Guid id)
     => await _context.Cultivations
     .Include(c => c.Objective)
+    .Include(c => c.Biometrics)
+    .Include(c => c.WaterParams)
     .FirstOrDefaultAsync(c => c.Id == id);
 }

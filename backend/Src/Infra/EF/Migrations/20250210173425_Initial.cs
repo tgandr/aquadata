@@ -548,7 +548,7 @@ namespace Aquadata.Infra.EF.Migrations
                     Oxygen = table.Column<float>(type: "float", nullable: false),
                     Temperature = table.Column<int>(type: "int", nullable: false),
                     Salinity = table.Column<int>(type: "int", nullable: false),
-                    Ammonium = table.Column<float>(type: "float", nullable: false),
+                    Ammonia = table.Column<float>(type: "float", nullable: false),
                     Nitrite = table.Column<float>(type: "float", nullable: false),
                     Origin = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -577,6 +577,7 @@ namespace Aquadata.Infra.EF.Migrations
                     Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Temperature = table.Column<int>(type: "int", nullable: false),
                     DissolvedOxygen = table.Column<float>(type: "float", nullable: false),
+                    TotalAmmonia = table.Column<float>(type: "float", nullable: false),
                     CultivationId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     PH_Value = table.Column<byte>(type: "tinyint unsigned", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),

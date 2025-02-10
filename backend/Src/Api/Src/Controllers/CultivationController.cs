@@ -1,8 +1,10 @@
 using Aquadata.Api.Extensions;
+using Aquadata.Api.Response;
+using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.Cultivation;
 using Aquadata.Application.UseCases.Cultivation.AddBiometric;
 using Aquadata.Application.UseCases.Cultivation.AddObjective;
-using Aquadata.Application.UseCases.Pond.GetPond;
+using Aquadata.Application.UseCases.Cultivation.AddWater;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,39 +21,36 @@ public class CultivationController: ControllerBase
   public CultivationController(IMediator mediator)
     => _mediator = mediator;
 
-  [HttpPost]
-  public async Task<IResult> Create([FromBody] CreateCultivationInput command
-  ,CancellationToken cancellationToken)
+  private async Task<IResult> SendRequest<TResponse>(IUseCaseRequest<TResponse> command, 
+  CancellationToken cancellationToken) 
   {
     var result = await _mediator.Send(command,cancellationToken);
 
     if (result.IsFail)
       return Results.Extensions.MapResult(result);
 
-    return Results.Created();
+    return Results.Ok(
+      new ApiResponse<TResponse>(result.Unwrap())
+    );
   }
+
+  [HttpPost]
+  public async Task<IResult> Create([FromBody] CreateCultivationInput command,
+  CancellationToken cancellationToken)
+    => await SendRequest(command, cancellationToken);
 
   [HttpPost("add-objective")]
   public async Task<IResult> AddObjective([FromBody] AddObjectiveInput command,
   CancellationToken cancellationToken)
-  {
-    var result = await _mediator.Send(command, cancellationToken);
-
-    if (result.IsFail)
-      return Results.Extensions.MapResult(result);
-
-    return Results.Created();
-  }
+    => await SendRequest(command,cancellationToken);
 
   [HttpPost("add-biometric")]
   public async Task<IResult> AddBiometric([FromBody] AddBiometricInput command,
   CancellationToken cancellationToken)
-  {
-    var result = await _mediator.Send(command, cancellationToken);
+    => await SendRequest(command,cancellationToken);
 
-    if (result.IsFail)
-      return Results.Extensions.MapResult(result);
-
-    return Results.Created();
-  }
+  [HttpPost("add-water-param")]
+  public async Task<IResult> AddWater([FromBody] AddWaterInput command,
+  CancellationToken cancellationToken)
+    => await SendRequest(command,cancellationToken);
 }

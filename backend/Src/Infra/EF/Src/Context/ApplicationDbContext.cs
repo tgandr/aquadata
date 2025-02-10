@@ -3,6 +3,7 @@ using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Objective;
 using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Entities.User;
+using Aquadata.Core.Entities.Water;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aquadata.Infra.EF.Context;
@@ -14,6 +15,7 @@ public class ApplicationDbContext: DbContext
   public DbSet<CultivationEntity> Cultivations {get;set;}
   public DbSet<ObjectiveEntity> Objectives {get;set;}
   public DbSet<BiometricEntity> Biometrics {get;set;}
+  public DbSet<WaterEntity> Waters {get;set;}
 
   public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     :base(options){}

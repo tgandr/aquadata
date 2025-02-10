@@ -28,7 +28,6 @@ public class WebAppFactory<TStartup>
           throw new NullReferenceException(
             "ApplicationDbContext is null");
         }
-        
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
       });

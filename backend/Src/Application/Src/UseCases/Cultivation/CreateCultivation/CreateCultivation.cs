@@ -1,4 +1,5 @@
 using Aquadata.Application.Interfaces;
+using Aquadata.Application.UseCases.Cultivation.Common;
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.WaterAndAcclimation;
 using Aquadata.Core.Interfaces.Repository;
@@ -8,7 +9,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Cultivation.CreateCultivation;
 
-public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Unit>
+public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, CultivationOutput>
 {
   private readonly IPondRepository _pondRepository;
   private readonly IAuthenticatedUserService _authenticatedUserService;
@@ -21,7 +22,7 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Unit>
     _pondRepository = pondRepository;
     _unitOfWork = unitOfWork;
   }
-  public async Task<Result<Unit>> Handle(CreateCultivationInput request, CancellationToken cancellationToken)
+  public async Task<Result<CultivationOutput>> Handle(CreateCultivationInput request, CancellationToken cancellationToken)
   {
     var cultivationResult = CultivationEntity.Of(
       request.PondNumber,
@@ -33,14 +34,14 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Unit>
     );
 
     if (cultivationResult.IsFail)
-      return Result<Unit>.Fail(cultivationResult.Error);
+      return Result<CultivationOutput>.Fail(cultivationResult.Error);
 
     var cultivation = cultivationResult.Unwrap();
     var userId = _authenticatedUserService.GetUserId() ?? "";
     var pondExists = await _pondRepository.Exists(userId, request.PondId.ToString());
 
     if (!pondExists)
-      return Result<Unit>.Fail(
+      return Result<CultivationOutput>.Fail(
         Error.NotFound(
           "UseCases.Cultivation.Create",
           "Pond not found"
@@ -52,9 +53,9 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Unit>
     {
       var result = request.StressTest.ToEntityOrError();
       if (result.IsFail)
-        return Result<Unit>.Fail(
+        return Result<CultivationOutput>.Fail(
           Error.Validation(
-            "UseCases.Cultivation.Create", 
+            result.Error.Code, 
             result.Error.Description
           ));
       cultivation.StressTest = result.Unwrap();
@@ -66,16 +67,16 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Unit>
       var inTransportResult = request.WaterAndAcclimation.InTransport.ToEntityOrError();
 
       if (inPondResult.IsFail)
-        return Result<Unit>.Fail(
+        return Result<CultivationOutput>.Fail(
           Error.Validation(
-            "UseCases.Cultivation.Create", 
+            inPondResult.Error.Code, 
             inPondResult.Error.Description
         ));
 
       if (inTransportResult.IsFail)
-        return Result<Unit>.Fail(
+        return Result<CultivationOutput>.Fail(
           Error.Validation(
-            "UseCases.Cultivation.Create", 
+            inTransportResult.Error.Code, 
             inTransportResult.Error.Description
         ));
       
@@ -88,6 +89,8 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Unit>
     await _pondRepository.CreateCultivation(cultivation, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);
 
-    return Result<Unit>.Ok(Unit.Value);
+    return Result<CultivationOutput>.Ok(
+      CultivationOutput.FromEntity(cultivation)
+    );
   }
 }

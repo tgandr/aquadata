@@ -793,6 +793,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<int>("Temperature")
                         .HasColumnType("int");
 
+                    b.Property<float>("TotalAmmonia")
+                        .HasColumnType("float");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -817,7 +820,7 @@ namespace Aquadata.Infra.EF.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<float>("Ammonium")
+                    b.Property<float>("Ammonia")
                         .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedAt")

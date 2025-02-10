@@ -1,13 +1,12 @@
 using System.Text.Json.Serialization;
 using Aquadata.Application.Dtos;
 using Aquadata.Application.Interfaces;
-using Aquadata.Core.Entities.StressTest;
+using Aquadata.Application.UseCases.Cultivation.Common;
 using Aquadata.Core.Enums;
-using MediatR;
 
 namespace Aquadata.Application.UseCases.Cultivation;
 
-public class CreateCultivationInput: IUseCaseRequest<Unit>
+public class CreateCultivationInput: IUseCaseRequest<CultivationOutput>
 {
   public int PondNumber {get;}
   public int Stock {get;}

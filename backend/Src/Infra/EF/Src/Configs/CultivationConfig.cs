@@ -37,7 +37,6 @@ public class CultivationConfig : IEntityTypeConfiguration<CultivationEntity>
     builder.Navigation(e => e.Biometrics).AutoInclude();
     builder.Navigation(e => e.WaterParams).AutoInclude();
     builder.Navigation(e => e.Harvests).AutoInclude();
-    builder.Navigation(e => e.WaterParams).AutoInclude();
     builder.Navigation(e => e.Feed).AutoInclude();
     builder.Navigation(e => e.Fertilizers).AutoInclude();
     builder.Navigation(e => e.WaterAndAcclimation).AutoInclude();

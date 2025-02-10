@@ -1,11 +1,11 @@
 
+using Aquadata.Application.Dtos;
 using Aquadata.Application.Interfaces;
-using Aquadata.Core.Entities.Objective;
-using MediatR;
+
 
 namespace Aquadata.Application.UseCases.Cultivation.AddObjective;
 
-public class AddObjectiveInput: IUseCaseRequest<Unit>
+public class AddObjectiveInput: IUseCaseRequest<ObjectiveDto>
 {
   public int Days {get;}
   public float AverageSize {get;}

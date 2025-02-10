@@ -12,7 +12,7 @@ public class WaterAndAcclimationDto
   public int Temperature {get; set;}
   public byte PH {get; set;}
   public int Salinity {get; set;}
-  public float Ammonium {get; set;}
+  public float Ammonia {get; set;}
   public float Nitrite {get; set;}
 
   [JsonIgnore]
@@ -20,34 +20,26 @@ public class WaterAndAcclimationDto
 
   public WaterAndAcclimationDto(float oxygen, 
   int temperature, byte pH, int salinity, 
-  float ammonium, float nitrite)
+  float ammonia, float nitrite)
   {
     Oxygen = oxygen;
     Temperature = temperature;
     PH = pH;
     Salinity = salinity;
-    Ammonium = ammonium;
+    Ammonia = ammonia;
     Nitrite = nitrite;
   }
 
   public Result<WaterAndAcclimationEntity> ToEntityOrError()
-  {
-    var phResult = Vo.PH.Of(PH);
-
-    if (phResult.IsFail)
-    {
-      return Result<WaterAndAcclimationEntity>.Fail(phResult.Error);
-    }
-
-    return WaterAndAcclimationEntity.Of(Oxygen, Temperature, phResult.Unwrap(), Salinity, Ammonium, Nitrite, Origin);
-  }
+    => WaterAndAcclimationEntity.Of(Oxygen, Temperature, PH, 
+    Salinity, Ammonia, Nitrite, Origin);
 
   public static WaterAndAcclimationDto FromEntity(WaterAndAcclimationEntity waterAndAcclimation)
   {
     return new WaterAndAcclimationDto(
       waterAndAcclimation.Oxygen, waterAndAcclimation.Temperature, 
       waterAndAcclimation.PH.Value, waterAndAcclimation.Salinity, 
-      waterAndAcclimation.Ammonium, waterAndAcclimation.Nitrite
+      waterAndAcclimation.Ammonia, waterAndAcclimation.Nitrite
     );
   }
 }

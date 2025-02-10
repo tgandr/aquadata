@@ -1,3 +1,4 @@
+using Aquadata.Application.Dtos;
 using Aquadata.Application.Interfaces;
 using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Interfaces.Repository;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Cultivation.AddBiometric;
 
-public class AddBiometric : IUseCaseHandler<AddBiometricInput, Unit>
+public class AddBiometric : IUseCaseHandler<AddBiometricInput, BiometricDto>
 {
   private readonly IUnitOfWork _unitOfWork;
   private readonly ICultivationRepository _repository;
@@ -22,7 +23,7 @@ public class AddBiometric : IUseCaseHandler<AddBiometricInput, Unit>
       _authenticatedUserService = authenticatedUserService;
   }
 
-  public async Task<Result<Unit>> Handle(AddBiometricInput request, 
+  public async Task<Result<BiometricDto>> Handle(AddBiometricInput request, 
   CancellationToken cancellationToken)
   {
     var biometricResult = BiometricEntity.Of(
@@ -32,9 +33,9 @@ public class AddBiometric : IUseCaseHandler<AddBiometricInput, Unit>
     );
 
     if (biometricResult.IsFail)
-      return Result<Unit>.Fail(
+      return Result<BiometricDto>.Fail(
         Error.Validation(
-          "UseCases.Cultivations.AddBiometric",
+          biometricResult.Error.Code,
           biometricResult.Error.Description
         )
     );
@@ -44,7 +45,7 @@ public class AddBiometric : IUseCaseHandler<AddBiometricInput, Unit>
     request.CultivationId.ToString());
 
     if (!cultivationExists)
-     return Result<Unit>.Fail(
+     return Result<BiometricDto>.Fail(
         Error.NotFound(
           "UseCases.Cultivations.AddBiometric",
           "Cultivation not found"
@@ -57,6 +58,8 @@ public class AddBiometric : IUseCaseHandler<AddBiometricInput, Unit>
     await _repository.AddBiometric(biometric);
     await _unitOfWork.Commit(cancellationToken);
 
-    return Result<Unit>.Ok(Unit.Value);  
+    return Result<BiometricDto>.Ok(
+      BiometricDto.FromEntity(biometric)
+    );  
   }
 }
