@@ -33,7 +33,11 @@ public class AddWater : IUseCaseHandler<AddWaterInput, WaterDto>
     );
 
     if (waterResult.IsFail)
-      return Result<WaterDto>.Fail(waterResult.Error);
+      return Result<WaterDto>.Fail(
+        Error.Validation(
+          waterResult.Error.Code,
+          waterResult.Error.Description
+      ));
 
     var userId = _authenticatedUserService.GetUserId() ?? "";
     var cultivationExists = await _repository.Exists(userId, 

@@ -1,6 +1,7 @@
 using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Fertilizer;
+using Aquadata.Core.Entities.Harvest;
 using Aquadata.Core.Entities.Objective;
 using Aquadata.Core.Entities.Water;
 using Aquadata.Core.Interfaces.Repository;
@@ -21,6 +22,9 @@ public class CultivationRepository: ICultivationRepository
   
   public async Task AddFertilizer(FertilizerEntity fertilizer)
     => await _context.Fertilizers.AddAsync(fertilizer);
+
+  public async Task AddHarvest(HarvestEntity harvest)
+    => await _context.Harvests.AddAsync(harvest);
 
   public async Task AddObjective(ObjectiveEntity objective)
     => await _context.Objectives.AddAsync(objective);

@@ -13,8 +13,8 @@ public class HarvestEntity : Entity
   public bool IsTotal {get; private set;}
   public float BioMass {get; private set;}
   
-  public virtual Guid? CultivationId {get;set;}
-  public virtual ICollection<BiometricEntity>? Biometrics {get; set;}
+  public virtual Guid CultivationId {get;set;}
+  public virtual ICollection<BiometricEntity> Biometrics {get; set;} 
 
   private HarvestEntity(string buyer, decimal price, 
   DateTime date, bool isTotal, float bioMass)

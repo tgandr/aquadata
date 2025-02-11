@@ -17,4 +17,13 @@ public class BiometricDto
 
   public static BiometricDto FromEntity(BiometricEntity entity)
     => new(entity.Count, entity.AverageWeight, entity.Date);
+
+  public static BiometricEntity ToEntity(BiometricDto dto, Guid cultivationId)
+  {
+    var res = BiometricEntity.Of(dto.Count, dto.AverageWeight, dto.Date).Unwrap();
+    res.CultivationId = cultivationId;
+
+    return res;
+  }
+  
 }

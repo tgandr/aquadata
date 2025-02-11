@@ -27,12 +27,12 @@ public class CultivationEntity : Entity, IAggregateRoot
   public virtual Guid PondId {get;set;}
   public virtual ObjectiveEntity? Objective {get;set;}
   public virtual StressTestEntity? StressTest {get; set;}
-  public virtual ICollection<BiometricEntity>? Biometrics {get; set;}
-  public virtual ICollection<WaterEntity>? WaterParams {get; set;}
-  public virtual ICollection<HarvestEntity>? Harvests {get; set;}
-  public virtual ICollection<FeedEntity>? Feed {get; set;}
-  public virtual ICollection<FertilizerEntity>? Fertilizers {get; set;}
-  public virtual ICollection<WaterAndAcclimationEntity>? WaterAndAcclimation {get; private set;}
+  public virtual ICollection<BiometricEntity> Biometrics {get; set;}
+  public virtual ICollection<WaterEntity> WaterParams {get; set;}
+  public virtual ICollection<HarvestEntity> Harvests {get; set;}
+  public virtual ICollection<FeedEntity> Feed {get; set;}
+  public virtual ICollection<FertilizerEntity> Fertilizers {get; set;}
+  public virtual ICollection<WaterAndAcclimationEntity> WaterAndAcclimation {get; private set;}
 
   private CultivationEntity() {}
   private CultivationEntity(int pondNumber, int stock, string pLOrigin, 
