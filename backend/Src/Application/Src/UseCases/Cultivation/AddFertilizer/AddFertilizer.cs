@@ -1,19 +1,19 @@
 using Aquadata.Application.Dtos;
 using Aquadata.Application.Interfaces;
-using Aquadata.Core.Entities.Water;
+using Aquadata.Core.Entities.Fertilizer;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
 
-namespace Aquadata.Application.UseCases.Cultivation.AddWater;
+namespace Aquadata.Application.UseCases.Cultivation.AddFertilizer;
 
-public class AddWater : IUseCaseHandler<AddWaterInput, WaterDto>
+public class AddFertilizer : IUseCaseHandler<AddFertilizerInput, FertilizerDto>
 {
   private readonly IUnitOfWork _unitOfWork;
   private readonly ICultivationRepository _repository;
   private readonly IAuthenticatedUserService _authenticatedUserService;
 
-  public AddWater(IUnitOfWork unitOfWork, 
+  public AddFertilizer(IUnitOfWork unitOfWork, 
   ICultivationRepository cultivationRepository,
   IAuthenticatedUserService authenticatedUserService)
   {
@@ -21,40 +21,40 @@ public class AddWater : IUseCaseHandler<AddWaterInput, WaterDto>
       _repository = cultivationRepository;
       _authenticatedUserService = authenticatedUserService;
   }
-
-  public async Task<Result<WaterDto>> Handle(AddWaterInput request, CancellationToken cancellationToken)
+  public async Task<Result<FertilizerDto>> Handle(AddFertilizerInput request, 
+  CancellationToken cancellationToken)
   {
-    var waterResult = WaterEntity.Of(
+    var fertilizerResult = FertilizerEntity.Of(
+      request.Name,
       request.Date,
-      request.Temperature,
-      request.DissolvedOxygen,
-      request.TotalAmmonia,
-      request.PH
-    );
+      request.Type,
+      request.Quantity,
+      request.MeasureUnit
+    ); 
 
-    if (waterResult.IsFail)
-      return Result<WaterDto>.Fail(waterResult.Error);
+    if (fertilizerResult.IsFail)
+      return Result<FertilizerDto>.Fail(fertilizerResult.Error);
 
     var userId = _authenticatedUserService.GetUserId() ?? "";
     var cultivationExists = await _repository.Exists(userId, 
     request.CultivationId.ToString());
 
     if (!cultivationExists)
-     return Result<WaterDto>.Fail(
+     return Result<FertilizerDto>.Fail(
         Error.NotFound(
-          "UseCases.Cultivations.AddWaterParam",
+          "UseCases.Cultivations.AddFertilizer",
           "Cultivation not found"
         )
     );
 
-    var water = waterResult.Unwrap();
-    water.CultivationId = request.CultivationId;
+    var fertilizer = fertilizerResult.Unwrap();
+    fertilizer.CultivationId = request.CultivationId;
 
-    await _repository.AddWater(water);
+    await _repository.AddFertilizer(fertilizer);
     await _unitOfWork.Commit(cancellationToken);
-        
-    return Result<WaterDto>.Ok(
-      WaterDto.FromEntity(water)
+
+    return Result<FertilizerDto>.Ok(
+      FertilizerDto.FromEntity(fertilizer)
     );
   }
 }

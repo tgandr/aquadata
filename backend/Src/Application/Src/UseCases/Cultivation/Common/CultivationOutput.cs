@@ -21,6 +21,7 @@ public class CultivationOutput
   public StressTestDto? StressTest {get;set;}
   public List<BiometricDto>? Biometrics {get;set;}
   public List<WaterDto>? WaterParams {get;set;}
+  public List<FertilizerDto>? Fertilizers {get;set;}
 
   public CultivationOutput(Guid id, int pondNumber, int stock, string pLOrigin, 
   CultivationUniformity uniformity, DateTime settlementDate, bool waterAndAcclimationChecked)
@@ -67,6 +68,13 @@ public class CultivationOutput
     {
       output.WaterParams = cultivation.WaterParams
         .Select(WaterDto.FromEntity).ToList();
+    }
+
+    if (cultivation.Fertilizers != null
+      && cultivation.Fertilizers.Any())
+    {
+      output.Fertilizers = cultivation.Fertilizers
+        .Select(FertilizerDto.FromEntity).ToList();
     }
       
     return output;

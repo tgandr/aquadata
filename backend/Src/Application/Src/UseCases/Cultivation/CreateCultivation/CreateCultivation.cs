@@ -53,11 +53,7 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Cultiva
     {
       var result = request.StressTest.ToEntityOrError();
       if (result.IsFail)
-        return Result<CultivationOutput>.Fail(
-          Error.Validation(
-            result.Error.Code, 
-            result.Error.Description
-          ));
+        return Result<CultivationOutput>.Fail(result.Error);
       cultivation.StressTest = result.Unwrap();
     }
 
@@ -67,18 +63,10 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Cultiva
       var inTransportResult = request.WaterAndAcclimation.InTransport.ToEntityOrError();
 
       if (inPondResult.IsFail)
-        return Result<CultivationOutput>.Fail(
-          Error.Validation(
-            inPondResult.Error.Code, 
-            inPondResult.Error.Description
-        ));
+        return Result<CultivationOutput>.Fail(inPondResult.Error);
 
       if (inTransportResult.IsFail)
-        return Result<CultivationOutput>.Fail(
-          Error.Validation(
-            inTransportResult.Error.Code, 
-            inTransportResult.Error.Description
-        ));
+        return Result<CultivationOutput>.Fail(inTransportResult.Error);
       
       cultivation.AddWaterAndAcclimation(new List<WaterAndAcclimationEntity>{
         inPondResult.Unwrap(),

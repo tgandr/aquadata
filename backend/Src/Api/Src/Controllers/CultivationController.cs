@@ -3,6 +3,7 @@ using Aquadata.Api.Response;
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.Cultivation;
 using Aquadata.Application.UseCases.Cultivation.AddBiometric;
+using Aquadata.Application.UseCases.Cultivation.AddFertilizer;
 using Aquadata.Application.UseCases.Cultivation.AddObjective;
 using Aquadata.Application.UseCases.Cultivation.AddWater;
 using MediatR;
@@ -51,6 +52,11 @@ public class CultivationController: ControllerBase
 
   [HttpPost("add-water-param")]
   public async Task<IResult> AddWater([FromBody] AddWaterInput command,
+  CancellationToken cancellationToken)
+    => await SendRequest(command,cancellationToken);
+
+  [HttpPost("add-fertilizer")]
+  public async Task<IResult> AddFertilizer([FromBody] AddFertilizerInput command,
   CancellationToken cancellationToken)
     => await SendRequest(command,cancellationToken);
 }

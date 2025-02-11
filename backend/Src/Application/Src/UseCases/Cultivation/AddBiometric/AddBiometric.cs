@@ -33,12 +33,7 @@ public class AddBiometric : IUseCaseHandler<AddBiometricInput, BiometricDto>
     );
 
     if (biometricResult.IsFail)
-      return Result<BiometricDto>.Fail(
-        Error.Validation(
-          biometricResult.Error.Code,
-          biometricResult.Error.Description
-        )
-    );
+      return Result<BiometricDto>.Fail(biometricResult.Error);
 
     var userId = _authenticatedUserService.GetUserId() ?? "";
     var cultivationExists = await _repository.Exists(userId, 

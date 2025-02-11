@@ -1,5 +1,6 @@
 using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Entities.Cultivation;
+using Aquadata.Core.Entities.Fertilizer;
 using Aquadata.Core.Entities.Objective;
 using Aquadata.Core.Entities.Water;
 
@@ -12,4 +13,5 @@ public interface ICultivationRepository
   Task AddObjective(ObjectiveEntity objective);
   Task AddBiometric(BiometricEntity biometric);
   Task AddWater(WaterEntity water);
+  Task AddFertilizer(FertilizerEntity fertilizer);
 }

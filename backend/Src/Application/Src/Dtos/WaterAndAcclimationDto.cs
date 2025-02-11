@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using Aquadata.Core.Entities.WaterAndAcclimation;
 using Aquadata.Core.Enums;
 using Aquadata.Core.Util;
-using Vo = Aquadata.Core.ValueObjects;
 
 namespace Aquadata.Application.Dtos;
 

@@ -26,6 +26,7 @@ public class CultivationPersistence: BasePersistence
     => await _context.Cultivations
     .Include(c => c.Objective)
     .Include(c => c.Biometrics)
+    .Include(c => c.Fertilizers)
     .Include(c => c.WaterParams)
     .FirstOrDefaultAsync(c => c.Id == id);
 }
