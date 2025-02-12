@@ -1,5 +1,6 @@
 using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Entities.Cultivation;
+using Aquadata.Core.Entities.Feed;
 using Aquadata.Core.Entities.Fertilizer;
 using Aquadata.Core.Entities.Harvest;
 using Aquadata.Core.Entities.Objective;
@@ -20,6 +21,7 @@ public class ApplicationDbContext: DbContext
   public DbSet<WaterEntity> Waters {get;set;}
   public DbSet<FertilizerEntity> Fertilizers {get;set;}
   public DbSet<HarvestEntity> Harvests {get;set;}
+  public DbSet<FeedEntity> Feed {get;set;}
 
   public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     :base(options){}

@@ -1,5 +1,6 @@
 using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Entities.Cultivation;
+using Aquadata.Core.Entities.Feed;
 using Aquadata.Core.Entities.Fertilizer;
 using Aquadata.Core.Entities.Harvest;
 using Aquadata.Core.Entities.Objective;
@@ -16,4 +17,5 @@ public interface ICultivationRepository
   Task AddWater(WaterEntity water);
   Task AddFertilizer(FertilizerEntity fertilizer);
   Task AddHarvest(HarvestEntity harvest);
+  Task AddFeed(FeedEntity feed);
 }

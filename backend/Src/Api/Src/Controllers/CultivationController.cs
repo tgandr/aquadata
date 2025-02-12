@@ -3,6 +3,7 @@ using Aquadata.Api.Response;
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.Cultivation;
 using Aquadata.Application.UseCases.Cultivation.AddBiometric;
+using Aquadata.Application.UseCases.Cultivation.AddFeed;
 using Aquadata.Application.UseCases.Cultivation.AddFertilizer;
 using Aquadata.Application.UseCases.Cultivation.AddHarvest;
 using Aquadata.Application.UseCases.Cultivation.AddObjective;
@@ -63,6 +64,11 @@ public class CultivationController: ControllerBase
 
   [HttpPost("add-harvest")]
   public async Task<IResult> AddHarvest([FromBody] AddHarvestInput command,
+  CancellationToken cancellationToken)
+    => await SendRequest(command,cancellationToken);
+
+  [HttpPost("add-feed")]
+  public async Task<IResult> AddFeed([FromBody] AddFeedInput command,
   CancellationToken cancellationToken)
     => await SendRequest(command,cancellationToken);
 }

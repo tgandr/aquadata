@@ -22,6 +22,7 @@ public class CultivationOutput
   public List<BiometricDto>? Biometrics {get;set;}
   public List<WaterDto>? WaterParams {get;set;}
   public List<FertilizerDto>? Fertilizers {get;set;}
+  public List<FeedDto> Feed {get;set;}
 
   public CultivationOutput(Guid id, int pondNumber, int stock, string pLOrigin, 
   CultivationUniformity uniformity, DateTime settlementDate, bool waterAndAcclimationChecked)
@@ -75,6 +76,13 @@ public class CultivationOutput
     {
       output.Fertilizers = cultivation.Fertilizers
         .Select(FertilizerDto.FromEntity).ToList();
+    }
+
+    if (cultivation.Feed != null
+      && cultivation.Feed.Any())
+    {
+      output.Feed = cultivation.Feed
+        .Select(FeedDto.FromEntity).ToList();
     }
       
     return output;

@@ -46,6 +46,12 @@ public class CultivationEntity : Entity, IAggregateRoot
     Uniformity = uniformity;
     SettlementDate = settlementDate;
     WaterAndAcclimationChecked = waterAndAcclimationChecked;
+    Biometrics = new List<BiometricEntity>();
+    WaterParams = new List<WaterEntity>();
+    Harvests = new List<HarvestEntity>();
+    Feed = new List<FeedEntity>();
+    Fertilizers = new List<FertilizerEntity>();
+    WaterAndAcclimation = new List<WaterAndAcclimationEntity>();
   }
 
   public static Result<CultivationEntity> Of(

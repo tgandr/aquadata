@@ -1,5 +1,6 @@
 using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Entities.Cultivation;
+using Aquadata.Core.Entities.Feed;
 using Aquadata.Core.Entities.Fertilizer;
 using Aquadata.Core.Entities.Harvest;
 using Aquadata.Core.Entities.Objective;
@@ -19,9 +20,12 @@ public class CultivationRepository: ICultivationRepository
 
   public async Task AddBiometric(BiometricEntity biometric)
     => await _context.Biometrics.AddAsync(biometric);
-  
+
+  public async Task AddFeed(FeedEntity feed)
+    => await _context.Feed.AddAsync(feed);
+
   public async Task AddFertilizer(FertilizerEntity fertilizer)
-    => await _context.Fertilizers.AddAsync(fertilizer);
+  => await _context.Fertilizers.AddAsync(fertilizer);
 
   public async Task AddHarvest(HarvestEntity harvest)
     => await _context.Harvests.AddAsync(harvest);
@@ -32,7 +36,6 @@ public class CultivationRepository: ICultivationRepository
   public async Task AddWater(WaterEntity water)
     => await _context.Waters.AddAsync(water);
   
-
   public async Task<bool> Exists(string userId, string cultivationId)
   => await _context.Ponds
     .Where(p => p.UserId.ToString() == userId)

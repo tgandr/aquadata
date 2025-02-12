@@ -28,6 +28,7 @@ public class CultivationPersistence: BasePersistence
     .Include(c => c.Biometrics)
     .Include(c => c.Fertilizers)
     .Include(c => c.WaterParams)
+    .Include(c => c.Feed)
     .Include(c => c.Harvests).ThenInclude(h => h.Biometrics)
     .FirstOrDefaultAsync(c => c.Id == id);
 }
