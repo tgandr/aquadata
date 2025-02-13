@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Aquadata.Core.Entities.User;
 using Aquadata.Core.Security;
 using Aquadata.Infra.EF.Context;
 using Aquadata.Infra.Security.Validation;
@@ -26,13 +27,13 @@ public class AuthenticateService: IAuthenticateService
     _config = config;
   }
 
-  public async Task<bool> Authenticate(string email, string password)
+  public async Task<(bool, UserEntity?)> Authenticate(string email, string password)
   {
     var user = await _context.Users
       .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
 
     if (user == null)
-      return false;
+      return (false, null);
     
     using var hmac = new HMACSHA256(user.PasswordSalt);
     var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
@@ -40,10 +41,10 @@ public class AuthenticateService: IAuthenticateService
     for (int i = 0; i < computedHash.Length; i++)
     {
       if (computedHash[i] != user.PasswordHash![i])
-        return false;
+        return (false, null);
     }
 
-    return true;
+    return (true, user);
   }
 
   public string GenerateToken(string id, string email)

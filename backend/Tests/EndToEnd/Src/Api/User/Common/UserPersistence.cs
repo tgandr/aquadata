@@ -13,5 +13,6 @@ public class UserPersistence: BasePersistence
   public async Task<UserEntity?> GetById(Guid id)
     => await _context.Users
       .AsNoTracking()
+      .Include(u => u.FeedPurchases)
       .FirstOrDefaultAsync(e => e.Id == id);
 }

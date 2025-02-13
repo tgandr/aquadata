@@ -28,7 +28,7 @@ public class ApiClient
         "Bearer", token);
   }
 
-  public async Task<UserApiOutput> SignUp(CreateUserInput? user = null)
+  public async Task<ApiCredentials> SignUp(CreateUserInput? user = null)
   {
     string payload;
 
@@ -53,7 +53,7 @@ public class ApiClient
       )
     );
 
-    var output = await GetOutput<ApiResponse<UserApiOutput>>(response);
+    var output = await GetOutput<ApiResponse<ApiCredentials>>(response);
     AddAuthorizationHeader(output!.Data.Token);
     return output!.Data;
   }

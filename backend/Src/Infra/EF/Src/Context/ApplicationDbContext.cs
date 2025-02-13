@@ -5,6 +5,7 @@ using Aquadata.Core.Entities.Fertilizer;
 using Aquadata.Core.Entities.Harvest;
 using Aquadata.Core.Entities.Objective;
 using Aquadata.Core.Entities.Pond;
+using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Entities.Water;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ public class ApplicationDbContext: DbContext
   public DbSet<FertilizerEntity> Fertilizers {get;set;}
   public DbSet<HarvestEntity> Harvests {get;set;}
   public DbSet<FeedEntity> Feed {get;set;}
+  public DbSet<FeedPurchaseEntity> FeedPurchases {get;set;}
 
   public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     :base(options){}

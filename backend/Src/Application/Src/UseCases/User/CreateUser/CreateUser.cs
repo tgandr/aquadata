@@ -4,6 +4,7 @@ using Aquadata.Application.UseCases.User.Common;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 using MediatR;
 
 namespace Aquadata.Application.UseCases.User.CreateUser;
@@ -31,6 +32,15 @@ public class CreateUser : IUseCaseHandler<CreateUserInput,UserOutput>
       request.FarmAddress,
       request.Phone
     );
+
+    var userExists = await _repository.IsEmailRegistered(request.Email);
+
+    if (userExists)
+      return Result<UserOutput>.Fail(
+        Error.Conflict(
+        "UserService.Signup",
+        "Email already exists"
+      ));
 
     if (userResult.IsFail) {
       return Result<UserOutput>.Fail(userResult.Error!);

@@ -3,7 +3,7 @@ using Aquadata.Core.Util;
 
 namespace Aquadata.Core.Entities.Purchase;
 
-public abstract class PurchaseBase : SeedWork.Entity
+public abstract class PurchaseBase : Entity
 {
   public DateOnly Date {get; private set;}
   public string Label {get; private set;}
@@ -20,7 +20,7 @@ public abstract class PurchaseBase : SeedWork.Entity
     Quantity = int.Abs(quantity);
     Value = decimal.Abs(value);
   }
-
+  
   protected override Result<Entity> Validate()
     => Result<Entity>.Ok(this);    
   

@@ -1,6 +1,5 @@
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.User.Common;
-using Aquadata.Core.Entities.User;
 
 namespace Application.UseCases.User.CreateUser;
 

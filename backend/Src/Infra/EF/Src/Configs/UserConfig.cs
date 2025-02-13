@@ -33,5 +33,17 @@ public class UserConfig : IEntityTypeConfiguration<UserEntity>
       .HasForeignKey(e => e.UserId).IsRequired();
     builder.HasMany(e => e.GenericPurchases).WithOne()
       .HasForeignKey(e => e.UserId).IsRequired();
+
+    builder.Navigation(e => e.Stock).AutoInclude();
+    builder.Navigation(e => e.Inventory).AutoInclude();
+    builder.Navigation(e => e.Ponds).AutoInclude();
+    builder.Navigation(e => e.Expenses).AutoInclude();
+    builder.Navigation(e => e.Employees).AutoInclude();
+    builder.Navigation(e => e.Payroll).AutoInclude();
+    builder.Navigation(e => e.FeedPurchases).AutoInclude();
+    builder.Navigation(e => e.FertilizerPurchases).AutoInclude();
+    builder.Navigation(e => e.PLPurchases).AutoInclude();
+    builder.Navigation(e => e.ProbioticPurchases).AutoInclude();
+    builder.Navigation(e => e.GenericPurchases).AutoInclude();
   }
 }

@@ -1,15 +1,14 @@
-using System.Security.Claims;
 using Application.UseCases.User.CreateUser;
 using Aquadata.Api.Extensions;
 using Aquadata.Api.Models;
 using Aquadata.Api.Response;
+using Aquadata.Application.Dtos;
 using Aquadata.Application.UseCases.User.Common;
 using Aquadata.Application.UseCases.User.DeleteUser;
-using Aquadata.Application.UseCases.User.GetByEmail;
 using Aquadata.Application.UseCases.User.GetUser;
+using Aquadata.Application.UseCases.User.Purchase.AddFeedPurchase;
 using Aquadata.Application.UseCases.User.UpdateUser;
 using Aquadata.Core.Security;
-using Aquadata.Core.Util.Result;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -33,16 +32,7 @@ public class UserController: ControllerBase
   [HttpPost("signup")]
   public async Task<IResult> SignUp([FromBody] CreateUserInput command, 
   CancellationToken cancellationToken)
-  {
-    var userFromDb = await _mediator.Send(new GetUserByEmailInput(command.Email));
-
-    if (!userFromDb.IsFail && 
-    userFromDb.Unwrap().Email == command.Email)
-      return Results.Conflict(Error.Conflict(
-        "UserService.Signup",
-        "Email already exists"
-      ));
-    
+  {    
     var userResult = await _mediator.Send(command, cancellationToken);
 
     if (userResult.IsFail)
@@ -55,7 +45,7 @@ public class UserController: ControllerBase
 
     return Results.Created(
       nameof(SignUp),
-      new ApiResponse<UserApiOutput>(new UserApiOutput(
+      new ApiResponse<ApiCredentials>(new ApiCredentials(
         userResult.Unwrap(),
         token
       ))
@@ -65,22 +55,16 @@ public class UserController: ControllerBase
   [HttpPost("signin")]
   public async Task<IResult> SignIn([FromBody] LoginModel login)
   {
-    var userResult = await _mediator.Send(new GetUserByEmailInput(login.Email));
-
-    if (userResult.IsFail)
-      return Results.Extensions.MapResult(userResult);
-
-    var isAuth = await _auth.Authenticate(login.Email, login.Password);
+    var (isAuth, user) = await _auth.Authenticate(login.Email, login.Password);
  
-    if (!isAuth)
+    if (user == null || !isAuth)
       return Results.Unauthorized();
     
-    var user = userResult.Unwrap();
     var token = _auth.GenerateToken(user.Id.ToString(), login.Email);
 
-    return Results.Ok(new ApiResponse<UserApiOutput>(
-      new UserApiOutput(
-      user,
+    return Results.Ok(new ApiResponse<ApiCredentials>(
+      new ApiCredentials(
+      UserOutput.FromEntity(user),
       token)
     ));
   }
@@ -125,4 +109,23 @@ public class UserController: ControllerBase
 
     return Results.NoContent();
   }
+
+  #region Purchases
+  [HttpPost("add-feed-purchase")]
+  [Authorize]
+  public async Task<IResult> AddFeedPurchase(
+    [FromBody] AddFeedPurchaseInput command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Ok(
+      new ApiResponse<FeedPurchaseDto>(
+        result.Unwrap()
+    ));
+  } 
+  #endregion
 }

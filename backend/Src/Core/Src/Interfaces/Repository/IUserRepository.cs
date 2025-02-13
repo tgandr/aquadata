@@ -1,3 +1,4 @@
+using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.SeedWork;
 
@@ -7,4 +8,6 @@ public interface IUserRepository: IGenericRepository<UserEntity>
 ,IDeletableRepository<UserEntity>
 {
   Task<UserEntity?> GetByEmail(string email);
+  Task<bool> IsEmailRegistered(string email);
+  Task AddFeedPurchase(FeedPurchaseEntity feedPurchase);
 }

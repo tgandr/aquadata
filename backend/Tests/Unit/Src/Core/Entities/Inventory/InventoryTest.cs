@@ -14,7 +14,7 @@ public class InventoryTest
       FinalValue = 2000m,
       UsefulLifeInYears = 5,
       Status = ItemStatus.New,
-      InOperationSince = DateOnly.Parse("2024-8-31")
+      InOperationSince = "31/08/2024"
     };
 
     var current = InventoryEntity.Of(
@@ -32,6 +32,6 @@ public class InventoryTest
     Assert.Equal(expected.FinalValue, current.FinalValue);
     Assert.Equal(expected.Status, current.Status);
     Assert.Equal(expected.UsefulLifeInYears, current.UsefulLifeInYears);
-    Assert.Equal(expected.InOperationSince, current.InOperationSince);
+    Assert.Equal(expected.InOperationSince, current.InOperationSince.ToString());
   }
 }

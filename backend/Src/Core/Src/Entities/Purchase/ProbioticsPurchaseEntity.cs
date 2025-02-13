@@ -1,5 +1,6 @@
 using Aquadata.Core.Enums;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Purchase;
 
@@ -17,8 +18,20 @@ public class ProbioticsPurchaseEntity : PurchaseBase
     Unit = unit;
   }
 
-  public static Result<ProbioticsPurchaseEntity> Of(
-    DateOnly date, string label, int quantity, decimal value, MeasureUnit unit
-  ) => Create(new ProbioticsPurchaseEntity(date,label,quantity,value,unit));
+  public static Result<ProbioticsPurchaseEntity> Of(string date, 
+  string label, int quantity, decimal value, MeasureUnit unit)
+  {
+    DateOnly parsedDate;
+    var isValidDate = DateOnly.TryParse(date, out parsedDate);
+    if (!isValidDate)
+      return Result<ProbioticsPurchaseEntity>.Fail(
+        Error.Validation(
+          "Core.ProbioticPurchase",
+          "Invalid date format"
+    ));
+    
+    return Create(new ProbioticsPurchaseEntity(parsedDate,label,
+    quantity,value,unit));
+  }
 
 }

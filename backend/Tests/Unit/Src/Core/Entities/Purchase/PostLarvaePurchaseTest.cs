@@ -9,7 +9,7 @@ public class PostLarvaePurchaseTest
   public void CreateValidPostLarvaePurchase()
   {
     var expected = new {
-      Date = DateOnly.Parse("2024-12-03"),
+      Date = "03/12/2024",
       Label =  "CELM",
       Quantity = 22,
       Value = 35.6m
@@ -24,7 +24,7 @@ public class PostLarvaePurchaseTest
 
     Assert.NotNull(current);
     Assert.NotEqual(current.Id, default);
-    Assert.Equal(expected.Date, current.Date);
+    Assert.Equal(expected.Date, current.Date.ToString());
     Assert.Equal(expected.Label, current.Label);
     Assert.Equal(expected.Quantity, current.Quantity);
     Assert.Equal(expected.Value, current.Value);
