@@ -38,4 +38,10 @@ public class UserRepository : IUserRepository
 
   public async Task AddFeedPurchase(FeedPurchaseEntity feedPurchase)
     => await _dbContext.FeedPurchases.AddAsync(feedPurchase);
+
+  public async Task AddProbioticPurchase(ProbioticsPurchaseEntity probioticPurchase)
+    => await _dbContext.ProbioticPurchases.AddAsync(probioticPurchase);
+
+  public async Task AddFertilizerPurchase(FertilizerPurchaseEntity fertilizerPurchase)
+    => await _dbContext.FertilizerPurchases.AddAsync(fertilizerPurchase);
 }

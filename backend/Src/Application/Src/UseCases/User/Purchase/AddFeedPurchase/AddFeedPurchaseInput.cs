@@ -1,9 +1,10 @@
+using Aquadata.Application.Common;
 using Aquadata.Application.Dtos;
 using Aquadata.Application.Interfaces;
 
 namespace Aquadata.Application.UseCases.User.Purchase.AddFeedPurchase;
 
-public class AddFeedPurchaseInput: AddPurchaseBase, IUseCaseRequest<FeedPurchaseDto>
+public class AddFeedPurchaseInput: PurchaseDtoBase, IUseCaseRequest<FeedPurchaseDto>
 {
   public string Brand {get;}
   public string Validity {get;}

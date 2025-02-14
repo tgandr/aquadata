@@ -1,13 +1,14 @@
-namespace Aquadata.Application.UseCases.User.Purchase;
+namespace Aquadata.Application.Common;
 
-public abstract class AddPurchaseBase
+public abstract class PurchaseDtoBase
 {
   public string Date {get;}
   public string Label {get;}
   public int Quantity {get;}
   public decimal Value {get;}
 
-  protected AddPurchaseBase(string date, string label, int quantity, decimal value)
+  protected PurchaseDtoBase(string date, string label, int quantity, 
+  decimal value)
   {
     Date = date;
     Label = label;

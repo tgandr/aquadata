@@ -10,4 +10,6 @@ public interface IUserRepository: IGenericRepository<UserEntity>
   Task<UserEntity?> GetByEmail(string email);
   Task<bool> IsEmailRegistered(string email);
   Task AddFeedPurchase(FeedPurchaseEntity feedPurchase);
+  Task AddProbioticPurchase(ProbioticsPurchaseEntity probioticPurchase);
+  Task AddFertilizerPurchase(FertilizerPurchaseEntity fertilizerPurchase);
 }

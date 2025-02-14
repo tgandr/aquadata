@@ -7,6 +7,8 @@ using Aquadata.Application.UseCases.User.Common;
 using Aquadata.Application.UseCases.User.DeleteUser;
 using Aquadata.Application.UseCases.User.GetUser;
 using Aquadata.Application.UseCases.User.Purchase.AddFeedPurchase;
+using Aquadata.Application.UseCases.User.Purchase.AddFertilizerPurchase;
+using Aquadata.Application.UseCases.User.Purchase.AddProbioticPurchase;
 using Aquadata.Application.UseCases.User.UpdateUser;
 using Aquadata.Core.Security;
 using MediatR;
@@ -126,6 +128,34 @@ public class UserController: ControllerBase
       new ApiResponse<FeedPurchaseDto>(
         result.Unwrap()
     ));
+  } 
+  
+  [HttpPost("add-probiotic-purchase")]
+  [Authorize]
+  public async Task<IResult> AddProbioticPurchase(
+    [FromBody] ProbioticPurchaseDto command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
+  } 
+
+  [HttpPost("add-fertilizer-purchase")]
+  [Authorize]
+  public async Task<IResult> AddFertilizerPurchase(
+    [FromBody] FertilizerPurchaseDto command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
   } 
   #endregion
 }

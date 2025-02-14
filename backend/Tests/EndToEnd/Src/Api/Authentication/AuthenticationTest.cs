@@ -25,8 +25,11 @@ public class AuthenticationTest
 
   
   [Theory]
-  [InlineData("/users/0", "GET")]
   [InlineData("/users", "PUT")]
+  [InlineData("/users/0", "GET")]
+  [InlineData("/users/add-fertilizer-purchase", "POST")]
+  [InlineData("/users/add-probiotic-purchase", "POST")]
+  [InlineData("/users/add-feed-purchase", "POST")]
   [InlineData("/users/0", "DELETE")]
   [InlineData("/ponds", "POST")]
   [InlineData("/ponds", "PUT")]

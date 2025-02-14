@@ -14,5 +14,7 @@ public class UserPersistence: BasePersistence
     => await _context.Users
       .AsNoTracking()
       .Include(u => u.FeedPurchases)
+      .Include(u => u.ProbioticPurchases)
+      .Include(u => u.FertilizerPurchases)
       .FirstOrDefaultAsync(e => e.Id == id);
 }
