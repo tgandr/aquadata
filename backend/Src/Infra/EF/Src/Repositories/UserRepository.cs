@@ -44,4 +44,10 @@ public class UserRepository : IUserRepository
 
   public async Task AddFertilizerPurchase(FertilizerPurchaseEntity fertilizerPurchase)
     => await _dbContext.FertilizerPurchases.AddAsync(fertilizerPurchase);
+
+  public async Task AddPLPurchase(PostLarvaePurchaseEntity pLPurchase)
+    => await _dbContext.PLPurchases.AddAsync(pLPurchase);
+
+  public async Task AddGenericPurchase(GenericPurchaseEntity genericPurchase)
+    => await _dbContext.GenericPurchases.AddAsync(genericPurchase);
 }

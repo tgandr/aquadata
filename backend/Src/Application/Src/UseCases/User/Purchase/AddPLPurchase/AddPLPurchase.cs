@@ -5,14 +5,15 @@ using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
 using MediatR;
 
-namespace Aquadata.Application.Dtos;
-public class AddFertilizerPurchase : IUseCaseHandler<FertilizerPurchaseDto, Unit>
+namespace Aquadata.Application.UseCases.User.Purchase.AddPLPurchase;
+
+public class AddPLPurchase: IUseCaseHandler<AddPLPurchaseInput, Unit>
 {
   private readonly IUnitOfWork _unitOfWork;
   private readonly IUserRepository _repository;
   private readonly IAuthenticatedUserService _authenticatedUserService;
 
-  public AddFertilizerPurchase(IUnitOfWork unitOfWork, 
+  public AddPLPurchase(IUnitOfWork unitOfWork, 
   IUserRepository cultivationRepository,
   IAuthenticatedUserService authenticatedUserService)
   {
@@ -21,15 +22,14 @@ public class AddFertilizerPurchase : IUseCaseHandler<FertilizerPurchaseDto, Unit
       _authenticatedUserService = authenticatedUserService;
   }
 
-  public async Task<Result<Unit>> Handle(FertilizerPurchaseDto request, 
+  public async Task<Result<Unit>> Handle(AddPLPurchaseInput request, 
   CancellationToken cancellationToken)
   {
-    var purchaseResult = FertilizerPurchaseEntity.Of(
+    var purchaseResult = PostLarvaePurchaseEntity.Of(
       request.Date,
       request.Label,
       request.Quantity,
-      request.Value,
-      request.Unit
+      request.Value
     );
 
     if (purchaseResult.IsFail)
@@ -48,11 +48,11 @@ public class AddFertilizerPurchase : IUseCaseHandler<FertilizerPurchaseDto, Unit
 
     var purchase = purchaseResult.Unwrap();
     purchase.UserId = parsedId;
+    purchase.CultivationId = request.CultivationId;
 
-    await _repository.AddFertilizerPurchase(purchase);
+    await _repository.AddPLPurchase(purchase);
     await _unitOfWork.Commit(cancellationToken);
 
     return Result<Unit>.Ok(Unit.Value);
   }
 }
-

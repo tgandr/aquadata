@@ -1,4 +1,6 @@
 using System.Net;
+using Aquadata.Api.Response;
+using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.User.AddFeedPurchase;
 
@@ -27,10 +29,13 @@ public class AddPurchaseTest
     Assert.NotNull(response);
     Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-    var userFromDb = await _fixture.Persistence.GetById(credentials.User.Id);
+    var (_,output) = await _fixture.ApiClient
+    .Get<ApiResponse<UserOutput>>(
+      $"users/{credentials.User.Id}"
+    );
 
-    Assert.NotNull(userFromDb);
-    Assert.NotNull(userFromDb.FeedPurchases);
-    Assert.NotEmpty(userFromDb.FeedPurchases);
+    Assert.NotNull(output);
+    Assert.NotNull(output.Data.FeedPurchases);
+    Assert.NotEmpty(output.Data.FeedPurchases);
   }
 }

@@ -1,3 +1,5 @@
+using Aquadata.Core.Entities.Cultivation;
+using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Entities.User;
 using Aquadata.EndToEndTests.Api.Base;
 using Aquadata.Infra.EF.Context;
@@ -17,4 +19,17 @@ public class UserPersistence: BasePersistence
       .Include(u => u.ProbioticPurchases)
       .Include(u => u.FertilizerPurchases)
       .FirstOrDefaultAsync(e => e.Id == id);
+
+  public async Task Insert(PondEntity pond)
+  {
+    await _context.Ponds.AddAsync(pond);
+    await _context.SaveChangesAsync();
+  }
+
+  public async Task Insert(CultivationEntity pond)
+  {
+    await _context.Cultivations.AddAsync(pond);
+    await _context.SaveChangesAsync();
+  }
+  
 }

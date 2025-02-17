@@ -1,4 +1,6 @@
 using System.Net;
+using Aquadata.Api.Response;
+using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.User.AddProbioticPurchase;
 
@@ -27,10 +29,12 @@ public class AddProbioticPurchaseTest
     Assert.NotNull(response);
     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
-    var userFromDb = await _fixture.Persistence.GetById(credentials.User.Id);
-
-    Assert.NotNull(userFromDb);
-    Assert.NotNull(userFromDb.ProbioticPurchases);
-    Assert.NotEmpty(userFromDb.ProbioticPurchases);
+    var (_,output) = await _fixture.ApiClient
+    .Get<ApiResponse<UserOutput>>(
+      $"users/{credentials.User.Id}"
+    );
+    Assert.NotNull(output);
+    Assert.NotNull(output.Data.ProbioticPurchases);
+    Assert.NotEmpty(output.Data.ProbioticPurchases);
   }
 }

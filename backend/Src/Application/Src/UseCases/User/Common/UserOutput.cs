@@ -1,7 +1,4 @@
 using Aquadata.Application.Dtos;
-using Aquadata.Application.UseCases.User.Purchase.AddFeedPurchase;
-using Aquadata.Application.UseCases.User.Purchase.AddFertilizerPurchase;
-using Aquadata.Application.UseCases.User.Purchase.AddProbioticPurchase;
 using Aquadata.Core.Entities.User;
 
 namespace Aquadata.Application.UseCases.User.Common;
@@ -19,6 +16,8 @@ public class UserOutput
   public List<FeedPurchaseDto> FeedPurchases {get;set;} = new List<FeedPurchaseDto>();
   public List<ProbioticPurchaseDto> ProbioticPurchases {get;set;} = new List<ProbioticPurchaseDto>();
   public List<FertilizerPurchaseDto> FertilizerPurchases {get;set;} = new List<FertilizerPurchaseDto>();
+  public List<PLPurchaseDto> PLPurchases {get;set;} = new List<PLPurchaseDto>();
+  public List<GenericPurchaseDto> GenericPurchases {get;set;} = new List<GenericPurchaseDto>();
 
   public UserOutput(Guid id, string name, string email, string farmName, 
     string farmAddress, string profile, string phone)
@@ -58,6 +57,16 @@ public class UserOutput
     && user.FertilizerPurchases.Any())
       res.FertilizerPurchases=user.FertilizerPurchases
       .Select(FertilizerPurchaseDto.FromEntity).ToList();
+
+    if (user.PLPurchases != null
+    && user.PLPurchases.Any())
+      res.PLPurchases=user.PLPurchases
+      .Select(PLPurchaseDto.FromEntity).ToList();
+
+    if (user.GenericPurchases != null
+    && user.GenericPurchases.Any())
+      res.GenericPurchases=user.GenericPurchases
+      .Select(GenericPurchaseDto.FromEntity).ToList();
 
     return res;
   }

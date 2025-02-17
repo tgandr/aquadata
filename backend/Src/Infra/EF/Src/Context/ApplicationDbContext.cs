@@ -26,6 +26,8 @@ public class ApplicationDbContext: DbContext
   public DbSet<FeedPurchaseEntity> FeedPurchases {get;set;}
   public DbSet<ProbioticsPurchaseEntity> ProbioticPurchases {get;set;}
   public DbSet<FertilizerPurchaseEntity> FertilizerPurchases {get;set;}
+  public DbSet<PostLarvaePurchaseEntity> PLPurchases {get;set;}
+  public DbSet<GenericPurchaseEntity> GenericPurchases {get;set;}
 
   public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     :base(options){}

@@ -1,3 +1,4 @@
+using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Purchase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -10,7 +11,7 @@ public class PostLarvaePurchaseConfig : IEntityTypeConfiguration<PostLarvaePurch
   {
     builder.ToTable("PostLarvaePurchases");
     builder.HasKey(e => e.Id);
-    builder.HasOne(e => e.Cultivation)
+    builder.HasOne<CultivationEntity>()
       .WithOne()
       .HasForeignKey<PostLarvaePurchaseEntity>(e => e.CultivationId)
       .IsRequired();

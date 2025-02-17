@@ -12,4 +12,6 @@ public interface IUserRepository: IGenericRepository<UserEntity>
   Task AddFeedPurchase(FeedPurchaseEntity feedPurchase);
   Task AddProbioticPurchase(ProbioticsPurchaseEntity probioticPurchase);
   Task AddFertilizerPurchase(FertilizerPurchaseEntity fertilizerPurchase);
+  Task AddPLPurchase(PostLarvaePurchaseEntity pLPurchase);
+  Task AddGenericPurchase(GenericPurchaseEntity genericPurchase);
 }

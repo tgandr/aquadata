@@ -7,7 +7,6 @@ namespace Aquadata.Core.Entities.Purchase;
 public class PostLarvaePurchaseEntity : PurchaseBase
 { 
   public virtual Guid CultivationId {get;set;}
-  public virtual CultivationEntity Cultivation {get;set;}
 
   private PostLarvaePurchaseEntity()
   :base(DateOnly.MinValue,"",0,0) {}

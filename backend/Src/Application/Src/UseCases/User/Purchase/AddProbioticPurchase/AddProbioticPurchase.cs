@@ -5,7 +5,7 @@ using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
 using MediatR;
 
-namespace Aquadata.Application.UseCases.User.Purchase.AddProbioticPurchase;
+namespace Aquadata.Application.Dtos;
 
 public class AddProbioticPurchase : IUseCaseHandler<ProbioticPurchaseDto, Unit>
 {

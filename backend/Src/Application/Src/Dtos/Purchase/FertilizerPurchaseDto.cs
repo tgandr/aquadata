@@ -4,7 +4,7 @@ using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Enums;
 using MediatR;
 
-namespace Aquadata.Application.UseCases.User.Purchase.AddFertilizerPurchase;
+namespace Aquadata.Application.Dtos;
 
 public class FertilizerPurchaseDto : PurchaseDtoBase, IUseCaseRequest<Unit>
 {

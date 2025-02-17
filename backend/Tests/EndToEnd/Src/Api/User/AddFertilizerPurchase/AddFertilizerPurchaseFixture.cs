@@ -1,4 +1,4 @@
-using Aquadata.Application.UseCases.User.Purchase.AddFertilizerPurchase;
+using Aquadata.Application.Dtos;
 using Aquadata.EndToEndTests.Api.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.User.AddFertilizerPurchase;
