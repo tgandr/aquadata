@@ -18,6 +18,7 @@ public class UserOutput
   public List<FertilizerPurchaseDto> FertilizerPurchases {get;set;} = new List<FertilizerPurchaseDto>();
   public List<PLPurchaseDto> PLPurchases {get;set;} = new List<PLPurchaseDto>();
   public List<GenericPurchaseDto> GenericPurchases {get;set;} = new List<GenericPurchaseDto>();
+  public List<EmployeeDto> Employees {get;set;} = new List<EmployeeDto>();
 
   public UserOutput(Guid id, string name, string email, string farmName, 
     string farmAddress, string profile, string phone)
@@ -67,6 +68,11 @@ public class UserOutput
     && user.GenericPurchases.Any())
       res.GenericPurchases=user.GenericPurchases
       .Select(GenericPurchaseDto.FromEntity).ToList();
+
+    if (user.Employees != null
+    && user.Employees.Any())
+      res.Employees=user.Employees
+      .Select(EmployeeDto.FromEntity).ToList();
 
     return res;
   }

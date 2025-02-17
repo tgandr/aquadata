@@ -111,6 +111,20 @@ public class UserController: ControllerBase
     return Results.NoContent();
   }
 
+  [HttpPost("add-employee")]
+  [Authorize]
+  public async Task<IResult> AddGenericPurchase(
+    [FromBody] EmployeeDto command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
+  }
+
   #region Purchases
   [HttpPost("add-feed-purchase")]
   [Authorize]

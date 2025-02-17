@@ -4,7 +4,7 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Employee;
 
-public class EmployeeEntity : SeedWork.Entity
+public class EmployeeEntity : Entity
 {
   public string Name {get; private set;}
 

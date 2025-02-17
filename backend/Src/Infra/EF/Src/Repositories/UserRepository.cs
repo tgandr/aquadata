@@ -1,3 +1,4 @@
+using Aquadata.Core.Entities.Employee;
 using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Interfaces.Repository;
@@ -50,4 +51,7 @@ public class UserRepository : IUserRepository
 
   public async Task AddGenericPurchase(GenericPurchaseEntity genericPurchase)
     => await _dbContext.GenericPurchases.AddAsync(genericPurchase);
+    
+  public async Task AddEmployee(EmployeeEntity employee)
+    => await _dbContext.Employees.AddAsync(employee);
 }
