@@ -7,8 +7,6 @@ using Aquadata.Application.UseCases.User.AddEmployeePayment;
 using Aquadata.Application.UseCases.User.Common;
 using Aquadata.Application.UseCases.User.DeleteUser;
 using Aquadata.Application.UseCases.User.GetUser;
-using Aquadata.Application.UseCases.User.Purchase.AddFeedPurchase;
-using Aquadata.Application.UseCases.User.Purchase.AddPLPurchase;
 using Aquadata.Application.UseCases.User.UpdateUser;
 using Aquadata.Core.Security;
 using MediatR;
@@ -139,79 +137,4 @@ public class UserController: ControllerBase
 
     return Results.Created();
   }
-
-  #region Purchases
-  [HttpPost("add-feed-purchase")]
-  [Authorize]
-  public async Task<IResult> AddFeedPurchase(
-    [FromBody] AddFeedPurchaseInput command,
-    CancellationToken cancellationToken)
-  {
-    var result = await _mediator.Send(command, cancellationToken);
-
-    if (result.IsFail)
-      return Results.Extensions.MapResult(result);
-
-    return Results.Ok(
-      new ApiResponse<FeedPurchaseDto>(
-        result.Unwrap()
-    ));
-  } 
-  
-  [HttpPost("add-probiotic-purchase")]
-  [Authorize]
-  public async Task<IResult> AddProbioticPurchase(
-    [FromBody] ProbioticPurchaseDto command,
-    CancellationToken cancellationToken)
-  {
-    var result = await _mediator.Send(command, cancellationToken);
-
-    if (result.IsFail)
-      return Results.Extensions.MapResult(result);
-
-    return Results.Created();
-  } 
-
-  [HttpPost("add-fertilizer-purchase")]
-  [Authorize]
-  public async Task<IResult> AddFertilizerPurchase(
-    [FromBody] FertilizerPurchaseDto command,
-    CancellationToken cancellationToken)
-  {
-    var result = await _mediator.Send(command, cancellationToken);
-
-    if (result.IsFail)
-      return Results.Extensions.MapResult(result);
-
-    return Results.Created();
-  } 
-
-  [HttpPost("add-post-larvae-purchase")]
-  [Authorize]
-  public async Task<IResult> AddPLPurchase(
-    [FromBody] AddPLPurchaseInput command,
-    CancellationToken cancellationToken)
-  {
-    var result = await _mediator.Send(command, cancellationToken);
-
-    if (result.IsFail)
-      return Results.Extensions.MapResult(result);
-
-    return Results.Created();
-  } 
-
-  [HttpPost("add-generic-purchase")]
-  [Authorize]
-  public async Task<IResult> AddGenericPurchase(
-    [FromBody] GenericPurchaseDto command,
-    CancellationToken cancellationToken)
-  {
-    var result = await _mediator.Send(command, cancellationToken);
-
-    if (result.IsFail)
-      return Results.Extensions.MapResult(result);
-
-    return Results.Created();
-  } 
-  #endregion
 }

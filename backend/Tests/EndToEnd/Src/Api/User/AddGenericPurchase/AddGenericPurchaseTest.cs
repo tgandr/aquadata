@@ -20,7 +20,7 @@ public class AddGenericPurchaseTest
 
     var (response, _) = await _fixture.ApiClient
     .Post<object>(
-      "/users/add-generic-purchase",
+      "/financial/add-generic-purchase",
       input
     );
 

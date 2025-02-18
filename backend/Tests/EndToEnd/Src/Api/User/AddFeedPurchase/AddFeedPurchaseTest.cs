@@ -22,7 +22,7 @@ public class AddPurchaseTest
 
     var (response, _) = await _fixture.ApiClient
     .Post<object>(
-      "/users/add-feed-purchase",
+      "/financial/add-feed-purchase",
       input
     );
 

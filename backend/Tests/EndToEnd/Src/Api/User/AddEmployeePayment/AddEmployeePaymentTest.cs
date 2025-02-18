@@ -50,7 +50,7 @@ public class AddEmployeePaymentTest
 
     var (response, _) = await _fixture.ApiClient
     .Post<object>(
-      "/users/add-employee-payment",
+      "/financial/add-employee-payment",
       input
     );
 

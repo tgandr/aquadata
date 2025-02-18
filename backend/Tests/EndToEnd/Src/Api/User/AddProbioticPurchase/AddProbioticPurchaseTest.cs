@@ -22,7 +22,7 @@ public class AddProbioticPurchaseTest
 
     var (response, _) = await _fixture.ApiClient
     .Post<object>(
-      "/users/add-probiotic-purchase",
+      "/financial/add-probiotic-purchase",
       input
     );
 
