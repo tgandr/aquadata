@@ -35,9 +35,9 @@ public class AddHarvest: IUseCaseHandler<AddHarvestInput, HarvestDto>
     if (harvestResult.IsFail)
       return Result<HarvestDto>.Fail(harvestResult.Error);
 
-    var userId = _authenticatedUserService.GetUserId() ?? "";
+    var userId = _authenticatedUserService.GetUserId();
     var cultivationExists = await _repository.Exists(userId, 
-    request.CultivationId.ToString());
+    request.CultivationId);
 
     if (!cultivationExists)
      return Result<HarvestDto>.Fail(

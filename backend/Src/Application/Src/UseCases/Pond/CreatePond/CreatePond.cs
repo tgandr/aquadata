@@ -38,7 +38,7 @@ public class CreatePond: IUseCaseHandler<CreatePondInput, PondOutput>
     var userId = _authenticatedUserService.GetUserId();
     var pond = pondResult.Unwrap();
 
-    if (userId != request.UserId.ToString())
+    if (userId != request.UserId)
       return Result<PondOutput>.Fail(
         Error.Unauthorized(
           "UseCases.Pond.Create",

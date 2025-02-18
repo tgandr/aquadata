@@ -293,7 +293,7 @@ namespace Aquadata.Infra.EF.Migrations
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     EmployeeId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    UserEntityId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci"),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -307,10 +307,11 @@ namespace Aquadata.Infra.EF.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EmployeePayments_Users_UserEntityId",
-                        column: x => x.UserEntityId,
+                        name: "FK_EmployeePayments_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -658,9 +659,9 @@ namespace Aquadata.Infra.EF.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeePayments_UserEntityId",
+                name: "IX_EmployeePayments_UserId",
                 table: "EmployeePayments",
-                column: "UserEntityId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_UserId",
@@ -705,8 +706,7 @@ namespace Aquadata.Infra.EF.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Inventories_UserId",
                 table: "Inventories",
-                column: "UserId",
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Objectives_CultivationId",
@@ -738,8 +738,7 @@ namespace Aquadata.Infra.EF.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Stocks_UserId",
                 table: "Stocks",
-                column: "UserId",
-                unique: true);
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StressTests_CultivationId",

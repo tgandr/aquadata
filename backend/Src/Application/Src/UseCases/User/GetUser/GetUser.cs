@@ -35,7 +35,7 @@ public class GetUser : IUseCaseHandler<GetUserInput,UserOutput>
 
     var userId = _authenticatedUserService.GetUserId();
     
-    if (userId != user.Id.ToString())
+    if (userId != user.Id)
       return Result<UserOutput>.Fail(
         Error.Unauthorized(
           "UseCases.Pond.Deactivate",

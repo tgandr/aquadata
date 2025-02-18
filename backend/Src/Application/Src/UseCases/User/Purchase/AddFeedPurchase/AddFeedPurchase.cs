@@ -39,19 +39,10 @@ public class AddFeedPurchase : IUseCaseHandler<AddFeedPurchaseInput, FeedPurchas
     if (purchaseResult.IsFail)
       return Result<FeedPurchaseDto>.Fail(purchaseResult.Error);
 
-    var userId = _authenticatedUserService.GetUserId() ?? "";
-    Guid parsedId;
-
-    if (!Guid.TryParse(userId, out parsedId))
-      return Result<FeedPurchaseDto>.Fail(
-        Error.Validation(
-          "UseCases.Users.AddFeedPurchase",
-          "Invalid Id Format"
-      )
-    );
-
+    var userId = _authenticatedUserService.GetUserId();
+    
     var purchase = purchaseResult.Unwrap();
-    purchase.UserId = parsedId;
+    purchase.UserId = userId;
 
     await _repository.AddFeedPurchase(purchase);
     await _unitOfWork.Commit(cancellationToken);

@@ -33,7 +33,7 @@ public class GetPond: IUseCaseHandler<GetPondInput, PondOutput>
     }
 
     var userId = _authenticatedUserService.GetUserId();
-    if (pond.UserId.ToString() != userId) 
+    if (pond.UserId != userId) 
       return Result<PondOutput>.Fail(
         Error.Unauthorized(
           "UseCases.Pond.GetPond",

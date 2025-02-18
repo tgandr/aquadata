@@ -36,10 +36,10 @@ public class PondRepository : IPondRepository
   public async Task CreateCultivation(CultivationEntity cultivation, CancellationToken cancellationToken)
     => await _dbContext.Cultivations.AddAsync(cultivation, cancellationToken);
 
-  public async Task<bool> Exists(string userId, string pondId)
+  public async Task<bool> Exists(Guid userId, Guid pondId)
     => await _dbContext.Ponds.AnyAsync(
-      p => p.Id.ToString() == pondId && 
-      p.UserId.ToString() == userId
+      p => p.Id == pondId && 
+      p.UserId == userId
     );
 
 }

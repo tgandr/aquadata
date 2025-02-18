@@ -36,9 +36,9 @@ public class AddFeed: IUseCaseHandler<AddFeedInput, FeedDto>
     if (feedResult.IsFail)
       return Result<FeedDto>.Fail(feedResult.Error);
 
-    var userId = _authenticatedUserService.GetUserId() ?? "";
+    var userId = _authenticatedUserService.GetUserId();
     var cultivationExists = await _repository.Exists(userId, 
-    request.CultivationId.ToString());
+    request.CultivationId);
 
     if (!cultivationExists)
      return Result<FeedDto>.Fail(

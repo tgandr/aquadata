@@ -1,5 +1,3 @@
-using Aquadata.Core.Entities.Inventory;
-using Aquadata.Core.Entities.Stock;
 using Aquadata.Core.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,15 +10,16 @@ public class UserConfig : IEntityTypeConfiguration<UserEntity>
   {
     builder.ToTable("Users");
     builder.HasKey(e => e.Id);
-    builder.HasOne(e => e.Stock).WithOne()
-      .HasForeignKey<StockEntity>(e => e.UserId).IsRequired();
-    builder.HasOne(e => e.Inventory).WithOne()
-      .HasForeignKey<InventoryEntity>(e => e.UserId).IsRequired();
-    builder.HasMany(e => e.Employees).WithOne()
+    builder.HasMany(e => e.Stocks).WithOne()
+      .HasForeignKey(e => e.UserId).IsRequired();
+    builder.HasMany(e => e.Inventories).WithOne()
+      .HasForeignKey(e => e.UserId).IsRequired();
+  builder.HasMany(e => e.Employees).WithOne()
       .HasForeignKey(e => e.UserId).IsRequired();
     builder.HasMany(e => e.Expenses).WithOne()
       .HasForeignKey(e => e.UserId).IsRequired();
-    builder.HasMany(e => e.Payroll).WithOne();
+    builder.HasMany(e => e.Payroll).WithOne()
+      .HasForeignKey(e => e.UserId).IsRequired();
     builder.HasMany(e => e.Ponds).WithOne()
       .HasForeignKey(e => e.UserId).IsRequired();
     builder.HasMany(e => e.PLPurchases).WithOne()
@@ -34,8 +33,8 @@ public class UserConfig : IEntityTypeConfiguration<UserEntity>
     builder.HasMany(e => e.GenericPurchases).WithOne()
       .HasForeignKey(e => e.UserId).IsRequired();
 
-    builder.Navigation(e => e.Stock).AutoInclude();
-    builder.Navigation(e => e.Inventory).AutoInclude();
+    builder.Navigation(e => e.Stocks).AutoInclude();
+    builder.Navigation(e => e.Inventories).AutoInclude();
     builder.Navigation(e => e.Ponds).AutoInclude();
     builder.Navigation(e => e.Expenses).AutoInclude();
     builder.Navigation(e => e.Employees).AutoInclude();

@@ -145,7 +145,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid?>("UserEntityId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
 
                     b.Property<decimal>("Value")
@@ -156,7 +156,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
-                    b.HasIndex("UserEntityId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("EmployeePayments", (string)null);
                 });
@@ -377,8 +377,7 @@ namespace Aquadata.Infra.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Inventories", (string)null);
                 });
@@ -682,8 +681,7 @@ namespace Aquadata.Infra.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Stocks", (string)null);
                 });
@@ -904,7 +902,9 @@ namespace Aquadata.Infra.EF.Migrations
 
                     b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
                         .WithMany("Payroll")
-                        .HasForeignKey("UserEntityId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Expense.CostPerPondEntity", b =>
@@ -961,8 +961,8 @@ namespace Aquadata.Infra.EF.Migrations
             modelBuilder.Entity("Aquadata.Core.Entities.Inventory.InventoryEntity", b =>
                 {
                     b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
-                        .WithOne("Inventory")
-                        .HasForeignKey("Aquadata.Core.Entities.Inventory.InventoryEntity", "UserId")
+                        .WithMany("Inventories")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1014,7 +1014,7 @@ namespace Aquadata.Infra.EF.Migrations
 
             modelBuilder.Entity("Aquadata.Core.Entities.Purchase.PostLarvaePurchaseEntity", b =>
                 {
-                    b.HasOne("Aquadata.Core.Entities.Cultivation.CultivationEntity", "Cultivation")
+                    b.HasOne("Aquadata.Core.Entities.Cultivation.CultivationEntity", null)
                         .WithOne()
                         .HasForeignKey("Aquadata.Core.Entities.Purchase.PostLarvaePurchaseEntity", "CultivationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1025,8 +1025,6 @@ namespace Aquadata.Infra.EF.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Cultivation");
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Purchase.ProbioticsPurchaseEntity", b =>
@@ -1041,8 +1039,8 @@ namespace Aquadata.Infra.EF.Migrations
             modelBuilder.Entity("Aquadata.Core.Entities.Stock.StockEntity", b =>
                 {
                     b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
-                        .WithOne("Stock")
-                        .HasForeignKey("Aquadata.Core.Entities.Stock.StockEntity", "UserId")
+                        .WithMany("Stocks")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1120,7 +1118,7 @@ namespace Aquadata.Infra.EF.Migrations
 
                     b.Navigation("GenericPurchases");
 
-                    b.Navigation("Inventory");
+                    b.Navigation("Inventories");
 
                     b.Navigation("PLPurchases");
 
@@ -1130,7 +1128,7 @@ namespace Aquadata.Infra.EF.Migrations
 
                     b.Navigation("ProbioticPurchases");
 
-                    b.Navigation("Stock");
+                    b.Navigation("Stocks");
                 });
 #pragma warning restore 612, 618
         }

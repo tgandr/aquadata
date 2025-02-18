@@ -26,17 +26,17 @@ public class UserEntity :Entity, IAggregateRoot
   public string FarmAddress {get; private set;}
   public string Phone {get; private set;}
 
-  public virtual StockEntity? Stock {get;set;}
-  public virtual InventoryEntity? Inventory {get;set;}
-  public virtual ICollection<PondEntity>? Ponds {get;set;} = new Collection<PondEntity>();
-  public virtual ICollection<ExpenseEntity>? Expenses {get;set;} = new Collection<ExpenseEntity>();
-  public virtual ICollection<EmployeeEntity>? Employees {get;set;} = new Collection<EmployeeEntity>();
-  public virtual ICollection<EmployeePaymentEntity>? Payroll {get;set;} = new Collection<EmployeePaymentEntity>();
-  public virtual ICollection<FeedPurchaseEntity>? FeedPurchases {get;set;} = new Collection<FeedPurchaseEntity>();
-  public virtual ICollection<FertilizerPurchaseEntity>? FertilizerPurchases {get;set;} = new Collection<FertilizerPurchaseEntity>();
-  public virtual ICollection<PostLarvaePurchaseEntity>? PLPurchases {get;set;} = new Collection<PostLarvaePurchaseEntity>();
-  public virtual ICollection<ProbioticsPurchaseEntity>? ProbioticPurchases {get;set;} = new Collection<ProbioticsPurchaseEntity>();
-  public virtual ICollection<GenericPurchaseEntity>? GenericPurchases {get;set;} = new Collection<GenericPurchaseEntity>();
+  public virtual ICollection<StockEntity> Stocks {get;set;} = new Collection<StockEntity>();
+  public virtual ICollection<InventoryEntity> Inventories {get;set;} = new Collection<InventoryEntity>();
+  public virtual ICollection<PondEntity> Ponds {get;set;} = new Collection<PondEntity>();
+  public virtual ICollection<ExpenseEntity> Expenses {get;set;} = new Collection<ExpenseEntity>();
+  public virtual ICollection<EmployeeEntity> Employees {get;set;} = new Collection<EmployeeEntity>();
+  public virtual ICollection<EmployeePaymentEntity> Payroll {get;set;} = new Collection<EmployeePaymentEntity>();
+  public virtual ICollection<FeedPurchaseEntity> FeedPurchases {get;set;} = new Collection<FeedPurchaseEntity>();
+  public virtual ICollection<FertilizerPurchaseEntity> FertilizerPurchases {get;set;} = new Collection<FertilizerPurchaseEntity>();
+  public virtual ICollection<PostLarvaePurchaseEntity> PLPurchases {get;set;} = new Collection<PostLarvaePurchaseEntity>();
+  public virtual ICollection<ProbioticsPurchaseEntity> ProbioticPurchases {get;set;} = new Collection<ProbioticsPurchaseEntity>();
+  public virtual ICollection<GenericPurchaseEntity> GenericPurchases {get;set;} = new Collection<GenericPurchaseEntity>();
 
   private UserEntity() {}
   private UserEntity(string name, string email, string password, string profile, 

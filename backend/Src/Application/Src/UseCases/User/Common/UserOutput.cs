@@ -19,6 +19,7 @@ public class UserOutput
   public List<PLPurchaseDto> PLPurchases {get;set;} = new List<PLPurchaseDto>();
   public List<GenericPurchaseDto> GenericPurchases {get;set;} = new List<GenericPurchaseDto>();
   public List<EmployeeDto> Employees {get;set;} = new List<EmployeeDto>();
+  public List<EmployeePaymentDto> Payroll {get;set;} = new List<EmployeePaymentDto>();
 
   public UserOutput(Guid id, string name, string email, string farmName, 
     string farmAddress, string profile, string phone)
@@ -73,6 +74,11 @@ public class UserOutput
     && user.Employees.Any())
       res.Employees=user.Employees
       .Select(EmployeeDto.FromEntity).ToList();
+
+    if (user.Payroll != null
+    && user.Payroll.Any())
+      res.Payroll=user.Payroll
+      .Select(EmployeePaymentDto.FromEntity).ToList();
 
     return res;
   }

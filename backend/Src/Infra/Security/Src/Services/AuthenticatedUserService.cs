@@ -11,8 +11,10 @@ public class AuthenticatedUserService : IAuthenticatedUserService
   public AuthenticatedUserService(IHttpContextAccessor httpAcessor) 
     => _httpAcessor = httpAcessor;
     
-  public string? GetUserId()
+  public Guid GetUserId()
   {
-    return _httpAcessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var res = _httpAcessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString();
+
+    return Guid.Parse(res);
   }
 }

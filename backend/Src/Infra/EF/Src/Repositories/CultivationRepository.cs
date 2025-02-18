@@ -36,11 +36,11 @@ public class CultivationRepository: ICultivationRepository
   public async Task AddWater(WaterEntity water)
     => await _context.Waters.AddAsync(water);
   
-  public async Task<bool> Exists(string userId, string cultivationId)
+  public async Task<bool> Exists(Guid userId, Guid cultivationId)
   => await _context.Ponds
-    .Where(p => p.UserId.ToString() == userId)
+    .Where(p => p.UserId == userId)
     .SelectMany(p => p.Cultivations)
-    .AnyAsync(c => c.Id.ToString() == cultivationId);
+    .AnyAsync(c => c.Id == cultivationId);
 
   public async Task<CultivationEntity?> Get(Guid id)
   => await _context.Cultivations.FirstOrDefaultAsync(e => e.Id == id);

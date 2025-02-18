@@ -1,4 +1,5 @@
 using Aquadata.Core.Entities.Employee;
+using Aquadata.Core.Entities.EmployeePayment;
 using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Interfaces.Repository;
@@ -54,4 +55,14 @@ public class UserRepository : IUserRepository
     
   public async Task AddEmployee(EmployeeEntity employee)
     => await _dbContext.Employees.AddAsync(employee);
+
+  public async Task AddEmployeePayment(EmployeePaymentEntity employeePayment)
+    => await _dbContext.Payroll.AddAsync(employeePayment);
+    
+  public async Task<bool> EmployeeExists(Guid employeeId, Guid userId)
+    => await _dbContext.Employees.AnyAsync(
+      e => e.Id == employeeId && 
+      e.UserId == userId
+    );
+
 }

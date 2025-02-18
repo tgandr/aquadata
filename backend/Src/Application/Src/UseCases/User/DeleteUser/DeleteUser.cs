@@ -34,7 +34,7 @@ public class DeleteUser : IUseCaseHandler<DeleteUserInput,Unit>
       );
     
     var userId = _authenticatedUserService.GetUserId();
-    if (userId != user.Id.ToString())
+    if (userId != user.Id)
       return Result<Unit>.Fail(
         Error.Unauthorized(
           "UseCases.User.DeleteUser",

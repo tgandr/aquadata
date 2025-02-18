@@ -4,11 +4,12 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.EmployeePayment;
 
-public class EmployeePaymentEntity : SeedWork.Entity
+public class EmployeePaymentEntity : Entity
 {
   public DateOnly Date {get; private set;}
   public decimal Value {get; private set;}
   public virtual Guid EmployeeId {get;set;}
+  public virtual Guid UserId {get;set;}
   
   private EmployeePaymentEntity(){}
 

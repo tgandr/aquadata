@@ -5,7 +5,7 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Inventory;
 
-public class InventoryEntity : SeedWork.Entity
+public class InventoryEntity : Entity
 {
   public string ItemName {get; private set;}
   public decimal AmountInvested {get; private set;}

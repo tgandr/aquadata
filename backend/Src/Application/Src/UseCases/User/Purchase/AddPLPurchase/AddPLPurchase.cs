@@ -35,19 +35,10 @@ public class AddPLPurchase: IUseCaseHandler<AddPLPurchaseInput, Unit>
     if (purchaseResult.IsFail)
       return Result<Unit>.Fail(purchaseResult.Error);
 
-    var userId = _authenticatedUserService.GetUserId() ?? "";
-    Guid parsedId;
-
-    if (!Guid.TryParse(userId, out parsedId))
-      return Result<Unit>.Fail(
-        Error.Validation(
-          "UseCases.Users.AddFeedPurchase",
-          "Invalid Id Format"
-      )
-    );
+    var userId = _authenticatedUserService.GetUserId();
 
     var purchase = purchaseResult.Unwrap();
-    purchase.UserId = parsedId;
+    purchase.UserId = userId;
     purchase.CultivationId = request.CultivationId;
 
     await _repository.AddPLPurchase(purchase);

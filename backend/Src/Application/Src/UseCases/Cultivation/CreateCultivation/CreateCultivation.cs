@@ -37,8 +37,8 @@ public class CreateCultivation : IUseCaseHandler<CreateCultivationInput, Cultiva
       return Result<CultivationOutput>.Fail(cultivationResult.Error);
 
     var cultivation = cultivationResult.Unwrap();
-    var userId = _authenticatedUserService.GetUserId() ?? "";
-    var pondExists = await _pondRepository.Exists(userId, request.PondId.ToString());
+    var userId = _authenticatedUserService.GetUserId();
+    var pondExists = await _pondRepository.Exists(userId, request.PondId);
 
     if (!pondExists)
       return Result<CultivationOutput>.Fail(

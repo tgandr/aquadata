@@ -39,9 +39,9 @@ public class AddWater : IUseCaseHandler<AddWaterInput, WaterDto>
           waterResult.Error.Description
       ));
 
-    var userId = _authenticatedUserService.GetUserId() ?? "";
+    var userId = _authenticatedUserService.GetUserId();
     var cultivationExists = await _repository.Exists(userId, 
-    request.CultivationId.ToString());
+    request.CultivationId);
 
     if (!cultivationExists)
      return Result<WaterDto>.Fail(

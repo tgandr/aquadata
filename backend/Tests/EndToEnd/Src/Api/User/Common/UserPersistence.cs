@@ -1,4 +1,5 @@
 using Aquadata.Core.Entities.Cultivation;
+using Aquadata.Core.Entities.Employee;
 using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Entities.User;
 using Aquadata.EndToEndTests.Api.Base;
@@ -29,6 +30,12 @@ public class UserPersistence: BasePersistence
   public async Task Insert(CultivationEntity pond)
   {
     await _context.Cultivations.AddAsync(pond);
+    await _context.SaveChangesAsync();
+  }
+
+  public async Task Insert(EmployeeEntity employee)
+  {
+    await _context.Employees.AddAsync(employee);
     await _context.SaveChangesAsync();
   }
   

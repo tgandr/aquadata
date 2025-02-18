@@ -34,9 +34,9 @@ public class UpdatePond : IUseCaseHandler<UpdatePondInput,PondOutput>
       ); 
     }
     
-    var userId = _authenticateUserService.GetUserId() ?? "";
+    var userId = _authenticateUserService.GetUserId();
 
-    if (pond.UserId.ToString() != userId)
+    if (pond.UserId != userId)
       return Result<PondOutput>.Fail(
         Error.Unauthorized(
           "UseCases.Pond.UpdatePond",
