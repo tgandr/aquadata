@@ -8,6 +8,9 @@ const BiometryPopup = ({
   setBiometrics }) => {
 
   const [showBiomCalculated, setShowBiomCalculated] = useState(0);
+  const [calculateOrInsert, showCalculateOrInsert] = useState();
+  const [showButtons, setShowButtons] = useState(true);
+  const [insertValueBiom, setInsertValueBiom] = useState('');
 
   const initialFormBiometryState = {
     data: new Date().toISOString().split('T')[0],
@@ -17,6 +20,7 @@ const BiometryPopup = ({
   };
 
   const handleBiometrySubmit = (e) => {
+    console.log(formBiometry)
     e.preventDefault();
     const { data, Pesagem, Contagem } = formBiometry;
     if (Pesagem && Contagem) {
@@ -42,43 +46,85 @@ const BiometryPopup = ({
   return (
     <div className="popup">
       <div className="popup-inner">
-        <h3>Anotar Biometria</h3>
+        <h3>Biometria</h3>
 
         <form onSubmit={handleBiometrySubmit} className="harv-form">
-          <label>
-            Data:
-            <input
-              type="date"
-              name="data"
-              value={formBiometry.data}
-              onChange={(e) => setFormBiometry({ ...formBiometry, data: e.target.value })}
-              required
-            />
-          </label>
-          <label>
-            Pesagem (em gramas):
-            <input
-              type="number"
-              name="Pesagem"
-              value={formBiometry.Pesagem}
-              onChange={(e) => setFormBiometry({ ...formBiometry, Pesagem: e.target.value })}
-              required
-            />
-          </label>
-          <label>
-            Contagem:
-            <input
-              type="number"
-              name="Contagem"
-              value={formBiometry.Contagem}
-              onChange={(e) => setFormBiometry({ ...formBiometry, Contagem: e.target.value })}
-              required
-            />
-          </label>
-          {formBiometry.Contagem &&
-            <h3>Peso médio:&nbsp;{(formBiometry.Pesagem / formBiometry.Contagem).toLocaleString('pt-BR',
-              { minimumFractionDigits: 1, maximumFractionDigits: 1 }
-            )}</h3>}
+
+          {showButtons &&
+            <>
+              <button onClick={() => { showCalculateOrInsert("calculate"); setShowButtons(false) }}>Calcular biometria</button>
+              <button onClick={() => { showCalculateOrInsert("insert"); setShowButtons(false) }}>Anotar biometria</button>
+            </>
+          }
+
+          {calculateOrInsert === "calculate" &&
+            <>
+              <label>
+                Data:
+                <input
+                  type="date"
+                  name="data"
+                  value={formBiometry.data}
+                  onChange={(e) => setFormBiometry({ ...formBiometry, data: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Pesagem (em gramas):
+                <input
+                  type="number"
+                  name="Pesagem"
+                  value={formBiometry.Pesagem}
+                  onChange={(e) => setFormBiometry({ ...formBiometry, Pesagem: e.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                Contagem:
+                <input
+                  type="number"
+                  name="Contagem"
+                  value={formBiometry.Contagem}
+                  onChange={(e) => setFormBiometry({ ...formBiometry, Contagem: e.target.value })}
+                  required
+                />
+              </label>
+              {formBiometry.Contagem &&
+                <h3>Peso médio:&nbsp;{(formBiometry.Pesagem / formBiometry.Contagem).toLocaleString('pt-BR',
+                  { minimumFractionDigits: 1, maximumFractionDigits: 1 }
+                )}</h3>}
+            </>
+          }
+
+          {calculateOrInsert === "insert" &&
+            <>
+              <label>
+                Data:
+                <input
+                  type="date"
+                  name="data"
+                  value={formBiometry.data}
+                  onChange={(e) => setFormBiometry({ ...formBiometry, data: e.target.value })}
+                  required
+                />
+              </label>
+
+              <label>
+                Peso médio - em gramas:
+                <input
+                  type="number"
+                  name="pesoCalculado"
+                  value={insertValueBiom}
+                  onChange={(e) => {
+                    setInsertValueBiom(e.target.value);
+                    setFormBiometry({ ...formBiometry, Contagem: 1, Pesagem: e.target.value, pesoMedio: e.target.value })
+                  }}
+                  required
+                />
+              </label>
+            </>
+          }
+
           <br />
           <br />
           <br />

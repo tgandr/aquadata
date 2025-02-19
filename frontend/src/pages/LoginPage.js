@@ -12,7 +12,9 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/login', {
+      // const response = await fetch('http://localhost:5000/api/users/login', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/users/login`, {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -28,7 +30,7 @@ const LoginPage = () => {
       const data = await response.json();
 
       // Armazenar o token ou dados do usuário em localStorage
-      localStorage.setItem('formData', JSON.stringify({token: data.token, ...data.user}));
+      localStorage.setItem('formData', JSON.stringify({ token: data.token, saveLogin: true, ...data.user }));
 
       // Redirecionar o usuário para a página principal após o login bem-sucedido
 
