@@ -137,4 +137,18 @@ public class UserController: ControllerBase
 
     return Results.Created();
   }
+
+  [HttpPost("add-stock")]
+  [Authorize]
+  public async Task<IResult> AddStock(
+    [FromBody] StockDto command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
+  }
 }

@@ -21,6 +21,7 @@ public class UserOutput
   public List<EmployeeDto> Employees {get;set;} = new List<EmployeeDto>();
   public List<EmployeePaymentDto> Payroll {get;set;} = new List<EmployeePaymentDto>();
   public List<ExpenseDto> Expenses {get;set;} = new List<ExpenseDto>();
+  public List<StockDto> Stocks {get;set;} = new List<StockDto>();
 
   public UserOutput(Guid id, string name, string email, string farmName, 
     string farmAddress, string profile, string phone)
@@ -85,6 +86,11 @@ public class UserOutput
     && user.Expenses.Any())
       res.Expenses=user.Expenses
       .Select(ExpenseDto.FromEntity).ToList();
+
+    if (user.Stocks != null
+    && user.Stocks.Any())
+      res.Stocks=user.Stocks
+      .Select(StockDto.FromEntity).ToList();
 
     return res;
   }

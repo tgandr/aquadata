@@ -9,6 +9,7 @@ using Aquadata.Core.Entities.Harvest;
 using Aquadata.Core.Entities.Objective;
 using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Entities.Purchase;
+using Aquadata.Core.Entities.Stock;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Entities.Water;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,7 @@ public class ApplicationDbContext: DbContext
   public DbSet<EmployeeEntity> Employees {get;set;}
   public DbSet<EmployeePaymentEntity> Payroll {get;set;}
   public DbSet<ExpenseEntity> Expenses {get;set;}
+  public DbSet<StockEntity> Stocks {get;set;}
 
   public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     :base(options){}

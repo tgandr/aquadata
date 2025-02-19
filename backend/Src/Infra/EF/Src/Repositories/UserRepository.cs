@@ -2,6 +2,7 @@ using Aquadata.Core.Entities.Employee;
 using Aquadata.Core.Entities.EmployeePayment;
 using Aquadata.Core.Entities.Expense;
 using Aquadata.Core.Entities.Purchase;
+using Aquadata.Core.Entities.Stock;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Infra.EF.Context;
@@ -65,6 +66,9 @@ public class UserRepository : IUserRepository
       e => e.Id == employeeId && 
       e.UserId == userId
     );
+
+  public async Task AddStock(StockEntity stock)
+    => await _dbContext.Stocks.AddAsync(stock);
 
   public async Task AddExpense(ExpenseEntity expense)
     => await _dbContext.Expenses.AddAsync(expense);

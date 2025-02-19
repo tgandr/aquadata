@@ -2,6 +2,7 @@ using Aquadata.Core.Entities.Employee;
 using Aquadata.Core.Entities.EmployeePayment;
 using Aquadata.Core.Entities.Expense;
 using Aquadata.Core.Entities.Purchase;
+using Aquadata.Core.Entities.Stock;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.SeedWork;
 
@@ -21,4 +22,5 @@ public interface IUserRepository: IGenericRepository<UserEntity>
   Task AddEmployee(EmployeeEntity employee);
   Task AddEmployeePayment(EmployeePaymentEntity employeePayment);
   Task AddExpense(ExpenseEntity expense);
+  Task AddStock(StockEntity stock);
 }
