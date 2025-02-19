@@ -11,5 +11,7 @@ public class WaterAndAcclimationConfig : IEntityTypeConfiguration<WaterAndAcclim
     builder.ToTable("WaterAndAcclimations");
     builder.HasKey(e => e.Id);
     builder.ComplexProperty(e => e.PH);
+    builder.Property(e => e.Origin)
+      .HasConversion<string>();
   }
 }

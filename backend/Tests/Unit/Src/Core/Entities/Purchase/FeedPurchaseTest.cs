@@ -8,12 +8,12 @@ public class FeedPurchaseTest
   public void CreateValidFeedPurchase()
   {
     var expected = new {
-      Date = DateOnly.Parse("2024-12-12"),
+      Date = "12/12/2024",
       Label =  "CELM",
       Brand = "Poli Nutri",
       Quantity = 22,
       Value = 35.6m,
-      Validity = DateOnly.Parse("2024-12-24"),
+      Validity = "23/12/2024",
       BagSize = 25,
       RationType = "2mm"
     };
@@ -33,12 +33,12 @@ public class FeedPurchaseTest
     Assert.NotEqual(current.Id, default);
     Assert.NotEqual(current.CreatedAt, default);
     Assert.NotEqual(current.UpdatedAt, default);
-    Assert.Equal(expected.Date, current.Date);
+    Assert.Equal(expected.Date, current.Date.ToString());
     Assert.Equal(expected.Label, current.Label);
     Assert.Equal(expected.Brand, current.Brand);
     Assert.Equal(expected.Quantity, current.Quantity);
     Assert.Equal(expected.Value, current.Value);
-    Assert.Equal(expected.Validity, current.Validity);
+    Assert.Equal(expected.Validity, current.Validity.ToString());
     Assert.Equal(expected.BagSize, current.BagSize);
     Assert.Equal(expected.RationType, current.RationType);
   }

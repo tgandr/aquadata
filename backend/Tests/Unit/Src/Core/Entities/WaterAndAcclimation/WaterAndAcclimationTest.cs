@@ -12,9 +12,9 @@ public class WaterAndAcclimationTest
     var expected = new {
       Oxygen = 3.5f,
       Temperature = 24,
-      PH = PH.Of(2).Unwrap(),
+      PH = (byte)3,
       Salinity = 3,
-      Ammonium = 54.5f,
+      ammonia = 54.5f,
       Nitrite = 43.6f,
       Origin = WaterAndAcclimationOrigin.Pond
     };
@@ -24,7 +24,7 @@ public class WaterAndAcclimationTest
       expected.Temperature,
       expected.PH,
       expected.Salinity,
-      expected.Ammonium,
+      expected.ammonia,
       expected.Nitrite,
       expected.Origin
     ).Unwrap();
@@ -33,8 +33,8 @@ public class WaterAndAcclimationTest
     Assert.NotEqual(current.Id, default);
     Assert.Equal(expected.Oxygen, current.Oxygen);
     Assert.Equal(expected.Temperature, current.Temperature);
-    Assert.Equal(expected.PH, current.PH);
-    Assert.Equal(expected.Ammonium, current.Ammonium);
+    Assert.Equal(expected.PH, current.PH.Value);
+    Assert.Equal(expected.ammonia, current.Ammonia);
     Assert.Equal(expected.Salinity, current.Salinity);
     Assert.Equal(expected.Nitrite, current.Nitrite);
     Assert.Equal(expected.Origin, current.Origin);

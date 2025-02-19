@@ -49,7 +49,6 @@ public class BaseFixture: IDisposable
     context.Database.EnsureDeleted();
     context.Database.EnsureCreated();
   }
-
   public void Dispose()
   {
     Factory.Dispose();

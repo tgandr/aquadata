@@ -2,7 +2,7 @@ using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.Application.UseCases.User.UpdateUser;
-public class UpdateUserInput : IApplicationRequest<UserOutput>
+public class UpdateUserInput : IUseCaseRequest<UserOutput>
 {
   public Guid Id {get;}
   public string Name { get; }

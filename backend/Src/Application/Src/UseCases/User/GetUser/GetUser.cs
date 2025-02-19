@@ -6,12 +6,17 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Application.UseCases.User.GetUser;
 
-public class GetUser : IApplicationHandler<GetUserInput,UserOutput>
+public class GetUser : IUseCaseHandler<GetUserInput,UserOutput>
 {
   private readonly IUserRepository _repository;
+  private readonly IAuthenticatedUserService _authenticatedUserService;
 
-  public GetUser(IUserRepository repository)
-    => _repository = repository;
+  public GetUser(IUserRepository repository, 
+  IAuthenticatedUserService authenticatedUserService)
+  {
+    _repository = repository;
+    _authenticatedUserService = authenticatedUserService;
+  }
     
   public async Task<Result<UserOutput>> Handle(GetUserInput request, 
   CancellationToken cancellationToken)
@@ -22,11 +27,21 @@ public class GetUser : IApplicationHandler<GetUserInput,UserOutput>
     {
       return Result<UserOutput>.Fail(
         Error.NotFound(
-          "User.UseCases.DeleteUser",
+          "UseCases.User.DeleteUser",
           "User not found'"
         )
       );
     }
+
+    var userId = _authenticatedUserService.GetUserId();
+    
+    if (userId != user.Id)
+      return Result<UserOutput>.Fail(
+        Error.Unauthorized(
+          "UseCases.Pond.Deactivate",
+          "Unauthorized"
+        )
+    );
 
     return Result<UserOutput>.Ok(
       UserOutput.FromEntity(user)

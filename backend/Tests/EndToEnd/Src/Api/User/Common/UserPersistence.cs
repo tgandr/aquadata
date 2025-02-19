@@ -1,24 +1,42 @@
+using Aquadata.Core.Entities.Cultivation;
+using Aquadata.Core.Entities.Employee;
+using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Entities.User;
+using Aquadata.EndToEndTests.Api.Base;
 using Aquadata.Infra.EF.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace Aquadata.EndToEndTests.Api.User.Common;
 
-public class UserPersistence
+public class UserPersistence: BasePersistence
 {
-  private readonly ApplicationDbContext _context;
-
   public UserPersistence(ApplicationDbContext context)
-    => _context = context;
+  :base(context){}
 
   public async Task<UserEntity?> GetById(Guid id)
     => await _context.Users
       .AsNoTracking()
+      .Include(u => u.FeedPurchases)
+      .Include(u => u.ProbioticPurchases)
+      .Include(u => u.FertilizerPurchases)
       .FirstOrDefaultAsync(e => e.Id == id);
 
-  public async Task Insert(UserEntity entity)
+  public async Task Insert(PondEntity pond)
   {
-    await _context.Users.AddAsync(entity);
+    await _context.Ponds.AddAsync(pond);
     await _context.SaveChangesAsync();
   }
+
+  public async Task Insert(CultivationEntity pond)
+  {
+    await _context.Cultivations.AddAsync(pond);
+    await _context.SaveChangesAsync();
+  }
+
+  public async Task Insert(EmployeeEntity employee)
+  {
+    await _context.Employees.AddAsync(employee);
+    await _context.SaveChangesAsync();
+  }
+  
 }

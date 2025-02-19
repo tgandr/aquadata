@@ -3,6 +3,7 @@ using Aquadata.Application.UseCases.Pond.CreatePond;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Infra.EF;
 using Aquadata.Infra.EF.Repositories;
+using Microsoft.OpenApi.Models;
 
 namespace Aquadata.Api.Configs;
 
@@ -25,6 +26,7 @@ public static class UseCasesConfig
   {
     services.AddTransient<IPondRepository, PondRepository>();
     services.AddTransient<IUserRepository, UserRepository>();
+    services.AddTransient<ICultivationRepository, CultivationRepository>();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
 
     return services;

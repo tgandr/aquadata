@@ -10,6 +10,8 @@ public class StockConfig: IEntityTypeConfiguration<StockEntity>
   {
     builder.ToTable("Stocks");
     builder.HasKey(e => e.Id);
+    builder.Property(e => e.SupplyType)
+      .HasConversion<string>();
   }
 }
 

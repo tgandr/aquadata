@@ -14,10 +14,7 @@ public class PondTestFixture: BaseFixture
     Persistence = new PondPersistence(CreateDbContext());
   }
   
-  public CreateUserInput GetUserExample()
-    => new("valid_name", $"{Guid.NewGuid()}@email.com", "valid_password", 
-    "farmName", "farmAddress","profile","phone");
-
+  
   public PondEntity GetPondExample(Guid id)
   {
     var pond = PondEntity.Of("pond", 10f, true).Unwrap(); 

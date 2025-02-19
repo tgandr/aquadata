@@ -18,7 +18,7 @@ public class CreateUserTest: IDisposable
     var input = _fixture.GetExampleInput();
     
     var (response, output) = await _fixture
-      .ApiClient.Post<ApiResponse<UserApiOutput>>(
+      .ApiClient.Post<ApiResponse<ApiCredentials>>(
         "/users/signup",
         input
       );

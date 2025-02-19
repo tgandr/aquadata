@@ -6,14 +6,15 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Pond;
 
-public class PondEntity : SeedWork.Entity, IAggregateRoot
+public class PondEntity : Entity, IAggregateRoot
 {
   public string Name {get;private set;}
   public float Area {get;private set;}
   public bool IsActive {get;private set;}
 
   public virtual Guid UserId {get;set;}
-  public virtual ICollection<CultivationEntity>? Cultivations {get;set;}
+  public virtual ICollection<CultivationEntity> Cultivations {get;set;}
+  = new List<CultivationEntity>();
 
   private PondEntity() {}
   private PondEntity(string name, float area, bool isActive = true)

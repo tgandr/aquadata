@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.User.DeleteUser;
 
-public class DeleteUserInput : IApplicationRequest<Unit>
+public class DeleteUserInput : IUseCaseRequest<Unit>
 {
   public Guid Id { get; }
 

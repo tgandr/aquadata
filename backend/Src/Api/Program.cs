@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Aquadata.Api.Configs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,10 +8,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAppConnection(builder.Configuration);
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(o => {
+    o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.AddUseCases();
 builder.Services.AddSecurity(builder.Configuration);
-
 
 var app = builder.Build();
 

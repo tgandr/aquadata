@@ -1,4 +1,3 @@
-using Aquadata.Application.Errors;
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.Pond.Common;
 using Aquadata.Core.Interfaces.Repository;
@@ -8,16 +7,20 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Pond.UpdatePond;
 
-public class UpdatePond : IApplicationHandler<UpdatePondInput,PondOutput>
+public class UpdatePond : IUseCaseHandler<UpdatePondInput,PondOutput>
 {
   private readonly IPondRepository _repository;
+  private readonly IAuthenticatedUserService _authenticateUserService;
   private readonly IUnitOfWork _unitOfWork;
 
-  public UpdatePond(IPondRepository repository, IUnitOfWork unitOfWork)
+  public UpdatePond(IPondRepository repository, 
+  IUnitOfWork unitOfWork, IAuthenticatedUserService authenticatedUserService)
   {
     _repository = repository;
     _unitOfWork = unitOfWork;
+    _authenticateUserService = authenticatedUserService;
   }
+
   public async Task<Result<PondOutput>> Handle(UpdatePondInput request, CancellationToken cancellationToken)
   {
     var pond = await _repository.Get(request.Id, cancellationToken);
@@ -25,12 +28,22 @@ public class UpdatePond : IApplicationHandler<UpdatePondInput,PondOutput>
     if (pond == null || !pond.IsActive) {
       return Result<PondOutput>.Fail(
         Error.NotFound(
-          "Pond.UseCases.UpdatePond",
+          "UseCases.Pond.UpdatePond",
           "Pond not found'"
         )
       ); 
     }
     
+    var userId = _authenticateUserService.GetUserId();
+
+    if (pond.UserId != userId)
+      return Result<PondOutput>.Fail(
+        Error.Unauthorized(
+          "UseCases.Pond.UpdatePond",
+          "Unauthorized"
+        )
+    );
+
     pond.Update(request.Name, request.Area);
 
     await _repository.Update(pond, cancellationToken);

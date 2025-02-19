@@ -25,15 +25,14 @@ public class CultivationEntity : Entity, IAggregateRoot
 
   // Navigation props
   public virtual Guid PondId {get;set;}
-  public virtual WaterEntity? Water {get;set;}
   public virtual ObjectiveEntity? Objective {get;set;}
   public virtual StressTestEntity? StressTest {get; set;}
-  public virtual ICollection<BiometricEntity>? Biometrics {get; set;}
-  public virtual ICollection<WaterEntity>? WaterParams {get; set;}
-  public virtual ICollection<HarvestEntity>? Harvests {get; set;}
-  public virtual ICollection<FeedEntity>? Feed {get; set;}
-  public virtual ICollection<FertilizerEntity>? Fertilizers {get; set;}
-  public virtual ICollection<WaterAndAcclimationEntity>? WaterAndAcclimation {get; set;}
+  public virtual ICollection<BiometricEntity> Biometrics {get; set;}
+  public virtual ICollection<WaterEntity> WaterParams {get; set;}
+  public virtual ICollection<HarvestEntity> Harvests {get; set;}
+  public virtual ICollection<FeedEntity> Feed {get; set;}
+  public virtual ICollection<FertilizerEntity> Fertilizers {get; set;}
+  public virtual ICollection<WaterAndAcclimationEntity> WaterAndAcclimation {get; private set;}
 
   private CultivationEntity() {}
   private CultivationEntity(int pondNumber, int stock, string pLOrigin, 
@@ -47,9 +46,12 @@ public class CultivationEntity : Entity, IAggregateRoot
     Uniformity = uniformity;
     SettlementDate = settlementDate;
     WaterAndAcclimationChecked = waterAndAcclimationChecked;
-
-    if (WaterAndAcclimation is not null)
-      WaterAndAcclimationChecked = true;
+    Biometrics = new List<BiometricEntity>();
+    WaterParams = new List<WaterEntity>();
+    Harvests = new List<HarvestEntity>();
+    Feed = new List<FeedEntity>();
+    Fertilizers = new List<FertilizerEntity>();
+    WaterAndAcclimation = new List<WaterAndAcclimationEntity>();
   }
 
   public static Result<CultivationEntity> Of(
@@ -65,6 +67,15 @@ public class CultivationEntity : Entity, IAggregateRoot
   public bool HasShrimp()
     => Stock > 0; 
   
+  public void AddWaterAndAcclimation(ICollection<WaterAndAcclimationEntity> list)
+  {
+    if (list.Count < 2)
+      return;
+    
+    WaterAndAcclimation = list;
+    WaterAndAcclimationChecked = true;
+  }
+
   protected override Result<Entity> Validate()
   {
     if (string.IsNullOrWhiteSpace(PLOrigin))

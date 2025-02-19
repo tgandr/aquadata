@@ -2,13 +2,13 @@ using Application.UseCases.User.CreateUser;
 using Aquadata.Api.Extensions;
 using Aquadata.Api.Models;
 using Aquadata.Api.Response;
+using Aquadata.Application.Dtos;
+using Aquadata.Application.UseCases.User.AddEmployeePayment;
 using Aquadata.Application.UseCases.User.Common;
 using Aquadata.Application.UseCases.User.DeleteUser;
-using Aquadata.Application.UseCases.User.GetByEmail;
 using Aquadata.Application.UseCases.User.GetUser;
 using Aquadata.Application.UseCases.User.UpdateUser;
 using Aquadata.Core.Security;
-using Aquadata.Core.Util.Result;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,16 +32,7 @@ public class UserController: ControllerBase
   [HttpPost("signup")]
   public async Task<IResult> SignUp([FromBody] CreateUserInput command, 
   CancellationToken cancellationToken)
-  {
-    var userFromDb = await _mediator.Send(new GetUserByEmailInput(command.Email));
-
-    if (!userFromDb.IsFail && 
-    userFromDb.Unwrap().Email == command.Email)
-      return Results.Conflict(Error.Conflict(
-        "UserService.Signup",
-        "Email already exists"
-      ));
-    
+  {    
     var userResult = await _mediator.Send(command, cancellationToken);
 
     if (userResult.IsFail)
@@ -54,7 +45,7 @@ public class UserController: ControllerBase
 
     return Results.Created(
       nameof(SignUp),
-      new ApiResponse<UserApiOutput>(new UserApiOutput(
+      new ApiResponse<ApiCredentials>(new ApiCredentials(
         userResult.Unwrap(),
         token
       ))
@@ -64,22 +55,16 @@ public class UserController: ControllerBase
   [HttpPost("signin")]
   public async Task<IResult> SignIn([FromBody] LoginModel login)
   {
-    var userResult = await _mediator.Send(new GetUserByEmailInput(login.Email));
-
-    if (userResult.IsFail)
-      return Results.Extensions.MapResult(userResult);
-
-    var isAuth = await _auth.Authenticate(login.Email, login.Password);
+    var (isAuth, user) = await _auth.Authenticate(login.Email, login.Password);
  
-    if (!isAuth)
+    if (user == null || !isAuth)
       return Results.Unauthorized();
     
-    var user = userResult.Unwrap();
     var token = _auth.GenerateToken(user.Id.ToString(), login.Email);
 
-    return Results.Ok(new ApiResponse<UserApiOutput>(
-      new UserApiOutput(
-      user,
+    return Results.Ok(new ApiResponse<ApiCredentials>(
+      new ApiCredentials(
+      UserOutput.FromEntity(user),
       token)
     ));
   }
@@ -89,11 +74,6 @@ public class UserController: ControllerBase
   public async Task<IResult> Get([FromRoute] Guid id, 
   CancellationToken cancellationToken)
   {
-    var userId = User.FindFirst("id")!.Value;
-
-    if (userId != id.ToString())
-      return Results.Unauthorized();
-
     var result = await _mediator.Send(new GetUserInput(id), cancellationToken);
 
     if (result.IsFail)
@@ -107,18 +87,12 @@ public class UserController: ControllerBase
   public async Task<IResult> Update(
     [FromBody] UpdateUserInput command,
     CancellationToken cancellationToken)
-  {
-    var userId = User.FindFirst("id")!.Value;
-
-    if (userId != command.Id.ToString())
-      return Results.Unauthorized();
-    
+  { 
     var result = await _mediator.Send(command,cancellationToken);
 
     if (result.IsFail)
       return Results.Extensions.MapResult(result);
 
-    
     return Results.Ok(new ApiResponse<UserOutput>(result.Unwrap()));
   }
 
@@ -128,16 +102,67 @@ public class UserController: ControllerBase
     [FromRoute] Guid id,
     CancellationToken cancellationToken)
   {
-    var userId = User.FindFirst("id")!.Value;
-
-    if (userId != id.ToString())
-      return Results.Unauthorized();
-
     var result = await _mediator.Send(new DeleteUserInput(id), cancellationToken);
 
     if (result.IsFail)
       return Results.Extensions.MapResult(result);
 
     return Results.NoContent();
+  }
+
+  [HttpPost("add-employee")]
+  [Authorize]
+  public async Task<IResult> AddGenericPurchase(
+    [FromBody] EmployeeDto command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
+  }
+
+  [HttpPost("add-employee-payment")]
+  [Authorize]
+  public async Task<IResult> AddEmployeePayment(
+    [FromBody] AddEmployeePaymentInput command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
+  }
+
+  [HttpPost("add-stock")]
+  [Authorize]
+  public async Task<IResult> AddStock(
+    [FromBody] StockDto command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
+  }
+
+  [HttpPost("add-inventory")]
+  [Authorize]
+  public async Task<IResult> AddInventory(
+    [FromBody] InventoryDto command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
   }
 }

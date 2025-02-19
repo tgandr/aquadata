@@ -13,7 +13,7 @@ public class WebAppFactory<TStartup>
   {
     builder.ConfigureServices(services =>
     {
-      var environment = "EndToEnd";
+      var environment = "Development";
       Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
       builder.UseEnvironment(environment);
       builder.ConfigureServices(services => {
@@ -28,7 +28,6 @@ public class WebAppFactory<TStartup>
           throw new NullReferenceException(
             "ApplicationDbContext is null");
         }
-        
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
       });

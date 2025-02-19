@@ -9,7 +9,7 @@ public class ProbioticsPurchaseTest
   public void CreateValidProbioticPurchase()
   {
     var expected = new {
-      Date = DateOnly.Parse("2024-12-03"),
+      Date = "23/03/2024",
       Label = "BioTrends",
       Quantity = 22,
       Value = 10.5m,
@@ -30,6 +30,6 @@ public class ProbioticsPurchaseTest
     Assert.Equal(expected.Value, current.Value);
     Assert.Equal(expected.Unit, current.Unit);
     Assert.Equal(expected.Label, current.Label);
-    Assert.Equal(expected.Date, current.Date);
+    Assert.Equal(expected.Date, current.Date.ToString());
   }
 }

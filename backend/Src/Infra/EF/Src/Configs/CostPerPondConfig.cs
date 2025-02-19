@@ -11,9 +11,5 @@ public class CostPerPondConfig : IEntityTypeConfiguration<CostPerPondEntity>
   {
     builder.ToTable("CostPerPond");
     builder.HasKey(e => e.Id);
-    builder.HasOne<PondEntity>()
-    .WithOne()
-    .HasForeignKey<CostPerPondEntity>(e => e.PondId)
-    .IsRequired();
   }
 }

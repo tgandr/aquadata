@@ -1,6 +1,4 @@
-using Aquadata.Application.Errors;
 using Aquadata.Application.Interfaces;
-using Aquadata.Application.UseCases.Pond.Common;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
@@ -8,15 +6,18 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.User.DeleteUser;
 
-public class DeleteUser : IApplicationHandler<DeleteUserInput,Unit>
+public class DeleteUser : IUseCaseHandler<DeleteUserInput,Unit>
 {
   private readonly IUserRepository _userRepository;
+  private readonly IAuthenticatedUserService _authenticatedUserService;
   private readonly IUnitOfWork _unitOfWork;
 
-  public DeleteUser(IUserRepository userRepository, IUnitOfWork unitOfWork)
+  public DeleteUser(IUserRepository userRepository, 
+  IUnitOfWork unitOfWork, IAuthenticatedUserService authenticatedUserService)
   {
     _userRepository = userRepository;
     _unitOfWork = unitOfWork;
+    _authenticatedUserService = authenticatedUserService;
   }
 
   public async Task<Result<Unit>> Handle(DeleteUserInput request, 
@@ -27,10 +28,19 @@ public class DeleteUser : IApplicationHandler<DeleteUserInput,Unit>
     if (user == null)
       return Result<Unit>.Fail(
         Error.NotFound(
-          "User.UseCases.DeleteUser",
+          "UseCases.User.DeleteUser",
           "User not found'"
         )
       );
+    
+    var userId = _authenticatedUserService.GetUserId();
+    if (userId != user.Id)
+      return Result<Unit>.Fail(
+        Error.Unauthorized(
+          "UseCases.User.DeleteUser",
+          "Unauthorized"
+        )
+    );
 
     await _userRepository.Delete(user, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);

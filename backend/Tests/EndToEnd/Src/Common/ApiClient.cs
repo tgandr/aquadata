@@ -4,7 +4,6 @@ using System.Text.Json;
 using Application.UseCases.User.CreateUser;
 using Aquadata.Api.Models;
 using Aquadata.Api.Response;
-using Aquadata.Core.Entities.User;
 
 namespace Aquadata.EndToEndTests.Common;
 
@@ -29,7 +28,7 @@ public class ApiClient
         "Bearer", token);
   }
 
-  public async Task<UserApiOutput> SignUp(CreateUserInput? user = null)
+  public async Task<ApiCredentials> SignUp(CreateUserInput? user = null)
   {
     string payload;
 
@@ -54,7 +53,7 @@ public class ApiClient
       )
     );
 
-    var output = await GetOutput<ApiResponse<UserApiOutput>>(response);
+    var output = await GetOutput<ApiResponse<ApiCredentials>>(response);
     AddAuthorizationHeader(output!.Data.Token);
     return output!.Data;
   }
@@ -90,6 +89,10 @@ public class ApiClient
         "application/json"
       )
     );
+    
+    if (!response.IsSuccessStatusCode)
+      return (response, null);
+
     var output = await GetOutput<T>(response);
     
     return (response, output);
@@ -108,6 +111,9 @@ public class ApiClient
       )
     );
 
+    if (!response.IsSuccessStatusCode)
+      return (response, null);
+
     var output = await GetOutput<T>(response);
     return (response, output);
   }
@@ -116,6 +122,10 @@ public class ApiClient
     where T : class
   {
     var response = await _httpClient.GetAsync(route);
+
+    if (! response.IsSuccessStatusCode)
+      return (response, null);
+
     var output = await GetOutput<T>(response);
     return (response, output);
   }
@@ -124,6 +134,10 @@ public class ApiClient
     where T : class
   {
     var response = await _httpClient.DeleteAsync(route);
+
+    if (!response.IsSuccessStatusCode)
+      return (response, null);
+
     var output = await GetOutput<T>(response);
     return (response, output);
   }

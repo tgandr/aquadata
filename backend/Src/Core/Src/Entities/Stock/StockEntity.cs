@@ -5,7 +5,7 @@ using Aquadata.Core.Util.Result;
 
 namespace Aquadata.Core.Entities.Stock;
 
-public class StockEntity: SeedWork.Entity
+public class StockEntity: Entity
 {
   public string Label {get; private set;}
   public SupplyType SupplyType {get; private set;}

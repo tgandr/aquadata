@@ -1,3 +1,4 @@
+using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Infra.EF.Context;
@@ -20,8 +21,10 @@ public class PondRepository : IPondRepository
   }
 
   public async Task<PondEntity?> Get(Guid id, CancellationToken cancellationToken)
-    => await _dbContext.Ponds.AsNoTracking().FirstOrDefaultAsync(
-      x => x.Id == id, cancellationToken
+    => await _dbContext.Ponds.AsNoTracking()
+    .Include(p => p.Cultivations)
+    .FirstOrDefaultAsync(
+      x => x.Id == id && x.IsActive, cancellationToken
     );
 
   public async Task Insert(PondEntity aggregate, CancellationToken cancellationToken)
@@ -29,4 +32,19 @@ public class PondRepository : IPondRepository
 
   public Task Update(PondEntity aggregate, CancellationToken cancellationToken)
     => Task.FromResult(_dbContext.Ponds.Update(aggregate));
+
+  public async Task CreateCultivation(CultivationEntity cultivation, CancellationToken cancellationToken)
+    => await _dbContext.Cultivations.AddAsync(cultivation, cancellationToken);
+
+  public async Task<bool> Exists(Guid userId, Guid pondId)
+    => await _dbContext.Ponds.AnyAsync(
+      p => p.Id == pondId && 
+      p.UserId == userId
+    );
+
+  // public async Task<bool> Exists(Guid userId, ICollection<Guid> pondIds)
+  //   => await _dbContext.Ponds
+  //     .Where(p => pondIds.Contains(p.Id))
+  //     .AllAsync(p => p.UserId == userId);
+
 }

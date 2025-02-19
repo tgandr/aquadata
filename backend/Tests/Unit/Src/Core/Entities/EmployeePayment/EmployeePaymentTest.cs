@@ -8,7 +8,7 @@ public class EmployeePaymentTest
   public void CreateValidEmployeePayment()
   {
     var expected = new {
-      Date = DateOnly.Parse("01-12-2024"),
+      Date = "01/12/2024",
       Value = 2000m
     };
 
@@ -19,7 +19,7 @@ public class EmployeePaymentTest
 
     Assert.NotNull(current);
     Assert.NotEqual(current.Id, default);
-    Assert.Equal(expected.Date, current.Date);
+    Assert.Equal(expected.Date, current.Date.ToString());
     Assert.Equal(expected.Value, current.Value);
   }
 }
