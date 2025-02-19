@@ -151,4 +151,18 @@ public class UserController: ControllerBase
 
     return Results.Created();
   }
+
+  [HttpPost("add-inventory")]
+  [Authorize]
+  public async Task<IResult> AddInventory(
+    [FromBody] InventoryDto command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
+  }
 }
