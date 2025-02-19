@@ -2,7 +2,7 @@ using Aquadata.Application.Dtos;
 using Aquadata.EndToEndTests.Api.Base;
 using Aquadata.EndToEndTests.Api.User.Common;
 
-namespace Aquadata.EndToEndTests.Api.User.AddGenericPurchase;
+namespace Aquadata.EndToEndTests.Api.Financal.AddGenericPurchase;
 
 [CollectionDefinition(nameof(AddGenericPurchaseTestFixture))]
 public class AddGenericPurchaseTestFixture

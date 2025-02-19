@@ -2,6 +2,7 @@ using Aquadata.Core.Entities.Biometric;
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Employee;
 using Aquadata.Core.Entities.EmployeePayment;
+using Aquadata.Core.Entities.Expense;
 using Aquadata.Core.Entities.Feed;
 using Aquadata.Core.Entities.Fertilizer;
 using Aquadata.Core.Entities.Harvest;
@@ -32,6 +33,7 @@ public class ApplicationDbContext: DbContext
   public DbSet<GenericPurchaseEntity> GenericPurchases {get;set;}
   public DbSet<EmployeeEntity> Employees {get;set;}
   public DbSet<EmployeePaymentEntity> Payroll {get;set;}
+  public DbSet<ExpenseEntity> Expenses {get;set;}
 
   public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     :base(options){}

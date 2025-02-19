@@ -2,7 +2,7 @@ using System.Net;
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.User.Common;
 
-namespace Aquadata.EndToEndTests.Api.User.AddProbioticPurchase;
+namespace Aquadata.EndToEndTests.Api.Financal.AddProbioticPurchase;
 
 [Collection(nameof(AddProbioticPurchaseTestFixture))]
 public class AddProbioticPurchaseTest

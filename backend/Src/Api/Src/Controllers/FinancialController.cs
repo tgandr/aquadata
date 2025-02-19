@@ -1,8 +1,8 @@
 using Aquadata.Api.Extensions;
 using Aquadata.Api.Response;
 using Aquadata.Application.Dtos;
-using Aquadata.Application.UseCases.User.Purchase.AddFeedPurchase;
-using Aquadata.Application.UseCases.User.Purchase.AddPLPurchase;
+using Aquadata.Application.UseCases.Financial.AddFeedPurchase;
+using Aquadata.Application.UseCases.Financial.AddPLPurchase;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -77,6 +77,19 @@ public class FinancialController:ControllerBase
   [HttpPost("add-generic-purchase")]
   public async Task<IResult> AddGenericPurchase(
     [FromBody] GenericPurchaseDto command,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(command, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Created();
+  } 
+
+  [HttpPost("add-expense")]
+  public async Task<IResult> AddGenericPurchase(
+    [FromBody] ExpenseDto command,
     CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(command, cancellationToken);

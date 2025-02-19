@@ -14,5 +14,7 @@ public class ExpenseConfig : IEntityTypeConfiguration<ExpenseEntity>
       .WithOne()
       .HasForeignKey(e => e.ExpenseId)
       .IsRequired();
+
+    builder.Navigation(e => e.CostsPerPond).AutoInclude();
   }
 }

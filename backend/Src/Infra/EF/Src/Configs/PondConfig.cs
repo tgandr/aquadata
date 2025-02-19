@@ -1,3 +1,4 @@
+using Aquadata.Core.Entities.Expense;
 using Aquadata.Core.Entities.Pond;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,5 +13,8 @@ public class PondConfig : IEntityTypeConfiguration<PondEntity>
     builder.HasKey(e => e.Id);
     builder.HasMany(e => e.Cultivations)
     .WithOne().HasForeignKey(e => e.PondId);
+
+    builder.HasMany<CostPerPondEntity>()
+      .WithOne().HasForeignKey(e => e.PondId);
   }
 }

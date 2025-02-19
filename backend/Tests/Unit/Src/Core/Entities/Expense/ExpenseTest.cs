@@ -18,9 +18,10 @@ public class ExpenseTest
 
     var current = ExpenseEntity.Of(
       expected.Date,
-      expected.Description,
-      expected.CostsPerPond
+      expected.Description
     ).Unwrap();
+
+    current.CostsPerPond = expected.CostsPerPond;
 
     Assert.NotNull(current);
     Assert.NotEqual(current.Id, default);
@@ -43,9 +44,10 @@ public class ExpenseTest
 
     var current = ExpenseEntity.Of(
       expected.Date,
-      expected.Description,
-      expected.CostsPerPond
+      expected.Description
     ).Unwrap();
+
+    current.CostsPerPond = expected.CostsPerPond;
 
     Assert.Equal(21m, current.Total());
   }

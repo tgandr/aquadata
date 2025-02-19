@@ -2,7 +2,7 @@ using System.Net;
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.User.Common;
 
-namespace Aquadata.EndToEndTests.Api.User.AddFeedPurchase;
+namespace Aquadata.EndToEndTests.Api.Financal.AddFeedPurchase;
 
 [Collection(nameof(AddFeedPurchaseTestFixture))]
 public class AddPurchaseTest

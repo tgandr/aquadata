@@ -1,5 +1,6 @@
 using Aquadata.Core.Entities.Employee;
 using Aquadata.Core.Entities.EmployeePayment;
+using Aquadata.Core.Entities.Expense;
 using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Interfaces.Repository;
@@ -65,4 +66,6 @@ public class UserRepository : IUserRepository
       e.UserId == userId
     );
 
+  public async Task AddExpense(ExpenseEntity expense)
+    => await _dbContext.Expenses.AddAsync(expense);
 }

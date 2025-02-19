@@ -186,8 +186,7 @@ namespace Aquadata.Infra.EF.Migrations
 
                     b.HasIndex("ExpenseId");
 
-                    b.HasIndex("PondId")
-                        .IsUnique();
+                    b.HasIndex("PondId");
 
                     b.ToTable("CostPerPond", (string)null);
                 });
@@ -916,8 +915,8 @@ namespace Aquadata.Infra.EF.Migrations
                         .IsRequired();
 
                     b.HasOne("Aquadata.Core.Entities.Pond.PondEntity", null)
-                        .WithOne()
-                        .HasForeignKey("Aquadata.Core.Entities.Expense.CostPerPondEntity", "PondId")
+                        .WithMany()
+                        .HasForeignKey("PondId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

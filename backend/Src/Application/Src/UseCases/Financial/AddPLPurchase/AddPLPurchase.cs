@@ -5,7 +5,7 @@ using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
 using MediatR;
 
-namespace Aquadata.Application.UseCases.User.Purchase.AddPLPurchase;
+namespace Aquadata.Application.UseCases.Financial.AddPLPurchase;
 
 public class AddPLPurchase: IUseCaseHandler<AddPLPurchaseInput, Unit>
 {

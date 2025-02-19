@@ -2,7 +2,7 @@ using Aquadata.Application.UseCases.User.AddEmployeePayment;
 using Aquadata.Core.Entities.Employee;
 using Aquadata.EndToEndTests.Api.User.Common;
 
-namespace Aquadata.EndToEndTests.Api.User.AddEmployeePayment;
+namespace Aquadata.EndToEndTests.Api.Financal.AddEmployeePayment;
 
 [CollectionDefinition(nameof(AddEmployeePaymentTestFixture))]
 public class AddEmployeePaymentTestFixture

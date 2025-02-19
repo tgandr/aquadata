@@ -2,7 +2,7 @@ using System.Net;
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.User.Common;
 
-namespace Aquadata.EndToEndTests.Api.User.AddEmployeePayment;
+namespace Aquadata.EndToEndTests.Api.Financal.AddEmployeePayment;
 
 [Collection(nameof(AddEmployeePaymentTestFixture))]
 public class AddEmployeePaymentTest

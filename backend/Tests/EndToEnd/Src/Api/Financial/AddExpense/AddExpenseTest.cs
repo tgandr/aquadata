@@ -2,25 +2,28 @@ using System.Net;
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.User.Common;
 
-namespace Aquadata.EndToEndTests.Api.Financal.AddEmployee;
+namespace Aquadata.EndToEndTests.Api.Financial.AddExpense;
 
-[Collection(nameof(AddEmployeeTestFixture))]
-public class AddEmployeeTest
+[Collection(nameof(AddExpenseTestFixture))]
+public class AddExpenseTest
 {
-  private readonly AddEmployeeTestFixture _fixture;
+  private readonly AddExpenseTestFixture _fixture;
 
-  public AddEmployeeTest(AddEmployeeTestFixture fixture)
+  public AddExpenseTest(AddExpenseTestFixture fixture)
     => _fixture = fixture;
 
   [Fact]
-  public async void AddEmployee()
+  public async void AddExpense()
   {
     var credentials = await _fixture.ApiClient.SignUp();
-    var input = _fixture.GetInput();
+    var pond = _fixture.GetPondExample(credentials.User.Id);
+    var input = _fixture.GetInput(pond.Id);
+
+    await _fixture.Persistence.Insert(pond);
 
     var (response, _) = await _fixture.ApiClient
     .Post<object>(
-      "/users/add-employee",
+      "/financial/add-expense",
       input
     );
 
@@ -33,7 +36,7 @@ public class AddEmployeeTest
     );
 
     Assert.NotNull(output);
-    Assert.NotNull(output.Data.Employees);
-    Assert.NotEmpty(output.Data.Employees);
+    Assert.NotNull(output.Data.Expenses);
+    Assert.NotEmpty(output.Data.Expenses);
   }
 }

@@ -6,7 +6,7 @@ using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
 using MediatR;
 
-namespace Aquadata.Application.UseCases.User.Purchase.AddGenericPurchase;
+namespace Aquadata.Application.UseCases.Financial.AddGenericPurchase;
 
 public class AddGenericPurchase : IUseCaseHandler<GenericPurchaseDto, Unit>
 {

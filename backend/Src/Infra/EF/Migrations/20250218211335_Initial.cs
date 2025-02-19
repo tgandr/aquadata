@@ -644,8 +644,7 @@ namespace Aquadata.Infra.EF.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CostPerPond_PondId",
                 table: "CostPerPond",
-                column: "PondId",
-                unique: true);
+                column: "PondId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Cultivations_PondId",

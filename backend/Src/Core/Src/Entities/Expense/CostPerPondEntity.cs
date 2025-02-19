@@ -6,7 +6,6 @@ namespace Aquadata.Core.Entities.Expense;
 public class CostPerPondEntity: Entity
 {
   public decimal Value {get; private set;}
-
   public virtual Guid PondId {get; set;}
   public virtual Guid ExpenseId {get;set;}
 

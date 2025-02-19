@@ -1,5 +1,6 @@
 using Aquadata.Core.Entities.Employee;
 using Aquadata.Core.Entities.EmployeePayment;
+using Aquadata.Core.Entities.Expense;
 using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.SeedWork;
@@ -19,4 +20,5 @@ public interface IUserRepository: IGenericRepository<UserEntity>
   Task AddGenericPurchase(GenericPurchaseEntity genericPurchase);
   Task AddEmployee(EmployeeEntity employee);
   Task AddEmployeePayment(EmployeePaymentEntity employeePayment);
+  Task AddExpense(ExpenseEntity expense);
 }

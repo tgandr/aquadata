@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Aquadata.Application.Common;
 using Aquadata.Application.Interfaces;
 using Aquadata.Core.Entities.Purchase;
@@ -8,6 +9,7 @@ namespace Aquadata.Application.Dtos;
 
 public class FertilizerPurchaseDto : PurchaseDtoBase, IUseCaseRequest<Unit>
 {
+  [JsonConverter(typeof(JsonStringEnumConverter))]
   public MeasureUnit Unit {get;}
   public FertilizerPurchaseDto(string date, string label, int quantity, 
   decimal value, MeasureUnit unit) 

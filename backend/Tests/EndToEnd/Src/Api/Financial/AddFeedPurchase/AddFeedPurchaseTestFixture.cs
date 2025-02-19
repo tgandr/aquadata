@@ -1,7 +1,7 @@
-using Aquadata.Application.UseCases.User.Purchase.AddFeedPurchase;
+using Aquadata.Application.UseCases.Financial.AddFeedPurchase;
 using Aquadata.EndToEndTests.Api.User.Common;
 
-namespace Aquadata.EndToEndTests.Api.User.AddFeedPurchase;
+namespace Aquadata.EndToEndTests.Api.Financal.AddFeedPurchase;
 
 [CollectionDefinition(nameof(AddFeedPurchaseTestFixture))]
 public class AddFeedPurchaseTestFixture

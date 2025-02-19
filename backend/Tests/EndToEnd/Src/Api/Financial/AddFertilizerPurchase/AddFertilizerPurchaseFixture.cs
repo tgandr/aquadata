@@ -1,7 +1,7 @@
 using Aquadata.Application.Dtos;
 using Aquadata.EndToEndTests.Api.User.Common;
 
-namespace Aquadata.EndToEndTests.Api.User.AddFertilizerPurchase;
+namespace Aquadata.EndToEndTests.Api.Financal.AddFertilizerPurchase;
 
 [CollectionDefinition(nameof(AddFertilizerPurchaseFixture))]
 public class AddFertilizerPurchaseFixture

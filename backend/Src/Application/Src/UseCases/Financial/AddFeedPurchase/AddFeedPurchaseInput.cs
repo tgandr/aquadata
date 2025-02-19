@@ -2,7 +2,7 @@ using Aquadata.Application.Common;
 using Aquadata.Application.Dtos;
 using Aquadata.Application.Interfaces;
 
-namespace Aquadata.Application.UseCases.User.Purchase.AddFeedPurchase;
+namespace Aquadata.Application.UseCases.Financial.AddFeedPurchase;
 
 public class AddFeedPurchaseInput: PurchaseDtoBase, IUseCaseRequest<FeedPurchaseDto>
 {

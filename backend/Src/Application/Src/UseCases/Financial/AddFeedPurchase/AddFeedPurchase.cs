@@ -3,9 +3,8 @@ using Aquadata.Application.Interfaces;
 using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Core.Util;
-using Aquadata.Core.Util.Result;
 
-namespace Aquadata.Application.UseCases.User.Purchase.AddFeedPurchase;
+namespace Aquadata.Application.UseCases.Financial.AddFeedPurchase;
 
 public class AddFeedPurchase : IUseCaseHandler<AddFeedPurchaseInput, FeedPurchaseDto>
 {

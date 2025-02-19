@@ -1,7 +1,7 @@
 using Aquadata.Application.Dtos;
 using Aquadata.EndToEndTests.Api.User.Common;
 
-namespace Aquadata.EndToEndTests.Api.User.AddProbioticPurchase;
+namespace Aquadata.EndToEndTests.Api.Financal.AddProbioticPurchase;
 
 [CollectionDefinition(nameof(AddProbioticPurchaseTestFixture))]
 public class AddProbioticPurchaseTestFixture: 
