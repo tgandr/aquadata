@@ -59,7 +59,8 @@
     max-width: 100%;
     padding: 0px 5% 0;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    grid-template-rows: auto auto; /* Define duas linhas de grupos */
+    grid-template-rows: auto auto;
+    /* Define duas linhas de grupos */
     margin-top: 10px;
     overflow: hidden;
     justify-self: center !important;
@@ -335,6 +336,11 @@ select {
     justify-content: space-around;
 }
 
+.bottom-buttons-distribution {
+    display: flex;
+    justify-content: space-around;
+}
+
 .result-box {
     min-height: 100px;
     margin-top: 20px;
@@ -494,6 +500,28 @@ select {
     z-index: 999;
 }
 
+.select-year {
+    width: 200px;
+    /* Define a largura do dropdown */
+    text-align: center;
+    /* Centraliza horizontalmente o texto */
+    text-align-last: center;
+    /* Centraliza o texto do item selecionado */
+    padding: 10px;
+    /* Adiciona espaço interno */
+    font-size: 16px;
+    /* Ajusta o tamanho do texto */
+    color: var(--color-white);
+    background-color: var(--color-blue-dark);
+
+}
+
+.select-year option {
+    text-align: center;
+    color: var(--color-white)
+    /* Centraliza o texto das opções */
+}
+
 .box-buttons {
     display: flex;
     flex-direction: row;
@@ -505,7 +533,7 @@ select {
     flex-direction: column;
     width: 100%;
     padding-top: 10px;
-    
+
 }
 
 .feed-table h4 {

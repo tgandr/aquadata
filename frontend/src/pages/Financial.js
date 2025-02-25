@@ -221,14 +221,14 @@ const Financial = () => {
               <span>Outras despesas</span>
             </div>
           </button>
-          <button className="financial-button revenue-button" onClick={() => setShowRevenuePopup(true)}>
+          {/* <button className="financial-button revenue-button" onClick={() => setShowRevenuePopup(true)}>
             <div className="icon-wrapper revenue-icon">
               <FontAwesomeIcon icon={faDollarSign} className="financial-icon" />
             </div>
             <div className="text-financial-wrapper revenue-text">
               <span>Receitas</span>
             </div>
-          </button>
+          </button> */}
         </div>
       </div>
       <IconContainer />
@@ -240,7 +240,7 @@ const Financial = () => {
       {showPopup && (
         <div className="popup">
           <div className="popup-inner">
-            <h3>Lançamento de {showPopup}</h3>
+            <h3>Lançamento de {showPopup === 'servicos' ? `serviços` : showPopup}</h3>
             <form
               className="harv-form"
               onSubmit={(e) => handleSubmit(e)}>
@@ -263,7 +263,7 @@ const Financial = () => {
                   onChange={handleChange}
                   required />
               </label>
-              {/* {showPopup && */}
+
               {showPopup !== 'energia' &&
                 <>
                   <label>Descrição:
@@ -321,6 +321,19 @@ const Financial = () => {
                             .reduce((acc, index) => acc + parseFloat(index), 0)
                             .toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                           : `0,00`}</p>
+
+                        <div className="bottom-buttons-distribution">
+                          <button
+                            type="button"
+                            className="cancel-button"
+                            onClick={handleClosePopup}
+                          >Voltar</button>
+                          <button
+                            type="submit"
+                            className="first-class-button"
+                          >Lançar</button>
+                        </ div>
+
                         {errorMessage && <p className="error-message">{errorMessage}</p>}
                       </>
                     )}
@@ -328,17 +341,19 @@ const Financial = () => {
                 </>
               }
               <br /><br /><br />
-              <div className="bottom-buttons">
-                <button
-                  type="button"
-                  className="cancel-button"
-                  onClick={handleClosePopup}
-                >Voltar</button>
-                <button
-                  type="submit"
-                  className="first-class-button"
-                >Lançar</button>
-              </div>
+              {form.distribution !== "n" &&
+                <div className="bottom-buttons">
+                  <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={handleClosePopup}
+                  >Voltar</button>
+                  <button
+                    type="submit"
+                    className="first-class-button"
+                  >Lançar</button>
+                </div>
+              }
             </form>
           </div>
         </div>
