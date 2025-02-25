@@ -41,10 +41,4 @@ public class PondRepository : IPondRepository
       p => p.Id == pondId && 
       p.UserId == userId
     );
-
-  // public async Task<bool> Exists(Guid userId, ICollection<Guid> pondIds)
-  //   => await _dbContext.Ponds
-  //     .Where(p => pondIds.Contains(p.Id))
-  //     .AllAsync(p => p.UserId == userId);
-
 }

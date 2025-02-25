@@ -46,4 +46,10 @@ public class UserRepository : IUserRepository
 
   public async Task Insert(FinancialEntity financial)
     => await _dbContext.Financials.AddAsync(financial);
+
+  public async Task<ICollection<InventoryEntity>> GetInventories(Guid userId)
+    => await _dbContext.Inventories.Where(i => i.UserId == userId).ToListAsync();
+
+  public async Task<ICollection<StockEntity>> GetStocks(Guid userId)
+    => await _dbContext.Stocks.Where(s => s.UserId == userId).ToListAsync();
 }

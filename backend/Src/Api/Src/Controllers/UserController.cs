@@ -5,6 +5,8 @@ using Aquadata.Api.Response;
 using Aquadata.Application.Dtos;
 using Aquadata.Application.UseCases.User.Common;
 using Aquadata.Application.UseCases.User.DeleteUser;
+using Aquadata.Application.UseCases.User.GetInventories;
+using Aquadata.Application.UseCases.User.GetStocks;
 using Aquadata.Application.UseCases.User.GetUser;
 using Aquadata.Application.UseCases.User.UpdateUser;
 using Aquadata.Core.Security;
@@ -135,5 +137,35 @@ public class UserController: ControllerBase
       return Results.Extensions.MapResult(result);
 
     return Results.Created();
+  }
+
+  [HttpGet("inventories")]
+  [Authorize]
+  public async Task<IResult> GetInventories(
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(new GetInventoriesInput(), cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Ok(
+      new ApiResponse<ICollection<InventoryDto>>(result.Unwrap())
+    );
+  }
+  
+  [HttpGet("stocks")]
+  [Authorize]
+  public async Task<IResult> GetStocks(
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(new GetStocksInput(), cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Ok(
+      new ApiResponse<ICollection<StockDto>>(result.Unwrap())
+    );
   }
 }

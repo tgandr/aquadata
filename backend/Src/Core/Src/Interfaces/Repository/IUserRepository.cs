@@ -14,4 +14,6 @@ public interface IUserRepository: IGenericRepository<UserEntity>
   Task Insert(FinancialEntity financial);
   Task AddStock(StockEntity stock);
   Task AddInventory(InventoryEntity inventory); 
+  Task<ICollection<InventoryEntity>> GetInventories(Guid userId);
+  Task<ICollection<StockEntity>> GetStocks(Guid userId);
 }
