@@ -22,7 +22,6 @@ public class PondRepository : IPondRepository
 
   public async Task<PondEntity?> Get(Guid id, CancellationToken cancellationToken)
     => await _dbContext.Ponds.AsNoTracking()
-    .Include(p => p.Cultivations)
     .FirstOrDefaultAsync(
       x => x.Id == id && x.IsActive, cancellationToken
     );
@@ -41,4 +40,9 @@ public class PondRepository : IPondRepository
       p => p.Id == pondId && 
       p.UserId == userId
     );
+
+  public async Task<ICollection<PondEntity>> GetPondsByUser(Guid userId, CancellationToken cancellationToken)
+    => await _dbContext.Ponds.AsNoTracking()
+      .Where(p => p.UserId == userId && p.IsActive)
+      .ToListAsync(cancellationToken);
 }

@@ -19,7 +19,6 @@ public class GetPondTest: IDisposable
   public async Task GetPond()
   {
     var credentials = await _fixture.ApiClient.SignUp();
-
     var pondExample = _fixture.GetPondExample(credentials.User.Id);
 
     await _fixture.Persistence.Insert(pondExample);
@@ -37,6 +36,28 @@ public class GetPondTest: IDisposable
     Assert.NotNull(pondDb);
     Assert.NotNull(output);
     Assert.Equivalent(output.Data, pondDb);
+  }
+
+  [Fact]
+  public async Task GetPondList()
+  {
+    var credentials = await _fixture.ApiClient.SignUp();
+
+    for (int i = 0; i < 5; i++)
+    {
+      await _fixture.Persistence.Insert(_fixture
+        .GetPondExample(credentials.User.Id));
+    }
+
+    var (response, output) = await _fixture.ApiClient
+    .Get<ApiResponse<ICollection<PondOutput>>>(
+      $"/ponds"
+    );
+
+    Assert.NotNull(response);
+    Assert.NotNull(output);
+    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    Assert.Equal(5, output.Data.Count);
   }
 
   [Fact]

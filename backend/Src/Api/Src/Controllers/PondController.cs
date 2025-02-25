@@ -4,6 +4,7 @@ using Aquadata.Application.UseCases.Pond.Common;
 using Aquadata.Application.UseCases.Pond.CreatePond;
 using Aquadata.Application.UseCases.Pond.DeactivatePond;
 using Aquadata.Application.UseCases.Pond.GetPond;
+using Aquadata.Application.UseCases.Pond.GetPondsByUser;
 using Aquadata.Application.UseCases.Pond.UpdatePond;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -37,7 +38,7 @@ public class PondController: ControllerBase
   }
 
   [HttpGet("{id}")]
-  public async Task<IResult> Get(
+  public async Task<IResult> GetById(
     [FromRoute] Guid id,
     CancellationToken cancellationToken)
   {
@@ -46,10 +47,21 @@ public class PondController: ControllerBase
     if (result.IsFail)
       return Results.Extensions.MapResult(result);
     
-    var pond = result.Unwrap();
-
     return Results.Ok(new ApiResponse<PondOutput>(
-      pond
+      result.Unwrap()
+    ));
+  }
+
+  [HttpGet]
+  public async Task<IResult> GetPondList(CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(new GetPondsByUserInput(), cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Ok(new ApiResponse<ICollection<PondOutput>>(
+      result.Unwrap()
     ));
   }
 

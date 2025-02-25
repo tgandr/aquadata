@@ -16,5 +16,7 @@ public class PondConfig : IEntityTypeConfiguration<PondEntity>
 
     builder.HasMany<CostPerPondEntity>()
       .WithOne().HasForeignKey(e => e.PondId);
+
+    builder.Navigation(p => p.Cultivations).AutoInclude();
   }
 }
