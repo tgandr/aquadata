@@ -7,7 +7,7 @@ namespace Aquadata.Core.Entities.Employee;
 public class EmployeeEntity : Entity
 {
   public string Name {get; private set;}
-  public virtual Guid UserId {get;set;}
+  public virtual Guid FinancialId {get;set;}
 
   private EmployeeEntity(string name) :base()
   {

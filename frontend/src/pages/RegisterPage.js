@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/RegisterPage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { signUp, RegisterUserApi } from '../services/user.service';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -69,29 +70,22 @@ const RegisterPage = () => {
         };
 
         try {
-            // Requisição POST para salvar o usuário no banco de dados
-            const response = await fetch('http://localhost:5000/api/users/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(user)
-            });
+            await signUp(new RegisterUserApi(
+                user.nomeCompleto,
+                user.email,
+                user.senha,
+                user.nomeFazenda,
+                user.enderecoFazenda,
+                user.perfil,
+                user.telefone
+            ))
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.msg || 'Erro ao registrar o usuário');
-            }
-
-            // Definir sucesso e limpar erros
+            localStorage.setItem('formData', JSON.stringify(user))
             setSuccess('Registro realizado com sucesso!');
             setError('');
-
-            // Navegar para o dashboard
             navigate('/dashboard');
         } catch (error) {
-            // Definir mensagem de erro caso a requisição falhe
-            setError(error.message);
+            setError("Este email já foi cadastrado");
         }
     };
 

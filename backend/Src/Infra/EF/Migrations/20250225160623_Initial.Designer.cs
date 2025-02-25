@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aquadata.Infra.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250218211335_Initial")]
+    [Migration("20250225160623_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -113,6 +113,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<Guid>("FinancialId")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -120,12 +123,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FinancialId");
 
                     b.ToTable("Employees", (string)null);
                 });
@@ -145,11 +145,11 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("char(36)");
 
+                    b.Property<Guid>("FinancialId")
+                        .HasColumnType("char(36)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
 
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(65,30)");
@@ -159,7 +159,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.HasIndex("EmployeeId")
                         .IsUnique();
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FinancialId");
 
                     b.ToTable("EmployeePayments", (string)null);
                 });
@@ -210,15 +210,15 @@ namespace Aquadata.Infra.EF.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<Guid>("FinancialId")
+                        .HasColumnType("char(36)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FinancialId");
 
                     b.ToTable("Expenses", (string)null);
                 });
@@ -302,6 +302,29 @@ namespace Aquadata.Infra.EF.Migrations
                     b.HasIndex("CultivationId");
 
                     b.ToTable("Fertilizers", (string)null);
+                });
+
+            modelBuilder.Entity("Aquadata.Core.Entities.Financial.FinancialEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Financials", (string)null);
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Harvest.HarvestEntity", b =>
@@ -467,6 +490,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<Guid>("FinancialId")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Label")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -481,9 +507,6 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
                     b.Property<DateOnly>("Validity")
                         .HasColumnType("date");
 
@@ -492,7 +515,7 @@ namespace Aquadata.Infra.EF.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FinancialId");
 
                     b.ToTable("FeedPurchases", (string)null);
                 });
@@ -509,6 +532,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<Guid>("FinancialId")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Label")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -523,15 +549,12 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FinancialId");
 
                     b.ToTable("FertilizerPurchases", (string)null);
                 });
@@ -552,6 +575,9 @@ namespace Aquadata.Infra.EF.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<Guid>("FinancialId")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Label")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -562,15 +588,12 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FinancialId");
 
                     b.ToTable("GenericPurchases", (string)null);
                 });
@@ -590,6 +613,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<Guid>("FinancialId")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Label")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -600,9 +626,6 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(65,30)");
 
@@ -611,7 +634,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.HasIndex("CultivationId")
                         .IsUnique();
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FinancialId");
 
                     b.ToTable("PostLarvaePurchases", (string)null);
                 });
@@ -628,6 +651,9 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<Guid>("FinancialId")
+                        .HasColumnType("char(36)");
+
                     b.Property<string>("Label")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -642,15 +668,12 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)");
-
                     b.Property<decimal>("Value")
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("FinancialId");
 
                     b.ToTable("ProbioticsPurchases", (string)null);
                 });
@@ -887,9 +910,9 @@ namespace Aquadata.Infra.EF.Migrations
 
             modelBuilder.Entity("Aquadata.Core.Entities.Employee.EmployeeEntity", b =>
                 {
-                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
+                    b.HasOne("Aquadata.Core.Entities.Financial.FinancialEntity", null)
                         .WithMany("Employees")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FinancialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -902,9 +925,9 @@ namespace Aquadata.Infra.EF.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
+                    b.HasOne("Aquadata.Core.Entities.Financial.FinancialEntity", null)
                         .WithMany("Payroll")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FinancialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -926,9 +949,9 @@ namespace Aquadata.Infra.EF.Migrations
 
             modelBuilder.Entity("Aquadata.Core.Entities.Expense.ExpenseEntity", b =>
                 {
-                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
+                    b.HasOne("Aquadata.Core.Entities.Financial.FinancialEntity", null)
                         .WithMany("Expenses")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FinancialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -951,6 +974,15 @@ namespace Aquadata.Infra.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Aquadata.Core.Entities.Financial.FinancialEntity", b =>
+                {
+                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
+                        .WithOne()
+                        .HasForeignKey("Aquadata.Core.Entities.Financial.FinancialEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Aquadata.Core.Entities.Harvest.HarvestEntity", b =>
                 {
                     b.HasOne("Aquadata.Core.Entities.Cultivation.CultivationEntity", null)
@@ -963,7 +995,7 @@ namespace Aquadata.Infra.EF.Migrations
             modelBuilder.Entity("Aquadata.Core.Entities.Inventory.InventoryEntity", b =>
                 {
                     b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
-                        .WithMany("Inventories")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -981,7 +1013,7 @@ namespace Aquadata.Infra.EF.Migrations
             modelBuilder.Entity("Aquadata.Core.Entities.Pond.PondEntity", b =>
                 {
                     b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
-                        .WithMany("Ponds")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -989,27 +1021,27 @@ namespace Aquadata.Infra.EF.Migrations
 
             modelBuilder.Entity("Aquadata.Core.Entities.Purchase.FeedPurchaseEntity", b =>
                 {
-                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
+                    b.HasOne("Aquadata.Core.Entities.Financial.FinancialEntity", null)
                         .WithMany("FeedPurchases")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FinancialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Purchase.FertilizerPurchaseEntity", b =>
                 {
-                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
+                    b.HasOne("Aquadata.Core.Entities.Financial.FinancialEntity", null)
                         .WithMany("FertilizerPurchases")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FinancialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Purchase.GenericPurchaseEntity", b =>
                 {
-                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
+                    b.HasOne("Aquadata.Core.Entities.Financial.FinancialEntity", null)
                         .WithMany("GenericPurchases")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FinancialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1022,18 +1054,18 @@ namespace Aquadata.Infra.EF.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
+                    b.HasOne("Aquadata.Core.Entities.Financial.FinancialEntity", null)
                         .WithMany("PLPurchases")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FinancialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Purchase.ProbioticsPurchaseEntity", b =>
                 {
-                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
+                    b.HasOne("Aquadata.Core.Entities.Financial.FinancialEntity", null)
                         .WithMany("ProbioticPurchases")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("FinancialId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1041,7 +1073,7 @@ namespace Aquadata.Infra.EF.Migrations
             modelBuilder.Entity("Aquadata.Core.Entities.Stock.StockEntity", b =>
                 {
                     b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
-                        .WithMany("Stocks")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1098,17 +1130,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Navigation("CostsPerPond");
                 });
 
-            modelBuilder.Entity("Aquadata.Core.Entities.Harvest.HarvestEntity", b =>
-                {
-                    b.Navigation("Biometrics");
-                });
-
-            modelBuilder.Entity("Aquadata.Core.Entities.Pond.PondEntity", b =>
-                {
-                    b.Navigation("Cultivations");
-                });
-
-            modelBuilder.Entity("Aquadata.Core.Entities.User.UserEntity", b =>
+            modelBuilder.Entity("Aquadata.Core.Entities.Financial.FinancialEntity", b =>
                 {
                     b.Navigation("Employees");
 
@@ -1120,17 +1142,21 @@ namespace Aquadata.Infra.EF.Migrations
 
                     b.Navigation("GenericPurchases");
 
-                    b.Navigation("Inventories");
-
                     b.Navigation("PLPurchases");
 
                     b.Navigation("Payroll");
 
-                    b.Navigation("Ponds");
-
                     b.Navigation("ProbioticPurchases");
+                });
 
-                    b.Navigation("Stocks");
+            modelBuilder.Entity("Aquadata.Core.Entities.Harvest.HarvestEntity", b =>
+                {
+                    b.Navigation("Biometrics");
+                });
+
+            modelBuilder.Entity("Aquadata.Core.Entities.Pond.PondEntity", b =>
+                {
+                    b.Navigation("Cultivations");
                 });
 #pragma warning restore 612, 618
         }

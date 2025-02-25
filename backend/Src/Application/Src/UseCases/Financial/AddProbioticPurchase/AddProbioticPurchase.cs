@@ -10,15 +10,15 @@ namespace Aquadata.Application.Dtos;
 public class AddProbioticPurchase : IUseCaseHandler<ProbioticPurchaseDto, Unit>
 {
   private readonly IUnitOfWork _unitOfWork;
-  private readonly IUserRepository _repository;
+  private readonly IFinancialRepository _financialRepository;
   private readonly IAuthenticatedUserService _authenticatedUserService;
 
   public AddProbioticPurchase(IUnitOfWork unitOfWork, 
-  IUserRepository cultivationRepository,
+  IFinancialRepository financialRepository,
   IAuthenticatedUserService authenticatedUserService)
   {
       _unitOfWork = unitOfWork;
-      _repository = cultivationRepository;
+      _financialRepository = financialRepository;
       _authenticatedUserService = authenticatedUserService;
   }
   
@@ -36,11 +36,19 @@ public class AddProbioticPurchase : IUseCaseHandler<ProbioticPurchaseDto, Unit>
       return Result<Unit>.Fail(purchaseResult.Error);
 
     var userId = _authenticatedUserService.GetUserId();
-    
-    var purchase = purchaseResult.Unwrap();
-    purchase.UserId = userId;
+    var financialId = await _financialRepository.GetIdByUser(userId);
 
-    await _repository.AddProbioticPurchase(purchase);
+    if (financialId == default)
+        return Result<Unit>.Fail(
+          Error.NotFound(
+            "UseCases.Financial.AddProbioticPurchase",
+            "Financial not Found"
+          )
+      );
+    var purchase = purchaseResult.Unwrap();
+    purchase.FinancialId = financialId;
+
+    await _financialRepository.Add(purchase);
     await _unitOfWork.Commit(cancellationToken);
 
     return Result<Unit>.Ok(Unit.Value);

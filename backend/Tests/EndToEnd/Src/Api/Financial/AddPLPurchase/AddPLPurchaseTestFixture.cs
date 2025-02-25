@@ -1,16 +1,17 @@
 using Aquadata.Application.UseCases.Financial.AddPLPurchase;
 using Aquadata.Core.Entities.Cultivation;
 using Aquadata.Core.Entities.Pond;
+using Aquadata.EndToEndTests.Api.Financial.Common;
 using Aquadata.EndToEndTests.Api.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.Financal.AddPLPurchase;
 
 [CollectionDefinition(nameof(AddPLPurchaseTestFixture))]
 public class AddPLPurchaseTestFixture
-:UserTestFixture, ICollectionFixture<AddPLPurchaseTestFixture>
+:FinancialFixture, ICollectionFixture<AddPLPurchaseTestFixture>
 {
-  public AddPLPurchaseInput GetInput(Guid userId, Guid cultivationId)
-    => new("12/12/2020", "label", 12, 12m, userId, cultivationId);
+  public AddPLPurchaseInput GetInput(Guid cultivationId)
+    => new("12/12/2020", "label", 12, 12m, cultivationId);
 
   public PondEntity GetPondExample(Guid userId)
   {

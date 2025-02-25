@@ -43,133 +43,19 @@ namespace Aquadata.Infra.EF.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Employees",
+                name: "Financials",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
+                    table.PrimaryKey("PK_Financials", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Employees_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Expenses",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Expenses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Expenses_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "FeedPurchases",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Brand = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Validity = table.Column<DateOnly>(type: "date", nullable: false),
-                    BagSize = table.Column<int>(type: "int", nullable: false),
-                    RationType = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    Label = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FeedPurchases", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_FeedPurchases_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "FertilizerPurchases",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Unit = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    Label = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FertilizerPurchases", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_FertilizerPurchases_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "GenericPurchases",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    Label = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GenericPurchases", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GenericPurchases_Users_UserId",
+                        name: "FK_Financials_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -232,34 +118,6 @@ namespace Aquadata.Infra.EF.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ProbioticsPurchases",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Unit = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    Label = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ProbioticsPurchases", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ProbioticsPurchases_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Stocks",
                 columns: table => new
                 {
@@ -286,59 +144,163 @@ namespace Aquadata.Infra.EF.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "EmployeePayments",
+                name: "Employees",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    EmployeeId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Name = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FinancialId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeePayments", x => x.Id);
+                    table.PrimaryKey("PK_Employees", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EmployeePayments_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_EmployeePayments_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_Employees_Financials_FinancialId",
+                        column: x => x.FinancialId,
+                        principalTable: "Financials",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "CostPerPond",
+                name: "Expenses",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    PondId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ExpenseId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Description = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    FinancialId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CostPerPond", x => x.Id);
+                    table.PrimaryKey("PK_Expenses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CostPerPond_Expenses_ExpenseId",
-                        column: x => x.ExpenseId,
-                        principalTable: "Expenses",
+                        name: "FK_Expenses_Financials_FinancialId",
+                        column: x => x.FinancialId,
+                        principalTable: "Financials",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "FeedPurchases",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Brand = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Validity = table.Column<DateOnly>(type: "date", nullable: false),
+                    BagSize = table.Column<int>(type: "int", nullable: false),
+                    RationType = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Label = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    FinancialId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FeedPurchases", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CostPerPond_Ponds_PondId",
-                        column: x => x.PondId,
-                        principalTable: "Ponds",
+                        name: "FK_FeedPurchases_Financials_FinancialId",
+                        column: x => x.FinancialId,
+                        principalTable: "Financials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "FertilizerPurchases",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Unit = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Label = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    FinancialId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FertilizerPurchases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FertilizerPurchases_Financials_FinancialId",
+                        column: x => x.FinancialId,
+                        principalTable: "Financials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "GenericPurchases",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Description = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Label = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    FinancialId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GenericPurchases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GenericPurchases_Financials_FinancialId",
+                        column: x => x.FinancialId,
+                        principalTable: "Financials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ProbioticsPurchases",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Unit = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Label = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    FinancialId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProbioticsPurchases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProbioticsPurchases_Financials_FinancialId",
+                        column: x => x.FinancialId,
+                        principalTable: "Financials",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -366,6 +328,65 @@ namespace Aquadata.Infra.EF.Migrations
                     table.PrimaryKey("PK_Cultivations", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Cultivations_Ponds_PondId",
+                        column: x => x.PondId,
+                        principalTable: "Ponds",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "EmployeePayments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    FinancialId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeePayments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeePayments_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EmployeePayments_Financials_FinancialId",
+                        column: x => x.FinancialId,
+                        principalTable: "Financials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "CostPerPond",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    PondId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    ExpenseId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CostPerPond", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CostPerPond_Expenses_ExpenseId",
+                        column: x => x.ExpenseId,
+                        principalTable: "Expenses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CostPerPond_Ponds_PondId",
                         column: x => x.PondId,
                         principalTable: "Ponds",
                         principalColumn: "Id",
@@ -494,7 +515,7 @@ namespace Aquadata.Infra.EF.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                    FinancialId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
@@ -506,9 +527,9 @@ namespace Aquadata.Infra.EF.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PostLarvaePurchases_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
+                        name: "FK_PostLarvaePurchases_Financials_FinancialId",
+                        column: x => x.FinancialId,
+                        principalTable: "Financials",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -658,24 +679,24 @@ namespace Aquadata.Infra.EF.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_EmployeePayments_UserId",
+                name: "IX_EmployeePayments_FinancialId",
                 table: "EmployeePayments",
-                column: "UserId");
+                column: "FinancialId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Employees_UserId",
+                name: "IX_Employees_FinancialId",
                 table: "Employees",
-                column: "UserId");
+                column: "FinancialId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Expenses_UserId",
+                name: "IX_Expenses_FinancialId",
                 table: "Expenses",
-                column: "UserId");
+                column: "FinancialId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FeedPurchases_UserId",
+                name: "IX_FeedPurchases_FinancialId",
                 table: "FeedPurchases",
-                column: "UserId");
+                column: "FinancialId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Feeds_CultivationId",
@@ -683,9 +704,9 @@ namespace Aquadata.Infra.EF.Migrations
                 column: "CultivationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FertilizerPurchases_UserId",
+                name: "IX_FertilizerPurchases_FinancialId",
                 table: "FertilizerPurchases",
-                column: "UserId");
+                column: "FinancialId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Fertilizers_CultivationId",
@@ -693,9 +714,15 @@ namespace Aquadata.Infra.EF.Migrations
                 column: "CultivationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GenericPurchases_UserId",
+                name: "IX_Financials_UserId",
+                table: "Financials",
+                column: "UserId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GenericPurchases_FinancialId",
                 table: "GenericPurchases",
-                column: "UserId");
+                column: "FinancialId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Harvests_CultivationId",
@@ -725,14 +752,14 @@ namespace Aquadata.Infra.EF.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostLarvaePurchases_UserId",
+                name: "IX_PostLarvaePurchases_FinancialId",
                 table: "PostLarvaePurchases",
-                column: "UserId");
+                column: "FinancialId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProbioticsPurchases_UserId",
+                name: "IX_ProbioticsPurchases_FinancialId",
                 table: "ProbioticsPurchases",
-                column: "UserId");
+                column: "FinancialId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Stocks_UserId",
@@ -818,6 +845,9 @@ namespace Aquadata.Infra.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "Cultivations");
+
+            migrationBuilder.DropTable(
+                name: "Financials");
 
             migrationBuilder.DropTable(
                 name: "Ponds");

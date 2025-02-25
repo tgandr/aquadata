@@ -1,7 +1,7 @@
 using Aquadata.Application.Interfaces;
 using MediatR;
 
-namespace Aquadata.Application.UseCases.User.AddEmployeePayment;
+namespace Aquadata.Application.UseCases.Financial.AddEmployeePayment;
 
 public class AddEmployeePaymentInput: IUseCaseRequest<Unit>
 {

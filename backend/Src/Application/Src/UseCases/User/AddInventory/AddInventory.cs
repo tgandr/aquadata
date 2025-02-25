@@ -14,11 +14,11 @@ public class AddInventory: IUseCaseHandler<InventoryDto, Unit>
   private readonly IAuthenticatedUserService _authenticatedUserService;
 
   public AddInventory(IUnitOfWork unitOfWork, 
-  IUserRepository cultivationRepository,
+  IUserRepository userRepository,
   IAuthenticatedUserService authenticatedUserService)
   {
     _unitOfWork = unitOfWork;
-    _repository = cultivationRepository;
+    _repository = userRepository;
     _authenticatedUserService = authenticatedUserService;
   }
 

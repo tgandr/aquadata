@@ -1,18 +1,18 @@
-using Aquadata.Application.UseCases.User.AddEmployeePayment;
+using Aquadata.Application.UseCases.Financial.AddEmployeePayment;
 using Aquadata.Core.Entities.Employee;
+using Aquadata.EndToEndTests.Api.Financial.Common;
 using Aquadata.EndToEndTests.Api.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.Financal.AddEmployeePayment;
 
 [CollectionDefinition(nameof(AddEmployeePaymentTestFixture))]
 public class AddEmployeePaymentTestFixture
-:UserTestFixture, ICollectionFixture<AddEmployeePaymentTestFixture>
+:FinancialFixture, ICollectionFixture<AddEmployeePaymentTestFixture>
 {
-  public EmployeeEntity GetEmployeeExample(Guid userId)
+  public EmployeeEntity GetEmployeeExample(Guid financialId)
   {
     var entity = EmployeeEntity.Of("name").Unwrap();
-    entity.UserId = userId;
-
+    entity.FinancialId = financialId;
     return entity;
   }
   

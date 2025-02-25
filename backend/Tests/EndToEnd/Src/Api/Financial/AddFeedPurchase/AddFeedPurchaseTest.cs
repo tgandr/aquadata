@@ -1,5 +1,6 @@
 using System.Net;
 using Aquadata.Api.Response;
+using Aquadata.Application.UseCases.Financial.Common;
 using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.Financal.AddFeedPurchase;
@@ -27,11 +28,11 @@ public class AddPurchaseTest
     );
 
     Assert.NotNull(response);
-    Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
     var (_,output) = await _fixture.ApiClient
-    .Get<ApiResponse<UserOutput>>(
-      $"users/{credentials.User.Id}"
+    .Get<ApiResponse<FinancialOutput>>(
+      $"financial"
     );
 
     Assert.NotNull(output);

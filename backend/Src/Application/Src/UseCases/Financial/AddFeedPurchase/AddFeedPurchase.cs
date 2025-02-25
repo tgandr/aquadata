@@ -3,25 +3,27 @@ using Aquadata.Application.Interfaces;
 using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Core.Util;
+using Aquadata.Core.Util.Result;
+using MediatR;
 
 namespace Aquadata.Application.UseCases.Financial.AddFeedPurchase;
 
-public class AddFeedPurchase : IUseCaseHandler<AddFeedPurchaseInput, FeedPurchaseDto>
+public class AddFeedPurchase : IUseCaseHandler<AddFeedPurchaseInput, Unit>
 {
   private readonly IUnitOfWork _unitOfWork;
-  private readonly IUserRepository _repository;
+  private readonly IFinancialRepository _financialRepository;
   private readonly IAuthenticatedUserService _authenticatedUserService;
 
   public AddFeedPurchase(IUnitOfWork unitOfWork, 
-  IUserRepository cultivationRepository,
+  IFinancialRepository financialRepository,
   IAuthenticatedUserService authenticatedUserService)
   {
       _unitOfWork = unitOfWork;
-      _repository = cultivationRepository;
+      _financialRepository = financialRepository;
       _authenticatedUserService = authenticatedUserService;
   }
 
-  public async Task<Result<FeedPurchaseDto>> Handle(AddFeedPurchaseInput request, 
+  public async Task<Result<Unit>> Handle(AddFeedPurchaseInput request, 
   CancellationToken cancellationToken)
   {
     var purchaseResult = FeedPurchaseEntity.Of(
@@ -36,18 +38,27 @@ public class AddFeedPurchase : IUseCaseHandler<AddFeedPurchaseInput, FeedPurchas
     );
 
     if (purchaseResult.IsFail)
-      return Result<FeedPurchaseDto>.Fail(purchaseResult.Error);
+      return Result<Unit>.Fail(purchaseResult.Error);
 
     var userId = _authenticatedUserService.GetUserId();
-    
-    var purchase = purchaseResult.Unwrap();
-    purchase.UserId = userId;
+    var financialId = await _financialRepository.GetIdByUser(userId);
 
-    await _repository.AddFeedPurchase(purchase);
+    if (financialId == default)
+        return Result<Unit>.Fail(
+          Error.NotFound(
+            "UseCases.Financial.AddFeedPurchase",
+            "Financial not Found"
+          )
+      );
+
+    var purchase = purchaseResult.Unwrap();
+    purchase.FinancialId = financialId;
+
+    await _financialRepository.Add(purchase);
     await _unitOfWork.Commit(cancellationToken);
 
-    return Result<FeedPurchaseDto>.Ok(
-      FeedPurchaseDto.FromEntity(purchase)
+    return Result<Unit>.Ok(
+      Unit.Value
     );
   }
 }

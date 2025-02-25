@@ -11,17 +11,17 @@ namespace Aquadata.Application.UseCases.Financial.AddExpense;
 public class AddExpense: IUseCaseHandler<ExpenseDto, Unit>
 {
   private readonly IUnitOfWork _unitOfWork;
-  private readonly IUserRepository _repository;
+  private readonly IFinancialRepository _financialRepository;
   private readonly IPondRepository _pondRepository;
   private readonly IAuthenticatedUserService _authenticatedUserService;
 
   public AddExpense(IUnitOfWork unitOfWork, 
-  IUserRepository cultivationRepository,
+  IFinancialRepository financialRepository,
   IPondRepository pondRepository,
   IAuthenticatedUserService authenticatedUserService)
   {
     _unitOfWork = unitOfWork;
-    _repository = cultivationRepository;
+    _financialRepository = financialRepository;
     _authenticatedUserService = authenticatedUserService;
     _pondRepository = pondRepository;
   }
@@ -37,8 +37,16 @@ public class AddExpense: IUseCaseHandler<ExpenseDto, Unit>
       return Result<Unit>.Fail(expenseResult.Error);
 
     var userId = _authenticatedUserService.GetUserId();
-    var expense = expenseResult.Unwrap();
-  
+    var financialId = await _financialRepository.GetIdByUser(userId);
+
+    if (financialId == default) 
+      return Result<Unit>.Fail(
+        Error.NotFound(
+          "UseCases.Financial.AddExpense",
+          "Financial not Found"
+        )
+      );
+
     var pondIds = request.CostsPerPonds.Select(c => c.PondId)
       .ToHashSet();
 
@@ -54,13 +62,15 @@ public class AddExpense: IUseCaseHandler<ExpenseDto, Unit>
           )
       );
     }
+
+    var expense = expenseResult.Unwrap();
   
-    expense.UserId = userId;
+    expense.FinancialId = financialId;
     expense.CostsPerPond = request.CostsPerPonds.Select(c =>
       c.ToEntity(expense.Id)
     ).ToList();
 
-    await _repository.AddExpense(expense);
+    await _financialRepository.Add(expense);
     await _unitOfWork.Commit(cancellationToken);
 
     return Result<Unit>.Ok(Unit.Value);

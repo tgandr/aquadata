@@ -1,5 +1,6 @@
 using System.Net;
 using Aquadata.Api.Response;
+using Aquadata.Application.Dtos;
 using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.User.AddStock;
@@ -30,12 +31,11 @@ public class AddStockTest
     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
     var (_,output) = await _fixture.ApiClient
-    .Get<ApiResponse<UserOutput>>(
-      $"users/{credentials.User.Id}"
+    .Get<ApiResponse<ICollection<StockDto>>>(
+      $"users/stocks"
     );
 
     Assert.NotNull(output);
-    Assert.NotNull(output.Data.Stocks);
-    Assert.NotEmpty(output.Data.Stocks);
+    Assert.NotEmpty(output.Data);
   }
 }

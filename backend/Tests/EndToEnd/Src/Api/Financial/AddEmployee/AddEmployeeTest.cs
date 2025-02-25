@@ -1,5 +1,6 @@
 using System.Net;
 using Aquadata.Api.Response;
+using Aquadata.Application.UseCases.Financial.Common;
 using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.Financal.AddEmployee;
@@ -20,7 +21,7 @@ public class AddEmployeeTest
 
     var (response, _) = await _fixture.ApiClient
     .Post<object>(
-      "/users/add-employee",
+      "/financial/add-employee",
       input
     );
 
@@ -28,8 +29,8 @@ public class AddEmployeeTest
     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
     var (_,output) = await _fixture.ApiClient
-    .Get<ApiResponse<UserOutput>>(
-      $"users/{credentials.User.Id}"
+    .Get<ApiResponse<FinancialOutput>>(
+      $"financial"
     );
 
     Assert.NotNull(output);

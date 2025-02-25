@@ -9,15 +9,15 @@ namespace Aquadata.Application.Dtos;
 public class AddFertilizerPurchase : IUseCaseHandler<FertilizerPurchaseDto, Unit>
 {
   private readonly IUnitOfWork _unitOfWork;
-  private readonly IUserRepository _repository;
+  private readonly IFinancialRepository _financialRepository;
   private readonly IAuthenticatedUserService _authenticatedUserService;
 
   public AddFertilizerPurchase(IUnitOfWork unitOfWork, 
-  IUserRepository cultivationRepository,
+  IFinancialRepository financialRepository,
   IAuthenticatedUserService authenticatedUserService)
   {
       _unitOfWork = unitOfWork;
-      _repository = cultivationRepository;
+      _financialRepository = financialRepository;
       _authenticatedUserService = authenticatedUserService;
   }
 
@@ -36,11 +36,20 @@ public class AddFertilizerPurchase : IUseCaseHandler<FertilizerPurchaseDto, Unit
       return Result<Unit>.Fail(purchaseResult.Error);
 
     var userId = _authenticatedUserService.GetUserId();
+    var financialId = await _financialRepository.GetIdByUser(userId);
+
+    if (financialId == default)
+        return Result<Unit>.Fail(
+          Error.NotFound(
+            "UseCases.Financial.AddFertilizerPurchase",
+            "Financial not Found"
+          )
+      );
 
     var purchase = purchaseResult.Unwrap();
-    purchase.UserId = userId;
+    purchase.FinancialId = financialId;
 
-    await _repository.AddFertilizerPurchase(purchase);
+    await _financialRepository.Add(purchase);
     await _unitOfWork.Commit(cancellationToken);
 
     return Result<Unit>.Ok(Unit.Value);

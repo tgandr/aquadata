@@ -5,6 +5,7 @@ using Aquadata.Core.Entities.EmployeePayment;
 using Aquadata.Core.Entities.Expense;
 using Aquadata.Core.Entities.Feed;
 using Aquadata.Core.Entities.Fertilizer;
+using Aquadata.Core.Entities.Financial;
 using Aquadata.Core.Entities.Harvest;
 using Aquadata.Core.Entities.Inventory;
 using Aquadata.Core.Entities.Objective;
@@ -21,6 +22,7 @@ public class ApplicationDbContext: DbContext
 {
   public DbSet<UserEntity> Users {get;set;}
   public DbSet<PondEntity> Ponds {get;set;}
+  public DbSet<FinancialEntity> Financials {get;set;}
   public DbSet<CultivationEntity> Cultivations {get;set;}
   public DbSet<ObjectiveEntity> Objectives {get;set;}
   public DbSet<BiometricEntity> Biometrics {get;set;}

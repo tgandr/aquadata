@@ -5,20 +5,20 @@ using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
 using MediatR;
 
-namespace Aquadata.Application.UseCases.User.AddEmployeePayment;
+namespace Aquadata.Application.UseCases.Financial.AddEmployeePayment;
 
 public class AddEmployeePayment: IUseCaseHandler<AddEmployeePaymentInput, Unit>
 {
   private readonly IUnitOfWork _unitOfWork;
-  private readonly IUserRepository _repository;
+  private readonly IFinancialRepository _financialRepository;
   private readonly IAuthenticatedUserService _authenticatedUserService;
 
   public AddEmployeePayment(IUnitOfWork unitOfWork, 
-  IUserRepository cultivationRepository,
+  IFinancialRepository financialRepository,
   IAuthenticatedUserService authenticatedUserService)
   {
     _unitOfWork = unitOfWork;
-    _repository = cultivationRepository;
+    _financialRepository = financialRepository;
     _authenticatedUserService = authenticatedUserService;
   }
 
@@ -33,7 +33,8 @@ public class AddEmployeePayment: IUseCaseHandler<AddEmployeePaymentInput, Unit>
       return Result<Unit>.Fail(paymentResult.Error);
 
     var userId = _authenticatedUserService.GetUserId();
-    var employeeExists = await _repository.EmployeeExists(request.EmployeeId, userId);
+    var employeeExists = await _financialRepository.EmployeeExists(request.EmployeeId, userId);
+    var financialId = await _financialRepository.GetIdByUser(userId);
 
     if (!employeeExists)
       return Result<Unit>.Fail(
@@ -42,12 +43,20 @@ public class AddEmployeePayment: IUseCaseHandler<AddEmployeePaymentInput, Unit>
           "Employee not found"
         )
       );
+      
+    if (financialId == default)
+      return Result<Unit>.Fail(
+        Error.NotFound(
+          "UseCases.User.AddEmployeePayment",
+          "Financial not found"
+        )
+      );
 
     var payment = paymentResult.Unwrap();
     payment.EmployeeId = request.EmployeeId;
-    payment.UserId = userId;
+    payment.FinancialId = financialId;
 
-    await _repository.AddEmployeePayment(payment);
+    await _financialRepository.Add(payment);
     await _unitOfWork.Commit(cancellationToken);
 
     return Result<Unit>.Ok(Unit.Value);

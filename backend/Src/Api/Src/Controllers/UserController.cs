@@ -3,7 +3,6 @@ using Aquadata.Api.Extensions;
 using Aquadata.Api.Models;
 using Aquadata.Api.Response;
 using Aquadata.Application.Dtos;
-using Aquadata.Application.UseCases.User.AddEmployeePayment;
 using Aquadata.Application.UseCases.User.Common;
 using Aquadata.Application.UseCases.User.DeleteUser;
 using Aquadata.Application.UseCases.User.GetUser;
@@ -109,35 +108,7 @@ public class UserController: ControllerBase
 
     return Results.NoContent();
   }
-
-  [HttpPost("add-employee")]
-  [Authorize]
-  public async Task<IResult> AddGenericPurchase(
-    [FromBody] EmployeeDto command,
-    CancellationToken cancellationToken)
-  {
-    var result = await _mediator.Send(command, cancellationToken);
-
-    if (result.IsFail)
-      return Results.Extensions.MapResult(result);
-
-    return Results.Created();
-  }
-
-  [HttpPost("add-employee-payment")]
-  [Authorize]
-  public async Task<IResult> AddEmployeePayment(
-    [FromBody] AddEmployeePaymentInput command,
-    CancellationToken cancellationToken)
-  {
-    var result = await _mediator.Send(command, cancellationToken);
-
-    if (result.IsFail)
-      return Results.Extensions.MapResult(result);
-
-    return Results.Created();
-  }
-
+  
   [HttpPost("add-stock")]
   [Authorize]
   public async Task<IResult> AddStock(
