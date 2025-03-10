@@ -36,8 +36,8 @@ const TransportParameters = ({formParam, setFormParam, setShowParameters}) => {
                             value={formParam.check}
                             onChange={handleParametersChange} required>
                             <option value="">Selecione</option>
-                            <option value="true">Sim</option>
-                            <option value="false">Não</option>
+                            <option value={true}>Sim</option>
+                            <option value={false}>Não</option>
                         </select>
                     </label>
                     <label>

@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import CountingPls from './CountingPls';
 import TransportParameters from './TransportParameters';
+import { addCultivation, CultivationUniformity, PostCultivationUseCase, StressTest, WaterAndAcclimation } from '../services/cultivation.service';
+import Enum from '../util/enum';
 
 const NewCyclePopup = ({
     showNewCyclePopup, setShowNewCyclePopup,
@@ -11,12 +13,29 @@ const NewCyclePopup = ({
     setCultivo
 }) => {
     const [showCountPlPopup, setShowCountPlPopup] = useState(false);
-
+    const uniformity = Enum(
+        ['excelente', 'Excellent'], 
+        ['boa', 'Good'],
+        ['aceitavel', 'Acceptable'],
+        ['desuniforme', 'Uneven']
+    )
+    const deadLarvae = Enum(
+        ['nenhuma', 'None'],
+        ['poucas', 'Few'],
+        ['muitas', 'many']
+    )
+    const swimmingResponse = Enum(
+        ['nenhuma', 'None'],
+        ['pequena', 'Small'],
+        ['media', 'Medium'],
+        ['grande', 'Bid']
+    )
+    const token = localStorage.getItem('token')
     const [testForm, setTestForm] = useState({
         tipoTeste: '',
         alteracaoNatatoria: '',
         larvasMortas: ''
-    });
+    }); 
     const [postLarvae, setPostLarvae] = useState([
         "Aquacrusta", "Aquatec", "CELM", "Larvifort"]);
     const [addNewPostLarvae, setAddNewPostLarvae] = useState(false);
@@ -33,7 +52,7 @@ const NewCyclePopup = ({
     })
     const [area, setArea] = useState(0);
     const [formParam, setFormParam] = useState({
-        check: '',
+        check: false,
         details: '',
         oxygen: { transp: '', pond: '' },
         temperature: { transp: '', pond: '' },
@@ -132,7 +151,7 @@ const NewCyclePopup = ({
         setShowNewCyclePopup(false);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (checkEdit) {
             handleEditChanges();
@@ -167,10 +186,49 @@ const NewCyclePopup = ({
             };
             history = [newCultivo];
         }
-        localStorage.setItem('history', JSON.stringify(history));
-        localStorage.setItem(`cultivo-${cultivoKey}`, JSON.stringify(newCultivo));
-        setCultivo(newCultivo);
-        setShowNewCyclePopup(false);
+
+        try {
+            var cultivationToPost = new PostCultivationUseCase(
+                newCultivo.viveiro,
+                newCultivo.quantidadeEstocada,
+                newCultivo.origemPL,
+                uniformity[newCultivo.uniformidade],
+                newCultivo.dataPovoamento,
+                formParam.check ?? false,
+                viveiroId
+            )
+
+            testForm.larvasMortas && cultivationToPost.addStressTest(new StressTest(
+                testForm.tipoTeste,
+                deadLarvae[testForm.larvasMortas],
+                swimmingResponse[testForm.alteracaoNatatoria]
+            ))
+            formParam.check && cultivationToPost.addWaterAndAcclimation({
+                inPond: new WaterAndAcclimation(
+                    formParam.oxygen.pond,
+                    formParam.temperature.pond,
+                    formParam.ph.pond,
+                    formParam.salinity.pond,
+                    formParam.ammonium.pond,
+                    formParam.nitrite.pond
+                ),
+                inTransport: new WaterAndAcclimation(
+                    formParam.oxygen.transp,
+                    formParam.temperature.transp,
+                    formParam.ph.transp,
+                    formParam.salinity.transp,
+                    formParam.ammonium.transp,
+                    formParam.nitrite.transp
+                )
+            })
+            console.log(cultivationToPost)
+            await addCultivation(cultivationToPost,token)
+            localStorage.setItem('history', JSON.stringify(history));
+            localStorage.setItem(`cultivo-${cultivoKey}`, JSON.stringify(newCultivo));
+            setCultivo(newCultivo);
+            setShowNewCyclePopup(false);
+        }
+        catch {}
     };
 
     const handleSavePLcount = () => {

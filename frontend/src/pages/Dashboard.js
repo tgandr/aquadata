@@ -15,7 +15,7 @@ const Dashboard = () => {
       const handleUnload = () => {
         localStorage.clear();
       };
-
+      
       window.addEventListener('beforeunload', handleUnload);
 
       return () => {

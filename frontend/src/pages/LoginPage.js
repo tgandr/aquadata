@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { json, Link, useNavigate } from 'react-router-dom';
 import '../styles/LoginPage.css';
-import { signIn } from '../services/user.service';
+import { LoginUseCase, signIn } from '../services/user.service';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -12,7 +12,20 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await signIn({email, password})
+      const res = await signIn(new LoginUseCase(email, password))
+      const user = res.data.user
+      const form = {
+        id: user.id,
+        email: user.email,
+        enderecoFazenda: user.farmAddres,
+        nomeCompleto: user.name,
+        telefone: user.phone,
+        nomeFazenda: user.farmName,
+        perfil: user.profile,
+        saveLogin: false
+      }
+      localStorage.setItem('token', res.data.token)
+      localStorage.setItem('formData', JSON.stringify(form))
       navigate('/dashboard')
     } catch (err) {
       console.error('Login error:', err.message); // Log detalhado do erro
@@ -38,7 +51,7 @@ const LoginPage = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        {error && <p className="error">{error}</p>}
+        {error && <p className="error" style={{color: 'red'}}>{error}</p>}
         <button type="submit">Entrar</button>
       </form>
       <p>

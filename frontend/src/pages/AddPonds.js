@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { json, Link, useFetcher, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSyringe, faHistory, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import '../styles/AddPonds.css';
@@ -7,13 +7,15 @@ import SanityAnalysis from './SanityAnalysis';
 import AnalysisReport from './AnalysisReport';
 import { IconContainer } from './utils';
 import { v4 as uuidv4 } from 'uuid';
+import { addPond, deactivatePond, getPonds, PostPondUseCase, PutPondUseCase, updatePond } from '../services/pond.service';
 
 const AddPonds = () => {
-  const [viveiros, setViveiros] = useState([]);
+  const token = localStorage.getItem('token')
+  const [ponds, setPonds] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showViveirosPopup, setShowViveirosPopup] = useState(false);
-  const [selectedViveiro, setSelectedViveiro] = useState(null);
+  const [selectedPond, setselectedPond] = useState(null);
   const [showAnalysisPopup, setShowAnalysisPopup] = useState(false);
   const [showAnalysisPopupPrevious, setShowAnalysisPopupPrevious] = useState({ start: false, previous: false });
   const [form, setForm] = useState({
@@ -21,17 +23,42 @@ const AddPonds = () => {
     area: ''
   });
   const [cultivos, setCultivos] = useState(JSON.parse(localStorage.getItem('history')));
-
   useEffect(() => {
-    const storedViveiros = JSON.parse(localStorage.getItem('viveiros'));
-    if (storedViveiros) {
-      setViveiros(storedViveiros);
+    const storedPonds = JSON.parse(localStorage.getItem('viveiros'));
+    if (storedPonds) {
+      setPonds(storedPonds);
     }
-  }, [selectedViveiro]);
+    else {
+      getPondsFromApi()
+        .catch(err => console.log(err))
+        .then(res => {
+          let ponds = adaptPondsToLocalFormat(res.data)
+          savePondsToLocalStorage(ponds)
+        })
+    }
+  }, [selectedPond]);
 
-  const saveViveirosToLocalStorage = (viveiros) => {
+  const savePondsToLocalStorage = (viveiros) => {
     localStorage.setItem('viveiros', JSON.stringify(viveiros));
   };
+
+  const getPondsFromApi = async () => {
+    try {
+      return await getPonds()
+    }
+    catch{}
+  }
+
+  const adaptPondsToLocalFormat = (ponds) => {
+    let list = []
+    for (var pond of ponds) {
+      list.push({
+        id: pond.id, 
+        nome: pond.name, 
+        area: pond.area})
+    }
+    return list
+  }
 
   const formData = JSON.parse(localStorage.getItem('formData'));
 
@@ -39,28 +66,45 @@ const AddPonds = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (selectedViveiro) {
-      const updatedViveiros = viveiros.map((viveiro) =>
-        viveiro.id === selectedViveiro.id ? { ...selectedViveiro, nome: `Viveiro ${form.numeroViveiro}`, area: form.area } : viveiro
-      );
-      setViveiros(updatedViveiros);
-      saveViveirosToLocalStorage(updatedViveiros);
-    } else {
-      const id = uuidv4();
-      const novoViveiro = {
-        id: id,
-        nome: `Viveiro ${form.numeroViveiro}`,
-        area: form.area,
-      };
-      const updatedViveiros = [...viveiros, novoViveiro];
-      setViveiros(updatedViveiros);
-      saveViveirosToLocalStorage(updatedViveiros);
+    if (selectedPond) {
+      try {
+        const res = await updatePond(new PutPondUseCase(
+          selectedPond.id,
+          `Viveiro ${form.numeroViveiro}`,
+          form.area
+        ), token)
+        console.log(res)
+        const updatedViveiros = ponds.map((viveiro) =>
+          viveiro.id === selectedPond.id ? { ...selectedPond, nome: `Viveiro ${form.numeroViveiro}`, area: form.area } : viveiro
+        );
+        setPonds(updatedViveiros);
+        savePondsToLocalStorage(updatedViveiros);
+      }
+      catch {}
+    } 
+    else {
+      try {
+        const userId = JSON.parse(localStorage.getItem('formData')).id
+        const res = await addPond(new PostPondUseCase(
+          `Viveiro ${form.numeroViveiro}`, 
+          parseFloat(form.area), 
+          userId
+        ), token)
+        const novoViveiro = {
+          id: res.data.id,
+          nome: res.data.name,
+          area: res.data.area,
+        };
+        const updatedViveiros = [...ponds, novoViveiro];
+        setPonds(updatedViveiros);
+        savePondsToLocalStorage(updatedViveiros);
+      } catch {}
     }
     setShowPopup(false);
     setShowEditPopup(false);
-    setSelectedViveiro(null);
+    setselectedPond(null);
     setForm({
       numeroViveiro: '',
       area: ''
@@ -92,28 +136,32 @@ const AddPonds = () => {
 
   const navigate = useNavigate();
 
-  const deletePond = () => {
+  const deletePond = async () => {
     const confirmDelete = window.confirm('Tem certeza que deseja excluir este viveiro?');
 
     if (confirmDelete) {
-      const viveiros = JSON.parse(localStorage.getItem('viveiros'));
-      const newList = viveiros.filter(viv => viv.id !== selectedViveiro.id);
-      localStorage.setItem('viveiros', JSON.stringify(newList));
-      setViveiros(newList);
-      setSelectedViveiro(null);
-      setShowEditPopup(false);
-      setForm({
-        numeroViveiro: '',
-        area: ''
+      try {
+        await deactivatePond(selectedPond.id)
+        const viveiros = JSON.parse(localStorage.getItem('viveiros'));
+        const newList = viveiros.filter(viv => viv.id !== selectedPond.id);
+        localStorage.setItem('viveiros', JSON.stringify(newList));
+        setPonds(newList);
+        setselectedPond(null);
+        setShowEditPopup(false);
+        setForm({
+          numeroViveiro: '',
+          area: ''
       });
-      alert('Viveiro excluído com sucesso!');
+        alert('Viveiro excluído com sucesso!');
+      }
+      catch {}
     } else {
       alert('Exclusão cancelada.');
     }
   };
 
   const handleEditClick = (viveiro) => {
-    setSelectedViveiro(viveiro);
+    setselectedPond(viveiro);
     setForm({
       numeroViveiro: viveiro.nome.split(' ')[1],
       area: viveiro.area
@@ -129,8 +177,8 @@ const AddPonds = () => {
         <h3>Fazenda {formData.nomeFazenda}</h3>
       </div>
       <div className="viveiros-container">
-        {viveiros.length > 0 ? (
-          viveiros.map(viveiro => (
+        {ponds.length > 0 ? (
+          ponds.map(viveiro => (
             <Link
               to={`/viveiro/${viveiro.id}`}
               state={{ viveiro: viveiro, farmName: formData.nomeFazenda }}
@@ -291,8 +339,8 @@ const AddPonds = () => {
           <div className="popup-inner">
             <h3>Selecionar Viveiro para Editar</h3>
             <div className="viveiros-list">
-              {viveiros.length > 0 ? (
-                viveiros.map(viveiro => (
+              {ponds.length > 0 ? (
+                ponds.map(viveiro => (
                   <button
                     key={viveiro.id}
                     onClick={() => handleEditClick(viveiro)}

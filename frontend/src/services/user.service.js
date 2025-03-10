@@ -1,6 +1,6 @@
 import { apiRequest } from "./apiRequest"
 
-export class RegisterUserApi {
+export class RegisterUserUseCase {
   constructor(
     name,email,password,
     farmName,farmAddress,
@@ -16,6 +16,19 @@ export class RegisterUserApi {
     this.phone = phone
   }
 }
+
+export class LoginUseCase {
+  constructor(
+    email,
+    password
+  )
+  {
+    this.email = email
+    this.password = password
+  }
+}
+
+
 
 export const signIn = async (user) => {
   return apiRequest('users/signin', 'POST', user)

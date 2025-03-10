@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../styles/RegisterPage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import { signUp, RegisterUserApi } from '../services/user.service';
+import { signUp, RegisterUserUseCase } from '../services/user.service';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -50,11 +50,6 @@ const RegisterPage = () => {
         }
     };
 
-    // const generateId = () => {
-    //     // Gera um _id simples para simulação
-    //     return Math.random().toString(36).substr(2, 9);
-    // };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -70,7 +65,7 @@ const RegisterPage = () => {
         };
 
         try {
-            await signUp(new RegisterUserApi(
+            const res = await signUp(new RegisterUserUseCase(
                 user.nomeCompleto,
                 user.email,
                 user.senha,
@@ -79,7 +74,7 @@ const RegisterPage = () => {
                 user.perfil,
                 user.telefone
             ))
-
+            localStorage.setItem('token', res.data.token)
             localStorage.setItem('formData', JSON.stringify(user))
             setSuccess('Registro realizado com sucesso!');
             setError('');
