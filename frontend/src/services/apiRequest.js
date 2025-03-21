@@ -11,7 +11,8 @@ export async function apiRequest(endpoint, method, body, token = '') {
     });
 
     if (!response.ok) {
-        throw new Error(`Request failed: ${response.statusText}`);
+        const data = await response.json()
+        throw new Error(data.description);
     }
 
     return response.json();

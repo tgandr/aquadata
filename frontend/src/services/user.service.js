@@ -28,12 +28,10 @@ export class LoginUseCase {
   }
 }
 
-
-
-export const signIn = async (user) => {
+export async function signIn(user) {
   return apiRequest('users/signin', 'POST', user)
 }
 
-export const signUp = async (user) => {
+export async function signUp(user) {
   return apiRequest('users/signup', 'POST', user)
 }
