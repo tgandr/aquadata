@@ -11,11 +11,14 @@ namespace Aquadata.Application.UseCases.User.CreateUser;
 
 public class CreateUser : IUseCaseHandler<CreateUserInput,UserOutput>
 {
+  private readonly ICouchdbService _couchdb;
   private readonly IUserRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
 
-  public CreateUser(IUserRepository repository, IUnitOfWork unitOfWork)
+  public CreateUser(IUserRepository repository, IUnitOfWork unitOfWork,
+  ICouchdbService couchdb)
   {
+    _couchdb = couchdb;
     _repository = repository;
     _unitOfWork = unitOfWork;
   }
@@ -53,6 +56,7 @@ public class CreateUser : IUseCaseHandler<CreateUserInput,UserOutput>
     await _repository.Insert(FinancialEntity.Of(user.Id));
     await _unitOfWork.Commit(cancellationToken);
 
+    await _couchdb.AddUser(user.Email, request.Password);
 
     return Result<UserOutput>.Ok(
       UserOutput.FromEntity(user)

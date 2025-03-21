@@ -53,6 +53,7 @@ public class AuthenticateService: IAuthenticateService
     {
       new Claim(ClaimTypes.NameIdentifier, id),
       new Claim(ClaimTypes.Email, email),
+      new Claim(JwtRegisteredClaimNames.Sub, email),
       new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
