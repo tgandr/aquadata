@@ -16,5 +16,6 @@ public class GenericPurchaseDto : PurchaseDtoBase, IUseCaseRequest<Unit>
   }
 
   public static GenericPurchaseDto FromEntity(GenericPurchaseEntity entity)
-    => new(entity.Date.ToString(),entity.Label,entity.Quantity,entity.Value,entity.Description);
+    => new(entity.Date.ToString(),entity.Label,entity.Quantity,entity.Value,
+    entity.Description);
 }

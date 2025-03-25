@@ -1,8 +1,5 @@
-using Aquadata.Core.Entities.Employee;
-using Aquadata.Core.Entities.EmployeePayment;
-using Aquadata.Core.Entities.Expense;
+using Aquadata.Core.Entities.Financial;
 using Aquadata.Core.Entities.Inventory;
-using Aquadata.Core.Entities.Purchase;
 using Aquadata.Core.Entities.Stock;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Interfaces.Repository;
@@ -41,39 +38,18 @@ public class UserRepository : IUserRepository
   public async Task<UserEntity?> GetByEmail(string email)
     => await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
 
-  public async Task AddFeedPurchase(FeedPurchaseEntity feedPurchase)
-    => await _dbContext.FeedPurchases.AddAsync(feedPurchase);
-
-  public async Task AddProbioticPurchase(ProbioticsPurchaseEntity probioticPurchase)
-    => await _dbContext.ProbioticPurchases.AddAsync(probioticPurchase);
-
-  public async Task AddFertilizerPurchase(FertilizerPurchaseEntity fertilizerPurchase)
-    => await _dbContext.FertilizerPurchases.AddAsync(fertilizerPurchase);
-
-  public async Task AddPLPurchase(PostLarvaePurchaseEntity pLPurchase)
-    => await _dbContext.PLPurchases.AddAsync(pLPurchase);
-
-  public async Task AddGenericPurchase(GenericPurchaseEntity genericPurchase)
-    => await _dbContext.GenericPurchases.AddAsync(genericPurchase);
-    
-  public async Task AddEmployee(EmployeeEntity employee)
-    => await _dbContext.Employees.AddAsync(employee);
-
-  public async Task AddEmployeePayment(EmployeePaymentEntity employeePayment)
-    => await _dbContext.Payroll.AddAsync(employeePayment);
-    
-  public async Task<bool> EmployeeExists(Guid employeeId, Guid userId)
-    => await _dbContext.Employees.AnyAsync(
-      e => e.Id == employeeId && 
-      e.UserId == userId
-    );
+  public async Task AddInventory(InventoryEntity inventory)
+  => await _dbContext.Inventories.AddAsync(inventory);
 
   public async Task AddStock(StockEntity stock)
-    => await _dbContext.Stocks.AddAsync(stock);
+  => await _dbContext.Stocks.AddAsync(stock);
 
-  public async Task AddExpense(ExpenseEntity expense)
-    => await _dbContext.Expenses.AddAsync(expense);
+  public async Task Insert(FinancialEntity financial)
+    => await _dbContext.Financials.AddAsync(financial);
 
-  public async Task AddInventory(InventoryEntity inventory)
-    => await _dbContext.Inventories.AddAsync(inventory);
+  public async Task<ICollection<InventoryEntity>> GetInventories(Guid userId)
+    => await _dbContext.Inventories.Where(i => i.UserId == userId).ToListAsync();
+
+  public async Task<ICollection<StockEntity>> GetStocks(Guid userId)
+    => await _dbContext.Stocks.Where(s => s.UserId == userId).ToListAsync();
 }

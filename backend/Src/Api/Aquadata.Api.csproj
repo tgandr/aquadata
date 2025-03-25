@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CouchDB.NET.DependencyInjection" Version="3.6.1" />
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
@@ -20,6 +21,7 @@
     <ProjectReference Include="..\Application\Aquadata.Application.csproj" />
     <ProjectReference Include="..\Infra\EF\Aquadata.Infra.EF.csproj" />
     <ProjectReference Include="..\Infra\Security\Aquadata.Infra.Security.csproj" />
+    <ProjectReference Include="..\Infra\Couchdb\Aquadata.Infra.CouchDb.csproj" />
   </ItemGroup>
 
 </Project>

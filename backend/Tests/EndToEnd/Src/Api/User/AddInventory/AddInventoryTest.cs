@@ -1,5 +1,6 @@
 using System.Net;
 using Aquadata.Api.Response;
+using Aquadata.Application.Dtos;
 using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.User.AddInventory;
@@ -32,12 +33,11 @@ public class AddInventoryTest
     }
 
     var (_,output) = await _fixture.ApiClient
-    .Get<ApiResponse<UserOutput>>(
-      $"users/{credentials.User.Id}"
+    .Get<ApiResponse<ICollection<InventoryDto>>>(
+      $"users/inventories"
     );
 
     Assert.NotNull(output);
-    Assert.NotNull(output.Data.Inventories);
-    Assert.NotEmpty(output.Data.Inventories);
+    Assert.NotEmpty(output.Data);
   }
 }

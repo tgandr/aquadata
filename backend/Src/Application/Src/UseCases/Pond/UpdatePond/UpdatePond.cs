@@ -1,5 +1,6 @@
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.Pond.Common;
+using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
@@ -33,7 +34,11 @@ public class UpdatePond : IUseCaseHandler<UpdatePondInput,PondOutput>
         )
       ); 
     }
-    
+
+    var updatePondResult = PondEntity.Of(request.Name, request.Area);
+    if (updatePondResult.IsFail)
+      return Result<PondOutput>.Fail(updatePondResult.Error);
+
     var userId = _authenticateUserService.GetUserId();
 
     if (pond.UserId != userId)

@@ -10,7 +10,7 @@ public class ExpenseEntity : Entity
   public string Description {get; private set;}
 
   public virtual ICollection<CostPerPondEntity> CostsPerPond {get; set;}
-  public virtual Guid UserId {get;set;}
+  public virtual Guid FinancialId {get;set;}
 
   private ExpenseEntity() {}
   private ExpenseEntity(DateOnly date, string description): base()

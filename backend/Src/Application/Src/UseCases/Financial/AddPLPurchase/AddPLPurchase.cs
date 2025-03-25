@@ -10,16 +10,19 @@ namespace Aquadata.Application.UseCases.Financial.AddPLPurchase;
 public class AddPLPurchase: IUseCaseHandler<AddPLPurchaseInput, Unit>
 {
   private readonly IUnitOfWork _unitOfWork;
-  private readonly IUserRepository _repository;
+  private readonly IFinancialRepository _financialRepository;
+  private readonly ICultivationRepository _cultivationRepository;
   private readonly IAuthenticatedUserService _authenticatedUserService;
 
   public AddPLPurchase(IUnitOfWork unitOfWork, 
-  IUserRepository cultivationRepository,
+  IFinancialRepository financialRepository,
+  ICultivationRepository cultivationRepository,
   IAuthenticatedUserService authenticatedUserService)
   {
       _unitOfWork = unitOfWork;
-      _repository = cultivationRepository;
+      _financialRepository = financialRepository;
       _authenticatedUserService = authenticatedUserService;
+      _cultivationRepository = cultivationRepository;
   }
 
   public async Task<Result<Unit>> Handle(AddPLPurchaseInput request, 
@@ -36,12 +39,31 @@ public class AddPLPurchase: IUseCaseHandler<AddPLPurchaseInput, Unit>
       return Result<Unit>.Fail(purchaseResult.Error);
 
     var userId = _authenticatedUserService.GetUserId();
+    var financialId = await _financialRepository.GetIdByUser(userId);
+
+    if (financialId == default)
+        return Result<Unit>.Fail(
+          Error.NotFound(
+            "UseCases.Financial.AddPLPurchase",
+            "Financial not Found"
+          )
+      );
+    
+    var cultivationExists = await _cultivationRepository.Exists(userId, request.CultivationId);
+    
+    if (!cultivationExists)
+      return Result<Unit>.Fail(
+        Error.NotFound(
+          "UseCases.Financial.AddPLPurchase",
+          "Cultivation not Found"
+        )
+      );
 
     var purchase = purchaseResult.Unwrap();
-    purchase.UserId = userId;
+    purchase.FinancialId = financialId;
     purchase.CultivationId = request.CultivationId;
 
-    await _repository.AddPLPurchase(purchase);
+    await _financialRepository.Add(purchase);
     await _unitOfWork.Commit(cancellationToken);
 
     return Result<Unit>.Ok(Unit.Value);

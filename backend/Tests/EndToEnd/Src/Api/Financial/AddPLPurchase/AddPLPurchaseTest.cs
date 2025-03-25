@@ -1,5 +1,6 @@
 using System.Net;
 using Aquadata.Api.Response;
+using Aquadata.Application.UseCases.Financial.Common;
 using Aquadata.Application.UseCases.User.Common;
 
 namespace Aquadata.EndToEndTests.Api.Financal.AddPLPurchase;
@@ -22,7 +23,7 @@ public class AddPLPurchaseTest
     await _fixture.Persistence.Insert(pond);
     await _fixture.Persistence.Insert(cultivation);
 
-    var input = _fixture.GetInput(credentials.User.Id, cultivation.Id);
+    var input = _fixture.GetInput(cultivation.Id);
 
     var (response, _) = await _fixture.ApiClient
     .Post<object>(
@@ -34,8 +35,8 @@ public class AddPLPurchaseTest
     Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
     var (_,output) = await _fixture.ApiClient
-    .Get<ApiResponse<UserOutput>>(
-      $"users/{credentials.User.Id}"
+    .Get<ApiResponse<FinancialOutput>>(
+      $"financial"
     );
 
     Assert.NotNull(output);

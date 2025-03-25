@@ -2,12 +2,11 @@ using System.Text.Json.Serialization;
 using Aquadata.Api.Configs;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAppConnection(builder.Configuration);
+builder.Services.AddAppConnections(builder.Configuration);
 builder.Services.AddControllers().AddJsonOptions(o => {
     o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });

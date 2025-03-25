@@ -9,4 +9,14 @@ services:
       - 33060:3306
     environment: 
       MYSQL_ROOT_PASSWORD: aquadata@
+
+  couchdb: 
+    container_name: aquacouch
+    hostname: aquacouch
+    image: couchdb
+    ports:
+      - 5984:5984
+    environment: 
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: aquadata
     

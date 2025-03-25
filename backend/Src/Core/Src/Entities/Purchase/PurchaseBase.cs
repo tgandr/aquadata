@@ -10,7 +10,7 @@ public abstract class PurchaseBase : Entity
   public int Quantity {get; private set;}
   public decimal Value {get; private set;}
 
-  public Guid UserId {get; set;}
+  public Guid FinancialId {get; set;}
 
   protected PurchaseBase(DateOnly date, string label, int quantity, decimal value)
   :base()

@@ -9,7 +9,7 @@ public class EmployeePaymentEntity : Entity
   public DateOnly Date {get; private set;}
   public decimal Value {get; private set;}
   public virtual Guid EmployeeId {get;set;}
-  public virtual Guid UserId {get;set;}
+  public virtual Guid FinancialId {get;set;}
   
   private EmployeePaymentEntity(){}
 

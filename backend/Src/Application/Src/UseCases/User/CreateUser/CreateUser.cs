@@ -1,21 +1,24 @@
 using Application.UseCases.User.CreateUser;
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.User.Common;
+using Aquadata.Core.Entities.Financial;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
-using MediatR;
 
 namespace Aquadata.Application.UseCases.User.CreateUser;
 
 public class CreateUser : IUseCaseHandler<CreateUserInput,UserOutput>
 {
+  private readonly ICouchdbService _couchdb;
   private readonly IUserRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
 
-  public CreateUser(IUserRepository repository, IUnitOfWork unitOfWork)
+  public CreateUser(IUserRepository repository, IUnitOfWork unitOfWork,
+  ICouchdbService couchdb)
   {
+    _couchdb = couchdb;
     _repository = repository;
     _unitOfWork = unitOfWork;
   }
@@ -46,11 +49,17 @@ public class CreateUser : IUseCaseHandler<CreateUserInput,UserOutput>
       return Result<UserOutput>.Fail(userResult.Error!);
     }
 
-    await _repository.Insert(userResult.Unwrap(), cancellationToken);
+    var user = userResult.Unwrap();
+    await _repository.Insert(user, cancellationToken);
     await _unitOfWork.Commit(cancellationToken);
 
+    await _repository.Insert(FinancialEntity.Of(user.Id));
+    await _unitOfWork.Commit(cancellationToken);
+
+    await _couchdb.AddUser(user.Email, request.Password);
+
     return Result<UserOutput>.Ok(
-      UserOutput.FromEntity(userResult.Unwrap())
+      UserOutput.FromEntity(user)
     );
   }
 }

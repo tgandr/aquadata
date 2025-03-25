@@ -1,12 +1,13 @@
 using Aquadata.Application.Dtos;
 using Aquadata.Core.Entities.Pond;
 using Aquadata.EndToEndTests.Api.User.Common;
+using Aquadata.EndToEndTests.Api.Financial.Common;
 
 namespace Aquadata.EndToEndTests.Api.Financial.AddExpense;
 
 [CollectionDefinition(nameof(AddExpenseTestFixture))]
 public class AddExpenseTestFixture
-:UserTestFixture, ICollectionFixture<AddExpenseTestFixture>
+:FinancialFixture, ICollectionFixture<AddExpenseTestFixture>
 {
   public PondEntity GetPondExample(Guid userId)
   {

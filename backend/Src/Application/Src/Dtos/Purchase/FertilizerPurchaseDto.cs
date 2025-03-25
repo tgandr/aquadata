@@ -19,5 +19,6 @@ public class FertilizerPurchaseDto : PurchaseDtoBase, IUseCaseRequest<Unit>
   }
 
   public static FertilizerPurchaseDto FromEntity(FertilizerPurchaseEntity entity)
-    => new(entity.Date.ToString(), entity.Label, entity.Quantity, entity.Value, entity.Unit);
+    => new(entity.Date.ToString(), entity.Label, entity.Quantity, entity.Value, 
+    entity.Unit);
 }

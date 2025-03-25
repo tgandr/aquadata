@@ -53,6 +53,7 @@ public class AuthenticateService: IAuthenticateService
     {
       new Claim(ClaimTypes.NameIdentifier, id),
       new Claim(ClaimTypes.Email, email),
+      new Claim(JwtRegisteredClaimNames.Sub, email),
       new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 
@@ -61,7 +62,7 @@ public class AuthenticateService: IAuthenticateService
     );
 
     var credentials = new SigningCredentials(privateKey, SecurityAlgorithms.HmacSha256);
-    var expiration = DateTime.UtcNow.AddHours(1);
+    var expiration = DateTime.UtcNow.AddDays(1);
 
     var token = new JwtSecurityToken(
       issuer: _config["jwt:issuer"],
