@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/LoginPage.css';
 import { LoginUseCase, signIn } from '../services/user.service';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import { Preferences } from '@capacitor/preferences';
+import LocalDb from '../databases/local.db';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -24,11 +27,11 @@ const LoginPage = () => {
         perfil: user.profile,
         saveLogin: false
       }
-      localStorage.setItem('token', res.data.token)
-      localStorage.setItem('formData', JSON.stringify(form))
+      await SecureStoragePlugin.set({key: 'token', value: res.data.token})
+      await SecureStoragePlugin.set({key:'credentials', value: JSON.stringify({email: user.email, password})})
+      await LocalDb.set('user', form)
       navigate('/dashboard')
     } catch (err) {
-      console.error('Login error:', err.message); // Log detalhado do erro
       setError('Usuário ou senha inválidos');
     }
   };

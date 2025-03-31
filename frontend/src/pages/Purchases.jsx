@@ -6,7 +6,7 @@ import OthersPurchasePopup from './OthersPurchasePopup';
 import ProbioticsPurchasePopup from './ProbioticsPurchasePopup';
 import { v4 as uuidv4 } from 'uuid';
 
-const Purchases = ({ setShowPurchasesPopup }) => {
+const Purchases = ({ setShowPurchasesPopup, database }) => {
     const [showRationPurchasesPopup, setShowRationPurchasesPopup] = useState(false);
     const [showSavedMessage, setShowSavedMessage] = useState(false);
     const [purchases, setPurchases] = useState({});
@@ -19,7 +19,10 @@ const Purchases = ({ setShowPurchasesPopup }) => {
     });
 
     const savePurchase = (data) => {
-        localStorage.setItem('financial', JSON.stringify(data));
+        database.put(data).then(res => {
+            data._rev = res.rev
+            setPurchases(data);
+        })
     };
 
     const saveStock = (category, toUpdate) => {
@@ -48,10 +51,10 @@ const Purchases = ({ setShowPurchasesPopup }) => {
         keys.forEach((key) => (key !== 'dataCompra' && (resetForm = { ...resetForm, [key]: '' })))
         resetForm = { ...resetForm, dataCompra: form.dataCompra }
         const updatedPurchases = { ...purchases, [category]: [...purchases[category], newForm] };
-        savePurchase(updatedPurchases);
-        saveStock(category, newForm);
-        formSetter(resetForm);
-        setPurchases(updatedPurchases);
+        console.log(updatedPurchases)
+        // savePurchase(updatedPurchases);
+        // saveStock(category, newForm);
+        // formSetter(resetForm);
     };
 
     const capitalizeProperly = (str) => {
@@ -112,7 +115,7 @@ const Purchases = ({ setShowPurchasesPopup }) => {
             </div>
 
             {showRationPurchasesPopup &&
-                <RationPurchasesPopup setShowRationPurchasesPopup={setShowRationPurchasesPopup} />}
+                <RationPurchasesPopup setShowRationPurchasesPopup={setShowRationPurchasesPopup} database={database}/>}
 
             {showPopup.probiotics && // Adicione o novo popup aqui
                 <ProbioticsPurchasePopup

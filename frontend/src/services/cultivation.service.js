@@ -1,4 +1,3 @@
-import { apiRequest } from "./apiRequest"
 export class PostCultivationUseCase {
     constructor(
         pondNumber,
@@ -55,9 +54,4 @@ export class WaterAndAcclimation {
         this.ammonia = ammonia
         this.nitrite = nitrite
     }
-}
-
-
-export async function addCultivation(cultivation, token) {
-    return apiRequest('cultivations', 'POST', cultivation, token)
 }

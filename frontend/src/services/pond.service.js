@@ -1,10 +1,12 @@
-import { apiRequest } from "./apiRequest";
+import { v4 } from "uuid";
 
 export class PostPondUseCase {
     constructor(name, area, userId) {
         this.name = name
         this.area = area
         this.userId = userId
+        this.dataType = 'pond'
+        this._id = v4()
     }
 }
 
@@ -15,20 +17,3 @@ export class PutPondUseCase {
         this.area = area
     }
 }
-
-export async function getPonds(token) {
-    return apiRequest('ponds', 'GET', null, token)
-}
-
-export async function addPond(pond, token) {
-    return apiRequest('ponds', 'POST', pond, token)
-}
-
-export async function updatePond(pond, token) {
-    return apiRequest('ponds', 'PUT', pond, token)
-}
-
-export async function deactivatePond(id, token) {
-    return apiRequest(`ponds/deactivate/${id}`, 'DELETE', null, token)
-}
-

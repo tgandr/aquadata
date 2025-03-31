@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { formatDate } from './utils';
 
-const FertilizationPopup = ({ setShowFertilizationPopup, saveData }) => {
+const FertilizationPopup = ({ setShowFertilizationPopup, saveData,database }) => {
   const [data, setData] = useState(new Date().toISOString().split('T')[0]);
+  const [stockData, setStockData] = useState()
   const [fertilizerType, setFertilizerType] = useState('');
   const [chemicalFertilizer, setChemicalFertilizer] = useState('');
   const [probiotic, setProbiotic] = useState('');
@@ -16,24 +17,33 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData }) => {
   const [remainingQuantity, setRemainingQuantity] = useState(0); // Estado para armazenar quantidade restante
 
   useEffect(() => {
-    const stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+    // const stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+    database.find({
+      selector: {
+        dataType: 'stockData'
+      }
+    }).then(res => {
+      if (!res.docs.lenght) return 
 
+      const stock = res.docs[0]
+      setStockData(res.docs[0])
+      const fertilizersList = stock.fertilizersPurchase || [];
+      const probioticsList = stock.probioticsPurchase || [];
+  
+      setFertilizers(fertilizersList.map(f => ({
+        label: f.label,
+        date: f.date,
+        id: f.id,
+        quantity: f.quantity // Incluindo a quantidade disponível
+      })));
+      setProbiotics(probioticsList.map(p => ({
+        label: p.label,
+        date: p.date,
+        id: p.id,
+        quantity: p.quantity // Incluindo a quantidade disponível
+      })));
+    })
     // Filtrando e removendo duplicatas
-    const fertilizersList = stockData.fertilizersPurchase || [];
-    const probioticsList = stockData.probioticsPurchase || [];
-
-    setFertilizers(fertilizersList.map(f => ({
-      label: f.label,
-      date: f.date,
-      id: f.id,
-      quantity: f.quantity // Incluindo a quantidade disponível
-    })));
-    setProbiotics(probioticsList.map(p => ({
-      label: p.label,
-      date: p.date,
-      id: p.id,
-      quantity: p.quantity // Incluindo a quantidade disponível
-    })));
   }, []);
 
   const handleSave = (e) => {
@@ -45,7 +55,6 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData }) => {
       return;
     }
 
-    const stockData = JSON.parse(localStorage.getItem('stockData')) || {};
     const conversionRates = {
       'quilo': 1,
       'grama': 0.001,

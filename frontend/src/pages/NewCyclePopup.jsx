@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import CountingPls from './CountingPls';
 import TransportParameters from './TransportParameters';
-import { addCultivation, PostCultivationUseCase, StressTest, WaterAndAcclimation } from '../services/cultivation.service';
+import { PostCultivationUseCase, StressTest, WaterAndAcclimation } from '../services/cultivation.service';
 import Enum from '../util/enum';
 
 const NewCyclePopup = ({
@@ -10,32 +10,35 @@ const NewCyclePopup = ({
     showStressTestPopup, setShowStressTestPopup,
     form, setForm,
     viveiroId,
-    setCultivo
+    setCultivo,
+    cultivation,
+    database,
+    pondArea
 }) => {
+    // const uniformity = Enum(
+    //     ['excelente', 'Excellent'], 
+    //     ['boa', 'Good'],
+    //     ['aceitavel', 'Acceptable'],
+    //     ['desuniforme', 'Uneven']
+    // )
+    // const deadLarvae = Enum(
+    //     ['nenhuma', 'None'],
+    //     ['poucas', 'Few'],
+    //     ['muitas', 'many']
+    // )
+    // const swimmingResponse = Enum(
+    //     ['nenhuma', 'None'],
+    //     ['pequena', 'Small'],
+    //     ['media', 'Medium'],
+    //     ['grande', 'Bid']
+    // )
     const [showCountPlPopup, setShowCountPlPopup] = useState(false);
-    const uniformity = Enum(
-        ['excelente', 'Excellent'], 
-        ['boa', 'Good'],
-        ['aceitavel', 'Acceptable'],
-        ['desuniforme', 'Uneven']
-    )
-    const deadLarvae = Enum(
-        ['nenhuma', 'None'],
-        ['poucas', 'Few'],
-        ['muitas', 'many']
-    )
-    const swimmingResponse = Enum(
-        ['nenhuma', 'None'],
-        ['pequena', 'Small'],
-        ['media', 'Medium'],
-        ['grande', 'Bid']
-    )
-    const token = localStorage.getItem('token')
     const [testForm, setTestForm] = useState({
         tipoTeste: '',
         alteracaoNatatoria: '',
         larvasMortas: ''
-    }); 
+    });
+    const [stockData,setStockData] = useState()
     const [postLarvae, setPostLarvae] = useState([
         "Aquacrusta", "Aquatec", "CELM", "Larvifort"]);
     const [addNewPostLarvae, setAddNewPostLarvae] = useState(false);
@@ -44,13 +47,12 @@ const NewCyclePopup = ({
     const [showMetas, setShowMetas] = useState(false);
     const [showParameters, setShowParameters] = useState(false);
     const [checkEdit, setCheckEdit] = useState(false);
-    const [cult, setCult] = useState({});
     const [metas, setMetas] = useState({
         sobrevivencia: "",
         tempo: "",
         tamanho: ""
     })
-    const [area, setArea] = useState(0);
+    const [area, setArea] = useState(pondArea);
     const [formParam, setFormParam] = useState({
         check: false,
         details: '',
@@ -67,7 +69,7 @@ const NewCyclePopup = ({
             setForm({ ...form, origemPL: l });
             setPostLarvae([...postLarvae, l]);
             setCustomPostLarvae('');
-            let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            // let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
             if ('postLarvaeList' in stockData) {
                 stockData.postLarvaeList.push(l);
             } else {
@@ -139,15 +141,17 @@ const NewCyclePopup = ({
     };
 
     const handleEditChanges = () => {
-        console.log(formParam)
-        const cultivoCheckOut = { ...cult, ...form, quantidadeEstocada: form.quantidadeEstocada * 1000 }
-        const cultivo = 'cultivo-' + cult.id;
-        const history = JSON.parse(localStorage.getItem('history'));
-        const updateHistory = history.filter((c) => c.id !== cult.id);
-        updateHistory.push(cultivoCheckOut);
-        localStorage.setItem('history', JSON.stringify(updateHistory));
-        localStorage.setItem(cultivo, JSON.stringify(cultivoCheckOut));
-        setCultivo(cultivoCheckOut);
+        const cultivoCheckOut = { ...cultivation, ...form, quantidadeEstocada: form.quantidadeEstocada * 1000 }
+        // const cultivo = 'cultivo-' + cultivation.id;
+        // const history = JSON.parse(localStorage.getItem('history'));
+        // const updateHistory = history.filter((c) => c.id !== cult.id);
+        // updateHistory.push(cultivoCheckOut);
+        // localStorage.setItem('history', JSON.stringify(updateHistory));
+        // localStorage.setItem(cultivo, JSON.stringify(cultivoCheckOut));
+        database.put(cultivoCheckOut).then(response => {
+            cultivoCheckOut.rev = response.rev
+            setCultivo(cultivoCheckOut);
+        })
         setShowNewCyclePopup(false);
     };
 
@@ -157,75 +161,64 @@ const NewCyclePopup = ({
             handleEditChanges();
             return
         }
-        const viveiros = JSON.parse(localStorage.getItem('viveiros'));
-        const vivNumber = viveiros.find(viv => viv.id === viveiroId);
-        let history = JSON.parse(localStorage.getItem('history'));
-        let newCultivo = {};
+        // const viveiros = JSON.parse(localStorage.getItem('viveiros'));
+        // const vivNumber = viveiros.find(viv => viv.id === viveiroId);
+        // let history = JSON.parse(localStorage.getItem('history'));
         const id = uuidv4();
-        let cultivoKey = id;
         const quantEstoc = form.quantidadeEstocada * 1000;
         const setFormToSubmit = { ...form, quantidadeEstocada: quantEstoc, formParam };
-        if (history) {
-            newCultivo = {
-                ...setFormToSubmit,
-                dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
-                viveiro: parseInt(vivNumber.nome.match(/\d+/)[0]),
-                viveiroId,
-                id,
-                hasShrimp: true
-            };
-            history = [...history, newCultivo];
-        } else {
-            newCultivo = {
-                ...setFormToSubmit,
-                dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
-                viveiro: parseInt(vivNumber.nome.match(/\d+/)[0]),
-                viveiroId,
-                id,
-                hasShrimp: true
-            };
-            history = [newCultivo];
-        }
+        const newCultivo = {
+            ...setFormToSubmit,
+            dataPovoamento: new Date(form.dataPovoamento).toISOString().split('T')[0],
+            viveiroId,
+            hasShrimp: true,
+            _id: id,
+            dataType: 'cultivation',
+            isCurrent: true,
+        };
+            // history = [...history, newCultivo];
+            // history = [newCultivo];
 
         try {
-            var cultivationToPost = new PostCultivationUseCase(
-                newCultivo.viveiro,
-                newCultivo.quantidadeEstocada,
-                newCultivo.origemPL,
-                uniformity[newCultivo.uniformidade],
-                newCultivo.dataPovoamento,
-                formParam.check ?? false,
-                viveiroId
-            )
+            // var cultivationToPost = new PostCultivationUseCase(
+            //     newCultivo.viveiro,
+            //     newCultivo.quantidadeEstocada,
+            //     newCultivo.origemPL,
+            //     uniformity[newCultivo.uniformidade],
+            //     newCultivo.dataPovoamento,
+            //     formParam.check ?? false,
+            //     viveiroId
+            // )
 
-            testForm.larvasMortas && cultivationToPost.addStressTest(new StressTest(
-                testForm.tipoTeste,
-                deadLarvae[testForm.larvasMortas],
-                swimmingResponse[testForm.alteracaoNatatoria]
-            ))
-            formParam.check && cultivationToPost.addWaterAndAcclimation({
-                inPond: new WaterAndAcclimation(
-                    formParam.oxygen.pond,
-                    formParam.temperature.pond,
-                    formParam.ph.pond,
-                    formParam.salinity.pond,
-                    formParam.ammonium.pond,
-                    formParam.nitrite.pond
-                ),
-                inTransport: new WaterAndAcclimation(
-                    formParam.oxygen.transp,
-                    formParam.temperature.transp,
-                    formParam.ph.transp,
-                    formParam.salinity.transp,
-                    formParam.ammonium.transp,
-                    formParam.nitrite.transp
-                )
+            // testForm.larvasMortas && cultivationToPost.addStressTest(new StressTest(
+            //     testForm.tipoTeste,
+            //     deadLarvae[testForm.larvasMortas],
+            //     swimmingResponse[testForm.alteracaoNatatoria]
+            // ))
+            // formParam.check && cultivationToPost.addWaterAndAcclimation({
+            //     inPond: new WaterAndAcclimation(
+            //         formParam.oxygen.pond,
+            //         formParam.temperature.pond,
+            //         formParam.ph.pond,
+            //         formParam.salinity.pond,
+            //         formParam.ammonium.pond,
+            //         formParam.nitrite.pond
+            //     ),
+            //     inTransport: new WaterAndAcclimation(
+            //         formParam.oxygen.transp,
+            //         formParam.temperature.transp,
+            //         formParam.ph.transp,
+            //         formParam.salinity.transp,
+            //         formParam.ammonium.transp,
+            //         formParam.nitrite.transp
+            //     )
+            // })
+            // localStorage.setItem('history', JSON.stringify(history));
+            // localStorage.setItem(`cultivo-${cultivoKey}`, JSON.stringify(newCultivo));
+            database.put(newCultivo).then(response => {
+                newCultivo._rev = response.rev
+                setCultivo(newCultivo);
             })
-            console.log(cultivationToPost)
-            await addCultivation(cultivationToPost,token)
-            localStorage.setItem('history', JSON.stringify(history));
-            localStorage.setItem(`cultivo-${cultivoKey}`, JSON.stringify(newCultivo));
-            setCultivo(newCultivo);
             setShowNewCyclePopup(false);
         }
         catch {}
@@ -235,8 +228,9 @@ const NewCyclePopup = ({
     };
 
     useEffect(() => {
-        const pondArea = JSON.parse(localStorage.getItem("viveiros")).find(p => p.id === viveiroId);
-        setArea(pondArea.area);
+        // const pondArea = JSON.parse(localStorage.getItem("viveiros")).find(p => p.id === viveiroId);
+        // setArea(pondArea.area);
+
         if (form.origemPL === 'custom') {
             setAddNewPostLarvae(true);
         } else {
@@ -245,35 +239,58 @@ const NewCyclePopup = ({
     }, [form.origemPL]);
 
     useEffect(() => {
-        const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
-        // const checkPurchases = JSON.parse(localStorage.getItem('financial')) || {};
-        // setPurchases(checkPurchases);
-        if ('postLarvaeList' in checkLists) {
-            setPostLarvae(checkLists.postLarvaeList);
+        database.find({
+            selector: {dataType: 'stockData'}
+        }).then(data => {
+            if (!data.docs.length) return
+            const stockData = data.docs[0]
+            setStockData(stockData)
+            if ('postLarvaeList' in stockData) {
+                setPostLarvae(stockData.postLarvaeList);
+            }
+        })
+        if(!cultivation) return
+        if (cultivation.hasShrimp) {
+            setForm({
+                ...form,
+                dataPovoamento: cultivation.dataPovoamento,
+                origemPL: cultivation.origemPL,
+                uniformidade: cultivation.uniformidade,
+                quantidadeEstocada: cultivation.quantidadeEstocada / 1000
+            });
+            setCheckEdit(true);
         }
+    
+        // const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
+        //// const checkPurchases = JSON.parse(localStorage.getItem('financial')) || {};
+        //// setPurchases(checkPurchases);
+        // if ('postLarvaeList' in checkLists) {
+        //     setPostLarvae(checkLists.postLarvaeList);
+        // }
+
+        // useEffect(() => {
+        //     for (let i = 0; i < localStorage.length; i++) {
+        //         const key = localStorage.key(i);
+        //         if (key.startsWith("cultivo-")) {
+        //             const cultivo = JSON.parse(localStorage.getItem(key));
+        //             if (cultivo.viveiroId === viveiroId) {
+        //                 if (cultivo.hasShrimp) {
+        //                     setForm({
+        //                         ...form,
+        //                         dataPovoamento: cultivo.dataPovoamento,
+        //                         origemPL: cultivo.origemPL,
+        //                         uniformidade: cultivo.uniformidade,
+        //                         quantidadeEstocada: cultivo.quantidadeEstocada / 1000
+        //                     });
+        //                     setCheckEdit(true);
+        //                     setCult(cultivo);
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }, [])
     }, []);
 
-    useEffect(() => {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith("cultivo-")) {
-                const cultivo = JSON.parse(localStorage.getItem(key));
-                if (cultivo.viveiroId === viveiroId) {
-                    if (cultivo.hasShrimp) {
-                        setForm({
-                            ...form,
-                            dataPovoamento: cultivo.dataPovoamento,
-                            origemPL: cultivo.origemPL,
-                            uniformidade: cultivo.uniformidade,
-                            quantidadeEstocada: cultivo.quantidadeEstocada / 1000
-                        });
-                        setCheckEdit(true);
-                        setCult(cultivo);
-                    }
-                }
-            }
-        }
-    }, [])
 
     return (
         <>

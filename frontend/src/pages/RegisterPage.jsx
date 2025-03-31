@@ -4,8 +4,12 @@ import '../styles/RegisterPage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { signUp, RegisterUserUseCase } from '../services/user.service';
-import getDbByEmail from '../databases/user.db'
+import {Preferences} from '@capacitor/preferences'
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import LocalDb from '../databases/local.db';
+import { v4 } from 'uuid';
+import getDbByUser from '../databases/user.db';
+
 const RegisterPage = () => {
     const navigate = useNavigate();
     const [form, setForm] = useState({
@@ -61,21 +65,23 @@ const RegisterPage = () => {
             enderecoFazenda: form.enderecoFazenda,
             nomeFazenda: form.nomeFazenda,
             perfil: form.perfil,
-            saveLogin: true,
-            senha: password.senha
+            saveLogin: true
         };
         try {
             const res = await signUp(new RegisterUserUseCase(
-                    user.nomeCompleto,
-                    user.email,
-                    user.senha,
-                    user.nomeFazenda,
-                    user.enderecoFazenda,
-                    user.perfil,
-                    user.telefone
-                ))
+                user.nomeCompleto,
+                user.email,
+                password.senha,
+                user.nomeFazenda,
+                user.enderecoFazenda,
+                user.perfil,
+                user.telefone
+            ))
+            user.id = res.data.user.id
+
             await SecureStoragePlugin.set({key:'token', value: res.data.token})
-            localStorage.setItem('formData', JSON.stringify(user))
+            await SecureStoragePlugin.set({key:'credentials', value: JSON.stringify({email: user.email, password: password.senha})})
+            await LocalDb.set('user', user);
             setSuccess('Registro realizado com sucesso!');
             setError('');
             navigate('/dashboard');
@@ -86,7 +92,9 @@ const RegisterPage = () => {
                     break;
                 case "email already exists":
                     setError("Este email já foi cadastrado");
-                    break;          
+                    break;
+                default: 
+                    setError("Erro Desconhecido")     
             }
         }
     };

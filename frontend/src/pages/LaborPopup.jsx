@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import '../styles/LaborPopup.css';
 
-const LaborPopup = ({ setShowLaborPopup }) => {
+const LaborPopup = ({ setShowLaborPopup, database }) => {
     const [workersList, setWorkersList] = useState([]);
     const [showFormInd, setShowFormInd] = useState(false);
     const [worker, setWorker] = useState({
@@ -9,6 +9,7 @@ const LaborPopup = ({ setShowLaborPopup }) => {
         name: '',
         salary: ''
     });
+    const [financial, setFinancial] = useState()
     const [addNewWorkerPopup, setAddNewWorkerPopup] = useState(false);
     const [addNewWorker, setAddNewWorker] = useState('');
     const [showSavedMessage, setShowSavedMessage] = useState(false);
@@ -27,32 +28,37 @@ const LaborPopup = ({ setShowLaborPopup }) => {
             setErrorMessage("Por favor, preencha todos os campos.");
             return;
         }
-        let financial = JSON.parse(localStorage.getItem('financial')) || {};
+        let newFinancial = {...financial}
+        // let financial = JSON.parse(localStorage.getItem('financial')) || {};
         const month = worker.month;
         const w = {
             name: worker.name,
             salary: worker.salary
         };
-        if (financial) {
-            if ('labor' in financial) {
+        if (newFinancial) {
+            if ('labor' in newFinancial) {
                 let monthFound = false;
-                financial.labor.forEach((item, index) => {
+                newFinancial.labor.forEach((item, index) => {
                     if (item.month === month) {
                         monthFound = true;
                         if ('payroll' in item) {
-                            financial.labor[index] = { ...item, payroll: [...item.payroll, w] };
+                            newFinancial.labor[index] = { ...item, payroll: [...item.payroll, w] };
                         } else {
-                            financial.labor[index] = { ...item, payroll: [w] };
+                            newFinancial.labor[index] = { ...item, payroll: [w] };
                         }}
                 });
                 if (!monthFound) {
-                    financial.labor.push({ month: month, payroll: [w] });
+                    newFinancial.labor.push({ month: month, payroll: [w] });
                 }} else {
-                financial = { ...financial, labor: [{ month: month, payroll: [w] }] };
+                newFinancial = { ...newFinancial, labor: [{ month: month, payroll: [w] }] };
             }} else {
-            financial = { labor: [{ month: month, payroll: [w] }] };
+            newFinancial = { labor: [{ month: month, payroll: [w] }] };
         }
-        localStorage.setItem('financial', JSON.stringify(financial));
+        // localStorage.setItem('financial', JSON.stringify(financial));
+        database.put(newFinancial).then(res => {
+            newFinancial._rev = res.rev
+            setFinancial(newFinancial)
+        })
         updateMonthsWithRegister(financial);
         setWorker({
             ...worker,
@@ -75,35 +81,46 @@ const LaborPopup = ({ setShowLaborPopup }) => {
     }, [worker]);
 
     useEffect(() => {
-        const wList = JSON.parse(localStorage.getItem('financial')) || {};
-        if (wList) {
-            if ('workersList' in wList) {
-                setWorkersList(wList.workersList)
-            }
-        };
-        updateMonthsWithRegister(wList);
+        database.find({
+            selector: {dataType: 'financial'}
+        }).then(data => {
+            const newFinancial = data.docs[0] || {}
+            setFinancial(newFinancial)
+            if (newFinancial) {
+                if ('workersList' in newFinancial) {
+                    setWorkersList(newFinancial.workersList)
+                }
+            };
+            updateMonthsWithRegister(newFinancial);
+        })
+        // const wList = JSON.parse(localStorage.getItem('financial')) || {};
     }, []);
 
     const saveNewWorker = () => {
         const workerAdded = capitalizeProperly(addNewWorker);
-        let financial = JSON.parse(localStorage.getItem('financial')) || {};
-        if (financial) {
-            if ('workersList' in financial) {
-                financial.workersList.push(workerAdded);
+        let newFinancial = {...financial}
+        // let financial = JSON.parse(localStorage.getItem('financial')) || {};
+        if (newFinancial) {
+            if ('workersList' in newFinancial) {
+                newFinancial.workersList.push(workerAdded);
             } else {
-                financial = { ...financial, workersList: [workerAdded] };
+                newFinancial = { ...newFinancial, workersList: [workerAdded] };
             }
         } else {
-            financial = { workersList: [workerAdded] };
+            newFinancial = { workersList: [workerAdded] };
         }
-        localStorage.setItem('financial', JSON.stringify(financial));
-        setWorkersList(financial.workersList)
+        // localStorage.setItem('financial', JSON.stringify(financial));
+        // setWorkersList(financial.workersList)
         setAddNewWorker('');
         setWorker({
             ...worker,
             name: workerAdded,
             salary: ''
         });
+        database.put(newFinancial).then(res => {
+            newFinancial._rev = res.rev
+            setFinancial(newFinancial)
+        })
         setShowSavedMessage(true);
         setTimeout(() => setShowSavedMessage(false), 2000);
     }
@@ -147,7 +164,7 @@ const LaborPopup = ({ setShowLaborPopup }) => {
                     const dateParts = m.month.split('-');
                     const year = parseInt(dateParts[0]);
                     const monthIndex = parseInt(dateParts[1]) - 1;
-                    if (year === 2024) {
+                   if (year === 2024) {
                         if (monthIndex === i) {
                             mSorted.push(m)
                         }

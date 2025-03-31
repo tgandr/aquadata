@@ -4,11 +4,14 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { formatDate, IconContainer } from './utils';
 import { Chart, registerables } from 'chart.js';
 import MonthlyCharts from './MonthlyCharts';
+import useDatabase from '../hooks/useDatabase';
 
 Chart.register(...registerables);
 
 const ReportFinancial = () => {
-    const financial = JSON.parse(localStorage.getItem('financial'));
+    const db = useDatabase()
+    const [history, setHistory] = useState([])
+    const [financial, setFinancial] = useState({})
     const [revenues, setRevenues] = useState([]);
     const [organizedData, setOrganizedData] = useState({});
     // const [revenueData, setRevenueData] = useState([]);
@@ -63,63 +66,85 @@ const ReportFinancial = () => {
     }, [showYear]);
 
     useEffect(() => {
-        if (financial) {
+        if (!db) return
+
+        db.find({
+            selector: {dataType: 'financial'}
+        }).then(data => {
+            const financial = data.docs[0]
             const organized = organizeByMonth(financial);
             const organizedObj = {};
             organized.forEach(item => {
                 organizedObj[item.month] = item;
             });
             setOrganizedData(organizedObj);
-        }
-    }, []);
+            setFinancial(financial)
 
-    useEffect(() => {
-        const history = JSON.parse(localStorage.getItem('history'));
-        let revenue = [];
-        if (history) {
-            if (history) {
-                history.forEach((hist) => {
-                    if ("harvest" in hist) {
-                        hist.harvest.forEach((harv) => {
-                            const harvData = {
-                                date: harv.id.date,
-                                price: harv.id.price,
-                                biomass: harv.data.biomass || harv.data.biomassAtFinalHarvest,
-                            };
-                            revenue.push(harvData);
-                        })
+            const getAllYears = (financial) => {
+                const years = new Set();
+                for (const key in financial) {
+                    if (Array.isArray(financial[key])) {
+                        financial[key].forEach(item => {
+                            if (item.date) {
+                                const year = parseInt(item.date.split("-")[0]);
+                                years.add(year);
+                            }
+                            if (item.month) {
+                                const year = parseInt(item.month.split("-")[0]);
+                                years.add(year);
+                            }
+                        });
                     }
-                })
-            }
-        }
-        setRevenues(revenue);
-    }, []);
-
-    useEffect(() => {
-        const financial = JSON.parse(localStorage.getItem('financial'));
-        const getAllYears = (financial) => {
-            const years = new Set();
-            for (const key in financial) {
-                if (Array.isArray(financial[key])) {
-                    financial[key].forEach(item => {
-                        if (item.date) {
-                            const year = parseInt(item.date.split("-")[0]);
-                            years.add(year);
-                        }
-                        if (item.month) {
-                            const year = parseInt(item.month.split("-")[0]);
-                            years.add(year);
-                        }
-                    });
                 }
-            }
-            return Array.from(years);
-        };
+                return Array.from(years);
+            };
+    
+            const years = getAllYears(financial);
+            setShowYear(Math.max(...years));
+            setYearsList(years);
+        })
 
-        const years = getAllYears(financial);
-        setShowYear(Math.max(...years));
-        setYearsList(years);
-    }, []);
+        db.find({
+            selector: {dataType: 'cultivation'}
+        }).then(data => {
+            const history = data.docs;
+            history.forEach((hist) => {
+                if ("harvest" in hist) {
+                    hist.harvest.forEach((harv) => {
+                        const harvData = {
+                            date: harv.id.date,
+                            price: harv.id.price,
+                            biomass: harv.data.biomass || harv.data.biomassAtFinalHarvest,
+                        };
+                        revenue.push(harvData);
+                    })
+                }
+            })
+            setHistory(history)
+        })
+    }, [db]);
+
+    // useEffect(() => {
+    //     const history = JSON.parse(localStorage.getItem('history'));
+    //     let revenue = [];
+    //     if (history) {
+    //         if (history) {
+    //             history.forEach((hist) => {
+    //                 if ("harvest" in hist) {
+    //                     hist.harvest.forEach((harv) => {
+    //                         const harvData = {
+    //                             date: harv.id.date,
+    //                             price: harv.id.price,
+    //                             biomass: harv.data.biomass || harv.data.biomassAtFinalHarvest,
+    //                         };
+    //                         revenue.push(harvData);
+    //                     })
+    //                 }
+    //             })
+    //         }
+    //     }
+    //     setRevenues(revenue);
+    // }, []);
 
     function organizeByMonth(data) {
         const result = {};

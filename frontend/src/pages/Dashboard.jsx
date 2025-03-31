@@ -5,15 +5,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt, faClipboardList, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons'
 import '../styles/Dashboard.css';
+import { Preferences } from '@capacitor/preferences';
+import LocalDb from '../databases/local.db';
 
 const Dashboard = () => {
+  const [formData, setFormData] = useState('')
   const navigate = useNavigate();
-  const formData = JSON.parse(localStorage.getItem('formData'));
 
   useEffect(() => {
+    if (!formData) LocalDb.get('user').then(data => setFormData(data))
+
     if (formData.eraseLocalStorageAfterLogout) {
       const handleUnload = () => {
-        localStorage.clear();
+        Preferences.clear()
       };
       
       window.addEventListener('beforeunload', handleUnload);
@@ -31,11 +35,10 @@ const Dashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    const formData = JSON.parse(localStorage.getItem('formData'));
+  const handleLogout = async () => {
     if (formData) {
       formData.saveLogin = false;
-      localStorage.setItem('formData', JSON.stringify(formData));
+      await LocalDb.set('user', formData)
     }
     navigate('/login');
   };

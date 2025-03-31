@@ -2,12 +2,34 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { formatDate, IconContainer } from './utils';
+import useDatabase from '../hooks/useDatabase'
 
 const ReportCosts = () => {
+    const db = useDatabase()
     const [showPondHistory, setShowPondHistory] = useState(false);
     const [pondHistory, setPondHistory] = useState([]);
-    const history = JSON.parse(localStorage.getItem('history')) ?? [];
-    const viveiros = JSON.parse(localStorage.getItem('viveiros')) ?? [];
+    const [history, setHistory] = useState([])
+    const [ponds, setPonds] = useState([])
+
+    useEffect(() => {
+        if (!db) return
+
+        db.find({
+            selector: {dataType: 'cultivation'}
+        }).then(data => {
+            setHistory(data.docs)
+        })
+
+        db.find({
+            selector: {dataType: 'pond'}
+        }).then(data => {
+            setPonds(data.docs.map(p => ({
+                id: p._id,
+                nome: p.name,
+                area: p.area
+            })))
+        })
+    },[db])
 
     const handleClick = (id) => {
         const historyFiltered = history.filter(p => p.viveiroId === id)
@@ -24,8 +46,8 @@ const ReportCosts = () => {
             <div className="pond-detail">
                 <div className="infos"></div>
                 <div className="viveiros-container">
-                    {viveiros.length > 0 ? (
-                        viveiros.map((viveiro, i) => (
+                    {ponds.length > 0 ? (
+                        ponds.map((viveiro, i) => (
                             <React.Fragment key={i}>
                                 <button
                                     className="viveiro-button"
@@ -68,9 +90,9 @@ const ReportCosts = () => {
                         <h3>Escolha o cultivo</h3>
                         {pondHistory.map((cycle, index) => (
                             <Link
-                                to={`/custos/${cycle.id}`}
+                                to={`/custos/${cycle._id}`}
                                 state={{ cycle: cycle }}
-                                key={cycle.id}
+                                key={cycle._id}
                                 className="link-style">
                                 <button key={index}>
                                     {formatDate(cycle.dataPovoamento).date}

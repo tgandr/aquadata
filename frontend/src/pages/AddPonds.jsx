@@ -6,11 +6,14 @@ import '../styles/AddPonds.css';
 import SanityAnalysis from './SanityAnalysis';
 import AnalysisReport from './AnalysisReport';
 import { IconContainer } from './utils';
-import { addPond, deactivatePond, getPonds, PostPondUseCase, PutPondUseCase, updatePond } from '../services/pond.service';
+import { PostPondUseCase, PutPondUseCase } from '../services/pond.service';
+import LocalDb from '../databases/local.db'
+import useDatabase from '../hooks/useDatabase'
 
 const AddPonds = () => {
-  const token = localStorage.getItem('token')
+  const db = useDatabase()
   const [ponds, setPonds] = useState([]);
+  const [formData, setFormData] = useState('')
   const [showPopup, setShowPopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showViveirosPopup, setShowViveirosPopup] = useState(false);
@@ -22,84 +25,67 @@ const AddPonds = () => {
     area: ''
   });
   const [cultivos, setCultivos] = useState(JSON.parse(localStorage.getItem('history')));
+
   useEffect(() => {
-    const storedPonds = JSON.parse(localStorage.getItem('viveiros'));
-    if (storedPonds) {
-      setPonds(storedPonds);
-    }
-    else {
-      getPondsFromApi()
-        .catch(err => console.log(err))
-        .then(res => {
-          let ponds = adaptPondsToLocalFormat(res.data)
-          savePondsToLocalStorage(ponds)
-        })
-    }
-  }, [selectedPond]);
+    LocalDb.get('user').then((user) => {
+      setFormData(user)
+    }) 
+  }, [])
 
-  const savePondsToLocalStorage = (viveiros) => {
-    localStorage.setItem('viveiros', JSON.stringify(viveiros));
-  };
-
-  const getPondsFromApi = async () => {
-    try {
-      return await getPonds()
+  useEffect(() => {
+    if (db) {
+      db.find({
+        selector: {
+          dataType: 'pond'
+        }
+      }).then(data => {
+        setPonds(data.docs.map(p => ({
+          id: p._id,
+          nome: p.name,
+          area: p.area
+        })))
+      })
     }
-    catch{}
-  }
-
-  const adaptPondsToLocalFormat = (ponds) => {
-    let list = []
-    for (var pond of ponds) {
-      list.push({
-        id: pond.id, 
-        nome: pond.name, 
-        area: pond.area})
-    }
-    return list
-  }
-
-  const formData = JSON.parse(localStorage.getItem('formData'));
+  },[db])
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
     if (selectedPond) {
       try {
-        const res = await updatePond(new PutPondUseCase(
+        const res = new PutPondUseCase(
           selectedPond.id,
           `Viveiro ${form.numeroViveiro}`,
           form.area
-        ), token)
-        console.log(res)
+        )
         const updatedViveiros = ponds.map((viveiro) =>
           viveiro.id === selectedPond.id ? { ...selectedPond, nome: `Viveiro ${form.numeroViveiro}`, area: form.area } : viveiro
         );
         setPonds(updatedViveiros);
-        savePondsToLocalStorage(updatedViveiros);
       }
       catch {}
     } 
     else {
-      try {
-        const userId = JSON.parse(localStorage.getItem('formData')).id
-        const res = await addPond(new PostPondUseCase(
+      // try {
+        const userId = formData.id
+        const newPond = new PostPondUseCase(
           `Viveiro ${form.numeroViveiro}`, 
           parseFloat(form.area), 
           userId
-        ), token)
+        )
         const novoViveiro = {
-          id: res.data.id,
-          nome: res.data.name,
-          area: res.data.area,
+          id: newPond._id,
+          nome: newPond.name,
+          area: newPond.area,
         };
         const updatedViveiros = [...ponds, novoViveiro];
+        db.put(newPond)
         setPonds(updatedViveiros);
-        savePondsToLocalStorage(updatedViveiros);
-      } catch {}
+      // } catch {}
     }
     setShowPopup(false);
     setShowEditPopup(false);

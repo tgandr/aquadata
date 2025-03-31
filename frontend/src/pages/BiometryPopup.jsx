@@ -5,8 +5,10 @@ const BiometryPopup = ({
   formBiometry,
   setFormBiometry,
   setShowBiometry,
-  setBiometrics }) => {
-
+  setBiometrics, database,
+  cultivation,
+  setCultivation
+}) => {
   const [showBiomCalculated, setShowBiomCalculated] = useState(0);
   const [calculateOrInsert, showCalculateOrInsert] = useState();
   const [showButtons, setShowButtons] = useState(true);
@@ -20,23 +22,26 @@ const BiometryPopup = ({
   };
 
   const handleBiometrySubmit = (e) => {
-    console.log(formBiometry)
     e.preventDefault();
     const { data, Pesagem, Contagem } = formBiometry;
     if (Pesagem && Contagem) {
       const pesoMedio = (Pesagem / Contagem).toFixed(1);
       const biom = { data, Pesagem, Contagem, pesoMedio };
-      const storedCultivos = JSON.parse(localStorage.getItem(`history`));
-      let storedCultivo = storedCultivos && storedCultivos.find((viv) => viv.viveiroId === viveiroId);
-      storedCultivo.biometrics ?
-        storedCultivo.biometrics.push(biom) :
-        storedCultivo = { ...storedCultivo, biometrics: [biom] };
-      setBiometrics(storedCultivo.biometrics);
-      storedCultivos.forEach((elem, i) => {
-        elem.id === storedCultivo.id && (storedCultivos[i] = storedCultivo)
+      // const storedCultivos = JSON.parse(localStorage.getItem(`history`));
+      // let storedCultivo = storedCultivos && storedCultivos.find((viv) => viv.viveiroId === viveiroId);
+      cultivation.biometrics ?
+      cultivation.biometrics.push(biom) :
+      cultivation = { ...cultivation, biometrics: [biom] };
+      setBiometrics(cultivation.biometrics);
+      // storedCultivos.forEach((elem, i) => {
+        //   elem.id === storedCultivo.id && (storedCultivos[i] = storedCultivo)
+        // })
+        // localStorage.setItem(`cultivo-${storedCultivo.id}`, JSON.stringify(storedCultivo));
+        // localStorage.setItem('history', JSON.stringify(storedCultivos));
+        database.put(cultivation).then(response => {
+          cultivation._rev = response.rev
+          setCultivation(cultivation)
       })
-      localStorage.setItem(`cultivo-${storedCultivo.id}`, JSON.stringify(storedCultivo));
-      localStorage.setItem('history', JSON.stringify(storedCultivos));
       setFormBiometry(initialFormBiometryState);
       setShowBiomCalculated(pesoMedio);
       setShowBiometry(false)
