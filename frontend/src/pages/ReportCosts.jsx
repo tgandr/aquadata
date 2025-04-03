@@ -23,11 +23,7 @@ const ReportCosts = () => {
         db.find({
             selector: {dataType: 'pond'}
         }).then(data => {
-            setPonds(data.docs.map(p => ({
-                id: p._id,
-                nome: p.name,
-                area: p.area
-            })))
+            setPonds(data.docs)
         })
     },[db])
 
@@ -51,14 +47,14 @@ const ReportCosts = () => {
                             <React.Fragment key={i}>
                                 <button
                                     className="viveiro-button"
-                                    onClick={() => handleClick(viveiro.id)}>
+                                    onClick={() => handleClick(viveiro._id)}>
                                     <div className="infos-wrapper">
-                                        {viveiro.id && (
+                                        {viveiro._id && (
                                             <span className="viveiro-data">
-                                                {`${(history.filter(h => h.viveiroId === viveiro.id)).length !== 0
-                                                    ? ((history.filter(h => h.viveiroId === viveiro.id)).length === 1
+                                                {`${(history.filter(h => h.viveiroId === viveiro._id)).length !== 0
+                                                    ? ((history.filter(h => h.viveiroId === viveiro._id)).length === 1
                                                         ? "1 cultivo anterior"
-                                                        : `${(history.filter(h => h.viveiroId === viveiro.id)).length} cultivos anteriores`)
+                                                        : `${(history.filter(h => h.viveiroId === viveiro._id)).length} cultivos anteriores`)
                                                     : "Nenhum cultivo registrado"}`
                                                 }
                                             </span>

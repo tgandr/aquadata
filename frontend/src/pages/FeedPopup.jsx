@@ -3,8 +3,10 @@ import { formatDate } from './utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
-const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
-  const [purchases, setPurchases] = useState([]);
+const FeedPopup = ({ setShowFeedPopup, saveData, base }) => {
+  // const [purchases, setPurchases] = useState([]);
+  const [purchases, setPurchases] = useState(base.stockData.feedPurchase)
+  const cultivo = base.cultivo
   const [uniquePurchases, setUniquePurchases] = useState([]);
   const [formFeed, setFormFeed] = useState({
     data: new Date().toISOString().split('T')[0],
@@ -65,8 +67,24 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
     });
   };
 
+  const saveCultivation = (cultivation) => {
+    base.db.put(cultivation).then(res => {
+      cultivation._rev = res.rev
+      base.setCultivo(cultivation)
+    })
+  } 
+
+  const saveStock = (stock) =>{
+    base.db.put(stock).then(res => {
+      stock._rev = res.rev
+      base.setStockData(stock)
+    })
+  }
+
   const removeFromStock = (id) => {
-    let stock = JSON.parse(localStorage.getItem('stockData'));
+    // let stock = JSON.parse(localStorage.getItem('stockData'));
+    let stock = {...base.stockData}
+
     const feedStock = stock.feedPurchase;
     const toUpdate = feedStock.map((item) => {
       if (item.purchaseId.id === id) {
@@ -75,7 +93,8 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
       return item;
     })
     stock = { ...stock, feedPurchase: toUpdate }
-    localStorage.setItem('stockData', JSON.stringify(stock));
+    // localStorage.setItem('stockData', JSON.stringify(stock));
+
   }
 
   const handleCheckboxChange = (e) => {
@@ -87,21 +106,23 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
   };
 
   const updateLastFiveFeeds = () => {
-    cultivo.feed && setLastFiveFeeds(cultivo.feed.slice(-5).reverse());
+    cultivo.feed && setLastFiveFeeds(base.cultivo.feed.slice(-5).reverse());
   };
 
   useEffect(() => {
     updateLastFiveFeeds();
   }, [cultivo]);
 
-  useEffect(() => {
-    const checkPurchases = JSON.parse(localStorage.getItem('stockData')) || [];
-    if ('feedPurchase' in checkPurchases) {
-      setPurchases(checkPurchases.feedPurchase);
-    }
-  }, []);
+  // useEffect(() => {
+  //   // const checkPurchases = JSON.parse(localStorage.getItem('stockData')) || [];
+  //   if ('feedPurchase' in base.stockData) {
+  //     setPurchases(checkPurchases.feedPurchase);
+  //   }
+  // }, [purchases]);
 
   useEffect(() => {
+    if (!base.stockData.feedPurchase) return
+    // const purchases = base.stockData.feedPurchases
     const uniqueSet = new Set();
     const uniquePurchasesLocal = [];
     purchases.forEach(purchase => {
@@ -117,6 +138,7 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
         });
       }
     });
+    console.log(uniquePurchasesLocal)
     setUniquePurchases(uniquePurchasesLocal);
   }, [purchases]);
 
@@ -148,7 +170,9 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
 
   const submitEdit = (edit) => {
     const { id, time, data } = edit;
-    let history = JSON.parse(localStorage.getItem('history'));
+    // let history = JSON.parse(localStorage.getItem('history'));
+    let history = base.cultivationHistory;
+    let cultivo = base.cultivo
     history = history.filter(c => c.id !== cultivo.id);
     const editFeedFromCultivo = cultivo.feed.filter((feed) =>
       !(feed.racaoUsada === id && feed.time === time && feed.data === data)
@@ -157,14 +181,17 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
     const updateFeedAfterEdit = [...editFeedFromCultivo, insertTimeInFormFeed]
     const updateCultivo = { ...cultivo, feed: updateFeedAfterEdit }
     history = [...history, updateCultivo];
-    setCultivo(updateCultivo);
-    localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(updateCultivo));
-    localStorage.setItem(`history`, JSON.stringify(history));
+    // setCultivo(updateCultivo);
+    // localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(updateCultivo));
+    // localStorage.setItem(`history`, JSON.stringify(history));
+    saveCultivation(updateCultivo)
     updateLastFiveFeeds();
   }
+
   const handleDeleteItem = (id, time, data) => {
     if (window.confirm('Tem certeza de que deseja excluir este item?')) {
-      let history = JSON.parse(localStorage.getItem('history'));
+      // let history = JSON.parse(localStorage.getItem('history'));
+      let history = base.cultivationHistory
       history = history.filter(c => c.id !== cultivo.id);
   
       // Encontrar o item a ser removido
@@ -184,12 +211,13 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
       // Atualizar o cultivo com o item removido
       const updateCultivo = { ...cultivo, feed: removeFeedFromCultivo }
       history = [...history, updateCultivo];
-      setCultivo(updateCultivo);
-      localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(updateCultivo));
-      localStorage.setItem(`history`, JSON.stringify(history));
-  
+      // base.setCultivo(updateCultivo);
+      // localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(updateCultivo));
+      // localStorage.setItem(`history`, JSON.stringify(history));
+      saveCultivation(updateCultivo)
       // Devolver a quantidade removida ao estoque
-      let stock = JSON.parse(localStorage.getItem('stockData'));
+      // let stock = JSON.parse(localStorage.getItem('stockData'));
+      let stock = base.stockData
       const feedStock = stock.feedPurchase.map((item) => {
         if (item.purchaseId.id === id) {
           return { ...item, quantity: parseFloat(item.quantity) + parseFloat(itemToRemove.racaoTotalDia) };
@@ -197,7 +225,8 @@ const FeedPopup = ({ setShowFeedPopup, saveData, cultivo, setCultivo }) => {
         return item;
       });
       stock = { ...stock, feedPurchase: feedStock };
-      localStorage.setItem('stockData', JSON.stringify(stock));
+      // localStorage.setItem('stockData', JSON.stringify(stock));
+      saveStock(stock)
   
       updateLastFiveFeeds();
     }

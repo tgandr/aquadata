@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { formatDate } from './utils';
 
-const RationPurchasesPopup = ({ setShowRationPurchasesPopup, database }) => {
+const RationPurchasesPopup = ({ setShowRationPurchasesPopup, base }) => {
     const [addNewBrandPopup, setAddNewBrandPopup] = useState(false);
     const [showSavedMessage, setShowSavedMessage] = useState(false);
-    const [rationsBrands, setRationsBrands] = useState([]);
-    const [financial, setFinancial] = useState({})
-    const [stockData, setStock] = useState({})
+    const [rationsBrands, setRationsBrands] = useState(base.stock.brandRatioList);
+    // const [financial, setFinancial] = useState({})
+    // const [stockData, setStock] = useState({})
     const [addNewBrand, setAddNewBrand] = useState('');
     const [rationPurchases, setRationPurchases] = useState([]);
     const [showRationPurchaseTable, setShowRationPurchaseTable] = useState(false);
@@ -32,28 +32,28 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup, database }) => {
         return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     };
 
-    useEffect(() => {
-        database.find({
-            selector: {dataType: 'financial'}
-        }).then(data => {
-            setFinancial(data.docs[0] || {})
-        })
+    // useEffect(() => {
+    //     database.find({
+    //         selector: {dataType: 'financial'}
+    //     }).then(data => {
+    //         setFinancial(data.docs[0] || {})
+    //     })
 
-        database.find({
-            selector: {dataType: 'stockData'}
-        }).then(data => {
-            if (!data.docs.length) return 
-            const stock = data.docs[0]
-            if ('brandRatioList' in stock) {
-                setRationsBrands(stock.brandRatioList);
-            }
-            setStock(stock)
-        })
-    }, []);
+    //     database.find({
+    //         selector: {dataType: 'stockData'}
+    //     }).then(data => {
+    //         if (!data.docs.length) return 
+    //         const stock = data.docs[0]
+    //         if ('brandRatioList' in stock) {
+    //             setRationsBrands(stock.brandRatioList);
+    //         }
+    //         setStock(stock)
+    //     })
+    // }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        let newFinancial = {...financial}
+        let newFinancial = {...base.financial}
         let formRationCheckOut = formRation;
         const { bagQuantity, bagSize, brand } = formRation;
         formRationCheckOut = {
@@ -93,9 +93,9 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup, database }) => {
             newFinancial = { feedPurchase: [formRationCheckOut] }
         }
         // localStorage.setItem('financial', JSON.stringify(financial));
-        database.put(newFinancial).then(res => {
+        base.db.put(newFinancial).then(res => {
             newFinancial._rev = res.rev
-            setFinancial(newFinancial)
+            base.setFinancial(newFinancial)
         })
         saveInStock(formRationCheckOut);
         setFormRation({
@@ -111,21 +111,21 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup, database }) => {
     }
 
     const saveInStock = (toSave) => {
-        let stock = {...stockData}
+        let stock = {...base.stock}
         if ('feedPurchase' in stock) {
             stock.feedPurchase.push(toSave);
         } else {
             stock = { ...stock, feedPurchase: [toSave] }
         }
-        database.put(stock).then(res => {
+        base.db.put(stock).then(res => {
             stock._rev = res.rev
-            setStock(stock)
+            base.setStock(stock)
         })
         // localStorage.setItem('stockData', JSON.stringify(stock));
     }
 
     const saveNewBrand = () => {
-        let stock = {...stockData};
+        let stock = {...base.stock};
         if (stock) {
             if ('brandRatioList' in stock) {
                 stock.brandRatioList.push(addNewBrand);
@@ -137,7 +137,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup, database }) => {
         }
 
         // localStorage.setItem('stock', JSON.stringify(stock));
-        database.put(stock).then(res => {
+        base.db.put(stock).then(res => {
             stock._rev = res.rev
             setStock(stock)
         })
@@ -149,21 +149,50 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup, database }) => {
         setTimeout(() => setShowSavedMessage(false), 2000);
     }
 
+    // const handleDeletePurchase = (index) => {
+    //     const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
+
+    //     if (isConfirmed) {
+    //         let stock = {...stockData}
+    //         let feedStock = stock.feedPurchase;
+    //         const id = rationPurchases[index].purchaseId.id;
+    //         feedStock = feedStock.filter(item => item.purchaseId.id !== id); 
+    //         stock = {...stock, feedPurchase: feedStock}
+    //         // localStorage.setItem('stockData', JSON.stringify(stock));
+            
+    //         const updatedPurchases = [...rationPurchases];
+    //         updatedPurchases.splice(index, 1);
+    //         // localStorage.setItem('financial', JSON.stringify({ ...JSON.parse(localStorage.getItem('financial')), feedPurchase: updatedPurchases }));
+    //         setRationPurchases(updatedPurchases);
+    //     }
+    // };
+
     const handleDeletePurchase = (index) => {
         const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
-
         if (isConfirmed) {
-            let stock = {...stockData}
-            let feedStock = stock.feedPurchase;
-            const id = rationPurchases[index].purchaseId.id;
-            feedStock = feedStock.filter(item => item.purchaseId.id !== id); 
-            stock = {...stock, feedPurchase: feedStock}
-            localStorage.setItem('stockData', JSON.stringify(stock));
-    
-            const updatedPurchases = [...rationPurchases];
-            updatedPurchases.splice(index, 1);
-            localStorage.setItem('financial', JSON.stringify({ ...JSON.parse(localStorage.getItem('financial')), feedPurchase: updatedPurchases }));
-            setRationPurchases(updatedPurchases);
+            const purchases = {...base.financial}
+            const actualIndex = purchases.feedPurchase.length - 1 - index;
+            const updatedPurchases = { ...purchases };
+            const deletedPurchase = updatedPurchases.feedPurchase[actualIndex];
+
+            updatedPurchases.feedPurchase.splice(actualIndex, 1);
+            // localStorage.setItem('financial', JSON.stringify(updatedPurchases));
+            base.db.put(updatedPurchases).then(res => {
+                updatedPurchases._rev = res.rev
+                base.setFinancial(updatedPurchases)
+            })
+            // setPurchases(updatedPurchases);
+
+            // let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            let stockData = {...base.stock}
+            if ('feedPurchase' in stockData) {
+                stockData.feedPurchase = stockData.feedPurchase.filter(purchase => purchase.id !== deletedPurchase.id);
+            }
+            base.db.put(stockData).then(res => {
+                stockData._rev = res.rev
+                base.setStock(stockData)
+            })
+            // localStorage.setItem('stockData', JSON.stringify(stockData));
         }
     };
 
@@ -183,16 +212,16 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup, database }) => {
     }, [addNewBrand]);
 
     useEffect(() => {
-        if (!financial) return 
-        if ('feedPurchase' in financial) {
-            setRationPurchases(financial.feedPurchase.slice(-5).reverse());
-            if (financial.feedPurchase.length > 0) {
+        if (!base.financial) return 
+        if ('feedPurchase' in base.financial) {
+            setRationPurchases(base.financial.feedPurchase.slice(-5).reverse());
+            if (base.financial.feedPurchase.length > 0) {
                 setShowRationPurchaseTable(true);
             } else {
                 setShowRationPurchaseTable(false);
             }
         }
-    }, [financial, formRation]);
+    }, [base.financial, formRation]);
 
     return (
         <div>

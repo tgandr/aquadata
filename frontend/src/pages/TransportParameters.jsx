@@ -2,7 +2,6 @@ import React from "react";
 
 const TransportParameters = ({formParam, setFormParam, setShowParameters}) => {
     const handleParametersChangeSubmit = (e) => {
-        console.log(e.target)
         e.preventDefault();
         setShowParameters(false);
     }

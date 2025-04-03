@@ -60,10 +60,10 @@ export const IconContainer = () => {
     )
 }
 
-export const calculateDepreciation = (hasShrimp) => {
-    const inventoryData = JSON.parse(localStorage.getItem("inventoryData"));
-    if (hasShrimp && inventoryData) {
-        return inventoryData.reduce((total, item) => {
+export const calculateDepreciation = (hasShrimp, inventory) => {
+    // const inventoryData = JSON.parse(localStorage.getItem("inventoryData"));
+    if (hasShrimp && inventory) {
+        return inventory.reduce((total, item) => {
             const meses = parseInt(item.vidaUtil, 10) * 12;
             const valorInicial = parseFloat(item.valor);
             const valorFinal = parseFloat(item.valorFinal);

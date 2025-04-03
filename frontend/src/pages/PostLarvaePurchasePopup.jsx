@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { formatDate } from './utils';
 
-const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPopup,
-    setShowSavedMessage, capitalizeProperly, handleChange, handleSubmit }) => {
+const PostLarvaePurchasePopup = ({ showPopup, setShowPopup,
+    setShowSavedMessage, capitalizeProperly, handleChange, handleSubmit, base }) => {
     const [formPostLarvae, setFormPostLarvae] = useState({
         date: new Date().toISOString().split('T')[0],
         label: '',
@@ -12,28 +12,32 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
         pond: '',
         dateIn: ''
     });
-
+    const [history, setHistory] = useState([])
     const [addNewPostLarvae, setAddNewPostLarvae] = useState('');
     const [customPostLarvae, setCustomPostLarvae] = useState('');
     const [showPostLarvaePurchaseTable, setShowPostLarvaePurchaseTable] = useState(false);
     const [datesIn, setDatesIn] = useState('');
-
+    const purchases = base.financial
     const [postLarvae, setPostLarvae] = useState([
         "Aquacrusta", "Aquatec", "CELM", "Larvifort"]);
-    const viveiros = JSON.parse(localStorage.getItem('viveiros'));
+    const viveiros = base.viveiros
 
     const savePostLarvaeList = (l) => {
         const larvae = capitalizeProperly(l);
+        let stockData = {...base.stock}
         if (l !== '') {
             setPostLarvae([...postLarvae, larvae]);
             setCustomPostLarvae('');
-            let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
             if ('postLarvaeList' in stockData) {
                 stockData.postLarvaeList.push(larvae);
             } else {
                 stockData.postLarvaeList = [...postLarvae, larvae];
             }
-            localStorage.setItem('stockData', JSON.stringify(stockData));
+            // localStorage.setItem('stockData', JSON.stringify(stockData));
+            base.db.put(stockData).then(res => {
+                stockData._rev = res.rev
+                base.setStock(stockData)
+            })
         }
         setFormPostLarvae({ ...formPostLarvae, fornecedor: larvae });
         setAddNewPostLarvae(false);
@@ -43,12 +47,18 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
     };
 
     useEffect(() => {
-        const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
-        const checkPurchases = JSON.parse(localStorage.getItem('financial')) || {};
-        setPurchases(checkPurchases);
+        // const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
+        // const checkPurchases = JSON.parse(localStorage.getItem('financial')) || {};
+        const checkLists = base.stock
+        // const checkPurchases = base.financial
+        // setPurchases(checkPurchases);
         if ('postLarvaeList' in checkLists) {
             setPostLarvae(checkLists.postLarvaeList);
         }
+
+        base.db.find({
+            selector: {dataType: 'cultivation'}
+        }).then(data => setHistory(data.docs))
     }, []);
 
     useEffect(() => {
@@ -67,11 +77,12 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
                 setShowPostLarvaePurchaseTable(false)
             }
         }
-    }, [purchases]);
+    }, [base.financial]);
 
     useEffect(() => {
         if (formPostLarvae.pond !== "") {
-            const history = JSON.parse(localStorage.getItem('history'));
+            // const history = JSON.parse(localStorage.getItem('history'));
+            if (!history.length) return
             const pondHistory = history.filter(pond => (pond.viveiroId === formPostLarvae.pond) && !pond.plPurchase);
             setFormPostLarvae({ ...formPostLarvae, quantity: (parseInt(pondHistory[0].quantidadeEstocada) / 1000) })
             setDatesIn(pondHistory);
@@ -80,7 +91,7 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
 
     useEffect(() => {
         if (formPostLarvae.dateIn !== "") {
-            const cultivo = JSON.parse(localStorage.getItem(`cultivo-${formPostLarvae.dateIn}`));
+            // const cultivo = JSON.parse(localStorage.getItem(`cultivo-${formPostLarvae.dateIn}`));
             setFormPostLarvae({ ...formPostLarvae, label: ''})
         }
     }, [formPostLarvae.dateIn])
@@ -88,19 +99,29 @@ const PostLarvaePurchasePopup = ({ purchases, setPurchases, showPopup, setShowPo
     const handleDeletePurchase = (index) => {
         const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
         if (isConfirmed) {
+            const purchases = {...base.financial}
             const actualIndex = purchases.postLarvaePurchase.length - 1 - index;
             const updatedPurchases = { ...purchases };
             const deletedPurchase = updatedPurchases.postLarvaePurchase[actualIndex];
 
             updatedPurchases.postLarvaePurchase.splice(actualIndex, 1);
-            localStorage.setItem('financial', JSON.stringify(updatedPurchases));
-            setPurchases(updatedPurchases);
+            // localStorage.setItem('financial', JSON.stringify(updatedPurchases));
+            base.db.put(updatedPurchases).then(res => {
+                updatedPurchases._rev = res.rev
+                base.setFinancial(updatedPurchases)
+            })
+            // setPurchases(updatedPurchases);
 
-            let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            // let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            let stockData = {...base.stock}
             if ('postLarvaePurchase' in stockData) {
                 stockData.postLarvaePurchase = stockData.postLarvaePurchase.filter(purchase => purchase.id !== deletedPurchase.id);
             }
-            localStorage.setItem('stockData', JSON.stringify(stockData));
+            base.db.put(stockData).then(res => {
+                stockData._rev = res.rev
+                base.setStock(stockData)
+            })
+            // localStorage.setItem('stockData', JSON.stringify(stockData));
         }
     };
 

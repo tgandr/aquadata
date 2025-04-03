@@ -6,11 +6,11 @@ import OthersPurchasePopup from './OthersPurchasePopup';
 import ProbioticsPurchasePopup from './ProbioticsPurchasePopup';
 import { v4 as uuidv4 } from 'uuid';
 
-const Purchases = ({ setShowPurchasesPopup, database }) => {
+const Purchases = ({ setShowPurchasesPopup, base }) => {
     const [showRationPurchasesPopup, setShowRationPurchasesPopup] = useState(false);
     const [showSavedMessage, setShowSavedMessage] = useState(false);
-    const [purchases, setPurchases] = useState({});
-
+    // const [purchases, setPurchases] = useState({});
+    const purchases = base.financial
     const [showPopup, setShowPopup] = useState({
         probiotics: false,
         fertilizers: false,
@@ -18,21 +18,18 @@ const Purchases = ({ setShowPurchasesPopup, database }) => {
         postLarvae: false
     });
 
-    const savePurchase = (data) => {
-        database.put(data).then(res => {
-            data._rev = res.rev
-            setPurchases(data);
-        })
-    };
-
     const saveStock = (category, toUpdate) => {
-        let stock = JSON.parse(localStorage.getItem('stockData')) || {};
+        let stock = base.stock
         if (category in stock) {
             stock[category].push(toUpdate);
         } else {
             stock = { ...stock, [category]: [toUpdate] }
         }
-        localStorage.setItem('stockData', JSON.stringify(stock));
+        // localStorage.setItem('stockData', JSON.stringify(stock));
+        base.db.put(stock).then(res => {
+            stock._rev = res.rev
+            base.setStock(stock)
+        })
     };
 
     const handleChange = (e, formSetter, form) => {
@@ -52,9 +49,13 @@ const Purchases = ({ setShowPurchasesPopup, database }) => {
         resetForm = { ...resetForm, dataCompra: form.dataCompra }
         const updatedPurchases = { ...purchases, [category]: [...purchases[category], newForm] };
         console.log(updatedPurchases)
-        // savePurchase(updatedPurchases);
-        // saveStock(category, newForm);
-        // formSetter(resetForm);
+        base.db.put(updatedPurchases).then(res => {
+            updatedPurchases._rev = res.rev
+            base.setFinancial(updatedPurchases)
+        })
+        saveStock(category, newForm);
+        formSetter(resetForm);
+        // setPurchases(updatedPurchases)
     };
 
     const capitalizeProperly = (str) => {
@@ -71,22 +72,32 @@ const Purchases = ({ setShowPurchasesPopup, database }) => {
             .join(' ');
     };
 
-    const updateLocalStorage = (updatedPurchases, category) => {
-        const financialData = JSON.parse(localStorage.getItem('financial')) || {};
-        const stockData = JSON.parse(localStorage.getItem('stockData')) || {};
-        financialData[category] = updatedPurchases;
-        stockData[category] = updatedPurchases;
-        localStorage.setItem('financial', JSON.stringify(financialData));
-        localStorage.setItem('stockData', JSON.stringify(stockData));
+    const updateDb = (updatedPurchases, category) => {
+        // const financialData = JSON.parse(localStorage.getItem('financial')) || {};
+        // const stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+        let financial = base.financial;
+        let stock = base.stock;
+        financial[category] = updatedPurchases;
+        stock[category] = updatedPurchases;
+        base.db.put(financial).then(res => {
+            financial._rev = res.rev
+            base.setFinancial(financial)
+        })
+        base.db.put(stock).then(res => {
+            financial._rev = res.rev
+            base.setStock(stock)
+        })
+        // localStorage.setItem('financial', JSON.stringify(financialData));
+        // localStorage.setItem('stockData', JSON.stringify(stockData));
     };
 
     const handleDeletePurchase = (id, category) => {
         const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
-
         if (isConfirmed) {
             const updatedPurchases = purchases[category].filter(purchase => purchase.id !== id);
-            setPurchases({ ...purchases, [category]: updatedPurchases });
-            updateLocalStorage(updatedPurchases, category);
+
+            // setPurchases({ ...purchases, [category]: updatedPurchases });
+            updateDb(updatedPurchases, category);
         }
     };
 
@@ -115,7 +126,7 @@ const Purchases = ({ setShowPurchasesPopup, database }) => {
             </div>
 
             {showRationPurchasesPopup &&
-                <RationPurchasesPopup setShowRationPurchasesPopup={setShowRationPurchasesPopup} database={database}/>}
+                <RationPurchasesPopup setShowRationPurchasesPopup={setShowRationPurchasesPopup} base={base}/>}
 
             {showPopup.probiotics && // Adicione o novo popup aqui
                 <ProbioticsPurchasePopup
@@ -125,9 +136,10 @@ const Purchases = ({ setShowPurchasesPopup, database }) => {
                     handleChange={handleChange}
                     handleSubmit={handleSubmit}
                     setShowSavedMessage={setShowSavedMessage}
-                    purchases={purchases}
-                    setPurchases={setPurchases}
+                    // purchases={purchases}
+                    // setPurchases={setPurchases}
                     handleDeletePurchase={handleDeletePurchase}
+                    base={base}
                 />
             }
 
@@ -138,10 +150,11 @@ const Purchases = ({ setShowPurchasesPopup, database }) => {
                     capitalizeProperly={capitalizeProperly}
                     handleChange={handleChange}
                     handleSubmit={handleSubmit}
-                    purchases={purchases}
-                    setPurchases={setPurchases}
+                    // purchases={purchases}
+                    // setPurchases={setPurchases}
                     setShowSavedMessage={setShowSavedMessage}
                     handleDeletePurchase={handleDeletePurchase}
+                    base={base}
                 />
             )}
 
@@ -150,19 +163,21 @@ const Purchases = ({ setShowPurchasesPopup, database }) => {
                     setShowPopup={setShowPopup}
                     handleChange={handleChange}
                     handleSubmit={handleSubmit}
-                    purchases={purchases}
-                    setPurchases={setPurchases}
+                    // purchases={purchases}
+                    // setPurchases={setPurchases}
+                    base={base}
                     handleDeletePurchase={handleDeletePurchase} />}
 
             {showPopup.postLarvae &&
                 <PostLarvaePurchasePopup
-                    purchases={purchases}
-                    setPurchases={setPurchases}
+                    // purchases={purchases}
+                    // setPurchases={setPurchases}
                     showPopup={showPopup}
                     setShowPopup={setShowPopup}
                     capitalizeProperly={capitalizeProperly}
                     setShowSavedMessage={setShowSavedMessage}
                     handleChange={handleChange}
+                    base={base}
                     handleSubmit={handleSubmit} />}
 
             {showSavedMessage && <div className="saved-message">Salvo!</div>}

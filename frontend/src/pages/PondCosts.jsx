@@ -50,16 +50,12 @@ const PondCosts = () => {
         db.find({
             selector: {dataType: 'pond'}
         }).then(data => {
-            const mappedPonds = data.docs.map(p =>({
-                id: p._id,
-                nome: p.name,
-                area: p.area
-            }))
-            const currentPond = mappedPonds.find(p => p.id == viveiroId)
+            const ponds = data.docs
+            const currentPond = ponds.find(p => p._id == viveiroId)
             const currentPondArea = parseFloat(currentPond.area)
             setCurrentPond(currentPond)
-            setPonds(mappedPonds)
-            setTotalPondsArea(mappedPonds.reduce((total, i) => 
+            setPonds(ponds)
+            setTotalPondsArea(ponds.reduce((total, i) => 
                 total + parseFloat(i.area), 0))
             setPondArea(currentPondArea)
             setPondPercentage(parseFloat((currentPondArea / totalPondsArea) * 100))
@@ -157,7 +153,7 @@ const PondCosts = () => {
         let totalLaborCost = 0;
         const getDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
 
-        if (!financial.labor) return 0;
+        if (!financial || !financial.labor) return 0;
 
         financial.labor.forEach(entry => {
             const entryDate = new Date(entry.month + "-01");

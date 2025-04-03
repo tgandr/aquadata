@@ -3,8 +3,12 @@ import '../styles/Inventory.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faEllipsisH, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { IconContainer } from './utils';
+import LocalDb from '../databases/local.db';
+import useDatabase from '../hooks/useDatabase';
+import { v4 } from 'uuid';
 
 const Inventory = () => {
+    const db = useDatabase()
     const [showPopup, setShowPopup] = useState(false);
     const [showFullTable, setShowFullTable] = useState(false);
     const [showTablePopup, setShowTablePopup] = useState(false);
@@ -19,14 +23,24 @@ const Inventory = () => {
         emOperacaoDesde: ''
     });
 
-    const formData = JSON.parse(localStorage.getItem('formData'));
+    // const formData = JSON.parse(localStorage.getItem('formData'));
+    const [formData, setFormData] = useState()
 
     useEffect(() => {
-        const storedInventoryData = JSON.parse(localStorage.getItem('inventoryData'));
-        if (storedInventoryData) {
-            setInventoryData(storedInventoryData);
-        }
-    }, []);
+        if (!db) return
+        LocalDb.get('user').then(data => setFormData(data))
+        db.find({
+            selector: {dataType: 'inventory'}
+        }).then(data => {
+            const inventory = data.docs || []
+            console.log(inventory)
+            setInventoryData(inventory)
+        })
+        // const storedInventoryData = JSON.parse(localStorage.getItem('inventoryData'));
+        // if (storedInventoryData) {
+        //     setInventoryData(storedInventoryData);
+        // }
+    }, [db]);
 
     const calculateDepreciation = () => {
         return inventoryData.reduce((total, item) => {
@@ -46,17 +60,25 @@ const Inventory = () => {
         e.preventDefault();
         const updatedInventoryData = [...inventoryData];
         if (editIndex !== null) {
-            const i = updatedInventoryData.findIndex(item => item.id === editIndex);
+            const i = updatedInventoryData.findIndex(item => item._id === editIndex);
             if (i !== -1) {
-                updatedInventoryData[i] = { ...form, id: editIndex };
+                updatedInventoryData[i] = { ...form, _id: editIndex };
+                const updatedItem = updatedInventoryData[i]
+                db.put(updatedItem).then(res => {
+                    updatedItem._rev = res.rev
+                })
             }
             setEditIndex(null);
         } else {
-            const novoItem = { ...form, id: Math.random().toString(36).substr(2, 9) };
+            const novoItem = { ...form, _id: v4(), dataType: 'inventory' };
+             db.put(novoItem).then(res => {
+                novoItem._rev = res.rev
+            })
             updatedInventoryData.push(novoItem);
         }
+
         setInventoryData(updatedInventoryData);
-        localStorage.setItem('inventoryData', JSON.stringify(updatedInventoryData));
+        // localStorage.setItem('inventoryData', JSON.stringify(updatedInventoryData));
         setShowPopup(false);
         setForm({
             item: '',
@@ -69,7 +91,7 @@ const Inventory = () => {
     };
 
     const handleEditItem = (id) => {
-        const item = inventoryData.filter(i => i.id === id);
+        const item = inventoryData.filter(i => i._id === id);
         setEditIndex(id);
         setForm(item[0]);
         setShowPopup(true);
@@ -78,9 +100,14 @@ const Inventory = () => {
 
     const handleDeleteItem = (id) => {
         if (window.confirm('Tem certeza de que deseja excluir este item?')) {
-            const updatedInventoryData = inventoryData.filter(item => item.id !== id);
-            setInventoryData(updatedInventoryData);
-            localStorage.setItem('inventoryData', JSON.stringify(updatedInventoryData));
+            const newInventory = [...inventoryData]
+            const tobeDeleted = inventoryData.find(item => item._id === id);
+            const tobeDeletedIndex = inventoryData.indexOf(tobeDeleted)
+            newInventory.splice(tobeDeletedIndex, 1)
+            db.remove(tobeDeleted).then(() => {
+                setInventoryData(newInventory);
+            })
+            // localStorage.setItem('inventoryData', JSON.stringify(updatedInventoryData));
         }
     };
 
@@ -102,16 +129,16 @@ const Inventory = () => {
                     </thead>
                     <tbody>
                         {data.map((item, index) => (
-                            <tr key={item.id}>
+                            <tr key={item._id}>
                                 <td>{item.item}</td>
                                 <td>R$ {(((parseFloat(item.valor) - parseFloat(item.valorFinal)) / (parseInt(item.vidaUtil, 10) * 12)).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}</td>
                                 <td style={{ textAlign: "center" }}>
-                                    <button className="delete-button" onClick={() => handleEditItem(item.id)}>
+                                    <button className="delete-button" onClick={() => handleEditItem(item._id)}>
                                         <FontAwesomeIcon icon={faEdit} />
                                     </button>
                                 </td>
                                 <td style={{ textAlign: "center" }}>
-                                    <button className="delete-button" onClick={() => handleDeleteItem(item.id)}>
+                                    <button className="delete-button" onClick={() => handleDeleteItem(item._id)}>
                                         <FontAwesomeIcon icon={faTrash} />
                                     </button>
                                 </td>
@@ -158,12 +185,12 @@ const Inventory = () => {
                                 <td>{item.vidaUtil}</td>
                                 <td>{new Date(item.emOperacaoDesde).toLocaleDateString('pt-BR')}</td>
                                 <td style={{ textAlign: "center" }}>
-                                    <button className="delete-button" onClick={() => handleEditItem(item.id)}>
+                                    <button className="delete-button" onClick={() => handleEditItem(item._id)}>
                                         <FontAwesomeIcon icon={faEdit} />
                                     </button>
                                 </td>
                                 <td style={{ textAlign: "center" }}>
-                                    <button className="delete-button" onClick={() => handleDeleteItem(item.id)}>
+                                    <button className="delete-button" onClick={() => handleDeleteItem(item._id)}>
                                         <FontAwesomeIcon icon={faTrash} />
                                     </button>
                                 </td>
@@ -174,7 +201,7 @@ const Inventory = () => {
             </div>
         );
     };
-
+    if (!formData || !inventoryData) return (<p>Carregando...</p>)
     return (
         <div>
             <div className="identify-data">

@@ -13,14 +13,15 @@ const ReportCycle = () => {
     const cultivoId = location.state.id;
     const pond = location.state.viveiro
     const viveiroName = location.state.viveiro.nome;
-    const findInHistory = () => {
-        const history = JSON.parse(localStorage.getItem("history"));
-        const idWithoutPrefix = cultivoId.split("-").slice(1).join("-");
-        return history.find((cult) => cult.id === idWithoutPrefix)
-    }
+    // const findInHistory = () => {
+    //     const history = JSON.parse(localStorage.getItem("history"));
+    //     const idWithoutPrefix = cultivoId.split("-").slice(1).join("-");
+    //     return history.find((cult) => cult.id === idWithoutPrefix)
+    // }
     const [cultivation, setCultivation] = useState()
     const [CA, setCA] = useState()
-    const stockData = JSON.parse(localStorage.getItem('stockData'));
+    // const stockData = JSON.parse(localStorage.getItem('stockData'));
+    const [stockData, setStock] = useState()
     const [showReceiptPostLarvaes, setShowReceiptPostLarvaes] = useState(false);
     const [showStressTest, setShowStressTest] = useState(false);
     const [showBiometrics, setShowBiometrics] = useState(false);
@@ -35,7 +36,15 @@ const ReportCycle = () => {
         if (!db) return 
         db.get(cultivoId).then(res =>{
             setCultivation(res)
+            console.log(checkFeedToCA(res))
             setCA(checkFeedToCA(res))
+        })
+
+        db.find({
+            selector: {dataType: 'stockData'}
+        }).then(data => {
+            const stock = data.docs[0]
+            setStock(stock || {})
         })
     },[db])
 
@@ -72,6 +81,7 @@ const ReportCycle = () => {
     };
 
     const produtividade = () => {
+        if (!CA) return 0
         // const viv = JSON.parse(localStorage.getItem('viveiros')).find(v => v.id == cultivation.viveiroId)
         return parseInt(CA.biomass / pond.area)
     };

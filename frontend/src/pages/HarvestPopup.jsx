@@ -3,8 +3,11 @@ import { calculateDepreciation } from './utils';
 
 const HarvestPopup = ({
   cultivo, setCultivo, saveData, harvestData, setHarvestData, survivalRate, setSurvivalRate,
-  biometryData, setBiometryData, newPesagem, setNewPesagem, setShowHarvest }) => {
-
+  biometryData, setBiometryData, newPesagem, setNewPesagem, setShowHarvest, database }) => {
+  
+  const [ponds, setPonds] = useState([])
+  const [cultivations, setCultivations] = useState([])
+  const [inventory, setInventory] = useState([])
   const [previousHarvestData, setPreviousHarvestData] = useState(true);
   const [totalBiomassHarvested, setTotalBiomassHarvested] = useState('');
   const [finishingHarvest, setFinishingHarvest] = useState({
@@ -24,6 +27,27 @@ const HarvestPopup = ({
 
   const [checkHarvestTotalOrParcial, setCheckHarvestTotalOrParcial] = useState('');
   const [showPercentual, setShowPercentual] = useState(false)
+
+  useEffect(() => {
+    database.find({
+      selector: {dataType: 'pond'}
+    }).then(data => {
+      setPonds(data.docs)
+    })
+
+    database.find({
+      selector: {dataType: 'cultivation'}
+    }).then(data => {
+      setCultivations(data.docs)
+    })
+
+    database.find({
+      selector: {dataType: 'inventory'}
+    }).then(data => {
+      setInventory(data.docs)
+    })
+  },[])
+
   const handleHarvestChange = (e) => {
     const { name, value } = e.target;
     setHarvestData({
@@ -148,30 +172,40 @@ const HarvestPopup = ({
   };
 
   const handleSave = () => {
-    const viveiros = JSON.parse(localStorage.getItem('viveiros'));
-    const pondArea = parseFloat((viveiros.find(viv => viv.id === cultivo.viveiroId)).area);
-    const totalPondsArea = viveiros.reduce((total, i) => total + parseFloat(i.area), 0);
+    let checkOut;
+    const pondArea = parseFloat((ponds.find(viv => viv._id === cultivo.viveiroId)).area);
+    const totalPondsArea = ponds.reduce((total, i) => total + parseFloat(i.area), 0);
     // const pondArea = parseFloat(pond.area);
     const pondPercentage = parseFloat(pondArea / totalPondsArea);
 
     if (hasBiomass) {
-      saveData(harvestTotals, 'harvest');
+      if ('harvest' in cultivo) {
+        const toStore = [...cultivo['harvest'], harvestTotals];
+        checkOut = { ...cultivo, ['harvest']: toStore };
+      } else {
+        checkOut = { ...cultivo, ['harvest']: [harvestTotals] };
+      }
       setShowHarvest(false);
     } else {
       setErrorMessage('Indique a biomassa colhida')
     }
     if (harvestTotals.id.totalOrParcial === 'total') {
-      let history = JSON.parse(localStorage.getItem('history'));
-      let closeCultivo = JSON.parse(localStorage.getItem(`cultivo-${cultivo.id}`));
-      history = history.filter((viv) => viv.id !== cultivo.id);
-      closeCultivo = { ...closeCultivo, 
-        hasShrimp: false, 
-        depreciationTotal: calculateDepreciation(true) * pondPercentage };
-      history.push(closeCultivo);
-      setCultivo(closeCultivo);
-      localStorage.setItem(`history`, JSON.stringify(history));
-      localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(closeCultivo));
+      // let history = JSON.parse(localStorage.getItem('history'));
+      // let closeCultivo = JSON.parse(localStorage.getItem(`cultivo-${cultivo.id}`));
+      // history = cultivations.filter((viv) => viv._id !== cultivo._id);
+
+      checkOut = { ...checkOut, 
+        hasShrimp: false,
+        isCurrent: false,
+        depreciationTotal: calculateDepreciation(true, inventory) * pondPercentage };
+      // history.push(closeCultivo);
+      // localStorage.setItem(`history`, JSON.stringify(history));
+      // localStorage.setItem(`cultivo-${cultivo.id}`, JSON.stringify(closeCultivo));
     }
+    database.put(checkOut).then(res => {
+      checkOut._rev = res.rev
+      setCultivo(checkOut)
+    })
   };
 
   const checkBiometry = () => {

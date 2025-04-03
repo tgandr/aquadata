@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { formatDate } from './utils';
 
-const OthersPurchasePopup = ({ setShowPopup, handleChange, handleSubmit, purchases, 
-    setPurchases, handleDeletePurchase }) => {
+const OthersPurchasePopup = ({ setShowPopup, handleChange, handleSubmit,
+    base }) => {
     const [formOthers, setFormOthers] = useState({
         date: new Date().toISOString().split('T')[0],
         label: '',
@@ -11,15 +11,18 @@ const OthersPurchasePopup = ({ setShowPopup, handleChange, handleSubmit, purchas
         quantity: '',
         value: ''
     });
+
+    const purchases = base.financial
     const [showOthersPurchaseTable, setShowOthersPurchaseTable] = useState(false);
 
     useEffect(() => {
-        const storedPurchases = JSON.parse(localStorage.getItem('financial')) || {};
-        if (storedPurchases) {
-            if ('othersPurchase' in storedPurchases) {
-                setPurchases(storedPurchases);
-            }
-        }
+        // const storedPurchases = JSON.parse(localStorage.getItem('financial')) || {};
+        const storedPurchases = base.financial
+        // if (storedPurchases) {
+        //     if ('othersPurchase' in storedPurchases) {
+        //         setPurchases(storedPurchases);
+        //     }
+        // }
         if (storedPurchases.othersPurchase) {
             if (storedPurchases.othersPurchase.length > 0) {
                 setShowOthersPurchaseTable(true);
@@ -27,7 +30,7 @@ const OthersPurchasePopup = ({ setShowPopup, handleChange, handleSubmit, purchas
                 setShowOthersPurchaseTable(false);
             }
         }
-    }, [formOthers]);    
+    }, [base.financial]);    
 
     const handleSubmitCheck = (e) => {
         e.preventDefault();
@@ -43,6 +46,34 @@ const OthersPurchasePopup = ({ setShowPopup, handleChange, handleSubmit, purchas
             quantity: '',
             value: ''
         });
+    };
+    const handleDeletePurchase = (index) => {
+        const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
+        if (isConfirmed) {
+            const purchases = {...base.financial}
+            const actualIndex = purchases.othersPurchase.length - 1 - index;
+            const updatedPurchases = { ...purchases };
+            const deletedPurchase = updatedPurchases.othersPurchase[actualIndex];
+
+            updatedPurchases.othersPurchase.splice(actualIndex, 1);
+            // localStorage.setItem('financial', JSON.stringify(updatedPurchases));
+            base.db.put(updatedPurchases).then(res => {
+                updatedPurchases._rev = res.rev
+                base.setFinancial(updatedPurchases)
+            })
+            // setPurchases(updatedPurchases);
+
+            // let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            let stockData = {...base.stock}
+            if ('othersPurchase' in stockData) {
+                stockData.othersPurchase = stockData.othersPurchase.filter(purchase => purchase.id !== deletedPurchase.id);
+            }
+            base.db.put(stockData).then(res => {
+                stockData._rev = res.rev
+                base.setStock(stockData)
+            })
+            // localStorage.setItem('stockData', JSON.stringify(stockData));
+        }
     };
 
     return (
@@ -130,14 +161,14 @@ const OthersPurchasePopup = ({ setShowPopup, handleChange, handleSubmit, purchas
                                 </tr>
                             </thead>
                             <tbody>
-                                {purchases.othersPurchase && purchases.othersPurchase.slice(-5).reverse().map((purchase) => (
+                                {purchases.othersPurchase && purchases.othersPurchase.slice(-5).reverse().map((purchase, index) => (
                                     <tr key={purchase.id}>
                                         <td>{formatDate(purchase.date).date}</td>
                                         <td>{purchase.label} -<br /> R$ {(purchase.value * purchase.quantity).toLocaleString('pt-BR',
                                             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                                         <td style={{ textAlign: "center" }}>
                                             <button
-                                                onClick={() => handleDeletePurchase(purchase.id, 'othersPurchase')}
+                                                onClick={() => handleDeletePurchase(index)}
                                                 className="delete-button">
                                                 <i className="fas fa-trash" />
                                             </button>

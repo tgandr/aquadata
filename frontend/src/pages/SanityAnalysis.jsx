@@ -4,9 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { faChevronDown, faChevronUp, faSearchPlus } from '@fortawesome/free-solid-svg-icons';
 import * as images from '../assets/images';
+import useDatabase from '../hooks/useDatabase';
 
 const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setShowAnalysisPopupPrevious }) => {
     const [showForm, setShowForm] = useState(false);
+    const db = useDatabase()
+    const [history, setHistory] = useState([])
     const [checkScreen, setCheckScreen] = useState(false);
     const [storedPonds, setStoredPonds] = useState({});
     const [saveString, setSaveString] = useState('');
@@ -150,11 +153,31 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
     }, [checkScreen, onClose]);
 
     useEffect(() => {
-        const storedData = JSON.parse(localStorage.getItem('history')).filter(pond => pond.hasShrimp) || {};
-        if (storedData) {
-            setStoredPonds(storedData);
-        }
-    }, []);
+        if (!db) return
+
+        db.find({
+            selector: {dataType: 'pond'}
+        }).then(data => {
+            const storedData = data.docs
+            if (storedData) {
+                setStoredPonds(storedData);
+            }
+        })
+
+        db.find({
+            selector: {
+                dataType: 'cultivation',
+                hasShrimp: true
+            }
+        }).then(data => {
+            const storedData = data.docs
+            if (storedData) {
+                setHistory(storedData);
+            }
+        })
+        // const storedData = JSON.parse(localStorage.getItem('history')).filter(pond => pond.hasShrimp) || {};
+
+    }, [db]);
 
     const logoutSanity = () => {
         const sampleId = analysis.samples.length + 1;
@@ -166,19 +189,30 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
     };
 
     const saveData = (data, key) => {
-        const storedCultivos = JSON.parse(localStorage.getItem(`history`));
-        const i = storedCultivos && storedCultivos.findIndex((viv) => viv.id == Number(data.id.pond));
-        if (key in storedCultivos[i]) {
-            const sanity = [...storedCultivos[i].sanity, data];
-            const checkOut = { ...storedCultivos[i], sanity: sanity };
-            storedCultivos[i] = checkOut;
-            localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
-            localStorage.setItem('history', JSON.stringify(storedCultivos));
+        // const storedCultivos = JSON.parse(localStorage.getItem(`history`));
+        const storedData = [...history]
+        const i = storedData && storedData.findIndex((viv) => viv._id == Number(data.id.pond));
+        if (key in storedData[i]) {
+            const sanity = [...storedData[i].sanity, data];
+            const checkOut = { ...storedData[i], sanity: sanity };
+            storedData[i] = checkOut;
+
+            db.put(checkOut).then(res => {
+                checkOut._rev = res._rev
+                setHistory(storedData)
+            })
+            // localStorage.setItem(`cultivo-${storedPonds[i].id}`, JSON.stringify(checkOut));
+            // localStorage.setItem('history', JSON.stringify(storedPonds));
+
         } else {
-            const checkOut = { ...storedCultivos[i], sanity: [data] };
-            storedCultivos[i] = checkOut;
-            localStorage.setItem(`cultivo-${storedCultivos[i].id}`, JSON.stringify(checkOut));
-            localStorage.setItem('history', JSON.stringify(storedCultivos));
+            const checkOut = { ...history[i], sanity: [data] };
+            storedPonds[i] = checkOut;
+            db.put(checkOut).then(res => {
+                checkOut._rev = res._rev
+                setHistory(storedData)
+            })
+            // localStorage.setItem(`cultivo-${storedPonds[i].id}`, JSON.stringify(checkOut));
+            // localStorage.setItem('history', JSON.stringify(storedPonds));
         }
     }
 
@@ -210,7 +244,7 @@ const SanityAnalysis = ({ setShowAnalysisPopup, showAnalysisPopupPrevious, setSh
                                     <option value="">Selecione o viveiro</option>
                                     {storedPonds.length > 0 ? (
                                         storedPonds.map((pond, index) => (
-                                            <option value={pond.id} key={index}>{pond.viveiro}</option>
+                                            <option value={pond._id} key={index}>{pond.nome}</option>
                                         ))
                                     ) : (<option value="">Nenhum cultivo cadastrado</option>)}
                                 </select>

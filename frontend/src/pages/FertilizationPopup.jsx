@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { formatDate } from './utils';
 
-const FertilizationPopup = ({ setShowFertilizationPopup, saveData,database }) => {
+const FertilizationPopup = ({ setShowFertilizationPopup,saveData,database }) => {
   const [data, setData] = useState(new Date().toISOString().split('T')[0]);
   const [stockData, setStockData] = useState()
   const [fertilizerType, setFertilizerType] = useState('');
@@ -23,7 +23,7 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData,database }) =>
         dataType: 'stockData'
       }
     }).then(res => {
-      if (!res.docs.lenght) return 
+      if (!res.docs.length) return 
 
       const stock = res.docs[0]
       setStockData(res.docs[0])
@@ -73,7 +73,8 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData,database }) =>
           return;
         }
         probioticItem.quantity -= convertedQuantity;
-        localStorage.setItem('stockData', JSON.stringify(stockData));
+        // localStorage.setItem('stockData', JSON.stringify(stockData));
+        
 
         newDataToSave = {
           data: data,
@@ -94,7 +95,7 @@ const FertilizationPopup = ({ setShowFertilizationPopup, saveData,database }) =>
           return;
         }
         fertilizerItem.quantity -= convertedQuantity;
-        localStorage.setItem('stockData', JSON.stringify(stockData));
+        // localStorage.setItem('stockData', JSON.stringify(stockData));
 
         newDataToSave = {
           data: data,

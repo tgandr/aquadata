@@ -18,6 +18,7 @@ const Financial = () => {
   const db = useDatabase()
   const [financial, setFinancial] = useState()
   const [formData, setFormData] = useState()
+  const [stock,setStock] = useState()
   const [showPopup, setShowPopup] = useState(null);
   const [showLaborPopup, setShowLaborPopup] = useState(false);
   const [showPurchasesPopup, setShowPurchasesPopup] = useState(false);
@@ -36,6 +37,12 @@ const Financial = () => {
 
   useEffect(() => {
     if (!db) return 
+    db.find({
+      selector: {dataType: 'stockData'}
+    }).then(res => {
+      const stock = res.docs[0]
+      setStock(stock)
+    })
 
     db.find({
       selector: {dataType: 'financial'}
@@ -60,11 +67,7 @@ const Financial = () => {
     db.find({
       selector: {dataType: 'pond'}
     }).then(res => {
-      setViveiros(res.docs.map(p => ({
-        id: p._id,
-        nome: p.name,
-        area: p.area
-      })));
+      setViveiros(res.docs)
     })
 
     LocalDb.get('user').then(data => setFormData(data))
@@ -101,7 +104,7 @@ const Financial = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    let newFinancial = {...financial}
     const totalViveiroValue = Object.values(form.viveiroDistribution)
       .reduce((acc, curr) => acc + parseFloat(curr || 0), 0);
     const formValue = parseFloat(form.value.replace(',', '.'));
@@ -130,14 +133,14 @@ const Financial = () => {
         return element;
       });
       setPayments(updatedPayments);
-      financial.payments = updatedPayments;
+      newFinancial.payments = updatedPayments;
     } else {
       const updatedPayments = [...payments, {
         month: form.date,
         [showPopup]: [newEntry]
       }];
       setPayments(updatedPayments);
-      financial.payments = updatedPayments;
+      newFinancial.payments = updatedPayments;
     }
 
     // localStorage.setItem('financial', JSON.stringify(financial));
@@ -149,9 +152,9 @@ const Financial = () => {
       viveiroDistribution: {}
     });
 
-    db.put(financial).then(res => {
-      financial._rev = res.rev
-      setFinancial(financial)
+    db.put(newFinancial).then(res => {
+      newFinancial._rev = res.rev
+      setFinancial(newFinancial)
     })
     handleClosePopup();
   };
@@ -266,9 +269,16 @@ const Financial = () => {
       </div>
       <IconContainer />
 
-      {showLaborPopup && <LaborPopup setShowLaborPopup={setShowLaborPopup} database={db}/>}
+      {showLaborPopup && <LaborPopup setShowLaborPopup={setShowLaborPopup} database={db} />}
 
-      {showPurchasesPopup && <Purchases setShowPurchasesPopup={setShowPurchasesPopup} database={db}/>}
+      {showPurchasesPopup && <Purchases setShowPurchasesPopup={setShowPurchasesPopup} base={{
+        db,
+        viveiros,
+        financial,
+        setFinancial,
+        stock,
+        setStock
+      }} />}
 
       {showPopup && (
         <div className="popup">

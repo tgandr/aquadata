@@ -72,6 +72,7 @@ const ReportFinancial = () => {
             selector: {dataType: 'financial'}
         }).then(data => {
             const financial = data.docs[0]
+            if (!financial) return 
             const organized = organizeByMonth(financial);
             const organizedObj = {};
             organized.forEach(item => {

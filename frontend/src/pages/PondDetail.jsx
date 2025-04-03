@@ -11,15 +11,15 @@ import { formatDate, IconContainer } from './utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faCheck, faSave } from '@fortawesome/free-solid-svg-icons';
 import useDatabase from '../hooks/useDatabase'
-import { v4 } from 'uuid';
 
 const PondDetail = () => {
   const db = useDatabase();
   const location = useLocation();
   const navigate = useNavigate();
-  const viveiroId = location.state.viveiro.id;
+  const viveiroId = location.state.viveiro._id;
   const viveiroName = location.state.viveiro.nome;
   const farmName = location.state.farmName;
+  const [stockData, setStockData] = useState()
   const [cultivation, setCultivation] = useState(null);
   const [showNewCyclePopup, setShowNewCyclePopup] = useState(false);
   const [showStressTestPopup, setShowStressTestPopup] = useState(false);
@@ -99,9 +99,16 @@ const PondDetail = () => {
       }
     }).then(data => {
       setCultivationHistory(data.docs)
-      const currentCultivation = data.docs.find(c => c.isCurrent)
-      console.log(currentCultivation)
+      const currentCultivation = data.docs.find(c => c.isCurrent == true)
       setCultivation(currentCultivation)
+    })
+
+    db.find({
+      selector: {dataType: 'stockData'}
+    }).then(data => {
+      const stock = data.docs[0]
+      if (!stock) return
+      setStockData(stock)
     })
 
     db.get(viveiroId).then(data => {
@@ -263,6 +270,7 @@ const PondDetail = () => {
   }
 
   return (
+
     <div className="pond-detail">
       <div className="identify-data">
         <h2>{viveiroName}</h2>
@@ -414,8 +422,14 @@ const PondDetail = () => {
       {showFeedPopup && <FeedPopup
         setShowFeedPopup={setShowFeedPopup}
         saveData={saveData}
-        cultivo={cultivation}
-        setCultivo={setCultivation} 
+        base={{
+          cultivo: cultivation,
+          setCultivo: setCultivation,
+          stockData,
+          setStockData,
+          cultivationHistory,
+          db
+        }}
         />}
 
       {showParamPopup && <ParamPopup setShowParamPopup={setShowParamPopup} saveData={saveData} />}
@@ -446,7 +460,8 @@ const PondDetail = () => {
         showHarvest={showHarvest}
         setShowHarvest={setShowHarvest}
         setParcialProdution={setParcialProdution}
-        processHarvest={processHarvest} />}
+        processHarvest={processHarvest}
+        database={db}/>}
 
       {showFertilizationPopup && <FertilizationPopup
         setShowFertilizationPopup={setShowFertilizationPopup}
@@ -603,7 +618,7 @@ const PondDetail = () => {
             <button
               className="first-class-button"
               onClick={() => {
-                localStorage.removeItem(`cultivo-${cultivation.id}`);
+                // localStorage.removeItem(`cultivo-${cultivation.id}`);
                 alert('O viveiro foi encerrado com sucesso.');
                 // window.location.reload();
                 navigate('/viveiros')
