@@ -9,7 +9,7 @@ using Aquadata.Application.UseCases.User.GetInventories;
 using Aquadata.Application.UseCases.User.GetStocks;
 using Aquadata.Application.UseCases.User.GetUser;
 using Aquadata.Application.UseCases.User.UpdateUser;
-using Aquadata.Core.Security;
+using Aquadata.Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

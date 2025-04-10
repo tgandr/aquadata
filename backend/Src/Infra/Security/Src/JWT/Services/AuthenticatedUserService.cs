@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Aquadata.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 
-namespace Aquadata.Infra.Security.Services;
+namespace Aquadata.Infra.Security.JWT.Services;
 
 public class AuthenticatedUserService : IAuthenticatedUserService
 {

@@ -3,6 +3,9 @@ using Aquadata.Application.UseCases.Pond.CreatePond;
 using Aquadata.Core.Interfaces.Repository;
 using Aquadata.Infra.EF;
 using Aquadata.Infra.EF.Repositories;
+using Aquadata.Infra.Payments.MercadoPago;
+using MercadoPago.Client.Payment;
+using MercadoPago.Resource.Payment;
 using Microsoft.OpenApi.Models;
 
 namespace Aquadata.Api.Configs;
@@ -29,6 +32,10 @@ public static class UseCasesConfig
     services.AddTransient<IFinancialRepository, FinancialRepository>();
     services.AddTransient<ICultivationRepository, CultivationRepository>();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
+    services.AddTransient<
+      IPaymentService<PaymentCreateRequest, Payment>, 
+      MercadoPagoService
+    >();
 
     return services;
   }

@@ -1,7 +1,8 @@
 using Aquadata.Application.Interfaces;
-using Aquadata.Core.Security;
-using Aquadata.Infra.Security.Services;
-using Aquadata.Infra.Security.Validation;
+using Aquadata.Infra.Security.BasicAuth;
+using Aquadata.Infra.Security.JWT.Services;
+using Aquadata.Infra.Security.JWT.Validation;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 
@@ -9,7 +10,7 @@ namespace Aquadata.Api.Configs;
 
 public static class SecurityConfig
 {
-  public static IServiceCollection AddSecurity(this IServiceCollection services,
+  public static IServiceCollection AddJWT(this IServiceCollection services,
   IConfiguration config)
   {
     services.AddAuthentication(x => 
@@ -22,7 +23,7 @@ public static class SecurityConfig
       x.SaveToken = true;
       x.TokenValidationParameters = TokenValidation.GetParameters(config);
     });
-    AddSwaggerSecurity(services);
+    AddSwaggerJWT(services);
     
     services.AddHttpContextAccessor();
     services.AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
@@ -30,8 +31,48 @@ public static class SecurityConfig
     return services;
   }
 
+  public static IServiceCollection AddBasicAuth(this IServiceCollection services)
+  {
+    services.AddAuthentication("Basic")
+      .AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>("Basic", null);
 
-  private static IServiceCollection AddSwaggerSecurity(IServiceCollection services)
+    AddSwaggerBasicAuth(services);
+    return services;
+  }
+  
+  private static IServiceCollection AddSwaggerBasicAuth(IServiceCollection services)
+  {
+    services.AddSwaggerGen(c =>
+    {
+      c.AddSecurityDefinition("Basic", new OpenApiSecurityScheme
+      {
+        Description = "Basic Authentication header using the Basic scheme. Example: \"Authorization: Basic {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "Basic"
+      });
+
+      c.AddSecurityRequirement(new OpenApiSecurityRequirement
+      {
+        {
+          new OpenApiSecurityScheme
+          {
+            Reference = new OpenApiReference
+            {
+              Type = ReferenceType.SecurityScheme,
+              Id = "Basic"
+            }
+          },
+          new string[] { }
+        }
+      });
+    });
+
+    return services;
+  }
+
+  private static IServiceCollection AddSwaggerJWT(IServiceCollection services)
   {
     services.AddSwaggerGen(c =>
     {
