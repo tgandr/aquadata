@@ -10,7 +10,13 @@ public class AuthenticatedUserService : IAuthenticatedUserService
 
   public AuthenticatedUserService(IHttpContextAccessor httpAcessor) 
     => _httpAcessor = httpAcessor;
-    
+
+  public string GetUserEmail()
+  {
+    return _httpAcessor.HttpContext?
+      .User?.FindFirst(ClaimTypes.Email)?.Value ?? "";
+  }
+
   public Guid GetUserId()
   {
     var res = _httpAcessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString();

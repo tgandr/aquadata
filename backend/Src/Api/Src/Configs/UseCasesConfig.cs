@@ -30,6 +30,8 @@ public static class UseCasesConfig
     services.AddTransient<IPondRepository, PondRepository>();
     services.AddTransient<IUserRepository, UserRepository>();
     services.AddTransient<IFinancialRepository, FinancialRepository>();
+    services.AddTransient<IPaymentRepository, PaymentRepository>();
+    services.AddTransient<ISubscriptionRepository, SubscriptionRepository>();
     services.AddTransient<ICultivationRepository, CultivationRepository>();
     services.AddTransient<IUnitOfWork, UnitOfWork>();
     services.AddTransient<

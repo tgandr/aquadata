@@ -13,8 +13,8 @@ builder.Services.AddControllers().AddJsonOptions(o => {
     o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 builder.Services.AddUseCases();
-builder.Services.AddJWT(builder.Configuration);
-// builder.Services.AddBasicAuth();
+// builder.Services.AddJWT(builder.Configuration);
+builder.Services.AddBasicAuth();
 
 var app = builder.Build();
 

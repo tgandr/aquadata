@@ -13,13 +13,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Aquadata.Infra.Security.JWT.Services;
 
-public class AuthenticateService: IAuthenticateService
+public class JwtAuthService: IJwtAuthService
 {
   private readonly ApplicationDbContext _context;
   private readonly IHttpContextAccessor _httpAcessor;
   private readonly IConfiguration _config;
 
-  public AuthenticateService(ApplicationDbContext context, IConfiguration config,
+  public JwtAuthService(ApplicationDbContext context, IConfiguration config,
   IHttpContextAccessor httpAcessor)
   {
     _httpAcessor = httpAcessor;

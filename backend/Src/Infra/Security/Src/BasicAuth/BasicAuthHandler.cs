@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
-using Aquadata.Core.Entities.User;
 using Aquadata.Application.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -11,31 +10,25 @@ namespace Aquadata.Infra.Security.BasicAuth;
 
 public class BasicAuthHandler: AuthenticationHandler<AuthenticationSchemeOptions>
 {
+  private readonly IAuthService _authService;
   public BasicAuthHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,
     ILoggerFactory logger,
     UrlEncoder encoder,
-    ISystemClock clock)
+    ISystemClock clock,
+    IAuthService authService)
     : base(options, logger, encoder, clock)
-  {}
-
-  protected override Task<AuthenticateResult> HandleAuthenticateAsync()
   {
-    if (!Request.Headers.ContainsKey("Authorization"))
-    {
-      return Task.FromResult(AuthenticateResult.Fail("Unauthorized"));
-    }
+    _authService = authService;
+  }
 
+  protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
+  {
     var authHeader = Request.Headers["Authorization"].ToString();
 
-    if (string.IsNullOrEmpty(authHeader))
+    if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Basic "))
     {
-      return Task.FromResult(AuthenticateResult.Fail("Unauthorized"));
-    }
-
-    if (!authHeader.StartsWith("Basic ", StringComparison.OrdinalIgnoreCase))
-    {
-      return Task.FromResult(AuthenticateResult.Fail("Unauthorized"));
+      return AuthenticateResult.Fail("Unauthorized");
     }
 
     var token = authHeader.Substring("Basic ".Length).Trim();
@@ -43,19 +36,26 @@ public class BasicAuthHandler: AuthenticationHandler<AuthenticationSchemeOptions
     var credentials = credentialAsString.Split(':', 2);
     if (credentials.Length != 2)
     {
-      return Task.FromResult(AuthenticateResult.Fail("Unauthorized"));
-    }
-    var username = credentials[0];
-    var password = credentials[1];
-    if (username != "admin" || password != "password")
-    {
-      return Task.FromResult(AuthenticateResult.Fail("Authentication failed"));
+      return AuthenticateResult.Fail("Unauthorized");
     }
 
-    var claims = new[] { new Claim(ClaimTypes.NameIdentifier, username) };
+    var username = credentials[0];
+    var password = credentials[1];
+    var (isAuth, user) = await _authService.Authenticate(username, password);
+    if (!isAuth)
+    {
+      return AuthenticateResult.Fail("Unauthorized");
+    }
+
+
+    var claims = new[] { 
+      new Claim(ClaimTypes.NameIdentifier, user!.Id.ToString()),
+      new Claim(ClaimTypes.Email, user.Email),
+    };
+    
     var identity = new ClaimsIdentity(claims, Scheme.Name);
     var principal = new ClaimsPrincipal(identity);
     var ticket = new AuthenticationTicket(principal, Scheme.Name);
-    return Task.FromResult(AuthenticateResult.Success(ticket));
+    return AuthenticateResult.Success(ticket);
   }
 }

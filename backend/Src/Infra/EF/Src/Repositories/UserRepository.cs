@@ -32,8 +32,11 @@ public class UserRepository : IUserRepository
   public Task Update(UserEntity aggregate, CancellationToken cancellationToken)
     => Task.FromResult(_dbContext.Users.Update(aggregate));
 
-  public async Task<bool> IsEmailRegistered(string email)
+  public async Task<bool> Exists(string email)
     => await _dbContext.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower());
+
+  public async Task<bool> Exists(Guid userId)
+    => await _dbContext.Users.AnyAsync(u => u.Id == userId);
 
   public async Task<UserEntity?> GetByEmail(string email)
     => await _dbContext.Users.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
@@ -52,4 +55,5 @@ public class UserRepository : IUserRepository
 
   public async Task<ICollection<StockEntity>> GetStocks(Guid userId)
     => await _dbContext.Stocks.Where(s => s.UserId == userId).ToListAsync();
+
 }

@@ -10,7 +10,8 @@ public interface IUserRepository: IGenericRepository<UserEntity>
 ,IDeletableRepository<UserEntity>
 {
   Task<UserEntity?> GetByEmail(string email);
-  Task<bool> IsEmailRegistered(string email);
+  Task<bool> Exists(string email);
+  Task<bool> Exists(Guid userId);
   Task Insert(FinancialEntity financial);
   Task AddStock(StockEntity stock);
   Task AddInventory(InventoryEntity inventory); 

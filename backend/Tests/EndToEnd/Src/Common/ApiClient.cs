@@ -26,6 +26,13 @@ public class ApiClient
     _httpClient.DefaultRequestHeaders
       .Authorization = new AuthenticationHeaderValue(
         "Bearer", token);
+
+    // _httpClient.DefaultRequestHeaders.Authorization =
+    //   new AuthenticationHeaderValue("Basic",
+    //     Convert.ToBase64String(
+    //       Encoding.UTF8.GetBytes(token)
+    //     )
+    //   );
   }
 
   public async Task<ApiCredentials> SignUp(CreateUserInput? user = null)

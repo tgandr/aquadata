@@ -1,16 +1,15 @@
-﻿using Aquadata.Application.Dtos.MercadoPago;
-using Aquadata.Application.Interfaces;
+﻿using Aquadata.Application.Interfaces;
+using Aquadata.Core.Entities.Payment;
+using Aquadata.Core.Interfaces.Repository;
+using Aquadata.Infra.Payments.MercadoPago.Helpers;
 using MercadoPago.Client;
-using MercadoPago.Client.Common;
 using MercadoPago.Client.Payment;
-using MercadoPago.Client.Preference;
 using MercadoPago.Config;
-
 using MercadoPago.Resource.Payment;
 using Microsoft.Extensions.Configuration;
 
 namespace Aquadata.Infra.Payments.MercadoPago;
- 
+
 public class MercadoPagoService: IPaymentService<PaymentCreateRequest, Payment>
 {
   private readonly RequestOptions _requestOptions = new RequestOptions();
@@ -27,4 +26,16 @@ public class MercadoPagoService: IPaymentService<PaymentCreateRequest, Payment>
     return payment;
   }
 
+  public async Task<Payment> GetPaymentAsync(string paymentId)
+  {
+    var payment = await _client.GetAsync(long.Parse(paymentId), _requestOptions);
+    return payment;
+  }
+
+  public PaymentEntity ToPaymentEntity(Payment payment, Guid userId)
+  {
+    var status = EnumHelper.ToDomain(payment.Status);
+
+    return new PaymentEntity(payment.Id.ToString()!, status, userId);
+  }
 }

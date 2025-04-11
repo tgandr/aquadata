@@ -1,5 +1,6 @@
 using Aquadata.Application.Interfaces;
 using Aquadata.Infra.Security.BasicAuth;
+using Aquadata.Infra.Security.BasicAuth.Services;
 using Aquadata.Infra.Security.JWT.Services;
 using Aquadata.Infra.Security.JWT.Validation;
 using Microsoft.AspNetCore.Authentication;
@@ -27,7 +28,7 @@ public static class SecurityConfig
     
     services.AddHttpContextAccessor();
     services.AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
-    services.AddTransient<IAuthenticateService, AuthenticateService>();
+    services.AddTransient<IJwtAuthService, JwtAuthService>();
     return services;
   }
 
@@ -37,6 +38,10 @@ public static class SecurityConfig
       .AddScheme<AuthenticationSchemeOptions, BasicAuthHandler>("Basic", null);
 
     AddSwaggerBasicAuth(services);
+    
+    services.AddHttpContextAccessor();
+    services.AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
+    services.AddTransient<IAuthService, BasicAuthService>();
     return services;
   }
   

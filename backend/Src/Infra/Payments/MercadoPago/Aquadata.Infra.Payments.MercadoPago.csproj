@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Application\Aquadata.Application.csproj" />
+    <ProjectReference Include="..\..\..\Core\Aquadata.Core.csproj" />
   </ItemGroup>
 
 </Project>

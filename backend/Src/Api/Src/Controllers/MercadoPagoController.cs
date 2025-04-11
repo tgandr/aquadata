@@ -1,58 +1,96 @@
 using System.Security.Cryptography;
 using System.Text;
-using Aquadata.Application.Dtos.MercadoPago;
+using Aquadata.Api.Extensions;
 using Aquadata.Application.Interfaces;
-using MediatR;
+using Aquadata.Application.UseCases.Payment;
+using Aquadata.Core.Entities.Subscription;
+using Aquadata.Core.Interfaces.Repository;
+using Aquadata.Infra.Payments.MercadoPago.Models;
 using MercadoPago.Client.Payment;
 using MercadoPago.Resource.Payment;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aquadata.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("/process_payment")]
 public class PaymentController: ControllerBase
 {
-  private readonly IPaymentService<PaymentCreateRequest, Payment> _paymentService;
   private readonly IConfiguration _config;
-  public PaymentController(IPaymentService<PaymentCreateRequest,Payment> paymentService,
-  IConfiguration config)
+  private readonly IPaymentService<PaymentCreateRequest, Payment> _paymentService;
+  private readonly IAuthenticatedUserService _authenticatedUserService;
+  private readonly IUserRepository _userRepository;
+  private readonly ISubscriptionRepository _subscriptionRepository;
+  private readonly ICouchdbService _couchdbService;
+
+  public PaymentController(
+    IConfiguration config,
+    IPaymentService<PaymentCreateRequest, Payment> paymentService,
+    IAuthenticatedUserService authenticatedUserService,
+    ISubscriptionRepository subscriptionRepository,
+    ICouchdbService couchdbService,
+    IUserRepository userRepository)
   {
-    _paymentService = paymentService;
+    _subscriptionRepository = subscriptionRepository;
+    _couchdbService = couchdbService;
     _config = config;
+    _paymentService = paymentService;
+    _authenticatedUserService = authenticatedUserService;
+    _userRepository = userRepository;
   }
 
   [HttpPost]
-  public async Task<IResult> ProcessPayment(
+  public async Task<IResult> CreatePayment(
     [FromBody] PaymentCreateRequest command)
   {
-    var res = await _paymentService.CreatePaymentAsync(command);
+    var useCase = new CreatePayment<PaymentCreateRequest, Payment>(
+      _paymentService,
+      _userRepository,
+      _authenticatedUserService
+    );
 
-    return Results.Ok(res);
+    var paymentResult = await useCase.ExecuteAsync(command);
+
+    if (paymentResult.IsFail)
+      return Results.Extensions.MapResult(paymentResult);
+
+    return Results.Ok(paymentResult.Unwrap());
   }
 
   [HttpPost("webhook")]
-  public IResult Webhook([FromBody] dynamic payload)
+  public async Task<IResult> Webhook([FromBody] PaymentWebhook payload)
   {
-    if (payload == null || string.IsNullOrEmpty(payload!.Type) || payload!.Data?.Id == null)
-            return Results.BadRequest("Payload inválido");
-
-    if (!ValidateRequest())
+    if (!IsAuthRequest(payload.Data.Id))
       return Results.BadRequest("Assinatura inválida");
-    
-
-    var json = System.Text.Json.JsonSerializer.Serialize(payload);
-    Console.WriteLine(json);
+  
+    switch(payload.Type)
+    {
+      case "payment":
+        var payment = await _paymentService.GetPaymentAsync(payload.Data.Id);
+        if (payment.Status == "approved") {
+          // Adicionar usuario para poder manipular o couchDB
+          // Adicionar o objeto de assinatura ao banco
+          var email = _authenticatedUserService.GetUserEmail();
+          var userId = _authenticatedUserService.GetUserId();
+          await _couchdbService.SetUserAsMember(email);
+          await _subscriptionRepository.Create(
+            new SubscriptionEntity(userId)
+          );
+        }
+        break;
+      default:
+        return Results.Ok();
+    }
     return Results.Ok();
   } 
 
-  private bool ValidateRequest() 
+  private bool IsAuthRequest(string dataId) 
   {
     var headers = Request.Headers;
     string? xSignature = headers["x-signature"];
     string? xRequestId = headers["x-request-id"];
-    string? dataId = Request.Query["data.id"];
 
     if (string.IsNullOrEmpty(xSignature) 
     || string.IsNullOrEmpty(xRequestId) 
