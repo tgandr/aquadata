@@ -1,4 +1,4 @@
-import { initMercadoPago, Payment, StatusScreen } from "@mercadopago/sdk-react";
+import { CardPayment, initMercadoPago, Payment, StatusScreen } from "@mercadopago/sdk-react";
 import { useState, useEffect } from "react";
 import LocalDb from '../databases/local.db'
 import { SecureStoragePlugin } from "capacitor-secure-storage-plugin";
@@ -18,21 +18,24 @@ const Payments = () => {
   }, [])
 
   const initialization = {
-      amount: 1
+      amount: 100
   };
   const customization = {
+    visual: {
+      texts: {
+        formTitle: "Realizar assinatura: R$ 150"
+      }
+    },
     paymentMethods: {
-      bankTransfer: "all",
-      creditCard: "all",
-      prepaidCard: "all",
-      debitCard: "all",
+      maxInstallments: 1
     },
   };
   const onSubmit = async (
-  { selectedPaymentMethod, formData }
+  formData
   ) => {
   // callback chamado ao clicar no botão de submissão dos dados
   return new Promise((resolve, reject) => {
+    console.log(formData)
     const auth = `${credentials.email}:${credentials.password}`
     fetch("http://localhost:5234/process_payment", {
       method: "POST",
@@ -67,18 +70,24 @@ const Payments = () => {
   };
        
             
-  return paymentId? <StatusScreen
-    initialization={{paymentId}}
-    onReady={onReady}
-    onError={onError}
-  /> :
-  <Payment
-    initialization={initialization}
-    customization={customization}
-    onSubmit={onSubmit}
-    onReady={onReady}
-    onError={onError}
-  />
+  return (
+    <>
+     {paymentId?
+      (<StatusScreen
+          initialization={{paymentId}}
+          onReady={onReady}
+          onError={onError}
+        />) :
+      (<CardPayment
+        initialization={initialization}
+        customization={customization}
+        onSubmit={onSubmit}
+        onReady={onReady}
+        onError={onError}
+        />)
+      }
+    </>
+  )
 }
 
 export default Payments

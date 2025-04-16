@@ -438,22 +438,46 @@ namespace Aquadata.Infra.EF.Migrations
 
             modelBuilder.Entity("Aquadata.Core.Entities.Payment.PaymentEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("varchar(255)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("CardId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("CustomerId")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("IdenticiationType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("IdentificationNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PaymentId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Payments", (string)null);
                 });
@@ -774,7 +798,7 @@ namespace Aquadata.Infra.EF.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime>("NextDueDate")
+                    b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Status")
@@ -1058,11 +1082,13 @@ namespace Aquadata.Infra.EF.Migrations
 
             modelBuilder.Entity("Aquadata.Core.Entities.Payment.PaymentEntity", b =>
                 {
-                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
+                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", "User")
+                        .WithOne()
+                        .HasForeignKey("Aquadata.Core.Entities.Payment.PaymentEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Pond.PondEntity", b =>
@@ -1145,11 +1171,13 @@ namespace Aquadata.Infra.EF.Migrations
 
             modelBuilder.Entity("Aquadata.Core.Entities.Subscription.SubscriptionEntity", b =>
                 {
-                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
+                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", "User")
                         .WithOne()
                         .HasForeignKey("Aquadata.Core.Entities.Subscription.SubscriptionEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Water.WaterEntity", b =>

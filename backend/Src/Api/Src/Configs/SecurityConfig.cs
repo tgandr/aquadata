@@ -27,8 +27,7 @@ public static class SecurityConfig
     AddSwaggerJWT(services);
     
     services.AddHttpContextAccessor();
-    services.AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
-    services.AddTransient<IJwtAuthService, JwtAuthService>();
+
     return services;
   }
 
@@ -40,8 +39,6 @@ public static class SecurityConfig
     AddSwaggerBasicAuth(services);
     
     services.AddHttpContextAccessor();
-    services.AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
-    services.AddTransient<IAuthService, BasicAuthService>();
     return services;
   }
   

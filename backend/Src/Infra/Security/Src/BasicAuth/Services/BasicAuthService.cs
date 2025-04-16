@@ -9,14 +9,11 @@ namespace Aquadata.Infra.Security.BasicAuth.Services;
 public class BasicAuthService : IAuthService
 {
   private readonly IUserRepository _userRepository;
-  private readonly ISubscriptionRepository _SubscriptionRepository;
 
   public BasicAuthService(
-    IUserRepository userRepository,
-    ISubscriptionRepository SubscriptionRepository
+    IUserRepository userRepository
   )
   {
-    _SubscriptionRepository = SubscriptionRepository;
     _userRepository = userRepository;
   }
 

@@ -11,12 +11,9 @@ public class PaymentConfig: IEntityTypeConfiguration<PaymentEntity>
   {
     builder.ToTable("Payments");
     builder.HasKey(e => e.Id);
-    builder.Property(e => e.Status)
-      .HasConversion<string>()
-      .IsRequired();
-
-    builder.HasOne<UserEntity>()
-    .WithMany()
-    .HasForeignKey(e => e.UserId);
+    builder.HasIndex(e => e.PaymentId);
+    builder.HasOne(e => e.User)
+    .WithOne()
+    .HasForeignKey<PaymentEntity>(e => e.UserId);
   }
 }

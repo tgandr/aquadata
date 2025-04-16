@@ -30,7 +30,6 @@ public static class ConnectionsConfig
       )
     );
 
-    services.AddTransient<ICouchdbService, AquadataCouchDb>();
     return services;
   }
 }

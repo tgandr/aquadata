@@ -1,11 +1,10 @@
 using Aquadata.Core.Entities.Subscription;
-using Aquadata.Core.Entities.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Aquadata.Infra.EF.Configs;
 
-public class SignatureConfig : IEntityTypeConfiguration<SubscriptionEntity>
+public class SubscriptionConfig : IEntityTypeConfiguration<SubscriptionEntity>
 {
   public void Configure(EntityTypeBuilder<SubscriptionEntity> builder)
   {
@@ -15,7 +14,7 @@ public class SignatureConfig : IEntityTypeConfiguration<SubscriptionEntity>
       .HasConversion<string>()
       .IsRequired();
 
-    builder.HasOne<UserEntity>()
+    builder.HasOne(e => e.User)
       .WithOne()
       .HasForeignKey<SubscriptionEntity>(e => e.UserId);
   }

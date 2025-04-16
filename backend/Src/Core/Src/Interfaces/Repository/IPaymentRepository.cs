@@ -4,6 +4,7 @@ namespace Aquadata.Core.Interfaces.Repository;
 
 public interface IPaymentRepository
 {
-  Task Create(PaymentEntity command);
-  Task<PaymentEntity?> Get(string paymentId);
+  Task CreateOrUpdate(PaymentEntity command);
+  Task<PaymentEntity?> GetByPaymentId(string paymentId);
+  Task<PaymentEntity?> GetByUserId(Guid userId);
 }

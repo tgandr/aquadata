@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aquadata.Infra.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250225160623_Initial")]
+    [Migration("20250416142514_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -439,6 +439,52 @@ namespace Aquadata.Infra.EF.Migrations
                     b.ToTable("Objectives", (string)null);
                 });
 
+            modelBuilder.Entity("Aquadata.Core.Entities.Payment.PaymentEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("CardId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("IdenticiationType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("IdentificationNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PaymentId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Payments", (string)null);
+                });
+
             modelBuilder.Entity("Aquadata.Core.Entities.Pond.PondEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -746,6 +792,33 @@ namespace Aquadata.Infra.EF.Migrations
                     b.ToTable("StressTests", (string)null);
                 });
 
+            modelBuilder.Entity("Aquadata.Core.Entities.Subscription.SubscriptionEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Subscriptions", (string)null);
+                });
+
             modelBuilder.Entity("Aquadata.Core.Entities.User.UserEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1010,6 +1083,17 @@ namespace Aquadata.Infra.EF.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Aquadata.Core.Entities.Payment.PaymentEntity", b =>
+                {
+                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", "User")
+                        .WithOne()
+                        .HasForeignKey("Aquadata.Core.Entities.Payment.PaymentEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Aquadata.Core.Entities.Pond.PondEntity", b =>
                 {
                     b.HasOne("Aquadata.Core.Entities.User.UserEntity", null)
@@ -1086,6 +1170,17 @@ namespace Aquadata.Infra.EF.Migrations
                         .HasForeignKey("Aquadata.Core.Entities.StressTest.StressTestEntity", "CultivationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Aquadata.Core.Entities.Subscription.SubscriptionEntity", b =>
+                {
+                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", "User")
+                        .WithOne()
+                        .HasForeignKey("Aquadata.Core.Entities.Subscription.SubscriptionEntity", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Water.WaterEntity", b =>

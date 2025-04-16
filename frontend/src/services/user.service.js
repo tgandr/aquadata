@@ -10,8 +10,8 @@ export class RegisterUserUseCase {
     this.name = name
     this.email = email
     this.password = password
-    this.farmName = farmName
-    this.farmAddress = farmAddress
+    this.farm_name = farmName
+    this.farm_address = farmAddress
     this.profile = profile
     this.phone = phone
   }

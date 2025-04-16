@@ -43,7 +43,7 @@ public class ApplicationDbContext: DbContext
   public DbSet<StockEntity> Stocks {get;set;}
   public DbSet<PaymentEntity> Payments {get;set;}
   public DbSet<InventoryEntity> Inventories {get;set;}
-  public DbSet<SubscriptionEntity> Signatures {get;set;}
+  public DbSet<SubscriptionEntity> Subscriptions {get;set;}
 
   public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     :base(options){}
