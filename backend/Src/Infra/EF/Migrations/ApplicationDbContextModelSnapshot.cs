@@ -805,10 +805,17 @@ namespace Aquadata.Infra.EF.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("SubscriptionId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SubscriptionId")
+                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();

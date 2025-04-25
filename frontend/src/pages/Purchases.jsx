@@ -48,7 +48,6 @@ const Purchases = ({ setShowPurchasesPopup, base }) => {
         keys.forEach((key) => (key !== 'dataCompra' && (resetForm = { ...resetForm, [key]: '' })))
         resetForm = { ...resetForm, dataCompra: form.dataCompra }
         const updatedPurchases = { ...purchases, [category]: [...purchases[category], newForm] };
-        console.log(updatedPurchases)
         base.db.put(updatedPurchases).then(res => {
             updatedPurchases._rev = res.rev
             base.setFinancial(updatedPurchases)

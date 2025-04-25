@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Aquadata.Infra.EF.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250416142514_Initial")]
+    [Migration("20250421123021_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -808,10 +808,17 @@ namespace Aquadata.Infra.EF.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("SubscriptionId")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SubscriptionId")
+                        .IsUnique();
 
                     b.HasIndex("UserId")
                         .IsUnique();

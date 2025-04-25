@@ -1,9 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import CountingPls from './CountingPls';
 import TransportParameters from './TransportParameters';
-import { PostCultivationUseCase, StressTest, WaterAndAcclimation } from '../services/cultivation.service';
-import Enum from '../util/enum';
 
 const NewCyclePopup = ({
     showNewCyclePopup, setShowNewCyclePopup,
@@ -15,23 +13,6 @@ const NewCyclePopup = ({
     database,
     pondArea
 }) => {
-    // const uniformity = Enum(
-    //     ['excelente', 'Excellent'], 
-    //     ['boa', 'Good'],
-    //     ['aceitavel', 'Acceptable'],
-    //     ['desuniforme', 'Uneven']
-    // )
-    // const deadLarvae = Enum(
-    //     ['nenhuma', 'None'],
-    //     ['poucas', 'Few'],
-    //     ['muitas', 'many']
-    // )
-    // const swimmingResponse = Enum(
-    //     ['nenhuma', 'None'],
-    //     ['pequena', 'Small'],
-    //     ['media', 'Medium'],
-    //     ['grande', 'Bid']
-    // )
     const [showCountPlPopup, setShowCountPlPopup] = useState(false);
     const [testForm, setTestForm] = useState({
         tipoTeste: '',
@@ -69,7 +50,6 @@ const NewCyclePopup = ({
             setForm({ ...form, origemPL: l });
             setPostLarvae([...postLarvae, l]);
             setCustomPostLarvae('');
-            // let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
             if ('postLarvaeList' in stockData) {
                 stockData.postLarvaeList.push(l);
             } else {
@@ -77,9 +57,7 @@ const NewCyclePopup = ({
             }
             localStorage.setItem('stockData', JSON.stringify(stockData));
         }
-        // setFormPostLarvae({ ...formPostLarvae, fornecedor: larvae });
         setAddNewPostLarvae(false);
-        // setShowPopup({ ...showPopup, postLarvae: true });
         setShowSavedMessage(true);
         setTimeout(() => setShowSavedMessage(false), 2000);
     };
@@ -87,25 +65,6 @@ const NewCyclePopup = ({
     const handleStressTestClick = (value) => {
         setForm({ ...form, testeEstresse: value });
     };
-
-    // const videoConstraints = {
-    //     facingMode: { exact: "environment" }
-    // }
-
-    // const [showAdjustCount, setShowAdjustCount] = useState({
-    //     show: false,
-    //     buttonText: 'Ajustar contagem'
-    // });
-
-    // const [countPLbyPhoto, setCountPLbyPhoto] = useState({
-    //     showPopupCountPL: false,
-    //     weight: '',
-    //     amount: ''
-    // });
-
-    // const handleCountPLbyPhoto = (value) => {
-    //     setCountPLbyPhoto({ ...countPLbyPhoto, showCountPlPopup: value });
-    // };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -176,45 +135,8 @@ const NewCyclePopup = ({
             dataType: 'cultivation',
             isCurrent: true,
         };
-            // history = [...history, newCultivo];
-            // history = [newCultivo];
 
         try {
-            // var cultivationToPost = new PostCultivationUseCase(
-            //     newCultivo.viveiro,
-            //     newCultivo.quantidadeEstocada,
-            //     newCultivo.origemPL,
-            //     uniformity[newCultivo.uniformidade],
-            //     newCultivo.dataPovoamento,
-            //     formParam.check ?? false,
-            //     viveiroId
-            // )
-
-            // testForm.larvasMortas && cultivationToPost.addStressTest(new StressTest(
-            //     testForm.tipoTeste,
-            //     deadLarvae[testForm.larvasMortas],
-            //     swimmingResponse[testForm.alteracaoNatatoria]
-            // ))
-            // formParam.check && cultivationToPost.addWaterAndAcclimation({
-            //     inPond: new WaterAndAcclimation(
-            //         formParam.oxygen.pond,
-            //         formParam.temperature.pond,
-            //         formParam.ph.pond,
-            //         formParam.salinity.pond,
-            //         formParam.ammonium.pond,
-            //         formParam.nitrite.pond
-            //     ),
-            //     inTransport: new WaterAndAcclimation(
-            //         formParam.oxygen.transp,
-            //         formParam.temperature.transp,
-            //         formParam.ph.transp,
-            //         formParam.salinity.transp,
-            //         formParam.ammonium.transp,
-            //         formParam.nitrite.transp
-            //     )
-            // })
-            // localStorage.setItem('history', JSON.stringify(history));
-            // localStorage.setItem(`cultivo-${cultivoKey}`, JSON.stringify(newCultivo));
             database.put(newCultivo).then(response => {
                 newCultivo._rev = response.rev
                 setCultivo(newCultivo);
@@ -228,9 +150,6 @@ const NewCyclePopup = ({
     };
 
     useEffect(() => {
-        // const pondArea = JSON.parse(localStorage.getItem("viveiros")).find(p => p.id === viveiroId);
-        // setArea(pondArea.area);
-
         if (form.origemPL === 'custom') {
             setAddNewPostLarvae(true);
         } else {
@@ -260,35 +179,6 @@ const NewCyclePopup = ({
             });
             setCheckEdit(true);
         }
-    
-        // const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
-        //// const checkPurchases = JSON.parse(localStorage.getItem('financial')) || {};
-        //// setPurchases(checkPurchases);
-        // if ('postLarvaeList' in checkLists) {
-        //     setPostLarvae(checkLists.postLarvaeList);
-        // }
-
-        // useEffect(() => {
-        //     for (let i = 0; i < localStorage.length; i++) {
-        //         const key = localStorage.key(i);
-        //         if (key.startsWith("cultivo-")) {
-        //             const cultivo = JSON.parse(localStorage.getItem(key));
-        //             if (cultivo.viveiroId === viveiroId) {
-        //                 if (cultivo.hasShrimp) {
-        //                     setForm({
-        //                         ...form,
-        //                         dataPovoamento: cultivo.dataPovoamento,
-        //                         origemPL: cultivo.origemPL,
-        //                         uniformidade: cultivo.uniformidade,
-        //                         quantidadeEstocada: cultivo.quantidadeEstocada / 1000
-        //                     });
-        //                     setCheckEdit(true);
-        //                     setCult(cultivo);
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }, [])
     }, []);
 
 
@@ -342,7 +232,6 @@ const NewCyclePopup = ({
                                 <input
                                     type="number"
                                     name="quantidadeEstocada"
-                                    // value={form.quantidadeEstocada ? Number(form.quantidadeEstocada).toLocaleString('pt-BR') : ''}
                                     value={form.quantidadeEstocada}
                                     onChange={handleChange}
                                     required />
@@ -360,31 +249,11 @@ const NewCyclePopup = ({
                                     <button
                                         type="button"
                                         className="check-Pl-button"
-                                        // className={`stress-test-button ${form.testeEstresse === 'Sim' ? 'active' : ''}`}
                                         onClick={() => setShowStressTestPopup(true)}>
                                         Anotar
                                     </button>
                                 </div>
                             </label>
-                            {/* <label>
-                                Calcular PL/grama por foto?
-                                <div className="stress-test-buttons">
-                                    <button
-                                        type="button"
-                                        className="check-Pl-button"
-                                        // className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Sim' ? 'active' : ''}`}
-                                        onClick={() => (handleCountPLbyPhoto('Sim'), setShowCountPlPopup(true))}>
-                                        Contar
-                                    </button> */}
-                            {/* <button
-                                        type="button"
-                                        // className={`stress-test-button ${countPLbyPhoto.showPopupCountPL === 'Não' ? 'active' : ''}`}
-                                        onClick={() => handleCountPLbyPhoto('Não')}
-                                    >
-                                        Não
-                                    </button> */}
-                            {/* </div>
-                            </label> */}
                             <label>
                                 Qualidade da água de transporte e recebimento:
                                 <div className="stress-test-buttons">

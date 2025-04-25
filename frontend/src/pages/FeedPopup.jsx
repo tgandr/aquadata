@@ -138,7 +138,6 @@ const FeedPopup = ({ setShowFeedPopup, saveData, base }) => {
         });
       }
     });
-    console.log(uniquePurchasesLocal)
     setUniquePurchases(uniquePurchasesLocal);
   }, [purchases]);
 

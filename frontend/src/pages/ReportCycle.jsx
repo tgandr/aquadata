@@ -36,7 +36,6 @@ const ReportCycle = () => {
         if (!db) return 
         db.get(cultivoId).then(res =>{
             setCultivation(res)
-            console.log(checkFeedToCA(res))
             setCA(checkFeedToCA(res))
         })
 

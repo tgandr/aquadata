@@ -180,6 +180,8 @@ namespace Aquadata.Infra.EF.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    SubscriptionId = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     ExpiresAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Status = table.Column<string>(type: "longtext", nullable: false)
@@ -836,6 +838,12 @@ namespace Aquadata.Infra.EF.Migrations
                 name: "IX_StressTests_CultivationId",
                 table: "StressTests",
                 column: "CultivationId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Subscriptions_SubscriptionId",
+                table: "Subscriptions",
+                column: "SubscriptionId",
                 unique: true);
 
             migrationBuilder.CreateIndex(

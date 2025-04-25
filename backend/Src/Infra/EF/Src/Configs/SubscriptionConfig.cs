@@ -10,6 +10,7 @@ public class SubscriptionConfig : IEntityTypeConfiguration<SubscriptionEntity>
   {
     builder.ToTable("Subscriptions");
     builder.HasKey(e => e.Id);
+    builder.HasIndex(e => e.SubscriptionId).IsUnique();
     builder.Property(e => e.Status)
       .HasConversion<string>()
       .IsRequired();

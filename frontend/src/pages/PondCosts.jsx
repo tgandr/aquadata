@@ -39,11 +39,9 @@ const PondCosts = () => {
 
     useEffect(() => {
         if (!db) return
-        console.log(location.state)
         db.find({
             selector: {dataType: 'financial'}
         }).then(data => {
-            console.log(data)
             setFinancial(data.docs[0])
         })
 

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Aquadata.Application.UseCases.Payment.HandleWebHook;
 
-public class PaymentWebHookInput: IUseCaseRequest<Unit>
+public class PaymentWebHookInput: IRequest<Unit>
 {
   public string PaymentId {get;}
   public string Type {get;}

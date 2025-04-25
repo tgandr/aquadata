@@ -6,7 +6,6 @@ import '../styles/AddPonds.css';
 import SanityAnalysis from './SanityAnalysis';
 import AnalysisReport from './AnalysisReport';
 import { IconContainer } from './utils';
-import { PostPondUseCase, PutPondUseCase } from '../services/pond.service';
 import LocalDb from '../databases/local.db'
 import useDatabase from '../hooks/useDatabase'
 import { v4 } from 'uuid';

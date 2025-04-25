@@ -33,7 +33,6 @@ const Inventory = () => {
             selector: {dataType: 'inventory'}
         }).then(data => {
             const inventory = data.docs || []
-            console.log(inventory)
             setInventoryData(inventory)
         })
         // const storedInventoryData = JSON.parse(localStorage.getItem('inventoryData'));

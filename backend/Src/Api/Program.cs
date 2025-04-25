@@ -16,9 +16,8 @@ builder.Services.AddControllers().AddJsonOptions(o => {
 });
 builder.Services.InjectDependencies();
 // builder.Services.AddJWT(builder.Configuration);
-builder.Services.AddBasicAuth();
-
 builder.Services.AddJobs(builder.Configuration);
+builder.Services.AddBasicAuth();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,8 +26,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseHangfireDashboard();
+
 app.UseHttpsRedirection();
+app.UseHangfireDashboard();
 app.UseCors(x => {
     x.AllowAnyHeader();
     x.AllowAnyMethod();
@@ -37,12 +37,12 @@ app.UseCors(x => {
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
-
 RecurringJob.AddOrUpdate<RenewSubscriptionsJob>(
     "RenewSubscriptionsJob",
     job => job.Execute(),
     Cron.Minutely()
 );
+app.Run();
 app.Run();
 
 public partial class Program { }

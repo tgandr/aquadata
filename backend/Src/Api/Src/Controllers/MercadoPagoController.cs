@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Aquadata.Api.Extensions;
-using Aquadata.Application.UseCases.Payment.Create;
+using Aquadata.Application.UseCases.PaymentGateway.CreateSubscription;
 using Aquadata.Application.UseCases.Payment.HandleWebHook;
 using Aquadata.Infra.Payments.MercadoPago.Models;
 using MediatR;
@@ -27,7 +27,7 @@ public class PaymentController: ControllerBase
   [HttpPost]
   [Authorize]
   public async Task<IResult> CreatePayment(
-    [FromBody] CreatePaymentInput command)
+    [FromBody] CreateSubscriptionInput command)
   {
     var paymentResult = await _mediator.Send(command);
     if (paymentResult.IsFail)

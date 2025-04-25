@@ -1,0 +1,9 @@
+.ui-button {
+  position: relative;
+}
+
+.loading-svg {
+  position: absolute;
+  left: 50%;
+  transform:  translateX(-50%);
+}

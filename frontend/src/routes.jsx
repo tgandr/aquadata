@@ -16,7 +16,6 @@ import ReportCycle from './pages/ReportCycle';
 import ReportFinancial from './pages/ReportFinancial';
 import ReportCosts from './pages/ReportCosts';
 import PondCosts from './pages/PondCosts';
-import Payments from './pages/Payments'
 
 const AppRoutes = () => {
   return (
@@ -39,7 +38,6 @@ const AppRoutes = () => {
         <Route path="/custos/:id" element={<PondCosts />} />
         <Route path="/sanidade" element={<AnalysisReport />} />
         <Route path="/aquadata" element={<HomePage />} />
-        <Route path="/payments" element={<Payments />} />
         <Route path="*" element={<HomePage />} />
       </Routes>
     </Router>

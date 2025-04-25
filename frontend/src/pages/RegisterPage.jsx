@@ -7,11 +7,11 @@ import { signUp, RegisterUserUseCase } from '../services/user.service';
 import {Preferences} from '@capacitor/preferences'
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import LocalDb from '../databases/local.db';
-import { v4 } from 'uuid';
-import getDbByUser from '../databases/user.db';
+import UiLoading from '../ui/UiLoading';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
+    const [loading,setLoading] = useState(false)
     const [form, setForm] = useState({
         nomeCompleto: '',
         email: '',
@@ -57,7 +57,8 @@ const RegisterPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true)
+        setError('')
         const user = {
             nomeCompleto: form.nomeCompleto,
             email: form.email,
@@ -65,7 +66,8 @@ const RegisterPage = () => {
             enderecoFazenda: form.enderecoFazenda,
             nomeFazenda: form.nomeFazenda,
             perfil: form.perfil,
-            saveLogin: true
+            saveLogin: true,
+            isSubscriptionActive: false,
         };
         try {
             const res = await signUp(new RegisterUserUseCase(
@@ -79,7 +81,6 @@ const RegisterPage = () => {
             ))
             user.id = res.data.user.id
 
-            await SecureStoragePlugin.set({key:'token', value: res.data.token})
             await SecureStoragePlugin.set({key:'credentials', value: JSON.stringify({email: user.email, password: password.senha})})
             await LocalDb.set('user', user);
             setSuccess('Registro realizado com sucesso!');
@@ -94,8 +95,12 @@ const RegisterPage = () => {
                     setError("Este email já foi cadastrado");
                     break;
                 default: 
+                    console.log(error)
                     setError("Erro Desconhecido")     
             }
+        }
+        finally {
+            setLoading(false)
         }
     };
 
@@ -136,6 +141,9 @@ const RegisterPage = () => {
                 </select>
                 <button type="submit">Cadastrar</button>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
+                {loading && <div className='loading'>
+                    <UiLoading/>
+                </div>}
             </form>
         </div>
     );

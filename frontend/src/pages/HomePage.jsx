@@ -13,7 +13,7 @@ const HomePage = () => {
     const timer1 = setTimeout(() => {
       // const formData = JSON.parse(localStorage.getItem('formData'));
       LocalDb.get('user').then(formData => {
-        if (formData && formData.saveLogin) {
+        if (formData) {
           setFadeClass('fade-out'); // Inicia a animação de fade out
           setTimeout(() => {
             navigate('/dashboard');

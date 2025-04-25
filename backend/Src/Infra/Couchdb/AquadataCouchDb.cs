@@ -2,17 +2,21 @@
 using System.Text;
 using System.Text.Json;
 using Aquadata.Application.Interfaces;
+using Microsoft.Extensions.Configuration;
 namespace Aquadata.Infra.CouchDb;
 
 public class AquadataCouchDb: ICouchdbService
 {
   private readonly HttpClient _client  = new HttpClient();
-  private readonly string _couchDbUrl = "http://localhost:5984";
-  private readonly string _adminUser = "admin";
-  private readonly string _adminPassword = "aquadata";
+  private readonly string _couchDbUrl;
+  private readonly string _adminUser;
+  private readonly string _adminPassword;
 
-  public AquadataCouchDb()
+  public AquadataCouchDb(IConfiguration configuration)
   {
+    _couchDbUrl = configuration["CouchDb:Url"]!;
+    _adminUser = configuration["CouchDb:Username"]!;
+    _adminPassword = configuration["CouchDb:Password"]!;
     AddHeaders();
   }
   private string GetUserDbUrl(string email) 
@@ -101,7 +105,6 @@ public class AquadataCouchDb: ICouchdbService
       Console.WriteLine("createStock:"+errorMessage);
     }
   }
-
 
   public async Task SetUserAsMember(string email) 
   {

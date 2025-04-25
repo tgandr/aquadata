@@ -2,7 +2,7 @@
   "appId": "com.aquadata.app",
   "appName": "aquadata",
   "webDir": "dist",
-  "server": {
-    "androidScheme": "https"
+  "server": { 
+    "androidScheme": "http"
   }
 }

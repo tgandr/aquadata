@@ -35,7 +35,6 @@ const Stock = () => {
       if (!res.docs.length) return
       const stockData = res.docs[0]
       setStockData(stockData)
-      console.log(stockData)
       setTotalValue(
         calculateTotalValue((stockData.othersPurchase ?? [])
         .concat(stockData.probioticsPurchase ?? [],
