@@ -4,7 +4,7 @@ import { formatDate } from './utils';
 
 
 const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, handleChange,
-    handleSubmit, setShowSavedMessage, purchases, setPurchases, handleDeletePurchase }) => {
+    handleSubmit, setShowSavedMessage, base }) => {
     const [addNewFert, setAddNewFert] = useState('');
     const [customChemicalFertilizer, setCustomChemicalFertilizer] = useState('');
     const [showFertilizerPurchasesTable, setShowFertilizerPurchasesTable] = useState(false);
@@ -15,7 +15,7 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
         value: '',
         unity: ''
     });
-
+    const purchases = base.financial
     const [fertilizers, setFertilizers] = useState([
         "NPK", "Fosfato Monopotássico", "Sulfato de Amônio"]);
 
@@ -24,13 +24,18 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
         if (newFert !== '') {
             setFertilizers([...fertilizers, fert]);
             setCustomChemicalFertilizer('');
-            let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            // let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            const stockData = base.stock
             if ('fertilizersList' in stockData) {
                 stockData.fertilizersList.push(fert);
             } else {
                 stockData.fertilizersList = [...fertilizers, fert];
             }
-            localStorage.setItem('stockData', JSON.stringify(stockData));
+            // localStorage.setItem('stockData', JSON.stringify(stockData));
+            base.db.put(stockData).then(res => {
+                stockData._rev = res.reverse
+                base.setStock(stockData)
+            })
         }
         setFormFertilizer({ ...formFertilizer, label: fert });
         setAddNewFert(false);
@@ -42,16 +47,17 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
     useEffect(() => {
         if (formFertilizer.label === 'custom') {
             setAddNewFert(true);
-        } else {
+        } else {                   
             setAddNewFert(false);
-        }
-    }, [formFertilizer.label]);
+        }                                              
+    }, [formFertilizer.label]);                                                                                                                                                                          
 
     useEffect(() => {
-        const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
-        const financial = JSON.parse(localStorage.getItem('financial')) || {};
-        const checkPurchases = financial.fertilizersPurchase || [];
-        setPurchases(financial);
+        // const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
+        const checkLists = base.stock
+        // const financial = JSON.parse(localStorage.getItem('financial')) || {};
+        const checkPurchases = base.financial.fertilizersPurchase || [];
+        // setPurchases(financial);
         if ('fertilizersList' in checkLists) {
             setFertilizers(checkLists.fertilizersList);
         }
@@ -60,8 +66,36 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
         } else {
             setShowFertilizerPurchasesTable(false);
         }
-    }, [formFertilizer]);
+    }, [base.financial]);
 
+    const handleDeletePurchase = (index) => {
+        const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
+        if (isConfirmed) {
+            const purchases = {...base.financial}
+            const actualIndex = purchases.fertilizersPurchase.length - 1 - index;
+            const updatedPurchases = { ...purchases };
+            const deletedPurchase = updatedPurchases.fertilizersPurchase[actualIndex];
+
+            updatedPurchases.fertilizersPurchase.splice(actualIndex, 1);
+            // localStorage.setItem('financial', JSON.stringify(updatedPurchases));
+            base.db.put(updatedPurchases).then(res => {
+                updatedPurchases._rev = res.rev
+                base.setFinancial(updatedPurchases)
+            })
+            // setPurchases(updatedPurchases);
+
+            // let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            let stockData = {...base.stock}
+            if ('fertilizersPurchase' in stockData) {
+                stockData.fertilizersPurchase = stockData.fertilizersPurchase.filter(purchase => purchase.id !== deletedPurchase.id);
+            }
+            base.db.put(stockData).then(res => {
+                stockData._rev = res.rev
+                base.setStock(stockData)
+            })
+            // localStorage.setItem('stockData', JSON.stringify(stockData));
+        }
+    }
     return (
         <>
             <div className="popup">
@@ -162,7 +196,7 @@ const FertilizersPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly,
                                             })}</td>
                                             <td style={{ textAlign: "center" }}>
                                                 <button
-                                                    onClick={() => handleDeletePurchase(purchase.id, 'fertilizersPurchase')}
+                                                    onClick={() => handleDeletePurchase(index)}
                                                     className="delete-button">
                                                     <i className="fas fa-trash" />
                                                 </button>

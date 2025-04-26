@@ -9,7 +9,7 @@ using Aquadata.Application.UseCases.User.GetInventories;
 using Aquadata.Application.UseCases.User.GetStocks;
 using Aquadata.Application.UseCases.User.GetUser;
 using Aquadata.Application.UseCases.User.UpdateUser;
-using Aquadata.Core.Security;
+using Aquadata.Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +21,10 @@ namespace Aquadata.Api.Controllers;
 public class UserController: ControllerBase
 {
   private readonly IMediator _mediator;
-  private readonly IAuthenticateService _auth;
+  // private readonly IJwtAuthService _auth;
+  private readonly IAuthService _auth;
 
-  public UserController(IMediator mediator, IAuthenticateService auth)
+  public UserController(IMediator mediator, IAuthService auth)
   {
     _mediator = mediator;
     _auth = auth;
@@ -39,16 +40,16 @@ public class UserController: ControllerBase
     if (userResult.IsFail)
       return Results.Extensions.MapResult(userResult);
 
-    var token = _auth.GenerateToken(
-      userResult.Unwrap().Id.ToString(), 
-      command.Email
-    );
+    // var token = _auth.GenerateToken(
+    //   userResult.Unwrap().Id.ToString(), 
+    //   command.Email
+    // );
 
     return Results.Created(
       nameof(SignUp),
       new ApiResponse<ApiCredentials>(new ApiCredentials(
         userResult.Unwrap(),
-        token
+        ""
       ))
     );
   }
@@ -61,12 +62,12 @@ public class UserController: ControllerBase
     if (user == null || !isAuth)
       return Results.Unauthorized();
     
-    var token = _auth.GenerateToken(user.Id.ToString(), login.Email);
+    // var token = _auth.GenerateToken(user.Id.ToString(), login.Email);
 
     return Results.Ok(new ApiResponse<ApiCredentials>(
       new ApiCredentials(
       UserOutput.FromEntity(user),
-      token)
+      "")
     ));
   }
 

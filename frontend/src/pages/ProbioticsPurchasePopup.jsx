@@ -3,7 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { formatDate } from './utils';
 
 const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, handleChange,
-    handleSubmit, setShowSavedMessage, purchases, setPurchases, handleDeletePurchase }) => {
+    handleSubmit, setShowSavedMessage, base }) => {
     const [addNewProbiotic, setAddNewProbiotic] = useState('');
     const [customProbiotic, setCustomProbiotic] = useState('');
     const [showProbioticsPurchasesTable, setShowProbioticsPurchasesTable] = useState(false);
@@ -14,7 +14,7 @@ const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, 
         value: '',
         unity: ''
     });
-
+    const purchases = base.financial
     const [probiotics, setProbiotics] = useState([
         "Biotrends", "DB Aqua", "Phibro"]);
 
@@ -23,13 +23,18 @@ const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, 
         if (newProbiotic !== '') {
             setProbiotics([...probiotics, probiotic]);
             setCustomProbiotic('');
-            let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            // let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            let stockData = {...base.stock}
             if ('probioticsList' in stockData) {
                 stockData.probioticsList.push(probiotic);
             } else {
                 stockData.probioticsList = [...probiotics, probiotic];
             }
-            localStorage.setItem('stockData', JSON.stringify(stockData));
+            // localStorage.setItem('stockData', JSON.stringify(stockData));
+            base.db.put(stockData).then(res => {
+                stockData._rev = res.rev
+                base.setStock(stockData)
+            })
         }
         setFormProbiotic({ ...formProbiotic, probiotico: probiotic });
         setAddNewProbiotic(false);
@@ -47,19 +52,52 @@ const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, 
     }, [formProbiotic.label]);
 
     useEffect(() => {
-        const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
-        const financial = JSON.parse(localStorage.getItem('financial')) || {};
-        const checkPurchases = financial.probioticsPurchase || [];
-        setPurchases(financial);
+        if (!base.financial.probioticsPurchase) return 
+        // const checkLists = JSON.parse(localStorage.getItem('stockData')) || {};
+        // const financial = JSON.parse(localStorage.getItem('financial')) || {};
+        const checkLists = base.stock
+        // const financial = base.financial
+        // const checkPurchases = financial.probioticsPurchase || [];
+
+        // setPurchases(base.financial);
         if ('probioticsList' in checkLists) {
             setProbiotics(checkLists.probioticsList);
         }
-        if (checkPurchases.length > 0) {
+        if (base.financial.probioticsPurchase.length > 0) {
             setShowProbioticsPurchasesTable(true);
         } else {
             setShowProbioticsPurchasesTable(false);
         }
-    }, [formProbiotic]);
+    }, [base.financial]);
+
+    const handleDeletePurchase = (index) => {
+        const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
+        if (isConfirmed) {
+            const purchases = {...base.financial}
+            const actualIndex = purchases.probioticsPurchase.length - 1 - index;
+            const updatedPurchases = { ...purchases };
+            const deletedPurchase = updatedPurchases.probioticsPurchase[actualIndex];
+
+            updatedPurchases.probioticsPurchase.splice(actualIndex, 1);
+            // localStorage.setItem('financial', JSON.stringify(updatedPurchases));
+            base.db.put(updatedPurchases).then(res => {
+                updatedPurchases._rev = res.rev
+                base.setFinancial(updatedPurchases)
+            })
+            // setPurchases(updatedPurchases);
+
+            // let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            let stockData = {...base.stock}
+            if ('probioticsPurchase' in stockData) {
+                stockData.probioticsPurchase = stockData.probioticsPurchase.filter(purchase => purchase.id !== deletedPurchase.id);
+            }
+            base.db.put(stockData).then(res => {
+                stockData._rev = res.rev
+                base.setStock(stockData)
+            })
+            // localStorage.setItem('stockData', JSON.stringify(stockData));
+        }
+    };
 
     return (
         <>
@@ -159,7 +197,7 @@ const ProbioticsPurchasePopup = ({ showPopup, setShowPopup, capitalizeProperly, 
                                             })}</td>
                                             <td style={{ textAlign: "center" }}>
                                                 <button
-                                                    onClick={() => handleDeletePurchase(purchase.id, 'probioticsPurchase')}
+                                                    onClick={() => handleDeletePurchase(index)}
                                                     className="delete-button">
                                                     <i className="fas fa-trash" />
                                                 </button>

@@ -4,21 +4,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBoxesPacking, faBacteria, faBoxesStacked, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { formatDate } from './utils';
 import { IconContainer } from './utils';
+import useDatabase from '../hooks/useDatabase'
+import LocalDb from '../databases/local.db';
 
 const Stock = () => {
+  const db = useDatabase()
   const [showPopup, setShowPopup] = useState({ ration: false, probiotics: false, fertilizers: false, others: false });
-  const formData = JSON.parse(localStorage.getItem('formData'));
+  const [formData,setFormData] = useState()
+  const [totalValue, setTotalValue] = useState()
   const [showTotalValue, setShowTotalValue] = useState(false);
   const headers = [['Data', 'date'], ['Fornecedor', 'label'], ['Quantidade', 'quantity']];
+  const [stockData, setStockData] = useState();
 
-  const [stockData, setStockData] = useState({
-    feedPurchase: [],
-    probioticsPurchase: [],
-    fertilizersPurchase: [],
-    othersPurchase: []
-  });
-
-  const calculateTotalValue = (purchaseData) => {
+  const calculateTotalValue = (purchaseData, stockData) => {
     if (stockData.feedPurchase) {
       const totalFeedPurchases = stockData.feedPurchase.reduce((total, i) =>
         total + (parseFloat(i.quantity) * (parseFloat(i.value) / parseInt(i.bagSize))), 0);
@@ -28,21 +26,37 @@ const Stock = () => {
     }
   };
 
-  const totalValue = calculateTotalValue(
-    (stockData.othersPurchase ?? [])
-      .concat(stockData.probioticsPurchase ?? [],
-        stockData.fertilizersPurchase ?? [])
-  );
-
   useEffect(() => {
-    const storedStockData = JSON.parse(localStorage.getItem('stockData'));
-    if (storedStockData) {
-      setStockData(storedStockData);
-    }
-    if (totalValue !== 0) {
-      setShowTotalValue(true);
-    }
-  }, [totalValue]);
+    if (!db) return
+    
+    db.find({
+      selector: {dataType: 'stockData'}
+    }).then((res) => {
+      if (!res.docs.length) return
+      const stockData = res.docs[0]
+      setStockData(stockData)
+      setTotalValue(
+        calculateTotalValue((stockData.othersPurchase ?? [])
+        .concat(stockData.probioticsPurchase ?? [],
+        stockData.fertilizersPurchase ?? []), stockData)
+      )
+    })
+
+    LocalDb.get('user').then(res => {
+      setFormData(res)
+    })
+  },[db])
+
+
+  // useEffect(() => {
+  //   // const storedStockData = JSON.parse(localStorage.getItem('stockData'));
+  //   // if (storedStockData) {
+  //   //   setStockData(storedStockData);
+  //   // }
+  //   if (totalValue !== 0) {
+  //     setShowTotalValue(true);
+  //   }
+  // }, [totalValue]);
 
   const renderTable = (data = [], headers) => {
     if (!data.length) {
@@ -73,7 +87,8 @@ const Stock = () => {
   };
 
   return (
-    <div className="financial-container">
+    formData &&
+    (<div className="financial-container">
       <div className="identify-data">
         <h2>Controle de Estoque</h2>
         <h3>Fazenda {formData.nomeFazenda}</h3>
@@ -173,7 +188,7 @@ const Stock = () => {
         </div>
       )}
     </div>
-  );
+  ));
 };
 
 export default Stock;

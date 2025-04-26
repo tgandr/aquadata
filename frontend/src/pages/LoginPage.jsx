@@ -2,18 +2,27 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/LoginPage.css';
 import { LoginUseCase, signIn } from '../services/user.service';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import { Preferences } from '@capacitor/preferences';
+import LocalDb from '../databases/local.db';
+import UiLoading from '../ui/UiLoading';
+import  apiRequest  from '../services/apiRequest';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false)
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
+    setLoading(true)
     try {
       const res = await signIn(new LoginUseCase(email, password))
       const user = res.data.user
+      
       const form = {
         id: user.id,
         email: user.email,
@@ -22,14 +31,16 @@ const LoginPage = () => {
         telefone: user.phone,
         nomeFazenda: user.farmName,
         perfil: user.profile,
-        saveLogin: false
       }
-      localStorage.setItem('token', res.data.token)
-      localStorage.setItem('formData', JSON.stringify(form))
+      // await SecureStoragePlugin.set({key: 'token', value: res.data.token})
+      await SecureStoragePlugin.set({key:'credentials', value: JSON.stringify({email: user.email, password})})
+      await LocalDb.set('user', form)
       navigate('/dashboard')
     } catch (err) {
-      console.error('Login error:', err.message); // Log detalhado do erro
       setError('Usuário ou senha inválidos');
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -51,7 +62,10 @@ const LoginPage = () => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        {error && <p className="error" style={{color: 'red'}}>{error}</p>}
+        {
+        loading? <UiLoading/> : (
+          error && <p className="error" style={{color: 'red'}}>{error}</p>
+        )}
         <button type="submit">Entrar</button>
       </form>
       <p>

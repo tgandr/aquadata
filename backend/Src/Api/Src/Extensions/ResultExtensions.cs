@@ -16,6 +16,7 @@ public static class ResultExtensions
       ErrorType.Unauthorized => Results.Unauthorized(),
       ErrorType.Conflict => Results.Conflict(error),
       ErrorType.NotFound => Results.NotFound(error),
+      ErrorType.Internal => Results.Problem(error.Description),
       _ => Results.Problem(
         statusCode: 500,
         title: "Server Failure",

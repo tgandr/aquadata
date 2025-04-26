@@ -1,5 +1,8 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Aquadata.Api.Configs;
+using Aquadata.Infra.Payments.MercadoPago.Jobs;
+using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -8,11 +11,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAppConnections(builder.Configuration);
 builder.Services.AddControllers().AddJsonOptions(o => {
+    o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
     o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
-builder.Services.AddUseCases();
-builder.Services.AddSecurity(builder.Configuration);
-
+builder.Services.InjectDependencies();
+// builder.Services.AddJWT(builder.Configuration);
+builder.Services.AddJobs(builder.Configuration);
+builder.Services.AddBasicAuth();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,6 +28,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseHangfireDashboard();
 app.UseCors(x => {
     x.AllowAnyHeader();
     x.AllowAnyMethod();
@@ -31,6 +37,12 @@ app.UseCors(x => {
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
+RecurringJob.AddOrUpdate<RenewSubscriptionsJob>(
+    "RenewSubscriptionsJob",
+    job => job.Execute(),
+    Cron.Minutely()
+);
+app.Run();
 app.Run();
 
 public partial class Program { }

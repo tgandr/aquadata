@@ -9,8 +9,10 @@ using Aquadata.Core.Entities.Financial;
 using Aquadata.Core.Entities.Harvest;
 using Aquadata.Core.Entities.Inventory;
 using Aquadata.Core.Entities.Objective;
+using Aquadata.Core.Entities.Payment;
 using Aquadata.Core.Entities.Pond;
 using Aquadata.Core.Entities.Purchase;
+using Aquadata.Core.Entities.Subscription;
 using Aquadata.Core.Entities.Stock;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Entities.Water;
@@ -39,7 +41,9 @@ public class ApplicationDbContext: DbContext
   public DbSet<EmployeePaymentEntity> Payroll {get;set;}
   public DbSet<ExpenseEntity> Expenses {get;set;}
   public DbSet<StockEntity> Stocks {get;set;}
+  public DbSet<PaymentEntity> Payments {get;set;}
   public DbSet<InventoryEntity> Inventories {get;set;}
+  public DbSet<SubscriptionEntity> Subscriptions {get;set;}
 
   public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     :base(options){}

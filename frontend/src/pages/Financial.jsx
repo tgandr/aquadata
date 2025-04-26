@@ -9,11 +9,16 @@ import '../styles/Financial.css';
 import LaborPopup from './LaborPopup';
 import Purchases from './Purchases';
 import { IconContainer } from './utils';
-import { parse } from 'uuid';
+import useDatabase from '../hooks/useDatabase'
+import LocalDb from '../databases/local.db'
+import { parse, v4 } from 'uuid';
 
 const Financial = () => {
   const navigate = useNavigate();
-  const formData = JSON.parse(localStorage.getItem('formData'));
+  const db = useDatabase()
+  const [financial, setFinancial] = useState()
+  const [formData, setFormData] = useState()
+  const [stock,setStock] = useState()
   const [showPopup, setShowPopup] = useState(null);
   const [showLaborPopup, setShowLaborPopup] = useState(false);
   const [showPurchasesPopup, setShowPurchasesPopup] = useState(false);
@@ -29,6 +34,44 @@ const Financial = () => {
   });
   const [payments, setPayments] = useState([]);
   const [revenues, setRevenues] = useState([]);
+
+  useEffect(() => {
+    if (!db) return 
+    db.find({
+      selector: {dataType: 'stockData'}
+    }).then(res => {
+      const stock = res.docs[0]
+      setStock(stock)
+    })
+
+    db.find({
+      selector: {dataType: 'financial'}
+    }).then(res => {
+      const financial = res.docs[0] || {
+        _id: v4(),
+        dataType: 'financial'
+      }
+      if ('payments' in financial) {
+        setPayments(financial.payments);
+      } else {
+        setPayments([]);
+      }
+      if ('revenues' in financial) {
+        setRevenues(financial.revenues);
+      } else {
+        setRevenues([]);
+      }
+      setFinancial(financial)
+    })
+
+    db.find({
+      selector: {dataType: 'pond'}
+    }).then(res => {
+      setViveiros(res.docs)
+    })
+
+    LocalDb.get('user').then(data => setFormData(data))
+  }, [db]);
 
   const handlePopup = (type) => {
     setShowPopup(type);
@@ -59,28 +102,9 @@ const Financial = () => {
     }
   };
 
-  useEffect(() => {
-    const financial = JSON.parse(localStorage.getItem('financial')) || {};
-    if ('payments' in financial) {
-      setPayments(financial.payments);
-    } else {
-      setPayments([]);
-    }
-    if ('revenues' in financial) {
-      setRevenues(financial.revenues);
-    } else {
-      setRevenues([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    const vivs = JSON.parse(localStorage.getItem("viveiros")) || [];
-    setViveiros(vivs);
-  }, []);
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    let newFinancial = {...financial}
     const totalViveiroValue = Object.values(form.viveiroDistribution)
       .reduce((acc, curr) => acc + parseFloat(curr || 0), 0);
     const formValue = parseFloat(form.value.replace(',', '.'));
@@ -90,7 +114,7 @@ const Financial = () => {
       return;
     }
 
-    let financial = JSON.parse(localStorage.getItem('financial')) || {};
+    // let financial = JSON.parse(localStorage.getItem('financial')) || {};
     const newEntry = {
       value: formValue,
       description: form.description,
@@ -109,17 +133,17 @@ const Financial = () => {
         return element;
       });
       setPayments(updatedPayments);
-      financial.payments = updatedPayments;
+      newFinancial.payments = updatedPayments;
     } else {
       const updatedPayments = [...payments, {
         month: form.date,
         [showPopup]: [newEntry]
       }];
       setPayments(updatedPayments);
-      financial.payments = updatedPayments;
+      newFinancial.payments = updatedPayments;
     }
 
-    localStorage.setItem('financial', JSON.stringify(financial));
+    // localStorage.setItem('financial', JSON.stringify(financial));
     setForm({
       date: new Date().toISOString().split('T')[0],
       value: '',
@@ -127,20 +151,31 @@ const Financial = () => {
       distribution: false,
       viveiroDistribution: {}
     });
+
+    db.put(newFinancial).then(res => {
+      newFinancial._rev = res.rev
+      setFinancial(newFinancial)
+    })
     handleClosePopup();
   };
 
   const handleRevenueSubmit = (e) => {
     e.preventDefault();
-    let financial = JSON.parse(localStorage.getItem('financial')) || {};
+    // let financial = JSON.parse(localStorage.getItem('financial')) || {};
     const updatedRevenues = [...revenues, {
       date: form.date,
       value: form.value,
       description: form.description
     }];
     setRevenues(updatedRevenues);
-    financial = { ...financial, revenues: updatedRevenues };
-    localStorage.setItem('financial', JSON.stringify(financial));
+    let newFinancial = { ...financial, revenues: updatedRevenues }
+    
+    db.put(newFinancial).then(res => {
+      newFinancial._rev = res.rev
+      setFinancial(newFinancial);
+    })
+
+    // localStorage.setItem('financial', JSON.stringify(financial));
     setForm({
       date: new Date().toISOString().split('T')[0],
       value: '',
@@ -150,7 +185,8 @@ const Financial = () => {
   };
 
   return (
-    <div className="financial-container">
+    formData &&
+    (<div className="financial-container">
       <div className="identify-data">
         <h2>Financeiro</h2>
         <h3>Fazenda {formData.nomeFazenda}</h3>
@@ -233,9 +269,16 @@ const Financial = () => {
       </div>
       <IconContainer />
 
-      {showLaborPopup && <LaborPopup setShowLaborPopup={setShowLaborPopup} />}
+      {showLaborPopup && <LaborPopup setShowLaborPopup={setShowLaborPopup} database={db} />}
 
-      {showPurchasesPopup && <Purchases setShowPurchasesPopup={setShowPurchasesPopup} />}
+      {showPurchasesPopup && <Purchases setShowPurchasesPopup={setShowPurchasesPopup} base={{
+        db,
+        viveiros,
+        financial,
+        setFinancial,
+        stock,
+        setStock
+      }} />}
 
       {showPopup && (
         <div className="popup">
@@ -408,7 +451,7 @@ const Financial = () => {
         </div>
       )}
     </div>
-  );
+  ));
 };
 
 export default Financial;

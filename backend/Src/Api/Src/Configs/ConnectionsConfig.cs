@@ -30,13 +30,6 @@ public static class ConnectionsConfig
       )
     );
 
-    services.AddCouchContext<AquadataCouchDb>(opts => {
-      opts.UseEndpoint("http://localhost:5984")
-        .EnsureDatabaseExists()
-        .UseBasicAuthentication("admin", "aquadata");
-    });
-
-    services.AddTransient<ICouchdbService, AquadataCouchDb>();
     return services;
   }
 }

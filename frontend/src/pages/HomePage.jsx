@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/back_white.jpeg';
 import '../styles/HomePage.css';
+import LocalDb from '../databases/local.db';
 
 const HomePage = () => {
   const [showButton, setShowButton] = useState(false);
@@ -10,16 +11,18 @@ const HomePage = () => {
 
   useEffect(() => {
     const timer1 = setTimeout(() => {
-      const formData = JSON.parse(localStorage.getItem('formData'));
-      if (formData && formData.saveLogin) {
-        setFadeClass('fade-out'); // Inicia a animação de fade out
-        setTimeout(() => {
-          navigate('/dashboard');
-        }, 500); // Tempo para a animação de fade out
-      } else {
-        setShowButton(true);
-      }
-    }, 2000); // Aguardar 2 segundos
+      // const formData = JSON.parse(localStorage.getItem('formData'));
+      LocalDb.get('user').then(formData => {
+        if (formData) {
+          setFadeClass('fade-out'); // Inicia a animação de fade out
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 500); // Tempo para a animação de fade out
+        } else {
+          setShowButton(true);
+        }
+      }, 2000); // Aguardar 2 segundos
+      })
 
     return () => {
       clearTimeout(timer1);

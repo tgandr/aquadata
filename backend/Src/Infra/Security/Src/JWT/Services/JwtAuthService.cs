@@ -3,23 +3,23 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Aquadata.Core.Entities.User;
-using Aquadata.Core.Security;
+using Aquadata.Application.Interfaces;
 using Aquadata.Infra.EF.Context;
-using Aquadata.Infra.Security.Validation;
+using Aquadata.Infra.Security.JWT.Validation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Aquadata.Infra.Security.Services;
+namespace Aquadata.Infra.Security.JWT.Services;
 
-public class AuthenticateService: IAuthenticateService
+public class JwtAuthService: IJwtAuthService
 {
   private readonly ApplicationDbContext _context;
   private readonly IHttpContextAccessor _httpAcessor;
   private readonly IConfiguration _config;
 
-  public AuthenticateService(ApplicationDbContext context, IConfiguration config,
+  public JwtAuthService(ApplicationDbContext context, IConfiguration config,
   IHttpContextAccessor httpAcessor)
   {
     _httpAcessor = httpAcessor;
@@ -75,7 +75,7 @@ public class AuthenticateService: IAuthenticateService
     return new JwtSecurityTokenHandler().WriteToken(token);
   }
 
-  public string? GetAuThenticatedUserId()
+  public string? GetAuthenticatedUserId()
     => _httpAcessor.HttpContext?.User?
     .FindFirst(ClaimTypes.NameIdentifier)?.Value;
 

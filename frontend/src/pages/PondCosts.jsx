@@ -4,12 +4,14 @@ import { useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { calculateDepreciation } from './utils';
+import useDatabase from '../hooks/useDatabase';
 
 const PondCosts = () => {
+    const db = useDatabase()
     const location = useLocation();
     const { dataPovoamento, feed, viveiro, viveiroId, hasShrimp,
         harvest, depreciationTotal, id, fertilizers } = location.state.cycle;
-    const financial = JSON.parse(localStorage.getItem('financial'));
+    const [financial, setFinancial] = useState({})
     const [showFixedCosts, setShowFixedCosts] = useState(false);
     const [showVariableCosts, setShowVariableCosts] = useState(false);
     const [showTotalCosts, setShowTotalCosts] = useState(false);
@@ -28,13 +30,36 @@ const PondCosts = () => {
             others: { name: 'Outros', value: 0 }
         }
     });
+    const [ponds,setPonds] = useState([])
+    const [currentPond, setCurrentPond] = useState({})
+    const [totalPondsArea, setTotalPondsArea] = useState() 
+    const [isLoaded, setIsLoaded] = useState(false)
+    const [pondArea, setPondArea] = useState()
+    const [pondPercentage, setPondPercentage] = useState()
 
-    const viveiros = JSON.parse(localStorage.getItem('viveiros'));
-    const pond = viveiros.find(viv => viv.id === viveiroId);
-    const totalPondsArea = viveiros.reduce((total, i) => total + parseFloat(i.area), 0);
+    useEffect(() => {
+        if (!db) return
+        db.find({
+            selector: {dataType: 'financial'}
+        }).then(data => {
+            setFinancial(data.docs[0])
+        })
 
-    const pondArea = parseFloat(pond.area);
-    const pondPercentage = parseFloat((pondArea / totalPondsArea) * 100);
+        db.find({
+            selector: {dataType: 'pond'}
+        }).then(data => {
+            const ponds = data.docs
+            const currentPond = ponds.find(p => p._id == viveiroId)
+            const currentPondArea = parseFloat(currentPond.area)
+            setCurrentPond(currentPond)
+            setPonds(ponds)
+            setTotalPondsArea(ponds.reduce((total, i) => 
+                total + parseFloat(i.area), 0))
+            setPondArea(currentPondArea)
+            setPondPercentage(parseFloat((currentPondArea / totalPondsArea) * 100))
+            setIsLoaded(true)
+        })
+    }, [db]) 
 
     const searchHarvestDate = () => {
         const finalHarvestDate = harvest && harvest.find(harv => harv.id.totalOrParcial === "total")?.id.date;
@@ -95,8 +120,8 @@ const PondCosts = () => {
         let totalEnergyCost = 0;
         const getDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
         
-        if (!financial) return 0;
-
+        if (!financial.payments) return 0;
+        
         financial.payments.forEach(entry => {
             const entryDate = new Date(entry.month + "-01"); // Convert month string to date
             if (entryDate >= startDate && entryDate <= endDate) {
@@ -126,7 +151,7 @@ const PondCosts = () => {
         let totalLaborCost = 0;
         const getDaysInMonth = (year, month) => new Date(year, month, 0).getDate();
 
-        if (!financial.labor) return 0;
+        if (!financial || !financial.labor) return 0;
 
         financial.labor.forEach(entry => {
             const entryDate = new Date(entry.month + "-01");
@@ -233,7 +258,7 @@ const PondCosts = () => {
             }
         }));
     }, []);
-
+    if (!isLoaded) return <p>Carregando...</p>
     return (
         <div>
             <div className="identify-data">
@@ -244,9 +269,9 @@ const PondCosts = () => {
             </div>
             <div className="pond-detail">
                 <div className="infos"><h3>
-                    {`${parseFloat(pond.area).toLocaleString('pt-BR',
+                    {`${parseFloat(currentPond.area).toLocaleString('pt-BR',
                         { minimumFractionDigits: 1, maximumFractionDigits: 1 })} `}
-                    ha - {`${parseFloat(pond.area / totalPondsArea * 100).toLocaleString('pt-BR',
+                    ha - {`${parseFloat(currentPond.area / totalPondsArea * 100).toLocaleString('pt-BR',
                         { minimumFractionDigits: 1, maximumFractionDigits: 1 })}% da área total`}</h3></div>
                 <div className="infos">Área total de viveiros: {`${totalPondsArea.toLocaleString('pt-BR',
                     { minimumFractionDigits: 1, maximumFractionDigits: 1 })} `}

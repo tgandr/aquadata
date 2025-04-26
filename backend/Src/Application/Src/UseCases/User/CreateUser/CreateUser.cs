@@ -15,8 +15,11 @@ public class CreateUser : IUseCaseHandler<CreateUserInput,UserOutput>
   private readonly IUserRepository _repository;
   private readonly IUnitOfWork _unitOfWork;
 
-  public CreateUser(IUserRepository repository, IUnitOfWork unitOfWork,
-  ICouchdbService couchdb)
+  public CreateUser(
+    IUserRepository repository, 
+    IUnitOfWork unitOfWork,
+    ICouchdbService couchdb
+  )
   {
     _couchdb = couchdb;
     _repository = repository;
@@ -36,7 +39,7 @@ public class CreateUser : IUseCaseHandler<CreateUserInput,UserOutput>
       request.Phone
     );
 
-    var userExists = await _repository.IsEmailRegistered(request.Email);
+    var userExists = await _repository.Exists(request.Email);
 
     if (userExists)
       return Result<UserOutput>.Fail(
@@ -50,10 +53,10 @@ public class CreateUser : IUseCaseHandler<CreateUserInput,UserOutput>
     }
 
     var user = userResult.Unwrap();
-    await _repository.Insert(user, cancellationToken);
-    await _unitOfWork.Commit(cancellationToken);
 
+    await _repository.Insert(user, cancellationToken);
     await _repository.Insert(FinancialEntity.Of(user.Id));
+
     await _unitOfWork.Commit(cancellationToken);
 
     await _couchdb.AddUser(user.Email, request.Password);

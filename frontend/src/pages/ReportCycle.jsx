@@ -4,21 +4,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { formatDate } from './utils';
 import { IconContainer } from './utils';
+import useDatabase from '../hooks/useDatabase';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 
 const ReportCycle = () => {
+    const db = useDatabase()
     const location = useLocation();
     const cultivoId = location.state.id;
+    const pond = location.state.viveiro
     const viveiroName = location.state.viveiro.nome;
-    const findInHistory = () => {
-        const history = JSON.parse(localStorage.getItem("history"));
-        const idWithoutPrefix = cultivoId.split("-").slice(1).join("-");
-        return history.find((cult) => cult.id === idWithoutPrefix)
-    }
-    const cultivo = JSON.parse(localStorage.getItem(cultivoId)) ||
-        findInHistory();
-
-    const stockData = JSON.parse(localStorage.getItem('stockData'));
+    // const findInHistory = () => {
+    //     const history = JSON.parse(localStorage.getItem("history"));
+    //     const idWithoutPrefix = cultivoId.split("-").slice(1).join("-");
+    //     return history.find((cult) => cult.id === idWithoutPrefix)
+    // }
+    const [cultivation, setCultivation] = useState()
+    const [CA, setCA] = useState()
+    // const stockData = JSON.parse(localStorage.getItem('stockData'));
+    const [stockData, setStock] = useState()
     const [showReceiptPostLarvaes, setShowReceiptPostLarvaes] = useState(false);
     const [showStressTest, setShowStressTest] = useState(false);
     const [showBiometrics, setShowBiometrics] = useState(false);
@@ -28,13 +31,28 @@ const ReportCycle = () => {
     const [showProducao, setShowProducao] = useState(false);
     let revenue = 0;
     let survivalRate = 0;
-    let CA = checkFeedToCA();
-    function checkFeedToCA() {
-        if ('feed' in cultivo) {
-            const feed = cultivo.feed.reduce(
+
+    useEffect(() => {
+        if (!db) return 
+        db.get(cultivoId).then(res =>{
+            setCultivation(res)
+            setCA(checkFeedToCA(res))
+        })
+
+        db.find({
+            selector: {dataType: 'stockData'}
+        }).then(data => {
+            const stock = data.docs[0]
+            setStock(stock || {})
+        })
+    },[db])
+
+    function checkFeedToCA(cultivation) {
+        if ('feed' in cultivation) {
+            const feed = cultivation.feed.reduce(
                 (total, feed) => total + parseFloat(feed.racaoTotalDia),
                 0);
-            const biomass = cultivo.harvest ? cultivo.harvest.reduce((total, biom) => total +
+            const biomass = cultivation.harvest ? cultivation.harvest.reduce((total, biom) => total +
                 (parseInt(biom.data.biomass) || parseInt(biom.data.biomassAtFinalHarvest)), 0) : 0;
             return { feed: feed, biomass: biomass }
         }
@@ -62,11 +80,13 @@ const ReportCycle = () => {
     };
 
     const produtividade = () => {
-        const viv = JSON.parse(localStorage.getItem('viveiros')).find(v => v.id == cultivo.viveiroId)
-        return parseInt(CA.biomass / viv.area)
+        if (!CA) return 0
+        // const viv = JSON.parse(localStorage.getItem('viveiros')).find(v => v.id == cultivation.viveiroId)
+        return parseInt(CA.biomass / pond.area)
     };
 
     return (
+        cultivation && (
         <div>
             <div className="identify-data">
                 <h2>Relatório</h2>
@@ -74,9 +94,9 @@ const ReportCycle = () => {
             </div>
             <div className="pond-detail">
                 <div className="infos">
-                    <p><strong>Data de Povoamento:</strong> {formatDate(cultivo.dataPovoamento).date}</p>
-                    <p><strong>Origem PL:</strong> {cultivo.origemPL}</p>
-                    <p><strong>Quantidade Estocada:</strong> {parseInt(cultivo.quantidadeEstocada).toLocaleString('pt-BR')}</p>
+                    <p><strong>Data de Povoamento:</strong> {formatDate(cultivation.dataPovoamento).date}</p>
+                    <p><strong>Origem PL:</strong> {cultivation.origemPL}</p>
+                    <p><strong>Quantidade Estocada:</strong> {parseInt(cultivation.quantidadeEstocada).toLocaleString('pt-BR')}</p>
                 </div>
 
                 <div className="report-tables">
@@ -90,10 +110,10 @@ const ReportCycle = () => {
                     </h3>
                     {showReceiptPostLarvaes &&
                         <>
-                            {cultivo.uniformidade === 'desuniforme' ?
+                            {cultivation.uniformidade === 'desuniforme' ?
                                 <p style={{ textAlign: 'left' }}>As pós-larvas eram desuniformes no recebimento</p>
-                                : <p style={{ textAlign: 'left' }}>Uniformidade <strong>{cultivo.uniformidade}</strong> no recebimento</p>}
-                            {cultivo.testForm ?
+                                : <p style={{ textAlign: 'left' }}>Uniformidade <strong>{cultivation.uniformidade}</strong> no recebimento</p>}
+                            {cultivation.testForm ?
                                 (<table className="biometry-table">
                                     <thead>
                                         <tr>
@@ -105,19 +125,19 @@ const ReportCycle = () => {
                                     <tbody>
                                         <tr>
                                             <td style={{ textAlign: "center" }}>
-                                                {tipoTesteMap[cultivo.testForm.tipoTeste]}
+                                                {tipoTesteMap[cultivation.testForm.tipoTeste]}
                                             </td>
                                             <td style={{ textAlign: "center" }}>
-                                                {alteracaoNatatoriaMap[cultivo.testForm.alteracaoNatatoria]}
+                                                {alteracaoNatatoriaMap[cultivation.testForm.alteracaoNatatoria]}
                                             </td>
                                             <td style={{ textAlign: "center" }}>
-                                                {larvasMortasMap[cultivo.testForm.larvasMortas]}
+                                                {larvasMortasMap[cultivation.testForm.larvasMortas]}
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                                 ) : (<p style={{ textAlign: 'left' }}>Teste de estresse não realizado</p>)}
-                            {cultivo.formParam && (cultivo.formParam.details === "true" ?
+                            {cultivation.formParam && (cultivation.formParam.details === "true" ?
                                 <>
                                     <table className="biometry-table">
                                         <thead>
@@ -133,10 +153,10 @@ const ReportCycle = () => {
                                                     Oxigênio
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.oxygen.transp} mg/L
+                                                    {cultivation.formParam.oxygen.transp} mg/L
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.oxygen.pond} mg/L
+                                                    {cultivation.formParam.oxygen.pond} mg/L
                                                 </td>
                                             </tr>
                                             <tr>
@@ -144,10 +164,10 @@ const ReportCycle = () => {
                                                     Temperatura
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.temperature.transp} °C
+                                                    {cultivation.formParam.temperature.transp} °C
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.temperature.pond} °C
+                                                    {cultivation.formParam.temperature.pond} °C
                                                 </td>
                                             </tr>
                                             <tr>
@@ -155,10 +175,10 @@ const ReportCycle = () => {
                                                     pH
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.ph.transp}
+                                                    {cultivation.formParam.ph.transp}
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.ph.pond}
+                                                    {cultivation.formParam.ph.pond}
                                                 </td>
                                             </tr>
                                             <tr>
@@ -166,10 +186,10 @@ const ReportCycle = () => {
                                                     Salinidade
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.salinity.transp} g/L
+                                                    {cultivation.formParam.salinity.transp} g/L
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.salinity.pond} g/L
+                                                    {cultivation.formParam.salinity.pond} g/L
                                                 </td>
                                             </tr>
                                             <tr>
@@ -177,10 +197,10 @@ const ReportCycle = () => {
                                                     Amônia
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.ammonium.transp} mg/L
+                                                    {cultivation.formParam.ammonium.transp} mg/L
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.ammonium.pond} mg/L
+                                                    {cultivation.formParam.ammonium.pond} mg/L
                                                 </td>
                                             </tr>
                                             <tr>
@@ -188,16 +208,16 @@ const ReportCycle = () => {
                                                     Nitrito
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.nitrite.transp} mg/L
+                                                    {cultivation.formParam.nitrite.transp} mg/L
                                                 </td>
                                                 <td style={{ textAlign: "right" }}>
-                                                    {cultivo.formParam.nitrite.pond} mg/L
+                                                    {cultivation.formParam.nitrite.pond} mg/L
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </> : 
-                                (cultivo.formParam.check === 'true'
+                                (cultivation.formParam.check === 'true'
                                     ? <p style={{ textAlign: 'left' }}>A checagem de parâmetros foi realizada mas não foi detalhada</p>
                                     : <p style={{ textAlign: 'left' }}>Não foi feita a checagem de parâmetros de água no recebimento</p>)
                             )}
@@ -247,7 +267,7 @@ const ReportCycle = () => {
                         )}
                     </h3>
                     {showRacao && (
-                        cultivo.feed ? (
+                        cultivation.feed ? (
                             <table className="biometry-table">
                                 <thead>
                                     <tr>
@@ -259,7 +279,7 @@ const ReportCycle = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {cultivo.feed.map((feed, index) => {
+                                    {cultivation.feed.map((feed, index) => {
                                         const purchase = stockData.feedPurchase.find(
                                             (item) => item.purchaseId.id === feed.racaoUsada
                                         );
@@ -277,7 +297,7 @@ const ReportCycle = () => {
                                         <td colSpan="4" style={{ textAlign: "center" }}><strong>Total</strong></td>
                                         <td className="td-revenue">
                                             <strong>
-                                                {cultivo.feed.reduce(
+                                                {cultivation.feed.reduce(
                                                     (total, feed) => total + parseFloat(feed.racaoTotalDia),
                                                     0
                                                 )}
@@ -298,7 +318,7 @@ const ReportCycle = () => {
                         )}
                     </h3>
                     {showParametros && (
-                        cultivo.params ? (
+                        cultivation.params ? (
                             <table className="biometry-table">
                                 <thead>
                                     <tr>
@@ -311,7 +331,7 @@ const ReportCycle = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {cultivo.params.map((param, index) => (
+                                    {cultivation.params.map((param, index) => (
                                         <tr key={index}>
                                             <td>{formatDate(param.data).date}</td>
                                             <td>{param.horario}</td>
@@ -336,7 +356,7 @@ const ReportCycle = () => {
                     </h3>
 
                     {showBiometrics && (
-                        cultivo.biometrics ? (
+                        cultivation.biometrics ? (
                             <table className="biometry-table">
                                 <thead>
                                     <tr>
@@ -347,7 +367,7 @@ const ReportCycle = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {cultivo.biometrics.map((biometric, index) => (
+                                    {cultivation.biometrics.map((biometric, index) => (
                                         <tr key={index}>
                                             <td>{formatDate(biometric.data).date}</td>
                                             <td style={{ textAlign: "right" }}>{biometric.Pesagem}</td>
@@ -371,7 +391,7 @@ const ReportCycle = () => {
                     </h3>
 
                     {showFertilizantes && (
-                        cultivo.fertilizers ? (
+                        cultivation.fertilizers ? (
                             <table className="biometry-table">
                                 <thead>
                                     <tr>
@@ -381,7 +401,7 @@ const ReportCycle = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {cultivo.fertilizers.map((fertilizer, index) => (
+                                    {cultivation.fertilizers.map((fertilizer, index) => (
                                         <tr key={index}>
                                             <td>{formatDate(fertilizer.data).date}</td>
                                             <td>{fertilizer.tipoFertilizante}</td>
@@ -402,7 +422,7 @@ const ReportCycle = () => {
                         )}
                     </h3>
                     {showProducao && (
-                        cultivo.harvest ? (
+                        cultivation.harvest ? (
                             <table className="biometry-table">
                                 <thead>
                                     <tr>
@@ -414,12 +434,12 @@ const ReportCycle = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {cultivo.harvest.map((harvest, index) => {
+                                    {cultivation.harvest.map((harvest, index) => {
                                         const totalWeight = harvest.data.biometries.reduce((sum, b) => sum + parseFloat(b.weight), 0);
                                         const totalCount = harvest.data.biometries.reduce((sum, b) => sum + parseInt(b.count), 0);
                                         const averageWeight = (totalWeight / totalCount);
                                         survivalRate += (((harvest.data.biomass ||
-                                            harvest.data.biomassAtFinalHarvest) * 1000) / averageWeight) / cultivo.quantidadeEstocada;
+                                            harvest.data.biomassAtFinalHarvest) * 1000) / averageWeight) / cultivation.quantidadeEstocada;
 
                                         return (
                                             <tr key={index}>
@@ -443,7 +463,7 @@ const ReportCycle = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {cultivo.harvest.map((harvest, index) => {
+                                    {cultivation.harvest.map((harvest, index) => {
                                         revenue += parseFloat(harvest.id.price) *
                                             parseInt(harvest.data.biomass || harvest.data.biomassAtFinalHarvest);
 
@@ -465,8 +485,8 @@ const ReportCycle = () => {
                                         {/* <td style={{ textAlign: "right" }}>{CA ? (CA.biomass).toLocaleString('pt-BR') `kg` :
                                             "Sem consumo de ração registrado"}</td> */}
                                         <td style={{ textAlign: "right" }}>
-                                            {cultivo.harvest ?
-                                                `${(cultivo.harvest.reduce((total, biom) => {
+                                            {cultivation.harvest ?
+                                                `${(cultivation.harvest.reduce((total, biom) => {
                                                     const biomass = parseInt(biom.data.biomass) || parseInt(biom.data.biomassAtFinalHarvest) || 0;
                                                     return total + biomass;
                                                 }, 0)).toLocaleString('pt-BR')} kg`
@@ -475,7 +495,7 @@ const ReportCycle = () => {
                                         <td colSpan="2" className="td-revenue"><strong>R$ {(revenue).toLocaleString('pt-BR',
                                             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></td>
                                     </tr>
-                                    {cultivo.harvest.some((harv) => harv.id.totalOrParcial === "total") && (
+                                    {cultivation.harvest.some((harv) => harv.id.totalOrParcial === "total") && (
                                         <>
                                             <tr>
                                                 <td colSpan="3" style={{ textAlign: "center" }}><strong>Sobrevivência</strong></td>
@@ -502,7 +522,9 @@ const ReportCycle = () => {
             </div>
             <IconContainer />
         </div>
-    );
+
+    ));
+    
 };
 
 export default ReportCycle;

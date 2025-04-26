@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Infra\EF\Aquadata.Infra.EF.csproj" />
     <ProjectReference Include="..\Infra\Security\Aquadata.Infra.Security.csproj" />
     <ProjectReference Include="..\Infra\Couchdb\Aquadata.Infra.CouchDb.csproj" />
+    <ProjectReference Include="..\Infra\Payments\MercadoPago\Aquadata.Infra.Payments.MercadoPago.csproj" />
   </ItemGroup>
 
 </Project>

@@ -4,10 +4,14 @@ import '../styles/RegisterPage.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { signUp, RegisterUserUseCase } from '../services/user.service';
-import getDbByEmail from '../databases/user.db'
+import {Preferences} from '@capacitor/preferences'
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import LocalDb from '../databases/local.db';
+import UiLoading from '../ui/UiLoading';
+
 const RegisterPage = () => {
     const navigate = useNavigate();
+    const [loading,setLoading] = useState(false)
     const [form, setForm] = useState({
         nomeCompleto: '',
         email: '',
@@ -53,7 +57,8 @@ const RegisterPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true)
+        setError('')
         const user = {
             nomeCompleto: form.nomeCompleto,
             email: form.email,
@@ -62,20 +67,22 @@ const RegisterPage = () => {
             nomeFazenda: form.nomeFazenda,
             perfil: form.perfil,
             saveLogin: true,
-            senha: password.senha
+            isSubscriptionActive: false,
         };
         try {
             const res = await signUp(new RegisterUserUseCase(
-                    user.nomeCompleto,
-                    user.email,
-                    user.senha,
-                    user.nomeFazenda,
-                    user.enderecoFazenda,
-                    user.perfil,
-                    user.telefone
-                ))
-            await SecureStoragePlugin.set({key:'token', value: res.data.token})
-            localStorage.setItem('formData', JSON.stringify(user))
+                user.nomeCompleto,
+                user.email,
+                password.senha,
+                user.nomeFazenda,
+                user.enderecoFazenda,
+                user.perfil,
+                user.telefone
+            ))
+            user.id = res.data.user.id
+
+            await SecureStoragePlugin.set({key:'credentials', value: JSON.stringify({email: user.email, password: password.senha})})
+            await LocalDb.set('user', user);
             setSuccess('Registro realizado com sucesso!');
             setError('');
             navigate('/dashboard');
@@ -86,8 +93,14 @@ const RegisterPage = () => {
                     break;
                 case "email already exists":
                     setError("Este email já foi cadastrado");
-                    break;          
+                    break;
+                default: 
+                    console.log(error)
+                    setError("Erro Desconhecido")     
             }
+        }
+        finally {
+            setLoading(false)
         }
     };
 
@@ -128,6 +141,9 @@ const RegisterPage = () => {
                 </select>
                 <button type="submit">Cadastrar</button>
                 {error && <p style={{ color: 'red' }}>{error}</p>}
+                {loading && <div className='loading'>
+                    <UiLoading/>
+                </div>}
             </form>
         </div>
     );

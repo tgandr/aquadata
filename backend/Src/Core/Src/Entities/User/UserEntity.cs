@@ -18,7 +18,7 @@ public class UserEntity :Entity, IAggregateRoot
   public string FarmName {get; private set;}
   public string FarmAddress {get; private set;}
   public string Phone {get; private set;}
-
+  
   private UserEntity() {}
   private UserEntity(string name, string email, string password, string profile, 
   string farmName, string farmAddress, string phone)

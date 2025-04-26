@@ -44,98 +44,6 @@ const CountingPls = ({ setShowNewCyclePopup, handleSavePLcount,
         }
     }, [webcamRef, threshold]);
 
-    // const countDarkPoints = (imageSrc, threshold) => {
-    //     const img = new Image();
-    //     img.src = imageSrc;
-    //     img.onload = () => {
-    //         const canvas = document.createElement('canvas');
-    //         const ctx = canvas.getContext('2d');
-    //         canvas.width = img.width;
-    //         canvas.height = img.height;
-    //         ctx.drawImage(img, 0, 0);
-
-    //         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    //         const data = imageData.data;
-    //         const width = canvas.width;
-    //         const height = canvas.height;
-    //         let darkCount = 0;
-
-    //         console.log(data[1])
-    //         console.log(data[2])
-    //         console.log(data[3])
-    //         const brightnessData = [];
-    //         const brightnessHistogram = [];
-
-    //         for (let i = 0; i < data.length; i += 4) {
-    //             const r = data[i];
-    //             const g = data[i + 1];
-    //             const b = data[i + 2];
-    //             const brightness = (r + g + b) / 3;
-    //             brightnessHistogram.push(brightness)
-    //             brightnessData.push(brightness < threshold ? 1 : 0);
-    //         }
-    //         console.log(brightnessHistogram)
-
-    //         const visited = new Array(width * height).fill(false);
-
-    //         const dfs = (x, y) => {
-    //             const stack = [[x, y]];
-    //             let pixelCount = 0;
-    //             let sumX = 0;
-    //             let sumY = 0;
-
-    //             while (stack.length > 0) {
-    //                 const [cx, cy] = stack.pop();
-    //                 const index = cy * width + cx;
-
-    //                 if (
-    //                     cx >= 0 && cy >= 0 && cx < width && cy < height &&
-    //                     !visited[index] && brightnessData[index] === 1
-    //                 ) {
-    //                     visited[index] = true;
-    //                     pixelCount++;
-    //                     sumX += cx;
-    //                     sumY += cy;
-
-    //                     stack.push([cx + 1, cy]);
-    //                     stack.push([cx - 1, cy]);
-    //                     stack.push([cx, cy + 1]);
-    //                     stack.push([cx, cy - 1]);
-    //                 }
-    //             }
-    //             if (pixelCount >= 10) { // Ajuste o tamanho mínimo do ponto escuro
-    //                 const centerX = sumX / pixelCount;
-    //                 const centerY = sumY / pixelCount;
-
-    //                 // Desenhar um círculo vermelho ao redor do centro do ponto escuro
-    //                 ctx.beginPath();
-    //                 ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI); // raio de 5 pixels
-    //                 ctx.strokeStyle = 'red';
-    //                 ctx.lineWidth = 2;
-    //                 ctx.stroke();
-
-    //                 return true;
-    //             }
-    //             return false;
-    //         };
-
-    //         for (let y = 0; y < height; y++) {
-    //             for (let x = 0; x < width; x++) {
-    //                 const index = y * width + x;
-    //                 if (brightnessData[index] === 1 && !visited[index]) {
-    //                     if (dfs(x, y)) darkCount++; // Conta apenas agrupamentos significativos
-    //                 }
-    //             }
-    //         }
-
-    //         setDarkPoints(darkCount);
-    //         setCountPLbyPhoto({ ...countPLbyPhoto, amount: darkCount })
-    //         setProcessedImage(canvas.toDataURL());
-    //     };
-    // };
-
-
-    // faz o histograma
     const countDarkPoints = (imageSrc, threshold) => {
         const img = new Image();
         img.src = imageSrc;
@@ -168,7 +76,6 @@ const CountingPls = ({ setShowNewCyclePopup, handleSavePLcount,
             }
 
             // Exibir histograma no console
-            console.log('Brightness Histogram:');
             brightnessHistogram.forEach((count, brightness) => {
                 if (count > 0) console.log(`Brightness ${brightness}: ${count}`);
             });

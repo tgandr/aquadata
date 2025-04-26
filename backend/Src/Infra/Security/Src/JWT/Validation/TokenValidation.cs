@@ -2,7 +2,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Aquadata.Infra.Security.Validation;
+namespace Aquadata.Infra.Security.JWT.Validation;
 
 public static class TokenValidation
 {

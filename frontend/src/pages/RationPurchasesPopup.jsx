@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { formatDate } from './utils';
 
-const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
+const RationPurchasesPopup = ({ setShowRationPurchasesPopup, base }) => {
     const [addNewBrandPopup, setAddNewBrandPopup] = useState(false);
     const [showSavedMessage, setShowSavedMessage] = useState(false);
-    const [rationsBrands, setRationsBrands] = useState([]);
+    const [rationsBrands, setRationsBrands] = useState(base.stock.brandRatioList);
+    // const [financial, setFinancial] = useState({})
+    // const [stockData, setStock] = useState({})
     const [addNewBrand, setAddNewBrand] = useState('');
     const [rationPurchases, setRationPurchases] = useState([]);
     const [showRationPurchaseTable, setShowRationPurchaseTable] = useState(false);
@@ -27,12 +29,31 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
     };
 
     const generateUniqueId = () => {
-        return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     };
+
+    // useEffect(() => {
+    //     database.find({
+    //         selector: {dataType: 'financial'}
+    //     }).then(data => {
+    //         setFinancial(data.docs[0] || {})
+    //     })
+
+    //     database.find({
+    //         selector: {dataType: 'stockData'}
+    //     }).then(data => {
+    //         if (!data.docs.length) return 
+    //         const stock = data.docs[0]
+    //         if ('brandRatioList' in stock) {
+    //             setRationsBrands(stock.brandRatioList);
+    //         }
+    //         setStock(stock)
+    //     })
+    // }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        let financial = JSON.parse(localStorage.getItem('financial')) || {};
+        let newFinancial = {...base.financial}
         let formRationCheckOut = formRation;
         const { bagQuantity, bagSize, brand } = formRation;
         formRationCheckOut = {
@@ -41,8 +62,8 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
             label: brand
         };
 
-        if (financial) {
-            if ('feedPurchase' in financial) {
+        if (newFinancial) {
+            if ('feedPurchase' in newFinancial) {
                 formRationCheckOut = {
                     ...formRationCheckOut,
                     purchaseId: {
@@ -50,7 +71,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                         id: generateUniqueId()
                     }
                 }
-                financial.feedPurchase.push(formRationCheckOut);
+                newFinancial.feedPurchase.push(formRationCheckOut);
             } else {
                 formRationCheckOut = {
                     ...formRationCheckOut,
@@ -59,7 +80,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                         id: generateUniqueId()
                     }
                 }
-                financial = { ...financial, feedPurchase: [formRationCheckOut] }
+                newFinancial = { ...newFinancial, feedPurchase: [formRationCheckOut] }
             }
         } else {
             formRationCheckOut = {
@@ -69,9 +90,13 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
                     id: generateUniqueId()
                 }
             }
-            financial = { feedPurchase: [formRationCheckOut] }
+            newFinancial = { feedPurchase: [formRationCheckOut] }
         }
-        localStorage.setItem('financial', JSON.stringify(financial));
+        // localStorage.setItem('financial', JSON.stringify(financial));
+        base.db.put(newFinancial).then(res => {
+            newFinancial._rev = res.rev
+            base.setFinancial(newFinancial)
+        })
         saveInStock(formRationCheckOut);
         setFormRation({
             ...formRation,
@@ -86,59 +111,90 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
     }
 
     const saveInStock = (toSave) => {
-        let stock = JSON.parse(localStorage.getItem('stockData')) || {};
+        let stock = {...base.stock}
         if ('feedPurchase' in stock) {
             stock.feedPurchase.push(toSave);
         } else {
             stock = { ...stock, feedPurchase: [toSave] }
         }
-        localStorage.setItem('stockData', JSON.stringify(stock));
+        base.db.put(stock).then(res => {
+            stock._rev = res.rev
+            base.setStock(stock)
+        })
+        // localStorage.setItem('stockData', JSON.stringify(stock));
     }
 
     const saveNewBrand = () => {
-        let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
-        if (stockData) {
-            if ('brandRatioList' in stockData) {
-                stockData.brandRatioList.push(addNewBrand);
+        let stock = {...base.stock};
+        if (stock) {
+            if ('brandRatioList' in stock) {
+                stock.brandRatioList.push(addNewBrand);
             } else {
-                stockData = { ...stockData, brandRatioList: [addNewBrand] };
+                stock = { ...stock, brandRatioList: [addNewBrand] };
             }
         } else {
-            stockData = { brandRatioList: [addNewBrand] };
+            stock = { brandRatioList: [addNewBrand] };
         }
-        localStorage.setItem('stockData', JSON.stringify(stockData));
+
+        // localStorage.setItem('stock', JSON.stringify(stock));
+        base.db.put(stock).then(res => {
+            stock._rev = res.rev
+            setStock(stock)
+        })
         setFormRation({ ...formRation, brand: addNewBrand });
-        setRationsBrands(stockData.brandRatioList);
+        setRationsBrands(stock.brandRatioList);
         setAddNewBrand('');
         setShowFieldNewBrand(false);
         setShowSavedMessage(true);
         setTimeout(() => setShowSavedMessage(false), 2000);
     }
 
+    // const handleDeletePurchase = (index) => {
+    //     const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
+
+    //     if (isConfirmed) {
+    //         let stock = {...stockData}
+    //         let feedStock = stock.feedPurchase;
+    //         const id = rationPurchases[index].purchaseId.id;
+    //         feedStock = feedStock.filter(item => item.purchaseId.id !== id); 
+    //         stock = {...stock, feedPurchase: feedStock}
+    //         // localStorage.setItem('stockData', JSON.stringify(stock));
+            
+    //         const updatedPurchases = [...rationPurchases];
+    //         updatedPurchases.splice(index, 1);
+    //         // localStorage.setItem('financial', JSON.stringify({ ...JSON.parse(localStorage.getItem('financial')), feedPurchase: updatedPurchases }));
+    //         setRationPurchases(updatedPurchases);
+    //     }
+    // };
+
     const handleDeletePurchase = (index) => {
         const isConfirmed = window.confirm("Tem certeza de que deseja excluir este registro?");
-
         if (isConfirmed) {
-            let stock = JSON.parse(localStorage.getItem('stockData'));
-            let feedStock = stock.feedPurchase;
-            const id = rationPurchases[index].purchaseId.id;
-            feedStock = feedStock.filter(item => item.purchaseId.id !== id); 
-            stock = {...stock, feedPurchase: feedStock}
-            localStorage.setItem('stockData', JSON.stringify(stock));
-    
-            const updatedPurchases = [...rationPurchases];
-            updatedPurchases.splice(index, 1);
-            localStorage.setItem('financial', JSON.stringify({ ...JSON.parse(localStorage.getItem('financial')), feedPurchase: updatedPurchases }));
-            setRationPurchases(updatedPurchases);
+            const purchases = {...base.financial}
+            const actualIndex = purchases.feedPurchase.length - 1 - index;
+            const updatedPurchases = { ...purchases };
+            const deletedPurchase = updatedPurchases.feedPurchase[actualIndex];
+
+            updatedPurchases.feedPurchase.splice(actualIndex, 1);
+            // localStorage.setItem('financial', JSON.stringify(updatedPurchases));
+            base.db.put(updatedPurchases).then(res => {
+                updatedPurchases._rev = res.rev
+                base.setFinancial(updatedPurchases)
+            })
+            // setPurchases(updatedPurchases);
+
+            // let stockData = JSON.parse(localStorage.getItem('stockData')) || {};
+            let stockData = {...base.stock}
+            if ('feedPurchase' in stockData) {
+                stockData.feedPurchase = stockData.feedPurchase.filter(purchase => purchase.id !== deletedPurchase.id);
+            }
+            base.db.put(stockData).then(res => {
+                stockData._rev = res.rev
+                base.setStock(stockData)
+            })
+            // localStorage.setItem('stockData', JSON.stringify(stockData));
         }
     };
-
-    useEffect(() => {
-        const storedStockData = JSON.parse(localStorage.getItem('stockData')) || {};
-        if ('brandRatioList' in storedStockData) {
-            setRationsBrands(storedStockData.brandRatioList);
-        }
-    }, []);
 
     useEffect(() => {
         if (formRation.brand === 'custom') {
@@ -156,16 +212,16 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup }) => {
     }, [addNewBrand]);
 
     useEffect(() => {
-        const storedFinancialData = JSON.parse(localStorage.getItem('financial')) || {};
-        if ('feedPurchase' in storedFinancialData) {
-            setRationPurchases(storedFinancialData.feedPurchase.slice(-5).reverse());
-            if (storedFinancialData.feedPurchase.length > 0) {
+        if (!base.financial) return 
+        if ('feedPurchase' in base.financial) {
+            setRationPurchases(base.financial.feedPurchase.slice(-5).reverse());
+            if (base.financial.feedPurchase.length > 0) {
                 setShowRationPurchaseTable(true);
             } else {
                 setShowRationPurchaseTable(false);
             }
         }
-    }, [formRation]);
+    }, [base.financial, formRation]);
 
     return (
         <div>
