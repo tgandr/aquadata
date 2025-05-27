@@ -37,12 +37,13 @@ app.UseCors(x => {
 app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
-RecurringJob.AddOrUpdate<RenewSubscriptionsJob>(
-    "RenewSubscriptionsJob",
+
+RecurringJob.AddOrUpdate<CancelSubscriptionsJob>(
+    "CancelSubscriptionsJob",
     job => job.Execute(),
     Cron.Minutely()
 );
-app.Run();
+
 app.Run();
 
 public partial class Program { }

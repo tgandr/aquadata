@@ -5,13 +5,13 @@ using Aquadata.Core.Interfaces.Repository;
 
 namespace Aquadata.Infra.Payments.MercadoPago.Jobs;
 
-public class RenewSubscriptionsJob
+public class CancelSubscriptionsJob
 {
   private readonly ISubscriptionRepository _repository;
   private readonly ICouchdbService _couchDb;
   private readonly IPaymentGateway _gateway;
 
-  public RenewSubscriptionsJob(
+  public CancelSubscriptionsJob(
     ISubscriptionRepository repository,
     ICouchdbService couchdDb,
     IPaymentGateway gateway

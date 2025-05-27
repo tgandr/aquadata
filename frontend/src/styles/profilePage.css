@@ -1,0 +1,77 @@
+.page-data {
+  color: #4D4D4D;
+  position: absolute;
+  height: calc(88% - 100px);
+  width: 100%;;
+  top: 100px;
+  overflow: auto;
+}
+
+.title{
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.data-item {
+  border: 1px solid #D2D2D2;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  word-break: break-all;
+  text-align: start;
+}
+
+.data-label {
+  font-size: 16px;
+  margin-right: 20px;
+  font-weight: 500;
+  max-width: 25%;
+  min-width: 25%;
+  text-align: start;
+}
+
+.data-value {
+  color: #797979;
+  font-size: 16px;
+}
+
+.subscription-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #D2D2D2;
+  padding: 15px 10px;
+  margin-bottom: 20px;
+}
+
+.subscription {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 20px;
+}
+
+.subscription-label {
+  font-weight: 500;
+  text-align: end;
+}
+
+.subscription-value {
+  text-align: start;
+}
+
+.status-circle {
+  display: inline-block;
+  width: 8px;
+  margin-right: 5px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.subscription-btn {
+  color: #D93C3F;
+  margin-top: 20px;
+  padding: 10px 10px;
+  cursor: pointer;
+}

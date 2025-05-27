@@ -9,9 +9,11 @@ import { IconContainer } from './utils';
 import LocalDb from '../databases/local.db'
 import useDatabase from '../hooks/useDatabase'
 import { v4 } from 'uuid';
+import UiLoading from '../ui/UiLoading';
 
 const AddPonds = () => {
-  const db = useDatabase()
+  const db = useDatabase();
+  const [loading, setLoading] = useState(true);
   const [ponds, setPonds] = useState([]);
   const [formData, setFormData] = useState('')
   const [showPopup, setShowPopup] = useState(false);
@@ -34,18 +36,21 @@ const AddPonds = () => {
 
   useEffect(() => {
     if (db) {
-      db.find({
+      const getPonds = db.find({
         selector: {
           dataType: 'pond'
         }
-      }).then(data => {
-        setPonds(data.docs)
+      })
+      const getCultivations = db.find({
+        selector: {dataType: 'cultivation'}
       })
 
-      db.find({
-        selector: {dataType: 'cultivation'}
-      }).then(data => {
-        setCultivos(data.docs)
+      Promise.all([getPonds, getCultivations]).then(values => {
+        const [pondsData, cultivationData] = values;
+        setPonds(pondsData.docs);
+        setCultivos(cultivationData.docs);
+      }).finally(() => {
+        setLoading(false)
       })
     }
   },[db])
@@ -117,8 +122,6 @@ const AddPonds = () => {
     }
   };
 
-  const navigate = useNavigate();
-
   const deletePond = async () => {
     const confirmDelete = window.confirm('Tem certeza que deseja excluir este viveiro?');
 
@@ -152,7 +155,13 @@ const AddPonds = () => {
     setShowViveirosPopup(false);
     setShowEditPopup(true);
   };
-
+  
+  if (loading) return (
+    <div className="loading-container">
+      <UiLoading size={45}/>
+    </div>
+  )
+  
   return (
     <div className="add-ponds">
       <div className="identify-data">

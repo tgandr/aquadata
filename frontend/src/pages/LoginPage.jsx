@@ -26,7 +26,7 @@ const LoginPage = () => {
       const form = {
         id: user.id,
         email: user.email,
-        enderecoFazenda: user.farmAddres,
+        enderecoFazenda: user.farmAddress,
         nomeCompleto: user.name,
         telefone: user.phone,
         nomeFazenda: user.farmName,
@@ -35,7 +35,7 @@ const LoginPage = () => {
       // await SecureStoragePlugin.set({key: 'token', value: res.data.token})
       await SecureStoragePlugin.set({key:'credentials', value: JSON.stringify({email: user.email, password})})
       await LocalDb.set('user', form)
-      navigate('/dashboard')
+      navigate('/splash-screen');
     } catch (err) {
       setError('Usuário ou senha inválidos');
       console.error(err)

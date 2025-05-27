@@ -7,6 +7,7 @@ using Aquadata.Infra.Payments.MercadoPago.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace Aquadata.Api.Controllers;
 
@@ -37,12 +38,21 @@ public class PaymentController: ControllerBase
   }
 
   [HttpPost("webhook")]
-  public async Task<IResult> Webhook([FromBody] PaymentWebhook payload)
+  public async Task<IResult> Webhook([FromBody] JsonDocument payload)
   {
-    if (!RequestIsValid(payload.Data.Id))
+    var root = payload.RootElement;
+    
+    if (!root.TryGetProperty("data", out var data)
+      || !data.TryGetProperty("id", out var dataId)
+      || !root.TryGetProperty("type", out var type))
+    {
+      return Results.BadRequest("Payload inválido");
+    }
+
+    if (!RequestIsValid(dataId.GetString()!))
       return Results.BadRequest("Assinatura inválida");
 
-    var input = new PaymentWebHookInput(payload.Data.Id, payload.Type);
+    var input = new PaymentWebHookInput(dataId.GetString()!, type.GetString()!);
     await _mediator.Send(input);
 
     return Results.Ok();

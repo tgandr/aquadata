@@ -85,7 +85,7 @@ const RegisterPage = () => {
             await LocalDb.set('user', user);
             setSuccess('Registro realizado com sucesso!');
             setError('');
-            navigate('/dashboard');
+            navigate('/splash-screen');
         } catch (error) {
             switch (error.message.toLowerCase()) {
                 case "failed to fetch":

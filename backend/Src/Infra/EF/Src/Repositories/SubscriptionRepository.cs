@@ -47,7 +47,7 @@ public class SubscriptionRepository : ISubscriptionRepository
     await _context.SaveChangesAsync();
   }
   
-  public Task<SubscriptionEntity?> GetBySubscriptionId(string subscriptionId)
+  public Task<SubscriptionEntity?> GetById(string subscriptionId)
     => _context.Subscriptions.AsNoTracking()
     .Include(s => s.User)
     .FirstOrDefaultAsync(x => x.SubscriptionId == subscriptionId);

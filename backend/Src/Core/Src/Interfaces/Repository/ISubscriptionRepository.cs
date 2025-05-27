@@ -10,7 +10,7 @@ public interface ISubscriptionRepository
   Task Cancel(string subscriptionId);
   Task<bool> Exists(string subscriptionId);
   Task<SubscriptionStatus?> GetStatus(Guid userId);
-  Task<SubscriptionEntity?> GetBySubscriptionId(string subscriptionId);
+  Task<SubscriptionEntity?> GetById(string subscriptionId);
   Task<SubscriptionEntity?> GetByUserId(Guid userId);
   Task<ICollection<SubscriptionEntity>> GetCancelledInBatches(
     int page = 1, 

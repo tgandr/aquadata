@@ -1,0 +1,85 @@
+.confirmation-popup {
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2000;  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeInOverlay 0.3s forwards;
+}
+
+.confirmation-content {
+  color: #4D4D4D;
+  width: 70%;
+  opacity: 0;
+  background-color: white;
+  padding: 15px;
+  border-radius: 5%;
+  animation: fadeInModal 0.3s forwards;
+  animation-delay: 0.1s;
+}
+
+.confirmation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 6px;
+}
+
+.btn-cancel {
+  background-color: #777777 !important;
+  color: white;
+}
+
+.confirmation-popup.hidden {
+  animation: fadeOutOverlay 0.3s forwards;
+}
+
+.confirmation-content.hidden .confirmatino-content{
+  animation: fadeOutModal 0.3s forwards;
+  animation-delay: 0.1s;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+    pointer-events: none;
+  }
+  to {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+@keyframes fadeInModal {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutOverlay {
+  to {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@keyframes fadeOutModal {
+  to {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}

@@ -15,7 +15,9 @@ import Inventory from './pages/Inventory';
 import ReportCycle from './pages/ReportCycle';
 import ReportFinancial from './pages/ReportFinancial';
 import ReportCosts from './pages/ReportCosts';
+import ProfilePage from './pages/ProfilePage';
 import PondCosts from './pages/PondCosts';
+import SplashScreen from './pages/SplashScreen';
 
 const AppRoutes = () => {
   return (
@@ -38,6 +40,8 @@ const AppRoutes = () => {
         <Route path="/custos/:id" element={<PondCosts />} />
         <Route path="/sanidade" element={<AnalysisReport />} />
         <Route path="/aquadata" element={<HomePage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/splash-screen" element={<SplashScreen/>}></Route>
         <Route path="*" element={<HomePage />} />
       </Routes>
     </Router>

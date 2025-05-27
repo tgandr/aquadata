@@ -7,6 +7,7 @@ namespace Aquadata.Application.Interfaces;
 public interface IPaymentGateway
 {
   Task<Result<SubscriptionOutput>> CreateSubscription(CreateSubscriptionInput command);
+  Task<Result<object>> CancelSubscription(string subscriptionId);
   Task<PaymentOutput?> GetPayment(string id); 
 }
 

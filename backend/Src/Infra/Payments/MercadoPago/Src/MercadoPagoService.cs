@@ -8,6 +8,7 @@ using Aquadata.Core.Util;
 using Aquadata.Core.Util.Result;
 using MercadoPago.Client.Payment;
 using MercadoPago.Config;
+using MercadoPago.Resource.Payment;
 using Microsoft.Extensions.Configuration;
 
 namespace Aquadata.Infra.Payments.MercadoPago;
@@ -52,6 +53,7 @@ public class MercadoPagoService: IPaymentGateway
       "application/json"
 
     );
+
     var response = await client.PostAsync(
       "https://api.mercadopago.com/preapproval", 
       content
@@ -85,12 +87,48 @@ public class MercadoPagoService: IPaymentGateway
     return Result<SubscriptionOutput>.Ok(output);
   }
 
+  public async Task<Result<object>> CancelSubscription(string subscriptionId)
+  {
+    var request = new
+    {
+      status = "cancelled"
+    };
+
+    var body = JsonSerializer.Serialize(request);
+    var content = new StringContent(
+      body,
+      Encoding.UTF8,
+      "application/json"
+    );
+    var response = await client.PutAsync(
+      $"https://api.mercadopago.com/preapproval/{subscriptionId}",
+      content
+    );
+
+    if (!response.IsSuccessStatusCode)
+      return Result<object>.Fail(
+        Error.Internal(
+          "Payments.MercadoPago.CancelSubscription",
+          response.ReasonPhrase!
+        )
+      );
+      
+    return Result<object>.Ok(new { message = "Subscription cancelled successfully" });
+  }
+
   public async Task<PaymentOutput?> GetPayment(string id)
   {
     var client = new PaymentClient();
-    var data = await client.GetAsync(long.Parse(id));
-
-    if (data == null) return null;
+    Payment data;
+    
+    try
+    {
+      data = await client.GetAsync(long.Parse(id));
+    }
+    catch
+    {
+      return null;
+    }
 
     return new PaymentOutput
     {

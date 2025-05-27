@@ -1,7 +1,10 @@
-using System.Threading.Tasks;
+using Aquadata.Api.Extensions;
 using Aquadata.Api.Response;
 using Aquadata.Application.Interfaces;
+using Aquadata.Application.UseCases.PaymentGateway.CancelSubscription;
+using Aquadata.Core.Enums;
 using Aquadata.Core.Interfaces.Repository;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,26 +17,42 @@ public class SubscriptionsController: ControllerBase
 {
   private readonly ISubscriptionRepository _repository;
   private readonly IAuthenticatedUserService _authenticatedUser;
+  private readonly IMediator _mediator;
 
   public SubscriptionsController(
     ISubscriptionRepository repository,
+    IMediator mediator,
     IAuthenticatedUserService authenticatedUser)
   {
     _repository = repository;
+    _mediator = mediator;
     _authenticatedUser = authenticatedUser;
   }
 
-  [HttpGet("status")]
-  public async Task<IResult> GetStatus()
+  [HttpGet]
+  public async Task<IResult> GetSubscription()
   {
     var userId = _authenticatedUser.GetUserId();
-    var status = await _repository.GetStatus(userId);
+    var entity = await _repository.GetByUserId(userId);
 
-    if (status == null)
+    if (entity == null)
       return Results.NotFound("Subscription not found");
     
-    return Results.Ok(new ApiResponse<object>(new {
-      Status = status.ToString()
+    return Results.Ok(new ApiResponse<object>(new
+    {
+      isActive = entity.Status == SubscriptionStatus.Active,
+      entity.ExpiresAt,
     }));
+  }
+
+  [HttpDelete("cancel")]
+  public async Task<IResult> CancelSubscription()
+  {
+    var result = await _mediator.Send(new CancelSubscriptionInput());
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Ok(new {});
   }
 }

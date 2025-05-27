@@ -1,26 +1,23 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import './UiButton.css'
 import UiLoading from "../UiLoading";
 
-const UiButton = ({onClickAsync, children = "Button", className, type= "button"}) => {
+const UiButton = ({onClickAsync = new Promise(), children = "Button", className, type= "button"}) => {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
-    setLoading(true)
+    setLoading(true);
 
     try {
-      await onClickAsync()
-    } 
-    catch (error){
-      console.error(error)
-    }
-    finally {
+      await onClickAsync();
+    } finally {
       setLoading(false)
     }
   }
+
   return ( 
     <button
-      onClick={handleClick}
+      onClick={handleClick}     
       className={"ui-button "+className}
       disabled={loading}
       type={type}

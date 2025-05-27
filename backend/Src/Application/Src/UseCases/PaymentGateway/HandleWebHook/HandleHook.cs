@@ -30,13 +30,14 @@ public class HandleHook : IRequestHandler<PaymentWebHookInput, Unit>
     if (payment == null) return Unit.Value;
     
     var subscriptionFromDb = await _subscriptionRepository
-      .GetBySubscriptionId(payment.SubscriptionId);
+      .GetById(payment.SubscriptionId);
 
     if (subscriptionFromDb == null) return Unit.Value;
 
     if (payment.Status != "approved") 
     {
       await _subscriptionRepository.Cancel(subscriptionFromDb.SubscriptionId);
+      await _couchDb.RemoveUserFromMembers(subscriptionFromDb.User.Email);
       return Unit.Value;
     }
 

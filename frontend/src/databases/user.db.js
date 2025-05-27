@@ -20,3 +20,4 @@ export default function getDbByUser(email, password) {
     localDb.sync(remoteDb, {live: true, retry: true})
     return localDb
 }
+

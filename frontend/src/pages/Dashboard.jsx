@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt, faClipboardList, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faShrimp, faWarehouse, faDollarSign, faSignOutAlt, faClipboardList, faUsers, faUser } from '@fortawesome/free-solid-svg-icons';
 import { faInstagram, faWhatsapp } from '@fortawesome/free-brands-svg-icons'
 import UiButton from '../ui/UiButton';
 import '../styles/Dashboard.css';
@@ -12,34 +12,30 @@ import { Browser } from '@capacitor/browser';
 import  apiRequest  from '../services/apiRequest';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import UiLoading from '../ui/UiLoading';
+import ConfirmationPopup from './ConfirmationPopup';
+import useSubscription from '../hooks/useSubscription';
+import useDatabase from '../hooks/useDatabase';
 
 const Dashboard = () => {
-  const [formData, setFormData] = useState({})
+  const [formData, setFormData] = useState({});
+  const db = useDatabase()
+  const [subscription, setSubscription] = useState({});
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [credentials, setCredentials] = useState()
-  const [isSubscriptionActive, setIsSubscriptionActive] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getFormData = LocalDb.get('user')
+    const getFormData = LocalDb.get('user');
     const getCredentials = SecureStoragePlugin.get({key: 'credentials'})
+    const getSubscription = useSubscription();
 
-    Promise.all([getFormData, getCredentials]).then(values => {
-      const [formData, credentialsJson] = values
+    Promise.all([getFormData, getCredentials, getSubscription]).then(values => {
+      const [formData, credentialsJson, subscription] = values
       const credentials = JSON.parse(credentialsJson.value)
       setCredentials(credentials)
       setFormData(formData)
-      apiRequest(
-        'subscriptions/status', 
-        'GET', 
-        null,
-        {
-          email: credentials.email,
-          password: credentials.password
-        }
-      ).then(res => {
-        setIsSubscriptionActive(res.data.status == 'Active')
-      })
+      setSubscription(subscription)
       setIsLoaded(true)
     })
     if (formData.eraseLocalStorageAfterLogout) {
@@ -66,6 +62,8 @@ const Dashboard = () => {
     if (formData) {
       formData.saveLogin = false;
       await LocalDb.set('user', formData)
+      console.log(db)
+      db.close();
     }
     navigate('/login');
   };
@@ -95,7 +93,7 @@ const Dashboard = () => {
         <h2>Fazenda {formData.nomeFazenda}</h2>
       </div>
       <div className="main">
-        {!isSubscriptionActive && 
+        {!subscription.isActive && 
         <div className="subscription-alert">
           <span>
             Sua conta está em modo de teste <br/>
@@ -103,7 +101,7 @@ const Dashboard = () => {
           </span>
           <UiButton 
             className="subscription-button"
-            onClickAsync={handleSubscriptionClick}
+            onClickAsync={() => setShowConfirmationPopup(true)}
           >
             Assine agora
           </UiButton>
@@ -149,6 +147,14 @@ const Dashboard = () => {
               <span>Usuários</span>
             </div>
           </button>
+          <button className="dashboard-button" onClick={() => navigate('/profile')}>
+            <div className="icon-wrapper">
+              <FontAwesomeIcon icon={faUser} className="icon" />
+            </div>
+            <div className="text-wrapper">
+              <span>Meu Perfil</span>
+            </div>
+          </button>
         </div>
         <div className="medias">
           <a href="https://www.instagram.com/data.aqua"
@@ -183,11 +189,20 @@ const Dashboard = () => {
           </button>
         </div>
       </div>
+      <ConfirmationPopup
+        isVisible={showConfirmationPopup}
+        onCancel={() => setShowConfirmationPopup(false)}
+        onConfirm={handleSubscriptionClick}
+        title="Atenção"
+        subTitle='Você será redirecionado para a página do Mercado Pago, onde poderá realizar o pagamento da sua assinatura.'
+        cancelButtonText='Cancelar'
+        confirmButtonText='Continuar'
+      />
 
     </div>) :
     (<div className='loading-page'>
       <UiLoading size={45}/>
-    </div>)
+      </div>)
   );
 };
 

@@ -19,4 +19,4 @@ const useDatabase = () => {
   return db
 }
 
-export default useDatabase
+export default useDatabase;
