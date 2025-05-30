@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../assets/images/back_white.jpeg';
+import logo from '../assets/images/aqua-data.png';
 import '../styles/HomePage.css';
 import LocalDb from '../databases/local.db';
 
@@ -22,7 +22,7 @@ const HomePage = () => {
           setShowButton(true);
         }
       }, 2000); // Aguardar 2 segundos
-      })
+    })
 
     return () => {
       clearTimeout(timer1);
@@ -30,7 +30,7 @@ const HomePage = () => {
   }, [navigate]);
 
   return (
-     <div className={`home-page ${fadeClass}`}>
+    <div className={`home-page ${fadeClass}`}>
       <div className="content">
         <img src={logo} alt="AQUADATA Logo" className="logo" />
         <h1></h1>
