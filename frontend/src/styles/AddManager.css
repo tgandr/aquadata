@@ -1,5 +1,7 @@
-
-.description {
+.manager-container {
+  font-size: 18px;
+}
+.page-content {
   color: #676767;
   padding: 30px 25px 0;
 }
@@ -26,4 +28,27 @@
   margin-top: 5px;
   cursor: pointer;
   font-size: 18px;
+}
+.manager-item {
+  padding-top: 10px;
+  display: flex;
+  border-top: 1px solid #6d6c6c;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.manager-icon {
+  font-size: 20px;
+}
+.manager-icon:first-child {
+  color: var(--color-orange-medium);
+}
+.manager-icon:last-child {
+  color: var(--color-red-medium);
 }

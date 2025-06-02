@@ -27,33 +27,32 @@ export const IconContainer = () => {
         <div className="icon-container-inner">
             <button className="side-icon-button" onClick={() => navigate(-1)}>
                 <div>
-                    <FontAwesomeIcon icon={faArrowLeft} className="icon" />
+                    <FontAwesomeIcon icon={faArrowLeft} className="icon side-icon" />
                 </div>
-                <span className="side-icon-button-text">Voltar</span>
+                
             </button>
             <button className="side-icon-button" onClick={() => navigate('/viveiros')}>
                 <div>
-                    <FontAwesomeIcon icon={faShrimp} className="icon" />
+                    <FontAwesomeIcon icon={faShrimp} className="icon side-icon" />
                 </div>
-                <span className="side-icon-button-text">Viveiros</span>
+                
             </button>
             <img
                 src={aquaDataIcon}
                 alt="Aqua Data Icon"
-                style={{ width: '100px', height: '100px' }}
                 onClick={() => navigate('/dashboard')}
                 className="centered-image" />
             <button className="side-icon-button" onClick={() => navigate('/estoque')}>
                 <div>
-                    <FontAwesomeIcon icon={faWarehouse} className="icon" />
+                    <FontAwesomeIcon icon={faWarehouse} className="icon side-icon" />
                 </div>
-                <span className="side-icon-button-text">Estoque</span>
+                
             </button>
             <button className="side-icon-button" onClick={() => navigate('/financeiro')}>
                 <div>
-                    <FontAwesomeIcon icon={faDollarSign} className="icon" />
+                    <FontAwesomeIcon icon={faDollarSign} className="icon side-icon" />
                 </div>
-                <span className="side-icon-button-text">Financeiro</span>
+                
             </button>
         </div>
     </div>

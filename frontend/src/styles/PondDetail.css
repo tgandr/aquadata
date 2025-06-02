@@ -62,7 +62,7 @@
     grid-template-rows: auto auto;
     /* Define duas linhas de grupos */
     margin-top: 10px;
-    overflow: hidden;
+    overflow: auto;
     justify-self: center !important;
 }
 

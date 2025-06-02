@@ -61,7 +61,7 @@
     transition: background-color 0.3s, border-color 0.3s;
     text-align: center;
     position: relative; /* Necessário para posicionamento absoluto dos spans */
-    overflow: hidden; /* Garante que o conteúdo não transborde */
+    overflow: auto; /* Garante que o conteúdo não transborde */
   }
   
   .financial-icon {

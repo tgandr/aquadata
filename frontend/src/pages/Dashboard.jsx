@@ -103,7 +103,7 @@ const Dashboard = () => {
         <div className="btn-container">
           <button className="dashboard-button" onClick={() => navigate('/viveiros')}>
             <div className="icon-wrapper">
-              <FontAwesomeIcon icon={faShrimp} className="icon" />
+              <FontAwesomeIcon icon={faShrimp} className="icon-btn" />
             </div>
             <div className="text-wrapper">
               <span>Viveiros</span>
@@ -111,7 +111,7 @@ const Dashboard = () => {
           </button>
           <button className="dashboard-button" onClick={() => navigate('/financeiro')}>
             <div className="icon-wrapper">
-              <FontAwesomeIcon icon={faDollarSign} className="icon" />
+              <FontAwesomeIcon icon={faDollarSign} className="icon-btn" />
             </div>
             <div className="text-wrapper">
               <span>Financeiro</span>
@@ -119,7 +119,7 @@ const Dashboard = () => {
           </button>
           <button className="dashboard-button" onClick={() => navigate('/estoque')}>
             <div className="icon-wrapper">
-              <FontAwesomeIcon icon={faWarehouse} className="icon" />
+              <FontAwesomeIcon icon={faWarehouse} className="icon-btn" />
             </div>
             <div className="text-wrapper">
               <span>Estoque</span>
@@ -127,7 +127,7 @@ const Dashboard = () => {
           </button>
           <button className="dashboard-button" onClick={() => navigate('/inventario')}>
             <div className="icon-wrapper">
-              <FontAwesomeIcon icon={faClipboardList} className="icon" />
+              <FontAwesomeIcon icon={faClipboardList} className="icon-btn" />
             </div>
             <div className="text-wrapper">
               <span>Inventário</span>
@@ -135,7 +135,7 @@ const Dashboard = () => {
           </button>
           <button className="dashboard-button" onClick={() => navigate('/registrar-gerente')}>
             <div className="icon-wrapper">
-              <FontAwesomeIcon icon={faUsers} className="icon" />
+              <FontAwesomeIcon icon={faUsers} className="icon-btn" />
             </div>
             <div className="text-wrapper">
               <span>Usuários</span>
@@ -143,7 +143,7 @@ const Dashboard = () => {
           </button>
           <button className="dashboard-button" onClick={() => navigate('/profile')}>
             <div className="icon-wrapper">
-              <FontAwesomeIcon icon={faUser} className="icon" />
+              <FontAwesomeIcon icon={faUser} className="icon-btn" />
             </div>
             <div className="text-wrapper">
               <span>Meu Perfil</span>
@@ -166,12 +166,10 @@ const Dashboard = () => {
             <div>
               <FontAwesomeIcon icon={faWhatsapp} className="icon" />
             </div>
-            <span className="side-icon-button-text">Whatsapp</span>
           </button>
           <img
             src={aquaDataIcon}
             alt="Aqua Data Icon"
-            style={{ width: '100px', height: '100px' }}
             onClick={() => navigate('/dashboard')}
             className="centered-image"
           />
@@ -179,7 +177,6 @@ const Dashboard = () => {
             <div>
               <FontAwesomeIcon icon={faSignOutAlt} className="icon" />
             </div>
-            <span className="side-icon-button-text">Sair</span>
           </button>
         </div>
       </div>
