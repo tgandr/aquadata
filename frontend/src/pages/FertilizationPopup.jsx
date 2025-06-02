@@ -16,6 +16,13 @@ const FertilizationPopup = ({ setShowFertilizationPopup,saveData,database }) => 
   const [dataToSave, setDataToSave] = useState({}); // Estado para armazenar dados
   const [remainingQuantity, setRemainingQuantity] = useState(0); // Estado para armazenar quantidade restante
 
+  function saveStock(stock) {
+    database.put(stock).then(res => {
+      stock._rev = res.rev
+      setStockData(stock)
+    })
+  }
+
   useEffect(() => {
     // const stockData = JSON.parse(localStorage.getItem('stockData')) || {};
     database.find({
@@ -73,8 +80,10 @@ const FertilizationPopup = ({ setShowFertilizationPopup,saveData,database }) => 
           return;
         }
         probioticItem.quantity -= convertedQuantity;
+        
         // localStorage.setItem('stockData', JSON.stringify(stockData));
         
+        saveStock(stockData)
 
         newDataToSave = {
           data: data,
@@ -96,7 +105,7 @@ const FertilizationPopup = ({ setShowFertilizationPopup,saveData,database }) => 
         }
         fertilizerItem.quantity -= convertedQuantity;
         // localStorage.setItem('stockData', JSON.stringify(stockData));
-
+        saveStock(stockData)
         newDataToSave = {
           data: data,
           tipoFertilizante: fertilizerType,

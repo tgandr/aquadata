@@ -11,6 +11,8 @@ const ConfirmationPopup = ({
   error = 'Erro ao confirmar',
   cancelButtonText = 'Voltar',
   confirmButtonText = 'Confirmar',
+  confirmOnly = false,
+  danger = false
 }) => {
   const modalRef = useRef(null);
   const [showError, setShowError] = useState(false);
@@ -26,8 +28,7 @@ const ConfirmationPopup = ({
       await onConfirm();
     }
     catch (err){
-      if (err instanceof TypeError) 
-        setErrorMessage("Erro de conexão")
+      setErrorMessage("Erro na requisição")
       setShowError(true);
     }
   }
@@ -53,15 +54,15 @@ const ConfirmationPopup = ({
           className="confirmation-content"
           onClick={(e) => e.stopPropagation()}
         >
-          <h3>{title}</h3>
+          <h3 style={{color: danger && '#dc3544'}}>{title}</h3>
           <p>{subTitle}</p>
           {showError && <p className='error'>{errorMessage}</p>}
           <div className="confirmation-buttons">
             <button 
-              className="btn-cancel"
+              className={`${danger? 'btn-danger' : 'btn-cancel'}`}
               onClick={(e) => {closePopup(e)}}
             >{cancelButtonText}</button>
-            <UiButton onClickAsync={confirmPopup}>{confirmButtonText}</UiButton>
+            {!confirmOnly && <UiButton onClickAsync={confirmPopup} color="#dc3544" outline={true}>{confirmButtonText}</UiButton>}
           </div>
         </div>
       </div>

@@ -93,6 +93,10 @@ const FeedPopup = ({ setShowFeedPopup, saveData, base }) => {
       return item;
     })
     stock = { ...stock, feedPurchase: toUpdate }
+    base.db.put(stock).then(res => {
+      stock._rev = res.rev
+      base.setStockData(stock)
+    })
     // localStorage.setItem('stockData', JSON.stringify(stock));
 
   }
@@ -153,7 +157,7 @@ const FeedPopup = ({ setShowFeedPopup, saveData, base }) => {
     const feedToEdit = cultivo.feed.find(
       (feed) => feed.racaoUsada === id && feed.time === time && feed.data === data
     );
-
+    console.log(feedToEdit)
     if (feedToEdit) {
       setFormFeed({
         data: feedToEdit.data,
@@ -267,7 +271,7 @@ const FeedPopup = ({ setShowFeedPopup, saveData, base }) => {
               <tr>
                 <th>Data/<br />Hora</th>
                 <th>Ração</th>
-                <th>Editar</th>
+                {/* <th>Editar</th> */}
                 <th>Excluir</th>
               </tr>
             </thead>
@@ -280,15 +284,17 @@ const FeedPopup = ({ setShowFeedPopup, saveData, base }) => {
                   </td>
 
                   <td>{`${item.marca} - ${item.tipo} - ${item.racaoTotalDia}`} kg</td>
-                  <td style={{ textAlign: 'center' }}>
+                  {/* <td style={{ textAlign: 'center' }}>
                     <button
                       className="delete-button"
-                      onClick={() => (handleEditItem(item.racaoUsada, item.time, item.data),
-                        setShowLastFeeds(false))}
+                      onClick={() => {
+                        handleEditItem(item.racaoUsada, item.time, item.data);
+                        setShowLastFeeds(false)}
+                      }
                     >
                       <FontAwesomeIcon icon={faEdit} />
                     </button>
-                  </td>
+                  </td> */}
                   <td style={{ textAlign: 'center' }}>
                     <button className="delete-button" onClick={() => handleDeleteItem(item.racaoUsada, item.time, item.data)}>
                       <FontAwesomeIcon icon={faTrash} />

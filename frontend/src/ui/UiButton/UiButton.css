@@ -2,6 +2,12 @@
   position: relative;
 }
 
+.ui-button--disabled {
+  background-color: #CCC;
+  color: rgb(104, 104, 104);
+  pointer-events: none;
+}
+
 .loading-svg {
   position: absolute;
   left: 50%;

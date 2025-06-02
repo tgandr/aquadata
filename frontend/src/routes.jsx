@@ -18,6 +18,7 @@ import ReportCosts from './pages/ReportCosts';
 import ProfilePage from './pages/ProfilePage';
 import PondCosts from './pages/PondCosts';
 import SplashScreen from './pages/SplashScreen';
+import AddManagerPage from './pages/AddManagerPage';
 
 const AppRoutes = () => {
   return (
@@ -42,6 +43,7 @@ const AppRoutes = () => {
         <Route path="/aquadata" element={<HomePage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/splash-screen" element={<SplashScreen/>}></Route>
+        <Route path="/registrar-gerente" element={<AddManagerPage/>}></Route>
         <Route path="*" element={<HomePage />} />
       </Routes>
     </Router>

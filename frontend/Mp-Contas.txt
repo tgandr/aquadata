@@ -1,0 +1,8 @@
+--- Comprador
+User: TESTUSER1969743911
+Email: test_user_1969743911@testuser.com
+Pass: C086DA2A#4690#48e1#
+
+-- Vendedor
+User: TESTUSER375637626
+Pass: a15fgbBQEF

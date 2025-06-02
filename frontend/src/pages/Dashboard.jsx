@@ -14,11 +14,9 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import UiLoading from '../ui/UiLoading';
 import ConfirmationPopup from './ConfirmationPopup';
 import useSubscription from '../hooks/useSubscription';
-import useDatabase from '../hooks/useDatabase';
 
 const Dashboard = () => {
   const [formData, setFormData] = useState({});
-  const db = useDatabase()
   const [subscription, setSubscription] = useState({});
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [credentials, setCredentials] = useState()
@@ -59,12 +57,8 @@ const Dashboard = () => {
   };
 
   const handleLogout = async () => {
-    if (formData) {
-      formData.saveLogin = false;
-      await LocalDb.set('user', formData)
-      console.log(db)
-      db.close();
-    }
+    LocalDb.clear();
+    SecureStoragePlugin.clear()
     navigate('/login');
   };
 
@@ -139,7 +133,7 @@ const Dashboard = () => {
               <span>Inventário</span>
             </div>
           </button>
-          <button className="dashboard-button" onClick={() => navigate('/inventario')}>
+          <button className="dashboard-button" onClick={() => navigate('/registrar-gerente')}>
             <div className="icon-wrapper">
               <FontAwesomeIcon icon={faUsers} className="icon" />
             </div>

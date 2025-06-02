@@ -1,6 +1,7 @@
 using Aquadata.Application.Interfaces;
 using Aquadata.Application.UseCases.PaymentGateway.CreateSubscription;
 using Aquadata.Core.Entities.Payment;
+using Aquadata.Core.Entities.Subscription;
 using Aquadata.Core.Interfaces.Repository;
 
 namespace Aquadata.Infra.Payments.MercadoPago.Jobs;
@@ -25,12 +26,16 @@ public class CancelSubscriptionsJob
   public async Task Execute()
   {
     int page = 1;
-    var expireds = await _repository.GetCancelledInBatches(page, 2);
+    ICollection<SubscriptionEntity> expireds;
 
-     do 
+    do 
     {
+      expireds = await _repository.GetCancelledInBatches(page, 2);
       foreach (var subscription in expireds)
       {
+        if (subscription.Status == Core.Enums.SubscriptionStatus.Active)
+          await _repository.Cancel(subscription.SubscriptionId);
+
         await _couchDb.RemoveUserFromMembers(subscription.User.Email);
         page += 1;
       }

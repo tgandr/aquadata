@@ -9,4 +9,8 @@ export default class LocalDb{
     static async set(key, value) {
         await Preferences.set({key,value: JSON.stringify(value)})
     }
+
+    static clear() {
+        Preferences.clear()
+    }
 }

@@ -21,7 +21,6 @@ const PostLarvaePurchasePopup = ({ showPopup, setShowPopup,
     const [postLarvae, setPostLarvae] = useState([
         "Aquacrusta", "Aquatec", "CELM", "Larvifort"]);
     const viveiros = base.viveiros
-
     const savePostLarvaeList = (l) => {
         const larvae = capitalizeProperly(l);
         let stockData = {...base.stock}
@@ -83,7 +82,10 @@ const PostLarvaePurchasePopup = ({ showPopup, setShowPopup,
         if (formPostLarvae.pond !== "") {
             // const history = JSON.parse(localStorage.getItem('history'));
             if (!history.length) return
-            const pondHistory = history.filter(pond => (pond.viveiroId === formPostLarvae.pond) && !pond.plPurchase);
+            console.log(history)
+            const pondHistory = history.filter(pond => (pond.viveiroId === formPostLarvae.pond));
+            console.log(history)
+            console.log(formPostLarvae)
             setFormPostLarvae({ ...formPostLarvae, quantity: (parseInt(pondHistory[0].quantidadeEstocada) / 1000) })
             setDatesIn(pondHistory);
         }
@@ -154,7 +156,7 @@ const PostLarvaePurchasePopup = ({ showPopup, setShowPopup,
                                 required>
                                 <option value="">Selecione</option>
                                 {viveiros && viveiros.map((viv, index) => (
-                                    <option value={viv.id} key={index}>{viv.nome}</option>
+                                    <option value={viv._id} key={index}>{viv.nome}</option>
                                 ))}
                             </select>
                         </label>

@@ -38,11 +38,11 @@ app.MapControllers();
 app.UseAuthentication();
 app.UseAuthorization();
 
-RecurringJob.AddOrUpdate<CancelSubscriptionsJob>(
-    "CancelSubscriptionsJob",
-    job => job.Execute(),
-    Cron.Minutely()
-);
+// RecurringJob.AddOrUpdate<CancelSubscriptionsJob>(
+//     "CancelSubscriptionsJob",
+//     job => job.Execute(),
+//     Cron.Minutely()
+// );
 
 app.Run();
 

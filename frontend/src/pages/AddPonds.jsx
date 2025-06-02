@@ -7,14 +7,18 @@ import SanityAnalysis from './SanityAnalysis';
 import AnalysisReport from './AnalysisReport';
 import { IconContainer } from './utils';
 import LocalDb from '../databases/local.db'
-import useDatabase from '../hooks/useDatabase'
 import { v4 } from 'uuid';
 import UiLoading from '../ui/UiLoading';
+import ConfirmationPopup from './ConfirmationPopup'
+import useDatabase from '../hooks/useDatabase';
+import useSubscription from '../hooks/useSubscription'
 
 const AddPonds = () => {
   const db = useDatabase();
   const [loading, setLoading] = useState(true);
   const [ponds, setPonds] = useState([]);
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false)
+  const [subscription, setSubscription] = useState()
   const [formData, setFormData] = useState('')
   const [showPopup, setShowPopup] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
@@ -44,11 +48,13 @@ const AddPonds = () => {
       const getCultivations = db.find({
         selector: {dataType: 'cultivation'}
       })
+      const getSubscription = useSubscription()
 
-      Promise.all([getPonds, getCultivations]).then(values => {
-        const [pondsData, cultivationData] = values;
+      Promise.all([getPonds, getCultivations, getSubscription]).then(values => {
+        const [pondsData, cultivationData, subscription] = values;
         setPonds(pondsData.docs);
         setCultivos(cultivationData.docs);
+        setSubscription(subscription)
       }).finally(() => {
         setLoading(false)
       })
@@ -59,6 +65,15 @@ const AddPonds = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const addPond = (e) => {
+    e.preventDefault()
+    if (!subscription.isActive && ponds.length >= 1) {
+      setShowConfirmationPopup(true)
+    } else {
+      setShowPopup(true)
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedPond) {
@@ -66,7 +81,6 @@ const AddPonds = () => {
       const updatedPonds = ponds.map((viveiro) =>
         viveiro._id === selectedPond._id ? currentUpdatedPond : viveiro
       );
-
       db.put(currentUpdatedPond).then(res => {
         currentUpdatedPond._rev = res.rev
         setPonds(updatedPonds);
@@ -204,7 +218,7 @@ const AddPonds = () => {
           </>
         )}
 
-        <button className="viveiro-button" onClick={() => setShowPopup(true)}>
+        <button className="viveiro-button" onClick={(e) => addPond(e)}>
           <div className="infos-wrapper">
             <FontAwesomeIcon icon={faPlus} className="icon-plus" />
           </div>
@@ -239,6 +253,16 @@ const AddPonds = () => {
       </div>
 
       <IconContainer />
+      
+      <ConfirmationPopup
+        isVisible={showConfirmationPopup}
+        onCancel={() => setShowConfirmationPopup(false)}
+        title='Ative sua assinatura'
+        confirmOnly={true}
+        danger={true}
+        cancelButtonText='Entendi'
+        subTitle='⚠️ Modo teste: máximo de 1 viveiro permitido. Ative sua assinatura para uso ilimitado'
+      />
 
       {showPopup && (
         <div className="popup">

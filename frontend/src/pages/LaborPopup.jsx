@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import '../styles/LaborPopup.css';
+import { v4 } from "uuid";
 
 const LaborPopup = ({ setShowLaborPopup, database }) => {
     const [workersList, setWorkersList] = useState([]);
     const [showFormInd, setShowFormInd] = useState(false);
     const [worker, setWorker] = useState({
+        _id: v4(),
         month: '',
         name: '',
         salary: ''
@@ -32,6 +34,7 @@ const LaborPopup = ({ setShowLaborPopup, database }) => {
         // let financial = JSON.parse(localStorage.getItem('financial')) || {};
         const month = worker.month;
         const w = {
+            _id: v4(),
             name: worker.name,
             salary: worker.salary
         };

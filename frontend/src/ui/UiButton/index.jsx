@@ -1,11 +1,24 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import './UiButton.css'
 import UiLoading from "../UiLoading";
 
-const UiButton = ({onClickAsync = new Promise(), children = "Button", className, type= "button"}) => {
+const UiButton = ({onClickAsync = () => {}, children = "Button", className = '', type= "button", 
+disabled = false
+}) => {
+  const buttonRef = useRef(null)
   const [loading, setLoading] = useState(false);
 
-  const handleClick = async () => {
+  useEffect(() => {
+    if (!buttonRef.current) return
+    
+    if (disabled) 
+      buttonRef.current.classList.add('ui-button--disabled')
+    else 
+      buttonRef.current.classList.remove('ui-button--disabled') 
+  },[disabled])
+
+  const handleClick = async (e) => {
+    e.preventDefault()
     setLoading(true);
 
     try {
@@ -17,9 +30,10 @@ const UiButton = ({onClickAsync = new Promise(), children = "Button", className,
 
   return ( 
     <button
-      onClick={handleClick}     
-      className={"ui-button "+className}
-      disabled={loading}
+      ref={buttonRef}
+      onClick={handleClick} 
+      className={'ui-button '+className}
+      disabled={loading || disabled}
       type={type}
     >
       {loading && (

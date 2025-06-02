@@ -139,7 +139,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup, base }) => {
         // localStorage.setItem('stock', JSON.stringify(stock));
         base.db.put(stock).then(res => {
             stock._rev = res.rev
-            setStock(stock)
+            base.setStock(stock)
         })
         setFormRation({ ...formRation, brand: addNewBrand });
         setRationsBrands(stock.brandRatioList);
@@ -246,7 +246,7 @@ const RationPurchasesPopup = ({ setShowRationPurchasesPopup, base }) => {
                                 onChange={handleChange}
                                 required>
                                 <option value="">Fabricante de ração</option>
-                                {rationsBrands.map((marca, i) => (
+                                {rationsBrands && rationsBrands.map((marca, i) => (
                                     <option key={i} value={marca}>{marca}</option>
                                 ))}
                                 <option value="custom">Adicionar fabricante</option>

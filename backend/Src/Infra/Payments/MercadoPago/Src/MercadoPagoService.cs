@@ -129,11 +129,10 @@ public class MercadoPagoService: IPaymentGateway
     {
       return null;
     }
-
     return new PaymentOutput
     {
       Status = data.Status,
-      SubscriptionId = data.Metadata["preapproval_id"].ToString() ?? ""
+      SubscriptionId = data.PointOfInteraction.TransactionData.SubscriptionId
     };
   }
 }

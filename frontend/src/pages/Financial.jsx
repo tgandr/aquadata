@@ -43,7 +43,6 @@ const Financial = () => {
       const stock = res.docs[0]
       setStock(stock)
     })
-
     db.find({
       selector: {dataType: 'financial'}
     }).then(res => {

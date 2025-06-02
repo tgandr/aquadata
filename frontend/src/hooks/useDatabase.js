@@ -1,21 +1,17 @@
+import { SecureStoragePlugin } from "capacitor-secure-storage-plugin"
 import { useEffect, useState } from "react"
-import getDbByUser from '../databases/user.db';
-import { SecureStoragePlugin } from "capacitor-secure-storage-plugin";
+import initDb from "../databases/pouch.db"
 
 const useDatabase = () => {
-  const [db,setDb] = useState(null)
-
+  const [db, setDb] = useState()
   useEffect(() => {
-    const initializeDb = async () => {
-      const credentials = await SecureStoragePlugin.get({key: 'credentials'})
-      const {email, password} = JSON.parse(credentials.value)
-      const db = getDbByUser(email,password)
-      setDb(db)
-    }
-    
-    initializeDb()
-  },[])
-
+    SecureStoragePlugin.get({key: 'credentials'}).then(res => {
+      const credentials = JSON.parse(res.value)
+      initDb(credentials.email, credentials.password).then(res =>
+        setDb(res)
+      )
+    })
+  }, [])
   return db
 }
 

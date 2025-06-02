@@ -95,7 +95,6 @@ const RegisterPage = () => {
                     setError("Este email já foi cadastrado");
                     break;
                 default: 
-                    console.log(error)
                     setError("Erro Desconhecido")     
             }
         }

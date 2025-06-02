@@ -1,0 +1,29 @@
+
+.description {
+  color: #676767;
+  padding: 30px 25px 0;
+}
+
+.manager-popup {
+  color: #1E3A8A;
+  padding: 0 10px;
+}
+
+.popup-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+.popup-item div {
+  width: 140px;
+}
+
+.cancel-btn {
+  padding: 10px;
+  width: 92%;
+  margin-top: 5px;
+  cursor: pointer;
+  font-size: 18px;
+}

@@ -2,19 +2,23 @@ import '../styles/HomePage.css';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/images/back_white.jpeg';
 import { useEffect, useState } from 'react';
-import useDatabase from '../hooks/useDatabase';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
+import initDb from '../databases/pouch.db';
+
 const SplashScreen = () => {
   const navigate = useNavigate();
   const [fadeClass, setFadeClass] = useState('fade-in');
-  const db = useDatabase()
 
   useEffect(() => {
-    if (!db) return;
     setFadeClass('fade-out');
-    db.allDocs().finally(() => {
-      navigate('/dashboard')
+
+    SecureStoragePlugin.get({key: 'credentials'}).then(res => {
+      const credentials = JSON.parse(res.value)
+      initDb(credentials.email, credentials.password).then(() => {
+        navigate('/dashboard')
+      })
     })
-  },[db])
+  })
 
   return ( 
     <div className={`home-page ${fadeClass}`}>

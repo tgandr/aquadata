@@ -131,7 +131,7 @@ public class AquadataCouchDb: ICouchdbService
     var securityConfig = new 
     {
       admins = new { names = new string[] { }, roles = new string[] { "admin" } },
-      members = new { names = new string[] { }, roles = new string[] { "admin" } }
+      members = new { names = new string[] {email}, roles = new string[] { "admin" } }
     };
 
     var securityContent = new StringContent(JsonSerializer.Serialize(securityConfig), Encoding.UTF8, "application/json");

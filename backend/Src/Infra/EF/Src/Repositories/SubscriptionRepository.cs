@@ -63,7 +63,7 @@ public class SubscriptionRepository : ISubscriptionRepository
   {
     return await _context.Subscriptions
     .AsNoTracking()
-    .Where(s => s.Status == SubscriptionStatus.Canceled && s.ExpiresAt < DateTime.UtcNow)
+    .Where(s => s.ExpiresAt < DateTime.UtcNow)
     .Include(s => s.User)
     .OrderBy(s => s.Id)
     .Skip((page - 1) * batchSize)
