@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/LoginPage.css';
 import { LoginUseCase, signIn } from '../services/user.service';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
-import { Preferences } from '@capacitor/preferences';
 import LocalDb from '../databases/local.db';
 import UiLoading from '../ui/UiLoading';
-import  apiRequest  from '../services/apiRequest';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -19,9 +17,20 @@ const LoginPage = () => {
     e.preventDefault()
     setError('')
     setLoading(true)
+
     try {
+      let user;
+      let isManager;
       const res = await signIn(new LoginUseCase(email, password))
-      const user = res.data.user
+      if (email.match(/^[1-9]{2}9\d{8}$/)) {
+        const manager = res.data.manager
+        user = manager.producer 
+        isManager = true
+      }
+      else {
+        user = res.data.user
+        isManager = false
+      }
       
       const form = {
         id: user.id,
@@ -31,10 +40,11 @@ const LoginPage = () => {
         telefone: user.phone,
         nomeFazenda: user.farmName,
         perfil: user.profile,
+        isManager
       }
-      // await SecureStoragePlugin.set({key: 'token', value: res.data.token})
+
       await SecureStoragePlugin.set({key:'credentials', value: JSON.stringify({email: user.email, password})})
-      await LocalDb.set('user', form)
+      await LocalDb.set('user', form);
       navigate('/splash-screen');
     } catch (err) {
       setError('Usuário ou senha inválidos');
@@ -49,7 +59,7 @@ const LoginPage = () => {
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <input
-          type="email"
+          type="text"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

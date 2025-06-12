@@ -17,6 +17,7 @@ using Aquadata.Core.Entities.Stock;
 using Aquadata.Core.Entities.User;
 using Aquadata.Core.Entities.Water;
 using Microsoft.EntityFrameworkCore;
+using Aquadata.Core.Entities.Manager;
 
 namespace Aquadata.Infra.EF.Context;
 
@@ -44,9 +45,10 @@ public class ApplicationDbContext: DbContext
   public DbSet<PaymentEntity> Payments {get;set;}
   public DbSet<InventoryEntity> Inventories {get;set;}
   public DbSet<SubscriptionEntity> Subscriptions {get;set;}
+  public DbSet<ManagerEntity> Managers { get; set; }
 
   public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    :base(options){}
+    : base(options) { }
   
   protected override void OnModelCreating(ModelBuilder builder)
   {

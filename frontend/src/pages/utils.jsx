@@ -3,7 +3,9 @@
 import { useNavigate } from 'react-router-dom';
 import aquaDataIcon from '../assets/images/aqua-data-icon-512.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faDollarSign, faWarehouse, faShrimp } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faDollarSign, faWarehouse, faShrimp, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import LocalDb from '../databases/local.db';
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 
 export const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -19,8 +21,21 @@ export const formatDate = (dateString) => {
     };
 };
 
-export const IconContainer = () => {
+
+export const IconContainer = ({formData = {}}) => {
     const navigate = useNavigate();
+    const handleLogoutClick = () => {
+        const isConfirmed = window.confirm('Você tem certeza que deseja sair?');
+        if (isConfirmed) {
+          handleLogout();
+        }
+      };
+    
+    const handleLogout = async () => {
+        LocalDb.clear();
+        SecureStoragePlugin.clear()
+        navigate('/login');
+      };
 
     return (
     <div className="icon-container">
@@ -48,12 +63,17 @@ export const IconContainer = () => {
                 </div>
                 
             </button>
-            <button className="side-icon-button" onClick={() => navigate('/financeiro')}>
+            {!formData.isManager ? <button className="side-icon-button" onClick={() => navigate('/financeiro')}>
                 <div>
                     <FontAwesomeIcon icon={faDollarSign} className="icon side-icon" />
                 </div>
-                
+            </button>:
+            <button className="side-icon-button" onClick={handleLogoutClick}>
+                <div>
+                    <FontAwesomeIcon icon={faSignOutAlt} className="icon" />
+                </div>
             </button>
+            }
         </div>
     </div>
     )

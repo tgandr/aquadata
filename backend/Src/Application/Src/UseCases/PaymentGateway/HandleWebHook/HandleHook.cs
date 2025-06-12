@@ -37,7 +37,7 @@ public class HandleHook : IRequestHandler<PaymentWebHookInput, Unit>
     if (payment.Status != "approved") 
     {
       await _subscriptionRepository.Cancel(subscriptionFromDb.SubscriptionId);
-      await _couchDb.RemoveUserFromMembers(subscriptionFromDb.User.Email);
+      // await _couchDb.RemoveUserFromMembers(subscriptionFromDb.User.Email);
       return Unit.Value;
     }
 

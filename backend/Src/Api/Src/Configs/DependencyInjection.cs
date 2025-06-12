@@ -32,6 +32,7 @@ public static class DependencyInjection
     services.AddScoped<IPaymentRepository, PaymentRepository>();
     services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
     services.AddScoped<ICultivationRepository, CultivationRepository>();
+    services.AddScoped<IManagerRepository, ManagerRepository>();
     services.AddScoped<IUnitOfWork, UnitOfWork>();
     services.AddSingleton<ICouchdbService, AquadataCouchDb>();
     services.AddSingleton<IPaymentGateway,MercadoPagoService>();

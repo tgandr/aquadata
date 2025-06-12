@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Aquadata.Core.Entities.Manager;
 
 namespace Aquadata.Infra.Security.JWT.Services;
 
@@ -45,6 +46,11 @@ public class JwtAuthService: IJwtAuthService
     }
 
     return (true, user);
+  }
+
+  public Task<(bool, ManagerEntity?)> AuthenticateManager(string phone, string password)
+  {
+    throw new NotImplementedException();
   }
 
   public string GenerateToken(string id, string email)

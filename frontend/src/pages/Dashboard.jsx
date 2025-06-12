@@ -87,7 +87,7 @@ const Dashboard = () => {
         <h2>Fazenda {formData.nomeFazenda}</h2>
       </div>
       <div className="main">
-        {!subscription.isActive && 
+        {!subscription.isActive && !formData.isManager &&
         <div className="subscription-alert">
           <span>
             Sua conta está em modo de teste <br/>
@@ -109,14 +109,14 @@ const Dashboard = () => {
               <span>Viveiros</span>
             </div>
           </button>
-          <button className="dashboard-button" onClick={() => navigate('/financeiro')}>
+          {!formData.isManager && <button className="dashboard-button" onClick={() => navigate('/financeiro')}>
             <div className="icon-wrapper">
               <FontAwesomeIcon icon={faDollarSign} className="icon-btn" />
             </div>
             <div className="text-wrapper">
               <span>Financeiro</span>
             </div>
-          </button>
+          </button>}
           <button className="dashboard-button" onClick={() => navigate('/estoque')}>
             <div className="icon-wrapper">
               <FontAwesomeIcon icon={faWarehouse} className="icon-btn" />
@@ -125,30 +125,30 @@ const Dashboard = () => {
               <span>Estoque</span>
             </div>
           </button>
-          <button className="dashboard-button" onClick={() => navigate('/inventario')}>
+          {!formData.isManager && <button className="dashboard-button" onClick={() => navigate('/inventario')}>
             <div className="icon-wrapper">
               <FontAwesomeIcon icon={faClipboardList} className="icon-btn" />
             </div>
             <div className="text-wrapper">
               <span>Inventário</span>
             </div>
-          </button>
-          <button className="dashboard-button" onClick={() => navigate('/registrar-gerente')}>
+          </button>}
+         {!formData.isManager && <button className="dashboard-button" onClick={() => navigate('/registrar-gerente')}>
             <div className="icon-wrapper">
               <FontAwesomeIcon icon={faUsers} className="icon-btn" />
             </div>
             <div className="text-wrapper">
               <span>Usuários</span>
             </div>
-          </button>
-          <button className="dashboard-button" onClick={() => navigate('/profile')}>
+          </button>}
+          {!formData.isManager && <button className="dashboard-button" onClick={() => navigate('/profile')}>
             <div className="icon-wrapper">
               <FontAwesomeIcon icon={faUser} className="icon-btn" />
             </div>
             <div className="text-wrapper">
               <span>Meu Perfil</span>
             </div>
-          </button>
+          </button>}
         </div>
         <div className="medias">
           <a href="https://www.instagram.com/data.aqua"

@@ -13,15 +13,18 @@ using Aquadata.Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Aquadata.Application.UseCases.User.AddManager;
+using System.Text.RegularExpressions;
+using Aquadata.Core.Entities.Manager;
+using Aquadata.Application.UseCases.Manager.Common;
 
 namespace Aquadata.Api.Controllers;
 
 [ApiController]
 [Route("/users")]
-public class UserController: ControllerBase
+public class UserController : ControllerBase
 {
   private readonly IMediator _mediator;
-  // private readonly IJwtAuthService _auth;
   private readonly IAuthService _auth;
 
   public UserController(IMediator mediator, IAuthService auth)
@@ -29,21 +32,16 @@ public class UserController: ControllerBase
     _mediator = mediator;
     _auth = auth;
   }
-    
-  
+
+
   [HttpPost("signup")]
-  public async Task<IResult> SignUp([FromBody] CreateUserInput command, 
+  public async Task<IResult> SignUp([FromBody] CreateUserInput command,
   CancellationToken cancellationToken)
-  {    
+  {
     var userResult = await _mediator.Send(command, cancellationToken);
 
     if (userResult.IsFail)
       return Results.Extensions.MapResult(userResult);
-
-    // var token = _auth.GenerateToken(
-    //   userResult.Unwrap().Id.ToString(), 
-    //   command.Email
-    // );
 
     return Results.Created(
       nameof(SignUp),
@@ -57,14 +55,33 @@ public class UserController: ControllerBase
   [HttpPost("signin")]
   public async Task<IResult> SignIn([FromBody] LoginModel login)
   {
-    var (isAuth, user) = await _auth.Authenticate(login.Email, login.Password);
- 
+    bool isAuth;
+    dynamic? user;
+    
+    if (isPhone(login.User))
+    {
+      var result = await _auth.AuthenticateManager(login.User, login.Password);
+      isAuth = result.Item1;
+      user = result.Item2;
+    }
+    else
+    {
+      var result = await _auth.Authenticate(login.User, login.Password);
+      isAuth = result.Item1;
+      user = result.Item2;
+    }
+
     if (user == null || !isAuth)
       return Results.Unauthorized();
-    
-    // var token = _auth.GenerateToken(user.Id.ToString(), login.Email);
 
-    return Results.Ok(new ApiResponse<ApiCredentials>(
+    if (user is ManagerEntity)
+      return Results.Ok(new ApiResponse<ManagerCredentials>(
+        new ManagerCredentials(
+          ManagerOutput.FromEntity(user)
+        )
+      ));
+      
+      return Results.Ok(new ApiResponse<ApiCredentials>(
       new ApiCredentials(
       UserOutput.FromEntity(user),
       "")
@@ -73,7 +90,7 @@ public class UserController: ControllerBase
 
   [HttpGet("{id}")]
   [Authorize]
-  public async Task<IResult> Get([FromRoute] Guid id, 
+  public async Task<IResult> Get([FromRoute] Guid id,
   CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(new GetUserInput(id), cancellationToken);
@@ -89,8 +106,8 @@ public class UserController: ControllerBase
   public async Task<IResult> Update(
     [FromBody] UpdateUserInput command,
     CancellationToken cancellationToken)
-  { 
-    var result = await _mediator.Send(command,cancellationToken);
+  {
+    var result = await _mediator.Send(command, cancellationToken);
 
     if (result.IsFail)
       return Results.Extensions.MapResult(result);
@@ -111,7 +128,21 @@ public class UserController: ControllerBase
 
     return Results.NoContent();
   }
-  
+
+  [HttpPost("add-manager")]
+  [Authorize]
+  public async Task<IResult> AddManager(
+    [FromBody] AddManagerInput request,
+    CancellationToken cancellationToken)
+  {
+    var result = await _mediator.Send(request, cancellationToken);
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.Ok(result.Unwrap());
+  }
+
   [HttpPost("add-stock")]
   [Authorize]
   public async Task<IResult> AddStock(
@@ -154,7 +185,7 @@ public class UserController: ControllerBase
       new ApiResponse<ICollection<InventoryDto>>(result.Unwrap())
     );
   }
-  
+
   [HttpGet("stocks")]
   [Authorize]
   public async Task<IResult> GetStocks(
@@ -168,5 +199,11 @@ public class UserController: ControllerBase
     return Results.Ok(
       new ApiResponse<ICollection<StockDto>>(result.Unwrap())
     );
+  }
+
+  private bool isPhone(string phone)
+  {
+    string pattern = @"^[1-9]{2}9\d{8}$";
+    return Regex.IsMatch(phone, pattern);
   }
 }

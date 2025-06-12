@@ -1,3 +1,9 @@
+.page-data {
+  overflow: auto;
+  box-sizing: border-box;
+  padding-bottom: 40px;
+}
+
 .manager-container {
   font-size: 18px;
 }
@@ -35,6 +41,11 @@
   border-top: 1px solid #6d6c6c;
   justify-content: space-between;
   align-items: center;
+}
+.manager-data {
+  width: 30%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .icons {

@@ -146,7 +146,7 @@ const Stock = () => {
             { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</h4>
         )}
       </div>
-      <IconContainer />
+      <IconContainer formData={formData}/>
 
       {showPopup.ration && (
         <div className="popup">

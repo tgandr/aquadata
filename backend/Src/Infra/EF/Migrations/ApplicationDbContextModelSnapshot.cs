@@ -404,6 +404,48 @@ namespace Aquadata.Infra.EF.Migrations
                     b.ToTable("Inventories", (string)null);
                 });
 
+            modelBuilder.Entity("Aquadata.Core.Entities.Manager.ManagerEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("longblob");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("longblob");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<Guid>("ProducerId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Phone")
+                        .IsUnique();
+
+                    b.HasIndex("ProducerId")
+                        .IsUnique();
+
+                    b.ToTable("Managers", (string)null);
+                });
+
             modelBuilder.Entity("Aquadata.Core.Entities.Objective.ObjectiveEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1076,6 +1118,17 @@ namespace Aquadata.Infra.EF.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Aquadata.Core.Entities.Manager.ManagerEntity", b =>
+                {
+                    b.HasOne("Aquadata.Core.Entities.User.UserEntity", "Producer")
+                        .WithOne()
+                        .HasForeignKey("Aquadata.Core.Entities.Manager.ManagerEntity", "ProducerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Producer");
                 });
 
             modelBuilder.Entity("Aquadata.Core.Entities.Objective.ObjectiveEntity", b =>

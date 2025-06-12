@@ -11,9 +11,11 @@ import { formatDate, IconContainer } from './utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faCheck, faSave } from '@fortawesome/free-solid-svg-icons';
 import useDatabase from '../hooks/useDatabase'
+import LocalDb from '../databases/local.db';
 
 const PondDetail = () => {
   const db = useDatabase();
+  const [formData,setFormData] = useState() 
   const location = useLocation();
   const navigate = useNavigate();
   const viveiroId = location.state.viveiro._id;
@@ -114,6 +116,8 @@ const PondDetail = () => {
     db.get(viveiroId).then(data => {
       setArea(data.area * 10_000)
     })
+
+    LocalDb.get('user').then(setFormData)
   }, [db])
   
   useEffect(() => {
@@ -372,8 +376,6 @@ const PondDetail = () => {
               <i className="fas fa-history"></i> Histórico
             </button>
           </div>
-
-
         </>
       ) : (
         <>
@@ -391,8 +393,13 @@ const PondDetail = () => {
               {cultivationHistory ?
                 (cultivationHistory.length > 0 ?
                   (cultivationHistory.map((hist, index) => (!hist.hasShrimp &&
-                    <button key={index} onClick={() => (setShowHistory(false),
-                      setCultivation(hist), setShowButtons(false))}>
+                    <button 
+                      key={index} 
+                      onClick={() => (
+                        setShowHistory(false),
+                        setCultivation(hist), 
+                        setShowButtons(false))
+                    }>
                       {formatDate(hist.dataPovoamento).date} a {" "}
                       {hist.harvest && hist.harvest.length > 0 ? (
                         formatDate(hist.harvest[hist.harvest.length - 1].id.date).date
@@ -400,8 +407,9 @@ const PondDetail = () => {
                         "Sem data de colheita"
                       )}
                     </button>
-                  ))) : <p>Sem cultivos anteriores</p>) :
-                <p>Sem cultivos anteriores</p>
+                  ))) : <p>Sem cultivos anteriores</p>) 
+                  :
+                  <p>Sem cultivos anteriores</p>
               }
               <button className="cancel-button" onClick={() => setShowHistory(false)}>Voltar</button>
             </div>
@@ -665,7 +673,7 @@ const PondDetail = () => {
       )}
       <br /><br /><br /><br /><br />
 
-      <IconContainer />
+      <IconContainer formData={formData}/>
 
     </div>
   );

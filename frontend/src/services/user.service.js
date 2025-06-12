@@ -23,7 +23,7 @@ export class LoginUseCase {
     password
   )
   {
-    this.email = email
+    this.user = email
     this.password = password
   }
 }

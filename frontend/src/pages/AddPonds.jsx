@@ -218,22 +218,22 @@ const AddPonds = () => {
           </>
         )}
 
-        <button className="viveiro-button" onClick={(e) => addPond(e)}>
+        {!formData.isManager && <button className="viveiro-button" onClick={(e) => addPond(e)}>
           <div className="infos-wrapper">
             <FontAwesomeIcon icon={faPlus} className="icon-plus" />
           </div>
           <div className="text-add-pond-wrapper">
             <span className="viveiro-titulo">Adicionar</span>
           </div>
-        </button>
-        <button className="viveiro-button" onClick={() => setShowViveirosPopup(true)}>
+        </button>}
+        {!formData.isManager && <button className="viveiro-button" onClick={() => setShowViveirosPopup(true)}>
           <div className="infos-wrapper">
             <FontAwesomeIcon icon={faEdit} className="icon-plus" />
           </div>
           <div className="text-add-pond-wrapper">
             <span className="viveiro-titulo">Editar</span>
           </div>
-        </button>
+        </button>}
         {/* <button className="viveiro-button" onClick={() => setShowViveirosPopup(true)}>
           <div className="infos-wrapper">
             <FontAwesomeIcon icon={faTrash} className="icon-plus" />
@@ -252,7 +252,7 @@ const AddPonds = () => {
         </button>
       </div>
 
-      <IconContainer />
+      <IconContainer formData={formData}/>
       
       <ConfirmationPopup
         isVisible={showConfirmationPopup}

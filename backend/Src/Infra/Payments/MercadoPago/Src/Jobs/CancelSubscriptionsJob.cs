@@ -36,7 +36,7 @@ public class CancelSubscriptionsJob
         if (subscription.Status == Core.Enums.SubscriptionStatus.Active)
           await _repository.Cancel(subscription.SubscriptionId);
 
-        await _couchDb.RemoveUserFromMembers(subscription.User.Email);
+        // await _couchDb.RemoveUserFromMembers(subscription.User.Email);
         page += 1;
       }
     }

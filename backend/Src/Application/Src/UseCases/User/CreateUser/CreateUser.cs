@@ -59,7 +59,8 @@ public class CreateUser : IUseCaseHandler<CreateUserInput,UserOutput>
 
     await _unitOfWork.Commit(cancellationToken);
 
-    await _couchdb.AddUser(user.Email, request.Password);
+    await _couchdb.AddUserAndCreateDb(user.Email, request.Password);
+    await _couchdb.SetUserAsMember(user.Email);
 
     return Result<UserOutput>.Ok(
       UserOutput.FromEntity(user)

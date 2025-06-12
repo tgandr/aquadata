@@ -6,29 +6,60 @@ import { useEffect, useState } from "react";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ConfirmationPopup from '../pages/ConfirmationPopup'
+import apiRequest from '../services/apiRequest'
+import { SecureStoragePlugin } from "capacitor-secure-storage-plugin";
+import useDatabase from '../hooks/useDatabase'
 
 const AddManagerPage = () => {
-  const [phone, setPhone] = useState('');
-  const [name, setName] = useState('');
-  const [showRegisterPage, setShowRegisterPage] = useState(false)
+  const db = useDatabase()
+  const [manager, setManager] = useState()
+  const [credentials, setCredentials] = useState();
+  const [form,setForm] = useState({
+    name: '',
+    phone: '',
+    password: '',
+    confirmPassword: ''
+  })
+  const [showRegisterPage, setShowRegisterPage] = useState(true)
   const [showPopup, setShowPopup] = useState(false);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [showError, setShowError] = useState(false);
   const [isDisable, setIsDisable] = useState(true);
   const [errorMessage, setErrorMessage] = useState('')
   const [showConfirmPopup, setShowConfirmPopup] = useState(false)
 
   useEffect(() => {
-    if (!phone || !name || !password || !confirmPassword)
+    if (!db) return
+    db.find({
+      selector: {
+        dataType: 'manager'
+      }
+    }).then(res => {
+      const data = res.docs[0]
+      if (data) {
+        setManager(data)
+        setShowRegisterPage(false)
+      }
+    })
+  }, [db])
+
+  useEffect(() => {
+    if (credentials) return;
+    SecureStoragePlugin.get({key: 'credentials'}).then(data => {
+      const result = JSON.parse(data.value)
+      setCredentials(result)
+    })    
+  }, [])
+
+  useEffect(() => {
+    if (!form.phone || !form.name || !form.password || !form.confirmPassword)
       setIsDisable(true)
   })
 
   useEffect(() => {
-    if (!password || !confirmPassword)
+    if (!form.password || !form.confirmPassword)
       return;
 
-    if (confirmPassword === password) {
+    if (form.confirmPassword === form.password) {
       setIsDisable(false);
       setShowError(false);
     } else {
@@ -36,11 +67,11 @@ const AddManagerPage = () => {
       setShowError(true);
     }
     setErrorMessage('Senhas não coincidem')
-  }, [password, confirmPassword])
+  }, [form.password, form.confirmPassword])
 
   useEffect(() => {
-    if (!phone) return
-    if (!phone.match(/^[1-9]{2}9\d{8}$/)) {
+    if (!form.phone) return
+    if (!form.phone.match(/^[1-9]{2}9\d{8}$/)) {
       setErrorMessage("Formato inválido de telefone")
       setIsDisable(true)
       setShowError(true)
@@ -48,22 +79,35 @@ const AddManagerPage = () => {
       setShowError(false)
       setIsDisable(false)
     }
-  }, [phone])
+  }, [form.phone])
 
-  function handleChangePhone(e) {
-    setPhone(e.target.value)
+  function handleChangeForm(e) {
+    const {value, name} = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value
+    }))
   }
 
-  function handleChangePassword(e) {
-    setPassword(e.target.value)
-  }
+  async function saveManager() {
+    const res = await apiRequest(
+      'users/add-manager',
+      'POST',
+      {
+        name: form.name,
+        phone: form.phone,
+        password: form.password
+      },
+      {
+        email: credentials.email,
+        password: credentials.password
+      }
+    )
 
-  function handleChangeConfirmPassword(e) {
-    setConfirmPassword(e.target.value)
-  }
-
-  function handleChangeName(e) {
-    setName(e.target.value)
+    setManager(res)
+    showPopup(false)
+    setShowRegisterPage(false)
   }
 
   return ( 
@@ -88,11 +132,11 @@ const AddManagerPage = () => {
           <div className="page-content">
               <h3>Gerentes Cadastrados</h3>
               <div className="manager-item">
-                <div>
-                  Carlos 
+                <div className="manager-data">
+                  {manager.name}
                 </div>
-                <div>
-                  88 912345678
+                <div >
+                  {manager.phone}
                 </div>
                 <div className="icons">
                   <FontAwesomeIcon icon={faEdit} onClick={() => setShowPopup(true)} className="manager-icon"/>
@@ -110,26 +154,27 @@ const AddManagerPage = () => {
             <h3>Cadastrar Gerente</h3>
             <div className="popup-item">
               <div>Nome</div>
-              <input type="text" value={name} onChange={handleChangeName}/>
+              <input type="text" value={form.name} name="name" onChange={handleChangeForm}/>
             </div>
             <div className="popup-item">
               <div>Telefone</div>
-              <input type="tel" value={phone}
+              <input type="tel" value={form.phone}
                 placeholder="88912345678"
-                onChange={handleChangePhone} 
+                name="phone"
+                onChange={handleChangeForm} 
                 required
               />
             </div>
             <div className="popup-item">
               <div>Senha</div>
-              <input type="password" value={password} onChange={handleChangePassword}/>
+              <input type="password" value={form.password} name="password" onChange={handleChangeForm}/>
             </div>
             <div className="popup-item">
               <div>Confirmar <br/>senha</div>
-              <input type="password" value={confirmPassword} onChange={handleChangeConfirmPassword}/>
+              <input type="password" value={form.confirmPassword} name="confirmPassword"onChange={handleChangeForm}/>
             </div>
             {showError && <p style={{color: 'red'}}>{errorMessage}</p>}
-            <UiButton disabled={isDisable} type="submit">Salvar</UiButton>
+            <UiButton disabled={isDisable} type="submit" onClickAsync={saveManager}>Salvar</UiButton>
             <div className="cancel-btn" onClick={() => setShowPopup(false)}>Cancelar</div>
           </form>
         </GenericPopup>
