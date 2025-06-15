@@ -14,6 +14,7 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import UiLoading from '../ui/UiLoading';
 import ConfirmationPopup from './ConfirmationPopup';
 import useSubscription from '../hooks/useSubscription';
+import { closeDb } from '../databases/pouch.db';
 
 const Dashboard = () => {
   const [formData, setFormData] = useState({});
@@ -58,6 +59,7 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     LocalDb.clear();
+    closeDb()
     SecureStoragePlugin.clear()
     navigate('/login');
   };

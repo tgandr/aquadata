@@ -15,6 +15,8 @@ public class ManagerRepository : IManagerRepository
   public async Task Create(ManagerEntity manager)
     => await _context.Managers.AddAsync(manager);
 
+  public Task Delete(ManagerEntity manager)
+    => Task.FromResult(_context.Managers.Remove(manager));
 
   public async Task<ManagerEntity?> GetByPhone(string phone)
    => await _context.Managers.FirstOrDefaultAsync(

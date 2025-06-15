@@ -20,15 +20,19 @@ const LoginPage = () => {
 
     try {
       let user;
+      let login;
       let isManager;
       const res = await signIn(new LoginUseCase(email, password))
+
       if (email.match(/^[1-9]{2}9\d{8}$/)) {
         const manager = res.data.manager
-        user = manager.producer 
+        user = manager.producer
+        login = manager.phone
         isManager = true
       }
       else {
         user = res.data.user
+        login = user.email
         isManager = false
       }
       
@@ -42,8 +46,10 @@ const LoginPage = () => {
         perfil: user.profile,
         isManager
       }
-
-      await SecureStoragePlugin.set({key:'credentials', value: JSON.stringify({email: user.email, password})})
+      await SecureStoragePlugin.set({
+        key:'credentials', value: 
+        JSON.stringify({email: login, password})
+      })
       await LocalDb.set('user', form);
       navigate('/splash-screen');
     } catch (err) {

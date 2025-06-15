@@ -1,14 +1,15 @@
 using Aquadata.Api.Extensions;
 using Aquadata.Api.Response;
 using Aquadata.Application.UseCases.Manager.Common;
+using Aquadata.Application.UseCases.Manager.DeleteManager;
 using Aquadata.Application.UseCases.Manager.GetManager;
-using Aquadata.Core.Util;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aquadata.Api.Controllers;
 
+[ApiController]
 [Route("/managers")]
 [Authorize]
 public class ManagerController : ControllerBase
@@ -20,10 +21,10 @@ public class ManagerController : ControllerBase
     _mediator = mediator;
   }
 
-  [HttpGet("/{id}")]
-  public async Task<IResult> GetManager(string id)
+  [HttpGet("/{phone}")]
+  public async Task<IResult> GetManager(string phone)
   {
-    var result = await _mediator.Send(new GetManagerInput(id));
+    var result = await _mediator.Send(new GetManagerInput(phone));
 
     if (result.IsFail)
       return Results.Extensions.MapResult(result);
@@ -31,5 +32,16 @@ public class ManagerController : ControllerBase
     return Results.Ok(new ApiResponse<ManagerOutput>(
       result.Unwrap()
     ));
+  }
+
+  [HttpDelete("/{phone}")]
+  public async Task<IResult> DeleteManager([FromRoute] string phone)
+  {
+    var result = await _mediator.Send(new DeleteManagerInput(phone));
+
+    if (result.IsFail)
+      return Results.Extensions.MapResult(result);
+
+    return Results.NoContent();
   }
 }

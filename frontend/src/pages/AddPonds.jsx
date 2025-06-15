@@ -39,26 +39,25 @@ const AddPonds = () => {
   }, [])
 
   useEffect(() => {
-    if (db) {
-      const getPonds = db.find({
-        selector: {
-          dataType: 'pond'
-        }
-      })
-      const getCultivations = db.find({
-        selector: {dataType: 'cultivation'}
-      })
-      const getSubscription = useSubscription()
+    if (!db) return
+    const getPonds = db.find({
+      selector: {
+        dataType: 'pond'
+      }
+    })
+    const getCultivations = db.find({
+      selector: {dataType: 'cultivation'}
+    })
+    const getSubscription = useSubscription()
 
-      Promise.all([getPonds, getCultivations, getSubscription]).then(values => {
-        const [pondsData, cultivationData, subscription] = values;
-        setPonds(pondsData.docs);
-        setCultivos(cultivationData.docs);
-        setSubscription(subscription)
-      }).finally(() => {
-        setLoading(false)
-      })
-    }
+    Promise.all([getPonds, getCultivations, getSubscription]).then(values => {
+      const [pondsData, cultivationData, subscription] = values;
+      setPonds(pondsData.docs);
+      setCultivos(cultivationData.docs);
+      setSubscription(subscription)
+    }).finally(() => {
+      setLoading(false)
+    })
   },[db])
 
   const handleChange = (e) => {
@@ -93,15 +92,15 @@ const AddPonds = () => {
         //   parseFloat(form.area), 
         //   userId
         // )
-        const novoViveiro = {
-          _id: v4(),
-          nome: `Viveiro ${form.numeroViveiro}`,
-          dataType: 'pond',
-          area: parseFloat(form.area),
-        };
-        const updatedViveiros = [...ponds, novoViveiro];
-        db.put(novoViveiro)
-        setPonds(updatedViveiros);
+      const novoViveiro = {
+        _id: v4(),
+        nome: `Viveiro ${form.numeroViveiro}`,
+        dataType: 'pond',
+        area: parseFloat(form.area),
+      };
+      const updatedViveiros = [...ponds, novoViveiro];
+      db.put(novoViveiro)
+      setPonds(updatedViveiros);
       // } catch {}
     }
     setShowPopup(false);

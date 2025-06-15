@@ -4,21 +4,23 @@ import logo from '../assets/images/back_white.jpeg';
 import { useEffect, useState } from 'react';
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin';
 import initDb from '../databases/pouch.db';
+import useDatabase from '../hooks/useDatabase';
 
 const SplashScreen = () => {
   const navigate = useNavigate();
+  const db = useDatabase()
   const [fadeClass, setFadeClass] = useState('fade-in');
 
   useEffect(() => {
+    if (!db) return
     setFadeClass('fade-out');
 
-    SecureStoragePlugin.get({key: 'credentials'}).then(res => {
-      const credentials = JSON.parse(res.value)
-      initDb(credentials.email, credentials.password).then(() => {
-        navigate('/dashboard')
-      })
+    db.find({selector: {
+      dataType: 'pond'
+    }}).then(() => {
+      navigate('/dashboard')
     })
-  })
+  }, [db])
 
   return ( 
     <div className={`home-page ${fadeClass}`}>

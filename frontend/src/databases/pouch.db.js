@@ -3,8 +3,9 @@ import pouchDbFind from 'pouchdb-find'
 
 PouchDB.plugin(pouchDbFind)
 
-let localDb = null
-let remoteDb = null
+let localDb = null;
+let remoteDb = null;
+let replicationHandler = null;
 
 export function getDbName(email){
     return 'userdb-'+Buffer.from(email).toString('hex')
@@ -12,16 +13,21 @@ export function getDbName(email){
 
 const remoteDbURL = "http://localhost:5984/"
 
-export default async function initDb(email, password) {
-    if (localDb) return localDb
-    const dbName = getDbName(email)
-    localDb = new PouchDB(dbName)
+export default async function initDb(db, email, password) {
+    if (localDb) return localDb;
+    const dbName = getDbName(db);
+    localDb = new PouchDB(dbName);
     remoteDb = new PouchDB(remoteDbURL+dbName, {auth: {
         username: email,
         password
-    }})
-    localDb.sync(remoteDb, {live: true, retry: true})
+    }});
+    replicationHandler = localDb.sync(remoteDb, {live: true, retry: true})
     return localDb
+}
+
+export function closeDb() {
+    if (!localDb) return;
+    replicationHandler.cancel()
 }
 
 

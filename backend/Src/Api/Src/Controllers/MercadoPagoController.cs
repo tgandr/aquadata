@@ -11,6 +11,7 @@ using System.Text.Json;
 
 namespace Aquadata.Api.Controllers;
 
+[ApiController]
 [Route("/process_payment")]
 public class PaymentController: ControllerBase
 {

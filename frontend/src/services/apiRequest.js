@@ -12,11 +12,21 @@ export default async function apiRequest(endpoint, method, body, auth = null) {
             body: method !== 'GET' && body? JSON.stringify(body): undefined
         }
     )
-
+    let responseData;
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Error: ${errorData.message || 'Unknown error'}`);
+        throw new Error(`Error: ${responseData || 'Unknown error'}`);
     }
 
-    return await response.json();
+    const contentType = response.headers.get('content-type')
+    try {
+        if (contentType && contentType.includes('application/json'))
+            responseData = await response.json()
+        else
+            responseData = await response.text()
+    }
+    catch(err) {
+        responseData = err
+    }
+
+    return responseData;
 }

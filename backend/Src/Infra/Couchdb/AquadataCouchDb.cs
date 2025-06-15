@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
+using System.Text.Json.Nodes;
 using Aquadata.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
 namespace Aquadata.Infra.CouchDb;
@@ -51,6 +51,35 @@ public class AquadataCouchDb : ICouchdbService
     _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeader);
 
     await _client.PutAsync(usersUrl, content);
+  }
+
+  public async Task RemoveUser(string userName)
+  {
+    string userId = $"org.couchdb.user:{userName}";
+    string url = $"{_couchDbUrl}/_users/{userId}";
+
+    var getResponse = await _client.GetAsync(url);
+    if (!getResponse.IsSuccessStatusCode)
+    {
+      Console.WriteLine($"Usuário não encontrado ou erro: {getResponse.StatusCode}");
+      return;
+    }
+
+    var json = await getResponse.Content.ReadAsStringAsync();
+    var doc = JsonNode.Parse(json);
+    var rev = doc!["_rev"]!.ToString();
+    
+    string deleteUrl = $"{url}?rev={rev}";
+    var deleteResponse = await _client.DeleteAsync(deleteUrl);
+
+    if (deleteResponse.IsSuccessStatusCode)
+    {
+        Console.WriteLine($"Usuário '{userName}' removido com sucesso.");
+    }
+    else
+    {
+        Console.WriteLine($"Erro ao remover usuário: {deleteResponse.StatusCode}");
+    }
   }
 
   public async Task AddUserAndCreateDb(string login, string password)
@@ -169,6 +198,34 @@ public class AquadataCouchDb : ICouchdbService
     }
   }
 
+  public async Task RemoveMemberToDb(string member, string db)
+  {
+    var dbName = GetUserDbUrl(db);
+    var securityUrl = $"{_couchDbUrl}/{dbName}/_security";
+    var getResponse = await _client.GetAsync(securityUrl);
+    getResponse.EnsureSuccessStatusCode();
+
+    var jsonString = await getResponse.Content.ReadAsStringAsync();
+    var securityDoc = JsonNode.Parse(jsonString);
+
+    var members = securityDoc!["members"];
+    var names = members!["names"] as JsonArray;
+    var newNames = new JsonArray();
+    
+    foreach (var name in names!)
+    {
+      if (name!.ToString() != member)
+        newNames.Add(name.ToString());
+    }
+
+    members["names"] = newNames;
+    securityDoc["members"] = members;
+
+    var content = new StringContent(securityDoc.ToString(), Encoding.UTF8, "application/json");
+    var putResponse = await _client.PutAsync(securityUrl, content);
+    putResponse.EnsureSuccessStatusCode();
+  }
+
   public async Task AddDataToDb(string user, object data)
   {
     string userDbUrl = GetUserDbUrl(user);
@@ -199,5 +256,24 @@ public class AquadataCouchDb : ICouchdbService
       string errorMessage = await addSecurityResponse.Content.ReadAsStringAsync();
       Console.WriteLine("AddSecurity:" + errorMessage);
     }
+  }
+
+  public async Task DeleteData(string user, string id)
+  {
+    var dbName = GetUserDbUrl(user);
+    var getResponse = await _client.GetAsync($"{_couchDbUrl}/{dbName}/{id}");
+    if (!getResponse.IsSuccessStatusCode)
+    {
+        Console.WriteLine($"Erro ao buscar o documento: {getResponse.StatusCode}");
+        return;
+    }
+
+    var jsonString = await getResponse.Content.ReadAsStringAsync();
+    var doc = JsonNode.Parse(jsonString);
+    var rev = doc!["_rev"];
+
+    var deleteUrl = $"{_couchDbUrl}/{dbName}/{id}?rev={rev}";
+    var deleteResponse = await _client.DeleteAsync(deleteUrl);
+    deleteResponse.EnsureSuccessStatusCode();
   }
 }

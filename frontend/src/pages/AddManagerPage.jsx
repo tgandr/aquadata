@@ -91,7 +91,7 @@ const AddManagerPage = () => {
   }
 
   async function saveManager() {
-    const res = await apiRequest(
+    await apiRequest(
       'users/add-manager',
       'POST',
       {
@@ -104,10 +104,32 @@ const AddManagerPage = () => {
         password: credentials.password
       }
     )
+    .then((res) => {
+      setManager(res)
+      setShowPopup(false)
+      setShowRegisterPage(false)
+    })
+    .catch((err) => {
+      console.log(err)
+      setErrorMessage('Erro na requisição, verifique sua conexão')
+      setShowError(true)
+    })
 
-    setManager(res)
-    showPopup(false)
-    setShowRegisterPage(false)
+  }
+
+  async function deleteManager() {
+    await apiRequest(
+      `${manager.phone}`,
+      'DELETE',
+      null,
+      {
+        email: credentials.email,
+        password: credentials.password
+      }
+    ).then(() => {
+      setShowConfirmPopup(false)
+      setShowRegisterPage(true)
+    })
   }
 
   return ( 
@@ -139,7 +161,7 @@ const AddManagerPage = () => {
                   {manager.phone}
                 </div>
                 <div className="icons">
-                  <FontAwesomeIcon icon={faEdit} onClick={() => setShowPopup(true)} className="manager-icon"/>
+                  {/* <FontAwesomeIcon icon={faEdit} onClick={() => setShowPopup(true)} className="manager-icon"/> */}
                   <FontAwesomeIcon icon={faTrash} onClick={() => setShowConfirmPopup(true)} className="manager-icon"/>
                 </div>
               </div>
@@ -173,7 +195,7 @@ const AddManagerPage = () => {
               <div>Confirmar <br/>senha</div>
               <input type="password" value={form.confirmPassword} name="confirmPassword"onChange={handleChangeForm}/>
             </div>
-            {showError && <p style={{color: 'red'}}>{errorMessage}</p>}
+            {showError && <p style={{color: 'red', fontSize: '16px'}}>{errorMessage}</p>}
             <UiButton disabled={isDisable} type="submit" onClickAsync={saveManager}>Salvar</UiButton>
             <div className="cancel-btn" onClick={() => setShowPopup(false)}>Cancelar</div>
           </form>
@@ -182,6 +204,7 @@ const AddManagerPage = () => {
         <ConfirmationPopup 
           isVisible={showConfirmPopup}
           title="Tem certeza?"
+          onConfirm={deleteManager}
           onCancel={() => setShowConfirmPopup(false)}
         />
       </div>
